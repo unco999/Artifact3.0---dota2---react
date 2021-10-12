@@ -1,0 +1,19 @@
+{
+    "compilerOptions": {
+        "rootDir": "src",
+        "outDir": "vscripts",
+        "target": "esnext",
+        "lib": ["esnext"],
+        "types": ["@moddota/dota-lua-types"],
+        "moduleResolution": "node",
+        "experimentalDecorators": true,
+        "strictNullChecks": false,
+        "strictPropertyInitialization": false,
+        "strict": false
+    },
+    "include": ["src", "../../shared"],
+    "tstl": {
+        "luaTarget": "JIT",
+        "sourceMapTraceback": true
+    }
+}

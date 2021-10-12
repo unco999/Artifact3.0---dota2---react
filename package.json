@@ -53,6 +53,7 @@
         "file-loader": "^6.2.0",
         "fork-ts-checker-webpack-plugin": "^5.2.1",
         "fs-extra": "^9.1.0",
+        "hyperid": "^2.3.1",
         "keyvalues-node": "0.0.2",
         "node-sass": "^4.14.1",
         "node-xlsx": "^0.15.0",
@@ -79,5 +80,14 @@
         "singleQuote": false,
         "arrowParens": "always",
         "proseWrap": "never"
+    },
+    "dependencies": {
+        "@serprex/react-motion": "^0.6.3",
+        "@types/d3-ease": "^3.0.0",
+        "@types/react-motion": "0.0.31",
+        "@types/shortid": "0.0.29",
+        "d3-ease": "^3.0.1",
+        "shortid": "^2.2.16",
+        "uuid": "^8.3.2"
     }
 }

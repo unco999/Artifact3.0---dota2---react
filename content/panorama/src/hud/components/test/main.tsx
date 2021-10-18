@@ -12,42 +12,52 @@ export const Test = () => {
     const test = () =>{
         setstate(value => value + 1)
     }
-
+//
     const indead = () => {
-        const b = ConpoentDataContainer.Instance.NameGetNode("TEST").current
-        b.csstable = {x:"100px",y:"100px"}
-        let time = 0
-        $.Schedule(Game.GetGameFrameTime(),function cb(){
-            time += Game.GetGameFrameTime()
-            b.csstable.x = `${d3.easeBackInOut(time) * 100}px`
-            setupdate(value => !value)
-            if(time > 1){
-                return;
-            }
-            $.Schedule(Game.GetGameFrameTime(),cb)
-        })//
+        return new Promise((res,rej)=>{
+            const b = ConpoentDataContainer.Instance.NameGetNode("TEST").current
+            b.csstable = {x:"100px",y:"100px"}
+            let time = 0
+            $.Schedule(Game.GetGameFrameTime(),function cb(){
+                time += Game.GetGameFrameTime()
+                b.csstable.x = `${d3.easeBackInOut(time) * 100}px`
+                setupdate(value => !value)
+                if(time > 1){
+                    res(true)
+                    return;
+                }
+                $.Schedule(Game.GetGameFrameTime(),cb)
+            })
+        })
     }
     
     const container = useInstance("TEST",uuid,{x:'0px'},[
-        new State(CardState.怎么都死不了状态,test,test,test),
-        new State(CardState.攻击状态,indead,test,test),
-        new State(CardState.施法状态,test,test,test),
-        new State(CardState.死了又活过来又死了状态,test,test,test),
-        new State(CardState.死去活来状态,test,test,test)
+        new State(CardState.怎么都死不了状态,test,indead,test),
+        new State(CardState.攻击状态,test,indead,test),
+        new State(CardState.施法状态,test,indead,test),
+        new State(CardState.死了又活过来又死了状态,test,indead,test),
+        new State(CardState.死去活来状态,test,indead,test)
     ])
 
-    useEffect(()=>{
-        $.Schedule(10,()=>{container?.switchState(CardState.怎么都死不了状态)})
-        $.Schedule(20,()=>{container?.switchState(CardState.怎么都死不了状态)})
-        $.Schedule(30,()=>{container?.switchState(CardState.怎么都死不了状态)})
-        $.Schedule(40,()=>{container?.switchState(CardState.怎么都死不了状态)})
-        $.Schedule(50,()=>{container?.switchState(CardState.怎么都死不了状态)})
-    },[container])
+    const track = () => {
+        $.Msg("开始了")
+        let time = 0
+        $.Schedule(Game.GetGameFrameTime(),function cb(){
+            time += Game.GetGameFrameTime();
+            $.Msg(`${(GameUI.GetCursorPosition()[0]) / (Game.GetScreenWidth() / 1920) - 960} ${(GameUI.GetCursorPosition()[1]) / (Game.GetScreenHeight() / 1080) - 540} 0`);
+            ($("#uuid1") as ScenePanel).FireEntityInput("test","SetControlPoint",`3: ${(GameUI.GetCursorPosition()[1]) / (Game.GetScreenHeight() / 1080) - 540} ${(GameUI.GetCursorPosition()[0]) / (Game.GetScreenWidth() / 1920) - 960} 0`);//
+            $.Schedule(Game.GetGameFrameTime(),cb)//
+        })
+    }
 
 
-    return(
-        <Panel onactivate={()=>container?.Statenext()} style={{...container?.csstable,width:'500px',height:'500px',align:"center center",backgroundColor:"black"}}>
+    return(//
+        <>
+        <Panel style={{width:'100%',height:'100%',backgroundColor:"white"}}/>
+        <Panel onactivate={()=>{track()}} style={{...container?.csstable,width:'100px',height:'100px',align:"center center",backgroundColor:"black"}}>
         <Label text={state} style={{color:"white",fontSize:"30px"}}/>
         </Panel>
+        <DOTAScenePanel hittest={false} id={"uuid1"} style={{width:"100%",height:"100%"}} map={"particle"} renderdeferred={false} particleonly={true} antialias={true}/>
+        </>
     )
 }

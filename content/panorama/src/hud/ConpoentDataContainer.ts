@@ -33,6 +33,9 @@ export class ConpoentDataContainer {
 
     addNode(name:string,uuid:string|undefined,dispatch:React.Dispatch<React.SetStateAction<number>>,css:Partial<VCSSStyleDeclaration>,State?:State[],group?:string){
         if(!uuid) return;
+        State?.forEach((value)=>{
+            value.setuuid(uuid)
+        })
         const newNode = new ComponentNode(name,dispatch,css,State)
         this.Namehashtable [ name + uuid ] = newNode
         this.Uuidhashtable [ uuid ] = newNode
@@ -78,23 +81,33 @@ export class ConpoentDataContainer {
 }
 
 export class State {
+    uuid:string|undefined
     identifier:CardState;
     ComponentNode:ComponentNode|undefined;
-    _entry:Function;_exit:Function;_run:Function;
+    _entry:Function;_exit:()=>Promise<any>;_run:Function;
 
-    constructor(identifer:CardState,entry:Function,exit:Function,run:Function){
+    constructor(identifer:CardState,entry:Function,exit:()=>Promise<any>,run:Function){
         this.identifier = identifer
         this._entry = entry
         this._exit = exit
         this._run = run
     }
 
+    setuuid(uuid:string){
+        this.uuid = uuid
+        GameEvents.Subscribe<any>(this.uuid,(event)=>{
+            if(event && event.to){
+                this.ComponentNode?.switchState(event.to)
+            }
+        })
+    }
+
     entry(){
         this._entry()
     }
 
-    exit(){
-        this._exit()
+    async exit(){
+       await this._exit()
     }
 
     run(){
@@ -147,18 +160,18 @@ export class ComponentNode {
         })
     }
 
-    Statenext(){
+    async Statenext(){
         if(this.State && this.current_State < this.State?.length - 1){
-            this.State[this.current_State].exit()
+            await this.State[this.current_State].exit()
             this.current_State++
             this.State[this.current_State].entry()
             $.Msg("当前UI激活编号为",this.current_State)
         }
     }
 
-    switchState(UIstate:CardState){
+    async switchState(UIstate:CardState){
         if(this.State){
-           this.State[this.current_State]?.exit()
+           await this.State[this.current_State]?.exit()
            for(const index in this.State){
                if(this.State[index].identifier == UIstate){
                    this.current_State = +index

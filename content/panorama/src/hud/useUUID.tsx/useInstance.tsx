@@ -8,13 +8,13 @@ export enum COMPOENT_FUNCTION {
     'horizontalArrangement'= 'horizontalArrangement',
 } 
 
-export const useInstance = (name:string,uuid:string|undefined,css:Partial<VCSSStyleDeclaration>,state?:State[]):ComponentNode|undefined =>{
+export const useInstance = (name:string,uuid:string|undefined,css:Partial<VCSSStyleDeclaration>,send:any,group?:string):ComponentNode|undefined =>{
     const [_updata,_set_update] = useState(0)
     const [component,set_compoent] = useState<ComponentNode>()
     
     useLayoutEffect(()=>{
         if(uuid){
-            ConpoentDataContainer.Instance.addNode(name,uuid,_set_update,Object.assign({},css),state,undefined)
+            ConpoentDataContainer.Instance.addNode(name,uuid,_set_update,Object.assign({},css),send,group)
         }
     },[uuid])
 

@@ -1,0 +1,13 @@
+// generate with Xavier's kv generator https://github.com/XavierCHN/x-template
+"CardGame" {
+	"1" {
+		"name" "test"
+		"attack" "10"
+		"arrmor" "10"
+		"health" "10"
+		"ability1" "test_ability"
+		"ability2" "test_ability"
+
+	}
+
+}

@@ -1,5 +1,5 @@
 // generate with Xavier's kv generator https://github.com/XavierCHN/x-template
-"XLSXContent" {
+"CardGame" {
 	"item_kv_generator_test" {
 		"BaseClass" "item_lua"
 		"AbilitySpecial" {

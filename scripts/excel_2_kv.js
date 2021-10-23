@@ -80,26 +80,26 @@ function row_data_to_dict(dct, key_names, row_data, i, parent_name) {
 
 function col_excel_to_kv(sheet) {
     console.log("single excel to kv");
-    let kv_data = { XLSXContent: {} };
+    let kv_data = { CardGame: {} };
     for (i = 2; i < sheet.data.length; ++i) {
         let row_data = sheet.data[i];
         let main_key = row_data[0];
         let value = row_data[1];
         if (main_key == null) continue;
-        kv_data.XLSXContent[main_key] = value.toString();
+        kv_data.CardGame[main_key] = value.toString();
     }
     return kv_data;
 }
 
 function xy_excel_to_kv(sheet) {
     let key_row = sheet.data[1]; // 第二行存键名
-    let kv_data = { XLSXContent: {} };
+    let kv_data = { CardGame: {} };
     for (i = 2; i < sheet.data.length; ++i) {
         let row_data = sheet.data[i];
         let main_key = row_data[0];
         if (main_key == null) continue;
         let ret_val = row_data_to_dict({}, key_row, row_data, 1);
-        kv_data.XLSXContent[main_key] = ret_val.dct;
+        kv_data.CardGame[main_key] = ret_val.dct;
     }
     return kv_data;
 }
@@ -126,13 +126,13 @@ function single_excel_to_kv(file) {
         kv_data = xy_excel_to_kv(sheet);
     }
 
-    if (Object.keys(kv_data.XLSXContent).length <= 0) return;
+    if (Object.keys(kv_data.CardGame).length <= 0) return;
     let outpath = file.replace(excel_path, kv_path).replace(".xlsx", ".txt");
     let parent_i = outpath.lastIndexOf("/");
     let out_dir = outpath.substr(0, parent_i);
     if (!fs.existsSync(out_dir)) fs.mkdirSync(out_dir);
     fs.writeFileSync(outpath, "// generate with Xavier's kv generator https://github.com/XavierCHN/x-template\n" + keyvalues.encode(kv_data));
-    console.log("success xlsx->kv", outpath, ", total items count ->", Object.keys(kv_data.XLSXContent).length);
+    console.log("success xlsx->kv", outpath, ", total items count ->", Object.keys(kv_data.CardGame).length);
 }
 
 const all_excel_to_kv = async (path) => {

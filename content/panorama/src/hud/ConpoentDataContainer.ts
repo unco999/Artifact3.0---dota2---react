@@ -9,6 +9,7 @@ export class ConpoentDataContainer {
     Uuidhashtable:Record<string,ComponentNode> = {}
     // group:uuid[]
     Grouphashtable:Record<string,string[]> = {}
+    GroupantiShake:Record<string,number> = {}
     openlist:ComponentNode[] = []
 
     registeropenlist(obj:ComponentNode){
@@ -31,20 +32,30 @@ export class ConpoentDataContainer {
         this.openlist = []
     }
 
-    addNode(name:string,uuid:string|undefined,dispatch:React.Dispatch<React.SetStateAction<number>>,css:Partial<VCSSStyleDeclaration>,State?:State[],group?:string){
+    addNode(name:string,uuid:string|undefined,dispatch:React.Dispatch<React.SetStateAction<number>>,css:Partial<VCSSStyleDeclaration>,send:any,group?:string){
         if(!uuid) return;
-        State?.forEach((value)=>{
-            value.setuuid(uuid)
-        })
-        const newNode = new ComponentNode(name,dispatch,css,State)
+        const newNode = new ComponentNode(name,dispatch,css,send)
         this.Namehashtable [ name + uuid ] = newNode
         this.Uuidhashtable [ uuid ] = newNode
         if(group){
             if(!this.Grouphashtable[group]){
                 this.Grouphashtable[group] = []
+                this.GroupantiShake[group] = Game.GetGameTime()
             }
             this.Grouphashtable[group].push(uuid)
         }
+    }
+
+    antiShake(group:string,interval:number){
+       const time = Game.GetGameTime() - this.GroupantiShake[group]
+       $.Msg(time)
+       if(time > interval){
+            $.Msg("可以触发")
+            this.GroupantiShake[group] = Game.GetGameTime()
+            return true
+       }
+       $.Msg("不能触发")
+       return false
     }
 
     NameGetNode(name:string){
@@ -85,24 +96,19 @@ export class State {
     identifier:CardState;
     ComponentNode:ComponentNode|undefined;
     _entry:Function;_exit:()=>Promise<any>;_run:Function;
+    cuurent_instruction = true
+    time = 0
 
-    constructor(identifer:CardState,entry:Function,exit:()=>Promise<any>,run:Function){
+    constructor(identifer:CardState,entry:Function,exit:()=>Promise<any>,run:(time:number)=>void){
         this.identifier = identifer
         this._entry = entry
         this._exit = exit
         this._run = run
     }
 
-    setuuid(uuid:string){
-        this.uuid = uuid
-        GameEvents.Subscribe<any>(this.uuid,(event)=>{
-            if(event && event.to){
-                this.ComponentNode?.switchState(event.to)
-            }
-        })
-    }
 
     entry(){
+        this.time = 0
         this._entry()
     }
 
@@ -110,8 +116,11 @@ export class State {
        await this._exit()
     }
 
-    run(){
-        this.run()
+    run(boolean:boolean){
+        if(!boolean) return
+        this.time += Game.GetGameFrameTime()
+        this._run(true,this.time)
+        $.Schedule(Game.GetGameFrameTime(),()=>this.run(this.cuurent_instruction))
     }
 
     next(){
@@ -120,11 +129,9 @@ export class State {
 }
 
 export enum CardState{
-    施法状态,
-    攻击状态,
-    死去活来状态,
-    怎么都死不了状态,
-    死了又活过来又死了状态,
+    手牌默认状态,
+    选中状态,
+    置放状态,
 }
 
 export class ComponentNode {
@@ -135,20 +142,21 @@ export class ComponentNode {
     switch:boolean = false
     dispatch_list:React.Dispatch<React.SetStateAction<number>>[] = []
     name:string
-    State:State[]|undefined //state按照顺序存储
-    current_State:number
+    _send:any
 
-    constructor(name:string,dispatch:React.Dispatch<React.SetStateAction<number>>,css:Partial<VCSSStyleDeclaration>,state?:State[]){
+    constructor(name:string,dispatch:React.Dispatch<React.SetStateAction<number>>,css:Partial<VCSSStyleDeclaration>,send?:any){
         this.name = name;
         this.dispatch = dispatch
         this.csstable = css
         this.default_css_table = Object.assign(this.default_css_table,css)
         this.switch = false
-        this.State = state
-        this.current_State = 0
-        this.State?.forEach((value)=>{
-            value.ComponentNode = this
-        })
+        this._send = send
+        this.update()
+    }
+
+
+    send(key:string,data:any){
+        this._send({type:key})
         this.update()
     }
 
@@ -160,27 +168,7 @@ export class ComponentNode {
         })
     }
 
-    async Statenext(){
-        if(this.State && this.current_State < this.State?.length - 1){
-            await this.State[this.current_State].exit()
-            this.current_State++
-            this.State[this.current_State].entry()
-            $.Msg("当前UI激活编号为",this.current_State)
-        }
-    }
 
-    async switchState(UIstate:CardState){
-        if(this.State){
-           await this.State[this.current_State]?.exit()
-           for(const index in this.State){
-               if(this.State[index].identifier == UIstate){
-                   this.current_State = +index
-                   this.State[index]._run()
-                   $.Msg("当前UI激活编号为",this.current_State)
-               }   
-           }
-        }
-    }
 
     close(){
         this.switch = false
@@ -229,7 +217,7 @@ export class ComponentNode {
         this.update()
     }
 
-    SetCss(targetkey:string,value:any){
+    SetCss(targetkey:keyof VCSSStyleDeclaration,value:any){
         for(let key in this.csstable){
             if(key == targetkey){
                 //@ts-ignore

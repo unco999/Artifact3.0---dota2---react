@@ -1,0 +1,73 @@
+.Battle_center_area_main{
+    width:720px;
+    height:720px;
+    background-color: black;
+    x:600px;
+    y:180px;
+}
+
+.battle_left_area_main{
+    width:600px;
+    height:720px;
+    background-color: black;
+    x:0px;
+    y:180px;
+}
+
+.battle_right_area_main{
+    width:600px;
+    height:720px;
+    background-color: black;
+    x:1320px;
+    y:180px;
+}
+
+.battle_red_center_area{
+    width:720px;
+    height:360px;
+    background-color: rgba(211, 32, 32, 0.986);
+    x:600px;
+    y:540px;
+}
+
+.battle_red_left_area{
+    width:600px;
+    height:360px;
+    background-color: rgba(211, 32, 32, 0.164);
+    x:0px;
+    y:540px;
+}
+
+.battle_red_right_area{
+    width:600px;
+    height:360px;
+    background-color: rgba(211, 32, 32, 0.158);
+    x:1320px;
+    y:540px;
+}
+
+
+.battle_blue_center_area{
+    width:720px;
+    height:360px;
+    background-color: rgba(38, 0, 255, 0.637);
+    x:600px;
+    y:180px;
+}
+
+.battle_blue_left_area{
+    width:600px;
+    height:360px;
+    background-color: rgba(38, 0, 255, 0.021);
+    x:0px;
+    y:180px;
+}
+
+.battle_blue_right_area{
+    width:600px;
+    height:360px;
+    background-color: rgba(38, 0, 255, 0.021);
+    x:1320px;
+    y:180px;
+}
+

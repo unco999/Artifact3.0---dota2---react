@@ -1,5 +1,5 @@
 // generate with Xavier's kv generator https://github.com/XavierCHN/x-template
-"XLSXContent" {
+"CardGame" {
 	"npc_dota_hero_ancient_apparition" "1"
 	"npc_dota_hero_antimage" "1"
 	"npc_dota_hero_axe" "1"

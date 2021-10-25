@@ -1,0 +1,123 @@
+Label{
+    font-family: Goudy Trajan Medium, FZKai-Z03, TH Sarabun New;
+}
+
+.Main{
+    width: 100%;
+    height: 100%;
+}
+
+.root{
+    width: 100%;
+    height: 100%;
+}
+
+.BaseBoard{
+    width: 98%;
+    height: 98%;
+    border: 2px solid rgba(80, 80, 80, 0.651);
+    align: center center;
+}
+
+.Pool{
+    x:222px;
+    y:170px;
+    width: 520px;
+    height: 770px;
+    flow-children: right-wrap;
+}
+
+.Card{
+    width: 210px;
+    height: 350px;
+    margin: 10px;
+    margin-left: 30px;
+    margin-top: 30px;
+    border-radius: 10px;
+}
+
+.redOwnedpool{
+    width: 963px;
+    height: 413px;
+    x:870px;
+    y:92px;
+    background-color:rgb(79, 80, 125);
+}
+
+.blueOwnedpool{
+    background-color:rgb(79, 80, 125);
+    width: 963px;
+    height: 413px;
+    x:870px;
+    y:585px;
+}
+
+.redCard{
+    width: 129px;
+    height: 218px;
+    align: center center;
+    border-radius: 5px;
+    opacity: 0;
+    transition-duration: 0.33s;
+    transition-property: opacity;
+    &.bright{
+        opacity: 1;
+    }
+}
+
+.blueCard{
+    @extend .redCard;
+    &.bright{
+        opacity: 1;
+    }
+}
+
+.OwendCardlist{
+    flow-children:right;
+}
+
+.OwendCardlistparent{
+    x:39px;
+    y:129px;
+}
+
+.blueownedCard{
+    width: 139px;
+    height: 227px;
+    border: 1px solid white;
+    border-radius: 10px;
+    margin-left: 10px;
+}
+
+.bluenum{
+    font-size: 40px;
+    align: center center;
+}
+
+.rednum{
+    @extend .bluenum;
+}
+
+.redownedCard{
+    width: 139px;
+    height: 227px;
+    border: 1px solid white;
+    border-radius: 10px;
+    margin-left: 10px;
+}
+
+.bluePlayerinformation{
+    width: 312px;
+    height: 93px;
+    background-color:rgba(121, 139, 241, 0.411);
+    x:43px;
+    y:21px;
+}
+
+.redPlayerinformation{
+    width: 312px;
+    height: 93px;
+    background-color:rgba(255, 0, 0, 0.411);
+    x:43px;
+    y:21px;
+}

@@ -17,7 +17,9 @@
         transform:translate3d(0px,-200px,0px)
     }
     &.test{
-        opacity: 0.5;
+        transform:rotateY(15deg);
+        transform:rotateZ(7.5deg);
+        transform:rotateX(7.5deg);
     }
     &.pos1{
         position:333px 0px 0px;

@@ -7,7 +7,6 @@ export class ConpoentDataContainer {
     static _instance:ConpoentDataContainer
     Namehashtable:Record<string,ComponentNode> = {}
     Uuidhashtable:Record<string,ComponentNode> = {}
-    // group:uuid[]
     Grouphashtable:Record<string,string[]> = {}
     GroupantiShake:Record<string,number> = {}
     openlist:ComponentNode[] = []

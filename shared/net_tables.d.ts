@@ -1,4 +1,8 @@
 declare interface CustomNetTableDeclarations {
+    Card_group_construction_phase:{
+        playerHasChosen:Record<string,string[]>
+        currentChoiceOfHeroes:Record<string,string[]>
+    }
     game_timer: {
         game_timer: {
             current_time: number;

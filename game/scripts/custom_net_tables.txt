@@ -2,7 +2,7 @@
 {
     custom_net_tables = 
     [
-        "hero_list",
+        "Card_group_construction_phase",
         "game_timer"
     ]
 }

@@ -5,6 +5,7 @@ import useUuid from "../../useUUID.tsx/useUuid";
 import * as d3 from 'd3-ease'
 import { useMachine } from "@xstate/react";
 import { actions, createMachine } from 'xstate';
+import { useGameEvent } from "react-panorama";
 const toggleMachine = createMachine({
     id: 'toggle',
     initial: 'inactive',
@@ -56,6 +57,12 @@ export const Hand_Card = ({...args}) =>{
     const container = useInstance("name",uuid,{},send,"Hand_Card")
     const id = useRef(Math.floor(Math.random() * 50 + 1))
 
+
+    useGameEvent("SendCardState",(event)=>{
+        if(event.uuid == uuid)
+        send({type:event.send})
+    },[send])
+
     function abc(){
         $.Msg("gogogo")
     }
@@ -85,7 +92,7 @@ export const Hand_Card = ({...args}) =>{
     }
 
     function mouseover_run(){
-    }//
+    }
 
     // card state 置放状态 ========================================================================
     function putUp_init(){
@@ -98,6 +105,13 @@ export const Hand_Card = ({...args}) =>{
 
     function putUp_run(time:number){
     }
+
+    useEffect(()=>{
+        if(mainref.current){
+            mainref.current.style.boxShadow = `black 4px 4px 8px 0px;`
+            $.Schedule(Game.GetGameFrameTime(),()=>{setupdate(value=>!value)}) 
+        }
+    },[update])
 
 
     // useEffect(()=>{
@@ -130,5 +144,5 @@ export const Hand_Card = ({...args}) =>{
     },[])
 
     return <DOTAHeroImage heroid={id.current as HeroID} ref = { Panel=> mainref.current = Panel } onactivate={()=>container?.send('GOTO',{})} hittest={true} onmouseover={()=>{
-        container?.send('TOGGLE',{})}}  onmouseout={()=>{container?.send('INCTIVE',{})}} style={{...container?.csstable}} className={"hand_index_1 hand_card"} {...args}/>
+        container?.send('TOGGLE',{})}}  onmouseout={()=>{container?.send('INCTIVE',{})}} style={{...container?.csstable}} className={"hand_index_1 hand_card test"} {...args}/>
 }

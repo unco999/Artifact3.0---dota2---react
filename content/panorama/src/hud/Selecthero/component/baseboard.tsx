@@ -1,7 +1,7 @@
 import React, { Children } from "react";
 
 export const BaseBoard = ({...args}) => {
-    return <Panel className={"BaseBoard"}>
+    return <Panel hittest={false} className={"BaseBoard"}>
         {args.children}
     </Panel>
 }

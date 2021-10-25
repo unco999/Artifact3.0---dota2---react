@@ -2,6 +2,7 @@ import { Timers } from "./lib/timers";
 import { reloadable } from "./lib/tstl-utils";
 import { AbilityFactory } from "./System/Ability";
 import { CenterScene } from "./System/centerScenes";
+import { ChooseHeroCardLoop, RedSelectstage } from "./System/ChooseHeroCard";
 import { KV } from "./System/KV";
 
 const heroSelectionTime = 999999;
@@ -12,6 +13,7 @@ declare global {
         CenterScene: CenterScene;
         KV:KV
         AbilityFactory:AbilityFactory
+        ChooseHeroCardLoop:ChooseHeroCardLoop
         Red:CDOTAPlayer //红队
         Blue:CDOTAPlayer //蓝队
     }
@@ -57,19 +59,8 @@ export class GameMode {
     private game_rules_state_change() {
         let newState = GameRules.State_Get();
         if( newState == DOTA_GameState.DOTA_GAMERULES_STATE_HERO_SELECTION){
-            Timers.CreateTimer(7,()=>{
-                print("当前选择结束")
-                Tutorial.SelectHero("npc_dota_hero_bounty_hunter")
-                Tutorial.ForceGameStart()
-            })
-            Timers.CreateTimer(1,()=>{
-                CustomNetTables.SetTableValue("Card_group_construction_phase",'playerHasChosen',{1:["-1","-1","-1","-1","-1","-1"]})
-                return 5
-            })
-            Timers.CreateTimer(1,()=>{
-                print(GameRules.State_Get())
-                return 1
-            })
+            GameRules.ChooseHeroCardLoop = new ChooseHeroCardLoop() // 英雄轮询阶段
+            GameRules.ChooseHeroCardLoop.SetcuurentsettingState = new RedSelectstage(1) // 暂时以红队开始选择  选牌次数为一次
         }
         if (newState == DOTA_GameState.DOTA_GAMERULES_STATE_GAME_IN_PROGRESS) {
             for (let i: PlayerID = 0; i <= 24; ++i) {

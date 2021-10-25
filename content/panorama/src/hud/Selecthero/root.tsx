@@ -15,13 +15,13 @@ render(<Main/>, $.GetContextPanel()); // 默认在中间渲染的红色REACT-PAN
             element.style.visibility = "collapse";
         }
     }
-    // HideHudElements("BottomPanels");
-    // HideHudElements("AvailableItemsContainer");
-    // HideHudElements("BottmPanelContainer");
-    // HideHudElements("BacktoHeroGrid");
-    // HideHudElements("Header");
-    // HideHudElements("MainContents");
-    // HideHudElements("HeaderCenter");
+    HideHudElements("BottomPanels");
+    HideHudElements("AvailableItemsContainer");
+    HideHudElements("BottmPanelContainer");
+    HideHudElements("BacktoHeroGrid");
+    HideHudElements("Header");
+    HideHudElements("MainContents");
+    HideHudElements("HeaderCenter");
     HideHudElements("RadiantTeamPlayers");
     HideHudElements("DireTeamPlayers");
     HideHudElements("PreMinimapContainer");

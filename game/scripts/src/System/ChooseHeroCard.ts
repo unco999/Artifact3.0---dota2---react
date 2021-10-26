@@ -1,10 +1,12 @@
 import { Timers } from "../lib/timers";
+import { reloadable } from "../lib/tstl-utils";
 
 export abstract class ChooseHerostate{
     host:ChooseHeroCardLoop
     id:string
     time:number; //该阶段计数器
     optionalQuantity:number //可选数量
+    remainingOptionalQuantity:number //剩余可选数量
 
     constructor(){
 
@@ -23,18 +25,19 @@ export abstract class ChooseHerostate{
     }
 
     dataupdate(){
-        CustomNetTables.SetTableValue("Card_group_construction_phase",'selectloop',{currentteam:this.id,timeLeft:this.time,optionalnumber:this.optionalQuantity})
+        CustomNetTables.SetTableValue("Card_group_construction_phase",'selectloop',{currentteam:this.id,timeLeft:this.time,optionalnumber:this.optionalQuantity,remainingOptionalQuantity:this.remainingOptionalQuantity})
     }
 
 }
 
 export class RedSelectstage extends ChooseHerostate{
     id = "RedSelectstage"
-    time = 5
+    time = 11
 
     constructor(optionalQuantity:number){
         super()
         this.optionalQuantity = optionalQuantity
+        this.remainingOptionalQuantity = optionalQuantity
     }
     
     entry(){
@@ -46,7 +49,9 @@ export class RedSelectstage extends ChooseHerostate{
     }
 
     RedAutoselectCard(){
-        this.host.addHeroCardinlist = RandomInt(0,40)
+        for(let i = 0 ; i <= this.remainingOptionalQuantity ; i++){
+            this.host.addHeroCardinlist = RandomInt(0,40)
+        }
     }
 
     run(){
@@ -72,11 +77,12 @@ export class RedSelectstage extends ChooseHerostate{
 
 export class BlueSelectstage extends ChooseHerostate{
     id = "BlueSelectstage"
-    time = 5
+    time = 11
 
     constructor(optionalQuantity:number){
         super()
         this.optionalQuantity = optionalQuantity
+        this.remainingOptionalQuantity = optionalQuantity
     }
 
     entry(){
@@ -88,7 +94,9 @@ export class BlueSelectstage extends ChooseHerostate{
     }
 
     BlueAutoselectCard(){
-        this.host.addHeroCardinlist = RandomInt(0,40)
+        for(let i = 0 ; i <= this.remainingOptionalQuantity ; i++){
+            this.host.addHeroCardinlist = RandomInt(0,40)
+        }
     }
 
     run(){
@@ -99,12 +107,12 @@ export class BlueSelectstage extends ChooseHerostate{
             return 
         }
         if(this.host.blueisok){
-            this.host.SetcuurentsettingState = new RedSelectstage(this.optionalQuantity == 1 ? 2 : 1)
+            this.host.SetcuurentsettingState = new RedSelectstage(this.optionalQuantity === 1 ? 1 : 2)
             return 
         }
         if(this.time === 0){
             this.BlueAutoselectCard()
-            this.host.SetcuurentsettingState = new RedSelectstage(this.optionalQuantity == 1 ? 2 : 1)
+            this.host.SetcuurentsettingState = new RedSelectstage(this.optionalQuantity === 1 ? 1 : 2)
             return 
         }
         return 1
@@ -114,7 +122,7 @@ export class BlueSelectstage extends ChooseHerostate{
 export class ChoosePreGame extends ChooseHerostate{
 }
 
-
+@reloadable
 export class ChooseHeroCardLoop{
     private currentState:ChooseHerostate
     private haveSelectedHero:Record<string,number[]> = {} //已经选择的英雄    
@@ -124,21 +132,32 @@ export class ChooseHeroCardLoop{
     time:number = 0
 
     constructor(){
-            this.haveSelectedHero['BlueSelectstage'] = [-1,-1,-1,-1,-1,-1] //初始化所有的英雄
-            this.haveSelectedHero['RedSelectstage'] = [-1,-1,-1,-1,-1,-1] //初始化所有的英雄
+            this.haveSelectedHero['BlueSelectstage'] = [-1,-1,-1,-1,-1] //初始化所有的英雄
+            this.haveSelectedHero['RedSelectstage'] = [-1,-1,-1,-1,-1] //初始化所有的英雄
+            this.setheroThatCanChooseOnTheCurrentField = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
+            this.RegisterGameEvent()
     }
 
     RegisterGameEvent(){
         CustomGameEventManager.RegisterListener("RED_SELECT_HERO_CARD",(_,event)=>{
-            if(this.currentState.id == "RedSelectstage"){
+            if(this.currentState.id == "RedSelectstage" && PlayerResource.GetPlayer(event.PlayerID) == GameRules.Red){
+                DeepPrintTable(event)
+                print("当前可以选择英雄")
                 this.addHeroCardinlist = event.herocardid
-                this.redisok = true
+                if(this.currentState.remainingOptionalQuantity === 0){
+                    this.blueisok = true
+                }
             }
         })
         CustomGameEventManager.RegisterListener("BLUE_SELECT_HERO_CARD",(_,event)=>{
-            if(this.currentState.id == "BlueSelectstage"){
+            DeepPrintTable(event)
+            print(GameRules.Blue)
+            if(this.currentState.id == "BlueSelectstage" && PlayerResource.GetPlayer(event.PlayerID) == GameRules.Blue){
+                print("当前可以选择英雄")
                 this.addHeroCardinlist = event.herocardid
-                this.blueisok = true
+                if(this.currentState.remainingOptionalQuantity === 0){
+                    this.blueisok = true
+                }
             }
         })
     }
@@ -164,7 +183,7 @@ export class ChooseHeroCardLoop{
     }
 
     set addHeroCardinlist(herocardid:number){
-        print("开始设置英雄")
+       if(this.GetcurrentState.remainingOptionalQuantity < 1) return;
        for(const team in this.haveSelectedHero){
            print("当前ID")
            print(this.currentState.id)
@@ -174,6 +193,7 @@ export class ChooseHeroCardLoop{
                    if(this.haveSelectedHero[team][index] === -1){
                        this.haveSelectedHero[team][index] = herocardid
                        CustomNetTables.SetTableValue('Card_group_construction_phase','playerHasChosen',this.haveSelectedHero)
+                       this.GetcurrentState.remainingOptionalQuantity--
                        return;
                    }
                }
@@ -186,7 +206,6 @@ export class ChooseHeroCardLoop{
         state.host = this
         this.redisok = false
         this.blueisok = false
-        this.setheroThatCanChooseOnTheCurrentField = [RandomInt(0,40),RandomInt(0,40),RandomInt(0,40),RandomInt(0,40)]
         this.currentState = state
         this.currentState.entry()
         Timers.CreateTimer(()=>{

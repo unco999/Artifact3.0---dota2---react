@@ -1,46 +1,46 @@
-import React, { useRef } from "react";
+import React, { useEffect, useRef } from "react";
+import { useNetTableKey } from "react-panorama";
 import shortid from "shortid";
+import { JsonString2Array } from "../../../Utils";
+import { useInstance } from "../../useUUID.tsx/useInstance";
+import useUuid from "../../useUUID.tsx/useUuid";
 import { Card } from "./SelectCardCompoent";
 
-export const Pool = () => {
-    const heroid = [1,2,3,4]
+export const teamState:Record<string,string> = {
+    "BlueSelectstage" : 'blue',
+    "RedSelectstage" : 'red'
+}
+
+export const Pool = ({...args}) => {
+    const id = useUuid()
+    const container = useInstance("Pool",id,{},undefined)
+    const heroid = JsonString2Array(useNetTableKey("Card_group_construction_phase","heroThatCanChooseOnTheCurrentField"))
     const mainpanel = useRef<Panel[]|null>([])
     
-    const OnDragStart = (panelId:any, dragCallbacks:any,index:number) =>{
-        const displayPanel = $.CreatePanel( "DOTAHeroImage", $.GetContextPanel(), "test" )
-        displayPanel.heroimagestyle = 'icon'
-        displayPanel.heroid = heroid[index] as HeroID
-        dragCallbacks.displayPanel = displayPanel;
-        dragCallbacks.offsetX = -20; 
-        dragCallbacks.offsetY = -20; 
+
+    const toggle = (panel:Panel) => {
+        panel.RemoveClass("born")
+        $.Schedule(0.5,()=>panel.AddClass("born"))
     }
 
-    const OnDragEnd = (panelId:any, dragCallbacks:any,index:number) => {
-        dragCallbacks.DeleteAsync( 0 );
+    const optional = (panel:Panel) => {
+        if(args?.loopdata?.currentteam){
+           if(args.playerteam[teamState[args.loopdata.currentteam]] === Players.GetLocalPlayer()){
+                if(container?.getKeyString(Players.GetLocalPlayer() + "isselect") == null){
+                    container?.SetKeyAny(Players.GetLocalPlayer() + "isselect",[undefined,undefined])
+                }
+                const isselect = container!.getKeyString<[number|undefined,number|undefined]>(Players.GetLocalPlayer() + "isselect")
+                const selectindex = container?.getKeyString<number>(Players.GetLocalPlayer() + "selectindex")
+                if(!selectindex) container?.SetKeyAny(Players.GetLocalPlayer() + "selectindex",0)
+                isselect[container!.getKeyString<number>(Players.GetLocalPlayer() + "selectindex")] = panel.Data().id
+           }else{
+                container?.SetKeyAny(Players.GetLocalPlayer() + "isselect",[undefined,undefined])
+                container?.SetKeyAny(Players.GetLocalPlayer() + "selectindex",0)
+           }
+        }
     }
-
-    const OnDragLeave = (panelId:any, dragCallbacks:any,index:number) => {
-        $.Msg("开始拖动了")
-    }
-
-    const OnDragDrop = (panelId:any, dragCallbacks:any,index:number) => {
-        $.Msg("开始拖动了")
-    }
-
-    const OnDragEnter = (panelId:any, dragCallbacks:any,index:number) => {
-        $.Msg(dragCallbacks)
-    }
-
-    const register = (panel:Panel,index:number) =>{
-        $.Msg(index,"执行了绑定")//
-        $.RegisterEventHandler( 'DragEnter', panel, (panelId:any, dragCallbacks:any,)=> OnDragEnter(panelId,dragCallbacks,index) );
-        $.RegisterEventHandler( 'DragDrop', panel, (panelId:any, dragCallbacks:any,)=> OnDragDrop(panelId,dragCallbacks,index) );
-        $.RegisterEventHandler( 'DragLeave', panel, (panelId:any, dragCallbacks:any,)=> OnDragLeave(panelId,dragCallbacks,index) );
-        $.RegisterEventHandler( 'DragStart', panel, (panelId:any, dragCallbacks:any,)=> OnDragStart(panelId,dragCallbacks,index) );
-        $.RegisterEventHandler( 'DragEnd', panel, (panelId:any, dragCallbacks:any,)=> OnDragEnd(panelId,dragCallbacks,index));
-    } 
 
     return <Panel className={"Pool"}>
-        {heroid.map((value,index)=><Card onload={(panel:any)=>register(panel,index)} key={shortid.generate()} id={value}/>)}
+        {heroid.map((value,index)=><Card onactivate={(Panel:Panel)=>optional(Panel)} onload={(panel:Panel)=>{toggle(panel);panel.Data().id = value}} key={"pool"+index + value} id={value}/>)}
     </Panel>
 }

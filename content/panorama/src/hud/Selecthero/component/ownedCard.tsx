@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { useGameEvent, useNetTableKey, useNetTableValues } from "react-panorama";
+import { ConpoentDataContainer } from "../../ConpoentDataContainer";
 
 export const OwendCard = ({...args}) => {
     const cardviewref = useRef<HeroImage|null>()
@@ -11,23 +12,14 @@ export const OwendCard = ({...args}) => {
         }
     },[args.heroid])
 
-    const OnDragEnter = (panelId:any, draggedPanel:any) => {
-        args.heroid === -1 && mainref.current?.AddClass("high")
-    }
+    $.Msg(args)
 
-    const OnDragLeave = (panelId:any, draggedPanel:any) => {
-        mainref.current?.RemoveClass("high")
-    }
 
-    useEffect(()=>{
-        if(!mainref.current) return
-        $.Msg(args.heroid,"执行了绑定")
-        $.RegisterEventHandler( 'DragEnter', mainref.current,OnDragEnter);
-        $.RegisterEventHandler( 'DragLeave', mainref.current,OnDragLeave);
-    },[])
-
-    return <Panel  draggable={true} ref={panel=>mainref.current = panel} className={args.player + "ownedCard"}>
-            <Label hittest={false} text={args.num} className={args.player + "num"}/>
+    return <Panel  ref={panel=>mainref.current = panel} className={args.player + "ownedCard"}>
+            <Panel className={"Cardframe"}>
             <DOTAHeroImage hittest={false} ref={panel => cardviewref.current = panel} heroid={args.heroid as HeroID} heroimagestyle={"portrait"} className={args.player + "Card"}/>
+            </Panel>
+            <Label text={"英雄名字"} className={"goldenWord"}/>
+            <Label text={args.heroid != -1 ? "已选择" : "等待..."}  />
         </Panel>
 }

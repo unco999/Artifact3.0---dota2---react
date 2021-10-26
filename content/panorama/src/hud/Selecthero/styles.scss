@@ -1,5 +1,17 @@
+
 Label{
     font-family: Goudy Trajan Medium, FZKai-Z03, TH Sarabun New;
+}
+
+.defualt{
+    background-color: gradient( linear, 0% 0%, 0% 100%, from( #373d457a ), to( #4d586075 ) );
+    border-style: solid;
+    border-width: 2px;
+    padding: 4px 10px;
+    border-top-color: #555555b7;
+    border-left-color: #494949c5;
+    border-bottom-color: #333333be;
+    border-right-color: #404040cc;
 }
 
 .Main{
@@ -20,49 +32,80 @@ Label{
 }
 
 .Pool{
-    x:222px;
+    @extend .defualt;
+    x:530px;
     y:170px;
-    width: 520px;
-    height: 770px;
+    width: 800px;
+    height: 800px;
     flow-children: right-wrap;
 }
 
+.Cardframe{
+    width: 70px;
+    height: 70px;
+    border-radius: 100px;
+    border: 1px solid gold;
+    vertical-align: center;
+    margin-left: 15px;
+    border-left: 0px solid rgb(255, 145, 0);
+    border-right: 1.5px solid rgb(229, 255, 0);
+}
+
 .Card{
-    width: 210px;
-    height: 350px;
+    @extend .defualt;
+    width: 115px;
+    height: 115px;
     margin: 10px;
-    margin-left: 30px;
-    margin-top: 30px;
     border-radius: 10px;
+    opacity: 0;
+    margin-left: 28px;
+    transform: rotateY(0deg);
+    transition-duration: 0.5s;
+    transition-property: transform,opacity;
+    &:hover{
+        border:1px solid greenyellow;
+    }
+    &.highlight{
+        border:2px solid rgb(255, 136, 0);
+    }
+    &.born{
+        transform: rotateY(180deg);
+        opacity: 1;
+    }
 }
 
 .redOwnedpool{
-    width: 963px;
-    height: 413px;
-    x:870px;
+    @extend .defualt;
+    width: 400px;
+    height: 800px;
+    x:0px;
     y:92px;
-    background-color:rgba(79, 80, 125, 0.11);
 }
 
 .blueOwnedpool{
-    background-color:rgba(79, 80, 125, 0.11);
-    width: 963px;
-    height: 413px;
-    x:870px;
-    y:585px;
+    @extend .redOwnedpool;
+    x:1480px;
 }
 
 .redCard{
-    width: 129px;
-    height: 218px;
-    align: center center;
-    border-radius: 5px;
+    width: 64px;
+    height: 64px;
+    border-radius: 100px;
     opacity: 0;
+    align:center center;
     transition-duration: 0.33s;
     transition-property: opacity;
+    box-shadow:inset 10px 10px 5px #8888882f;
     &.bright{
         opacity: 1;
     }
+}
+
+.goldenWord{
+    font-size: 22px;
+    color: goldenrod;
+    align:left center;
+    margin-left: 12px;
 }
 
 .blueCard{
@@ -73,24 +116,52 @@ Label{
 }
 
 .OwendCardlist{
-    flow-children:right;
+    flow-children:down;
 }
 
 .OwendCardlistparent{
     x:39px;
     y:129px;
+    
 }
 
 .blueownedCard{
-    width: 139px;
-    height: 227px;
-    border: 1px solid white;
+    @extend .defualt;
+    width: 320px;
+    height: 80px;
     border-radius: 10px;
-    margin-left: 10px;
     z-index: 5;
+    flow-children:right;
+    margin-top: 10px;
+    background-color: rgba(128, 128, 128, 0.26);
+    Label{
+        align:center center;
+    }
     &.high{
         box-shadow: inset #9dff0062 0px 0px 5px 2px;
     }
+}
+
+.Okbutton{
+    @extend .defualt;
+    width: 200px;
+    height: 60px;
+    x:820px;
+    y:100px;
+    Label{
+        font-size: 25px;
+        align:center center;
+        color: white;
+        text-shadow: 0px 0px 3px 1.0 black;
+    }
+}
+
+.Tip{
+    font-size: 25px;
+    color: antiquewhite;
+    text-shadow:2px 2px 8px 3.0 #333333b0;
+    x:780px;
+    y:60px; 
 }
 
 .bluenum{

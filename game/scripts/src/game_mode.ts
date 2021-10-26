@@ -59,24 +59,25 @@ export class GameMode {
     private game_rules_state_change() {
         let newState = GameRules.State_Get();
         if( newState == DOTA_GameState.DOTA_GAMERULES_STATE_HERO_SELECTION){
-            GameRules.ChooseHeroCardLoop = new ChooseHeroCardLoop() // 英雄轮询阶段
-            GameRules.ChooseHeroCardLoop.SetcuurentsettingState = new RedSelectstage(1) // 暂时以红队开始选择  选牌次数为一次
-        }
-        if (newState == DOTA_GameState.DOTA_GAMERULES_STATE_GAME_IN_PROGRESS) {
             for (let i: PlayerID = 0; i <= 24; ++i) {
                 let player = PlayerResource.GetPlayer(i as PlayerID);
                 if (player) {
-                    if(!GameRules.Red){
-                        GameRules.Red = player
-                        continue
-                    }
                     if(!GameRules.Blue){
                         GameRules.Blue = player
+                        continue
+                    }
+                    if(!GameRules.Red){
+                        GameRules.Red = player
                         continue 
                     }
                 }
             }
+            CustomNetTables.SetTableValue("Card_group_construction_phase","team",{red:GameRules.Red.GetPlayerID(),blue:GameRules.Blue.GetPlayerID()})
             GameRules.CenterScene = new CenterScene()
+            GameRules.ChooseHeroCardLoop = new ChooseHeroCardLoop() // 英雄轮询阶段
+            GameRules.ChooseHeroCardLoop.SetcuurentsettingState = new RedSelectstage(1) // 暂时以红队开始选择  选牌次数为一次
+        }
+        if (newState == DOTA_GameState.DOTA_GAMERULES_STATE_GAME_IN_PROGRESS) {
         }
         if (newState == DOTA_GameState.DOTA_GAMERULES_STATE_CUSTOM_GAME_SETUP) {
             if(IsInToolsMode()){

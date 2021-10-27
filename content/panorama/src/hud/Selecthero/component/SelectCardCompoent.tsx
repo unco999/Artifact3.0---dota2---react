@@ -11,13 +11,17 @@ export const Card = ({...args}) =>{
            if(isselect[key] === args.id){
                bool = true
            }
-        }
+        }   
         bool ? ref.current?.AddClass("highlight") : ref.current?.RemoveClass("highlight")
     })
 
     useEffect(()=>{
-        return ()=>ref.current?.RemoveClass("born")
-    },[])
+       if(args?.filter === 0){
+            ref.current?.AddClass("disable")
+       }
+       ref.current?.RemoveClass("highlight")
+    },[args?.filter])
+
     
     return <DOTAHeroMovie ref={panel => ref.current = panel} {...args} onload={args.onload} heroid={args.id}  className={'Card'}/>
 }

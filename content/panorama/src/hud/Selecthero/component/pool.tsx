@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from "react";
 import { useNetTableKey } from "react-panorama";
 import shortid from "shortid";
 import { JsonString2Array } from "../../../Utils";
+import { ConpoentDataContainer } from "../../ConpoentDataContainer";
 import { useInstance } from "../../useUUID.tsx/useInstance";
 import useUuid from "../../useUUID.tsx/useUuid";
 import { Card } from "./SelectCardCompoent";
@@ -15,17 +16,17 @@ export const Pool = ({...args}) => {
     const id = useUuid()
     const container = useInstance("Pool",id,{},undefined)
     const heroid = JsonString2Array(useNetTableKey("Card_group_construction_phase","heroThatCanChooseOnTheCurrentField"))
-    const mainpanel = useRef<Panel[]|null>([])
-    
+    const heroselected = JsonString2Array(useNetTableKey("Card_group_construction_phase",'heroSelected'))
 
-    const toggle = (panel:Panel) => {
-        panel.RemoveClass("born")
-        $.Schedule(0.5,()=>panel.AddClass("born"))
-    }
+    useEffect(()=>{
+        container?.SetKeyAny(Players.GetLocalPlayer() + "isselect",[undefined,undefined])
+        container?.SetKeyAny(Players.GetLocalPlayer() + "selectindex",0)
+    },[args?.loopdata?.currentteam])
 
     const optional = (panel:Panel) => {
         if(args?.loopdata?.currentteam){
            if(args.playerteam[teamState[args.loopdata.currentteam]] === Players.GetLocalPlayer()){
+                if(filter(panel.Data().id) === 0) return
                 if(container?.getKeyString(Players.GetLocalPlayer() + "isselect") == null){
                     container?.SetKeyAny(Players.GetLocalPlayer() + "isselect",[undefined,undefined])
                 }
@@ -33,6 +34,16 @@ export const Pool = ({...args}) => {
                 const selectindex = container?.getKeyString<number>(Players.GetLocalPlayer() + "selectindex")
                 if(!selectindex) container?.SetKeyAny(Players.GetLocalPlayer() + "selectindex",0)
                 isselect[container!.getKeyString<number>(Players.GetLocalPlayer() + "selectindex")] = panel.Data().id
+                if(args?.loopdata?.remainingOptionalQuantity == 2){
+                    container?.SetKeyAny(Players.GetLocalPlayer() + "selectindex",container!.getKeyString<number>(Players.GetLocalPlayer() + "selectindex") == 1 ? 0 : 1)
+                }
+                let b:boolean = false
+                for(const key in isselect){
+                    if(isselect[key] != undefined){
+                        b = true
+                    }
+                }
+                okbutton(b)
            }else{
                 container?.SetKeyAny(Players.GetLocalPlayer() + "isselect",[undefined,undefined])
                 container?.SetKeyAny(Players.GetLocalPlayer() + "selectindex",0)
@@ -40,7 +51,27 @@ export const Pool = ({...args}) => {
         }
     }
 
+    const okbutton = (bool:boolean)=> {
+        const okbutton =ConpoentDataContainer.Instance.NameGetNode("okbutton").current
+        if(bool){
+            okbutton.addclassName("hight")
+        }else{
+            okbutton.addclassName("")
+        }
+    }
+
+    const filter = (heroid:number) => {
+        let bool = 1
+        for(const key in heroselected){
+            const heroided = heroselected[key]
+            if(heroid === +heroided){
+                bool = 0
+            }
+        }
+        return bool
+    }
+
     return <Panel className={"Pool"}>
-        {heroid.map((value,index)=><Card onactivate={(Panel:Panel)=>optional(Panel)} onload={(panel:Panel)=>{toggle(panel);panel.Data().id = value}} key={"pool"+index + value} id={value}/>)}
+        {heroid.map((value,index)=><Card onactivate={(Panel:Panel)=>optional(Panel)} filter={filter(value)} onload={(panel:Panel)=>{panel.Data().id = value}} key={"pool"+index + filter(value)} id={value}/>)}
     </Panel>
 }

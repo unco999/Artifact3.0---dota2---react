@@ -57,7 +57,7 @@ Label{
     height: 115px;
     margin: 10px;
     border-radius: 10px;
-    opacity: 0;
+    opacity: 1;
     margin-left: 28px;
     transform: rotateY(0deg);
     transition-duration: 0.5s;
@@ -68,9 +68,8 @@ Label{
     &.highlight{
         border:2px solid rgb(255, 136, 0);
     }
-    &.born{
-        transform: rotateY(180deg);
-        opacity: 1;
+    &.disable{
+        saturation: 0;
     }
 }
 
@@ -80,11 +79,18 @@ Label{
     height: 800px;
     x:0px;
     y:92px;
+    transition-property: background-color;
+    &.hight{
+        background-color: gradient( linear, 0% 0%, 0% 100%, from( #0000007a ), to( #a10d0d75 ) );
+    }
 }
 
 .blueOwnedpool{
     @extend .redOwnedpool;
     x:1480px;
+    &.hight{
+        background-color: gradient( linear, 0% 0%, 0% 100%, from( #5e47747a ), to( #1796bd75 ) );
+    }
 }
 
 .redCard{
@@ -122,7 +128,9 @@ Label{
 .OwendCardlistparent{
     x:39px;
     y:129px;
-    
+    &.hight{
+        background-color: gradient( linear, 0% 0%, 0% 100%, from( #60ee357a ), to( #20ec0575 ) );
+    }
 }
 
 .blueownedCard{
@@ -153,6 +161,9 @@ Label{
         align:center center;
         color: white;
         text-shadow: 0px 0px 3px 1.0 black;
+    }
+    &.hight{
+        background-color: gradient( linear, 0% 0%, 0% 100%, from( #7c1a1a7a ), to( #ff0000b2 ) );
     }
 }
 

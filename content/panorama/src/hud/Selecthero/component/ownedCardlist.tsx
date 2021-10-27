@@ -6,13 +6,14 @@ import { ConpoentDataContainer } from "../../ConpoentDataContainer";
 import { useInstance } from "../../useUUID.tsx/useInstance";
 import useUuid from "../../useUUID.tsx/useUuid";
 import { OwendCard } from "./ownedCard";
+import { teamState } from "./pool";
 
 export const OwendCardList = ({...args}) => {
     const id = useUuid()
     const container = useInstance(args.player + "OwendCardList",id,{},undefined)
-    const [motion,setmotion] = useState(0)
     const reduuid =  useRef([shortid.generate(),shortid.generate(),shortid.generate(),shortid.generate(),shortid.generate()])
     const blueuuid = useRef([shortid.generate(),shortid.generate(),shortid.generate(),shortid.generate(),shortid.generate()])
+    const panel = useRef<Panel|null>()
 
     const instance = () => {
         let jsx:JSX.Element[] = []
@@ -26,7 +27,8 @@ export const OwendCardList = ({...args}) => {
         return jsx
     }
 
-    return<Panel className={"OwendCardlistparent"}>
+
+    return<Panel  className={"OwendCardlistparent"}>
         <Panel className={"OwendCardlist"}>
             {instance()}
         </Panel>

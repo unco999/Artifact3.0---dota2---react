@@ -16,6 +16,6 @@ export const Main = () => {
         <Ownedpool player={"red"} loopdata={loopdata} playerHasChosen={playerHasChosen}/>
         <Ownedpool player={"blue"} loopdata={loopdata} playerHasChosen={playerHasChosen}/>
         <Tip loopdata={loopdata}/>
-        <Okbutton/>
+        <Okbutton playerteam={playerteam} loopdata={loopdata} />
     </BaseBoard>
 }

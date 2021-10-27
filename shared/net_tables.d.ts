@@ -4,6 +4,7 @@ declare interface CustomNetTableDeclarations {
         heroThatCanChooseOnTheCurrentField:number[] //当前场上可选英雄
         selectloop:{timeLeft:number,currentteam:string,optionalnumber:number,remainingOptionalQuantity:number}
         team:{red:number,blue:number}
+        heroSelected:Array<number>
     }
     game_timer: {
         game_timer: {

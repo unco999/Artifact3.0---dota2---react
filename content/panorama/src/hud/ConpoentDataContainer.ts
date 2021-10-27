@@ -47,13 +47,10 @@ export class ConpoentDataContainer {
 
     antiShake(group:string,interval:number){
        const time = Game.GetGameTime() - this.GroupantiShake[group]
-       $.Msg(time)
        if(time > interval){
-            $.Msg("可以触发")
             this.GroupantiShake[group] = Game.GetGameTime()
             return true
        }
-       $.Msg("不能触发")
        return false
     }
 
@@ -142,6 +139,7 @@ export class ComponentNode {
     dispatch_list:React.Dispatch<React.SetStateAction<number>>[] = []
     name:string
     _send:any
+    className:string = ""
 
     constructor(name:string,dispatch:React.Dispatch<React.SetStateAction<number>>,css:Partial<VCSSStyleDeclaration>,send?:any){
         this.name = name;
@@ -167,6 +165,18 @@ export class ComponentNode {
         })
     }
 
+    get classname(){
+        return this.className
+    }
+
+    addclassName(classname:string){
+        this.className = classname
+        this.dispatch((value:any)=>value+1)
+        this.dispatch_list.forEach(dispatch=>{
+            if(dispatch)
+            dispatch(value=> value+1)
+        })
+    }
 
 
     close(){

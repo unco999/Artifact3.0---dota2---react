@@ -13,7 +13,6 @@ export const OwendCardList = ({...args}) => {
     const container = useInstance(args.player + "OwendCardList",id,{},undefined)
     const reduuid =  useRef([shortid.generate(),shortid.generate(),shortid.generate(),shortid.generate(),shortid.generate()])
     const blueuuid = useRef([shortid.generate(),shortid.generate(),shortid.generate(),shortid.generate(),shortid.generate()])
-    const panel = useRef<Panel|null>()
 
     const instance = () => {
         let jsx:JSX.Element[] = []

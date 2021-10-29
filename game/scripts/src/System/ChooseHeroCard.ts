@@ -32,7 +32,7 @@ export abstract class ChooseHerostate{
 
 export class RedSelectstage extends ChooseHerostate{
     id = "RedSelectstage"
-    time = 11
+    time = 80
 
     constructor(optionalQuantity:number){
         super()
@@ -76,7 +76,7 @@ export class RedSelectstage extends ChooseHerostate{
 
 export class BlueSelectstage extends ChooseHerostate{
     id = "BlueSelectstage"
-    time = 11
+    time = 999999
 
     constructor(optionalQuantity:number){
         super()
@@ -120,7 +120,17 @@ export class BlueSelectstage extends ChooseHerostate{
 export class ChoosePreGame extends ChooseHerostate{
     constructor(){
         super()
-        GameRules.ForceGameStart()
+        this.registerGameEevent()
+    }
+
+    registerGameEevent(){
+        CustomGameEventManager.RegisterListener("SHOW_TIME_END",()=>{
+            CustomNetTables.SetTableValue("GameMianLoop",'currentLoopName',{current:"herodeploy"})
+        })
+    }
+
+    override entry(){
+        CustomNetTables.SetTableValue("GameMianLoop",'currentLoopName',{current:"showtime"})
     }
 }
 
@@ -142,10 +152,7 @@ export class ChooseHeroCardLoop{
             this.setheroThatCanChooseOnTheCurrentField = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
             this.selectOrder = [1,2,2,2,2,1]
             this.RegisterGameEvent()
-            Timers.CreateTimer(()=>{
-                print(this.currentState.remainingOptionalQuantity)
-                return 1
-            })
+            CustomNetTables.SetTableValue("GameMianLoop","currentLoopName",{current:"selectherocard"})
     }
 
     RegisterGameEvent(){

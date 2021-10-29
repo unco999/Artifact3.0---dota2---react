@@ -33,10 +33,10 @@ Label{
 
 .Pool{
     @extend .defualt;
-    x:530px;
-    y:170px;
-    width: 800px;
-    height: 800px;
+    x:430px;
+    y:212px;
+    width: 1000px;
+    height: 680px;
     flow-children: right-wrap;
 }
 
@@ -51,14 +51,52 @@ Label{
     border-right: 1.5px solid rgb(229, 255, 0);
 }
 
+.threeDimensional{
+    @extend .defualt;
+    width: 100%;
+    height: 40px;
+    flow-children:right;
+    vertical-align: bottom;
+    background-color: #000000b9;
+    .attack{
+        margin-left: 3px;
+        width: 30%;
+        height: 100%;
+        background-color: #e7881abd;
+        border-radius: 8px;
+    }
+    .arrmor{
+        @extend .attack;
+        background-color: #397ea7bd;
+        border-radius: 8px;
+    }
+    .heal{
+        @extend .attack;
+        background-color: #db4e6dbd;
+        border-radius:8px;
+    }
+    Label{
+        font-size: 25px;
+        color: #ffffffb9;
+        align:center center;
+        text-shadow: 0px 0px 3px 0.5 rgb(252, 255, 87);
+    }
+}
+
+.gloabtip{
+    width: 300px;
+    height: 300px;
+    background-color: #1796bd;
+}
+
 .Card{
     @extend .defualt;
-    width: 115px;
-    height: 115px;
+    width: 140px;
+    height: 190px;
     margin: 10px;
     border-radius: 10px;
     opacity: 1;
-    margin-left: 28px;
+    margin-left: 40px;
     transform: rotateY(0deg);
     transition-duration: 0.5s;
     transition-property: transform,opacity;

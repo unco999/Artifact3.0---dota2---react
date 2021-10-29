@@ -1,0 +1,29 @@
+.root{
+    width: 100%;
+    height: 100%;
+}
+.showtimemain{
+    width: 100%;
+    height: 100%;
+    background-color: black;
+}
+
+.RedCardList{
+    width:1200px;
+    height: 300px;
+    border: 1px solid red;
+    x:400px;
+    y:120px;
+    flow-children:right;
+}
+
+.BlueCardList{
+    @extend .RedCardList;
+    y:600px;
+}
+
+.Card{
+    width: 170px;
+    height: 280px;
+    margin-left: 60px;
+}

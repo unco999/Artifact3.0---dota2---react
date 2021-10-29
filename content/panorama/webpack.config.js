@@ -65,7 +65,8 @@ module.exports = {
                 { import: './hud/BattleArea/layout.xml', type: 'Hud' },
                 { import: './hud/Hand/layout.xml', type: 'Hud' },
                 { import: './end_screen/layout.xml', type: 'EndScreen' },
-                { import: './hud/Selecthero/layout.xml',type:'HeroSelection'}
+                { import: './hud/Selecthero/layout.xml',type:'Hud'},
+                { import: './hud/showtime/layout.xml',type:'Hud'},
             ],
         }),
         new ForkTsCheckerWebpackPlugin({

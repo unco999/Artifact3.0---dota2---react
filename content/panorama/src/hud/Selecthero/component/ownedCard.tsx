@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import { useGameEvent, useNetTableKey, useNetTableValues } from "react-panorama";
 import { ConpoentDataContainer } from "../../ConpoentDataContainer";
+import { teamState } from "./pool";
 
 export const OwendCard = ({...args}) => {
     const cardviewref = useRef<HeroImage|null>()
@@ -11,9 +12,6 @@ export const OwendCard = ({...args}) => {
             cardviewref.current?.AddClass("bright")
         }
     },[args.heroid])
-
-    $.Msg(args)
-
 
     return <Panel  ref={panel=>mainref.current = panel} className={args.player + "ownedCard"}>
             <Panel className={"Cardframe"}>

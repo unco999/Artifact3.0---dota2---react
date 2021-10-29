@@ -5,10 +5,10 @@
 	IsTemplate = false
 	maps = 
 	[
-		"dota",
+		"1v1",
 	]
 	CheckAFKPlayers = false
-	DefaultMap = "dota"
+	DefaultMap = "1v1"
 	Default_Keys = 
 	[
 		{
@@ -28,7 +28,8 @@
 	map_options = 
 	[
 		{
-			map = "dota"
+			map = "1v1"
+			MaxPlayers = 2
 		},
 	]
 	PenaltiesEnabled = false

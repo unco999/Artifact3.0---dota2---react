@@ -3,9 +3,10 @@ import { reloadable } from "./lib/tstl-utils";
 import { AbilityFactory } from "./System/Ability";
 import { CenterScene } from "./System/centerScenes";
 import { ChooseHeroCardLoop, RedSelectstage } from "./System/ChooseHeroCard";
+import { GameMainloopManager } from "./System/GameMainloopManager";
 import { KV } from "./System/KV";
 
-const heroSelectionTime = 999999;
+const heroSelectionTime = 0;
 
 declare global {
     interface CDOTAGamerules {
@@ -16,6 +17,7 @@ declare global {
         ChooseHeroCardLoop:ChooseHeroCardLoop
         Red:CDOTAPlayer //红队
         Blue:CDOTAPlayer //蓝队
+        gamemainloop:GameMainloopManager
     }
 }
 
@@ -58,7 +60,7 @@ export class GameMode {
 
     private game_rules_state_change() {
         let newState = GameRules.State_Get();
-        if( newState == DOTA_GameState.DOTA_GAMERULES_STATE_HERO_SELECTION){
+        if( newState == DOTA_GameState.DOTA_GAMERULES_STATE_PRE_GAME){
             for (let i: PlayerID = 0; i <= 24; ++i) {
                 let player = PlayerResource.GetPlayer(i as PlayerID);
                 if (player) {

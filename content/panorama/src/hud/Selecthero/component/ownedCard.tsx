@@ -6,6 +6,7 @@ import { teamState } from "./pool";
 export const OwendCard = ({...args}) => {
     const cardviewref = useRef<HeroImage|null>()
     const mainref = useRef<Panel|null>()
+    
 
     useEffect(()=>{
         if(args.heroid != -1){

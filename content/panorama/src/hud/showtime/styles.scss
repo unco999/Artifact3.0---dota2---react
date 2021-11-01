@@ -26,4 +26,12 @@
     width: 170px;
     height: 280px;
     margin-left: 60px;
+    opacity: 0;
+    transform: rotateY(90deg);
+    transition-duration: 1s;
+    transition-property: transform,opacity;
+    &.show{
+        opacity: 1;
+        transform: rotateY(0deg);
+    }
 }

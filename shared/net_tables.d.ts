@@ -5,6 +5,7 @@ declare interface CustomNetTableDeclarations {
         selectloop:{timeLeft:number,currentteam:string,optionalnumber:number,remainingOptionalQuantity:number}
         team:{red:number,blue:number}
         heroSelected:Array<number>
+        brachisok:{[key:number]:boolean}
     }
     GameMianLoop:{
         currentLoopName:{current:string}

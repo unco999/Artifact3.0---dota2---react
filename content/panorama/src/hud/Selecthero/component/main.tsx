@@ -29,7 +29,7 @@ export const Main = () => {
         {playerteam.red == Players.GetLocalPlayer() && <Branch gameloop={gameloopname?.current}/>}
         {playerteam.blue == Players.GetLocalPlayer() && <Branch gameloop={gameloopname?.current}/>}
         <Tip loopdata={loopdata}/>
-        <Okbutton playerteam={playerteam} loopdata={loopdata} />
+        <Okbutton playerteam={playerteam} loopdata={loopdata} gameloopname={gameloopname}/>
         <Gloabtip/>
     </BaseBoard>
     }

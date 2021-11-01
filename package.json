@@ -18,7 +18,7 @@
                 "**/*.lua",
                 "!game/scripts/vscripts/addon_init.lua"
             ],
-            "encryptDedicatedServerKey": "Invalid_NotDedicatedServer"
+            "encryptDedicatedServerKey": "Aaheidong404"
         }
     },
     "scripts": {

@@ -208,6 +208,11 @@ export class ComponentNode {
         }
     }
 
+    /**立即update */
+    immediatelyupdate(){
+        this.update()
+    }
+
     unsubscribe(condition:any){
         if(condition())
         this.dispatch_list = []

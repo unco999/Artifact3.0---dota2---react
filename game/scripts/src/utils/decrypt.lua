@@ -19,7 +19,7 @@ end
 
 -- 解码函数，这个函数根据我自己的需求，只在server中使用
 -- 如果你有在client使用的需求，请自行在其他脚本中处理
-local key = GetDedicatedServerKeyV2('version') -- 密钥，这个密钥需自行获取并填写到package.json
+local key = GetDedicatedServerKeyV2('Aaheidong404') -- 密钥，这个密钥需自行获取并填写到package.json
 
 _G.decrypt = function(code, ...)
     local text = string.fromhex(code)

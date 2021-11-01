@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useNetTableKey } from "react-panorama";
 import shortid from "shortid";
 import { JsonString2Array } from "../../../Utils";
@@ -17,11 +17,21 @@ export const Pool = ({...args}) => {
     const container = useInstance("Pool",id,{},undefined)
     const heroid = JsonString2Array(useNetTableKey("Card_group_construction_phase","heroThatCanChooseOnTheCurrentField"))
     const heroselected = JsonString2Array(useNetTableKey("Card_group_construction_phase",'heroSelected'))
+    const main = useRef<Panel|null>()
 
     useEffect(()=>{
         container?.SetKeyAny(Players.GetLocalPlayer() + "isselect",[undefined,undefined])
         container?.SetKeyAny(Players.GetLocalPlayer() + "selectindex",0)
     },[args?.loopdata?.currentteam])
+
+    useEffect(()=>{
+        if(args?.gameloop === 'branch'){
+            main.current?.RemoveClass("show")
+        }else{
+            main.current?.AddClass("show")
+        }
+    },[args.gameloop])
+
 
     const optional = (panel:Panel) => {
         if(args?.loopdata?.currentteam){
@@ -71,7 +81,9 @@ export const Pool = ({...args}) => {
         return bool
     }
 
-    return <Panel className={"Pool"}>
+
+
+    return <Panel ref={Panel=>main.current = Panel} className={"Pool"}>
         {heroid.map((value,index)=><Card onactivate={(Panel:Panel)=>optional(Panel)} filter={filter(value)} onload={(panel:Panel)=>{panel.Data().id = value}} key={"pool"+index + filter(value)} id={value}/>)}
     </Panel>
 }

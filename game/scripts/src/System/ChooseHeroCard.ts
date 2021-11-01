@@ -32,7 +32,7 @@ export abstract class ChooseHerostate{
 
 export class RedSelectstage extends ChooseHerostate{
     id = "RedSelectstage"
-    time = 80
+    time = 10
 
     constructor(optionalQuantity:number){
         super()
@@ -76,7 +76,7 @@ export class RedSelectstage extends ChooseHerostate{
 
 export class BlueSelectstage extends ChooseHerostate{
     id = "BlueSelectstage"
-    time = 999999
+    time = 10
 
     constructor(optionalQuantity:number){
         super()
@@ -124,13 +124,29 @@ export class ChoosePreGame extends ChooseHerostate{
     }
 
     registerGameEevent(){
-        CustomGameEventManager.RegisterListener("SHOW_TIME_END",()=>{
-            CustomNetTables.SetTableValue("GameMianLoop",'currentLoopName',{current:"herodeploy"})
+        CustomGameEventManager.RegisterListener("BRANCH_TIME_END",()=>{
+            CustomNetTables.SetTableValue("GameMianLoop",'currentLoopName',{current:"showtime"})
+        })
+        CustomGameEventManager.RegisterListener("HERO_BRANCH_OVER",(_,event)=>{
+            if(!event.branch) return;
+            let count = 0
+            for(const key in event.branch){
+                for(const index in event.branch[key]){
+                    if(this.host.heroSelected.includes(event.branch[key][index])){
+                        count++
+                    }
+                }
+            }
+            if(count == 5){
+                print("收到了正确的英雄分路表   现在打印数据")
+                DeepPrintTable(this.host.herobrach)
+                this.host.herobrach = event.branch
+            }
         })
     }
 
     override entry(){
-        CustomNetTables.SetTableValue("GameMianLoop",'currentLoopName',{current:"showtime"})
+        CustomNetTables.SetTableValue("GameMianLoop",'currentLoopName',{current:"branch"})
     }
 }
 
@@ -141,7 +157,8 @@ export class ChooseHeroCardLoop{
     private heroThatCanChooseOnTheCurrentField:number[] = [] //当前场上可选择的英雄
     private selectOrder:number[] = []
     private selectindex = 0
-    private heroSelected:number[] = []
+    heroSelected:number[] = []
+    herobrach:Record<number,number[]> = {}
     redisok:boolean = false
     blueisok:boolean = false
     time:number = 0
@@ -151,6 +168,9 @@ export class ChooseHeroCardLoop{
             this.haveSelectedHero['RedSelectstage'] = [-1,-1,-1,-1,-1] //初始化所有的英雄
             this.setheroThatCanChooseOnTheCurrentField = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
             this.selectOrder = [1,2,2,2,2,1]
+            for(let i = 1 ; i < 4 ; i++){
+                this.herobrach[i] = []
+            }
             this.RegisterGameEvent()
             CustomNetTables.SetTableValue("GameMianLoop","currentLoopName",{current:"selectherocard"})
     }

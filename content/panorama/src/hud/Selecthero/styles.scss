@@ -29,15 +29,78 @@ Label{
     height: 98%;
     border: 2px solid rgba(80, 80, 80, 0.164);
     align: center center;
+    background-color: black;
 }
 
 .Pool{
     @extend .defualt;
-    x:430px;
+    x:440px;
     y:212px;
     width: 1000px;
     height: 680px;
     flow-children: right-wrap;
+    transition-duration: 0.5s;
+    transition-property: transform,opacity,x,y;
+    opacity: 1;
+    transform: translateY(400px);
+    &.show{
+        x:440px;
+        y:212px;
+        opacity: 1;
+        transform: translateY(0px);
+    }
+}
+
+.branch{
+    @extend .defualt;
+    width: 1000px;
+    height: 360px;
+    x:440px;
+    y:912px;
+    transition-duration: 0.5s;
+    transition-property: transform,opacity,x,y;
+    flow-children:right;
+    &.show{
+        transform: translateY(-700px);
+    }
+    .BranchCard{
+        @extend .defualt;
+        width: 200px;
+        height: 330px;
+        border: 1px solid black;
+        margin-left: 90px;
+        margin-top: 10px;
+        flow-children:down;
+        Label{
+            font-size: 30px;
+            color: white;
+        }
+    }
+}
+
+.dragicon{
+    width: 100px;
+    height: 55px;
+}
+
+.box{
+    @extend .defualt;
+    width: 90%;
+    height: 100%;
+    border: 1px solid rgba(255, 255, 255, 0.137);
+    flow-children:down;
+}
+
+.optionhero{
+    @extend .defualt;
+    width: 60%;
+    height: 54px;
+    horizontal-align:center;
+    border-radius: 10px;
+}
+
+DropDownMenu{
+    width: 150px;
 }
 
 .Cardframe{
@@ -87,6 +150,10 @@ Label{
     width: 300px;
     height: 300px;
     background-color: #1796bd;
+    opacity: 0;
+    &.show{
+        opacity: 1;
+    }
 }
 
 .Card{

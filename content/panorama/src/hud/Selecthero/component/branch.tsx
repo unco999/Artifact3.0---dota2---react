@@ -11,7 +11,7 @@ export const BranchCard = (props:{index:number}) => {
     const [motion,setmotion] = useState(0)
     const max = props.index == 1 || props.index == 3 ? 2 : 1
     const branchok = useNetTableKey('Card_group_construction_phase','brachisok') ?? false
-
+//
     useEffect(()=>{
         $.RegisterEventHandler( 'DragEnter', main.current!, OnDragEnter );
         $.RegisterEventHandler( 'DragDrop', main.current!, OnDragDrop );

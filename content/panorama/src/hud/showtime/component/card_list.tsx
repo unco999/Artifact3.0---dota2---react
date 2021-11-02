@@ -1,26 +1,31 @@
-import React from "react";
+import React, { useMemo } from "react";
+import { useNetTableKey } from "react-panorama";
+import shortid from "shortid";
+import { JsonString2Array, JsonString2Arraystrt0 } from "../../../Utils";
 import {ShowCard} from './card'
 
 export const CardList = () => {
-    const owendSelectHeroCard = CustomNetTables.GetTableValue("Card_group_construction_phase","playerHasChosen")
+    const maindata = useNetTableKey("Card_group_construction_phase",'herobrach') ?? {}
+    const team = useNetTableKey('Card_group_construction_phase','team')
+    const mydata_brach0 = JsonString2Arraystrt0(maindata[Players.GetLocalPlayer()][0])
+    const mydata_brach1 = JsonString2Arraystrt0(maindata[Players.GetLocalPlayer()][1])
+    const mydata_brach2 = JsonString2Arraystrt0(maindata[Players.GetLocalPlayer()][2])
+    const youdata_brach0 = JsonString2Arraystrt0(maindata[ Players.GetLocalPlayer() == team.red ? team.blue : team.red ][0])
+    const youdata_brach1 = JsonString2Arraystrt0(maindata[Players.GetLocalPlayer() == team.red ? team.blue : team.red][1])
+    const youdata_brach2 = JsonString2Arraystrt0(maindata[Players.GetLocalPlayer() == team.red ? team.blue : team.red][2])
 
-
-    $.Msg(owendSelectHeroCard)
+    $.Msg(maindata)
 
     return <> 
         <Panel className={"RedCardList"}>  
-        <ShowCard heroid={owendSelectHeroCard?.RedSelectstage["1"] ?? -1} index={1}/>
-        <ShowCard heroid={owendSelectHeroCard?.RedSelectstage["2"] ?? -1} index={2}/>
-        <ShowCard heroid={owendSelectHeroCard?.RedSelectstage["3"] ?? -1} index={3}/>
-        <ShowCard heroid={owendSelectHeroCard?.RedSelectstage["4"] ?? -1} index={4}/>
-        <ShowCard heroid={owendSelectHeroCard?.RedSelectstage["5"] ?? -1} index={5}/>
+        {youdata_brach0.map(value=><ShowCard key={shortid.generate()} heroid={value} delay={3}/>)}
+        {youdata_brach1.map(value=><ShowCard key={shortid.generate()} heroid={value} delay={1}/>)}
+        {youdata_brach2.map(value=><ShowCard key={shortid.generate()} heroid={value} delay={3}/>)}
         </Panel>
         <Panel className={"BlueCardList"}>  
-        <ShowCard heroid={owendSelectHeroCard?.BlueSelectstage["1"] ?? -1} index={1}/>
-        <ShowCard heroid={owendSelectHeroCard?.BlueSelectstage["2"] ?? -1} index={2}/>
-        <ShowCard heroid={owendSelectHeroCard?.BlueSelectstage["3"] ?? -1} index={3}/>
-        <ShowCard heroid={owendSelectHeroCard?.BlueSelectstage["4"] ?? -1} index={4}/>
-        <ShowCard heroid={owendSelectHeroCard?.BlueSelectstage["5"] ?? -1} index={5}/>
-        </Panel>
-        </>
+        {mydata_brach0.map(value=><ShowCard key={shortid.generate()} heroid={value} delay={3}/>)}
+        {mydata_brach1.map(value=><ShowCard key={shortid.generate()} heroid={value} delay={1}/>)}
+        {mydata_brach2.map(value=><ShowCard key={shortid.generate()} heroid={value} delay={3}/>)}
+        </Panel> 
+         </>
 }

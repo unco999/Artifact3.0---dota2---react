@@ -42,6 +42,9 @@ export const Okbutton = (props:{playerteam:{red:number,blue:number},loopdata: {
         }
         if(!Pool) return
         const isselect = Pool.getKeyString<[number,number]>(Players.GetLocalPlayer() + "isselect")
+        if(isselect[0] == undefined){
+            isselect[0] = -1
+        }
         if(isselect[1] == undefined){
             isselect[1] = -1
         }

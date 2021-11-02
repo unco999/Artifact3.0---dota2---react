@@ -11,7 +11,6 @@
 .RedCardList{
     width:1200px;
     height: 300px;
-    border: 1px solid red;
     x:400px;
     y:120px;
     flow-children:right;
@@ -34,4 +33,30 @@
         opacity: 1;
         transform: rotateY(0deg);
     }
+}
+
+.tit_center{
+    font-size: 50px;
+    color: rgb(255, 255, 255);
+    x:950px;
+    y:470px;
+    opacity: 0;
+    text-shadow: 0px 0px 15px 3.0 rgb(34, 50, 63);
+    transform: translateZ(5000px);
+    transition-duration: 0.55s;
+    transition-property: transform,opacity;
+    &.show{
+        opacity: 1;
+        transform: translateZ(0px);
+    }
+}
+
+.tit_left{
+    @extend .tit_center;
+    x:600px;
+}
+
+.tit_right{
+    @extend .tit_center;
+    x:1300px;
 }

@@ -6,6 +6,7 @@ declare interface CustomNetTableDeclarations {
         team:{red:number,blue:number}
         heroSelected:Array<number>
         brachisok:{[key:number]:boolean}
+        herobrach:{[key :number ]:{0:Array<number>,1:Array<number>,2:Array<number>}}; // 已确定的分路信息
     }
     GameMianLoop:{
         currentLoopName:{current:string}

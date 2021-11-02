@@ -32,7 +32,7 @@ export abstract class ChooseHerostate{
 
 export class RedSelectstage extends ChooseHerostate{
     id = "RedSelectstage"
-    time = 10
+    time = 5
 
     constructor(optionalQuantity:number){
         super()
@@ -76,7 +76,7 @@ export class RedSelectstage extends ChooseHerostate{
 
 export class BlueSelectstage extends ChooseHerostate{
     id = "BlueSelectstage"
-    time = 10
+    time = 5
 
     constructor(optionalQuantity:number){
         super()
@@ -121,7 +121,7 @@ export class BlueSelectstage extends ChooseHerostate{
 /**分路选择 */
 export class ChoosePreGame extends ChooseHerostate{
     id = "ChoosePreGame"
-    time = 30   
+    time = 20 
 
     constructor(){
         super()
@@ -178,7 +178,7 @@ export class ChoosePreGame extends ChooseHerostate{
             if(count == 5 && bool == true){
                 print("收到了正确的英雄分路表   现在打印数据")
                 DeepPrintTable(this.host.herobrach)
-                this.host.herobrach[event.PlayerID] = event.branch
+                this.host.Setbranch(event.branch,event.PlayerID)
                 if(event.PlayerID == GameRules.Red.GetPlayerID()){
                     this.host.redbranchisok = true
                     CustomNetTables.SetTableValue('Card_group_construction_phase','brachisok',{[GameRules.Red.GetPlayerID()]:true})
@@ -220,10 +220,10 @@ export class ChoosePreGame extends ChooseHerostate{
             }
         }
         if(this.time === 0){
-            if(this.host.bluebranchisok && this.host.redbranchisok){
+                CustomNetTables.SetTableValue('Card_group_construction_phase','herobrach',this.host.herobrach)
                 this.host.SetcuurentsettingState = new showtime()
-            }
         }
+        
         super.dataupdate()
         return 1
     }
@@ -255,28 +255,26 @@ export class ChooseHeroCardLoop{
     private heroThatCanChooseOnTheCurrentField:number[] = [] //当前场上可选择的英雄
     private selectOrder:number[] = []
     private selectindex = 0
-    RedheroSelected:Array<number> = []
-    BlueheroSelected:Array<number> = []
+    RedheroSelected:Array<number> = []  // 红色玩家已经选择过的英雄
+    BlueheroSelected:Array<number> = []   // 蓝色玩家已经选择过的英雄
     RedbranchSelected:number[] = []
     BluebranchSelected:number[] = []
-    herobrach:{[key :number ]:{0:Array<number>,1:Array<number>,2:Array<number>}} = {}
+    herobrach:Record<number,{0:Array<number>,1:Array<number>,2:Array<number>}> = {}
     redisok:boolean = false
     blueisok:boolean = false
     time:number = 0
     redbranchisok = false
     bluebranchisok = false
+    bluebranchherokv:Record<number,number> = {}
+    redbranchherokv:Record<number,number> = {}
 
     constructor(){
             this.haveSelectedHero['BlueSelectstage'] = [-1,-1,-1,-1,-1] //初始化所有的英雄
             this.haveSelectedHero['RedSelectstage'] = [-1,-1,-1,-1,-1] //初始化所有的英雄
             this.setheroThatCanChooseOnTheCurrentField = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
             this.selectOrder = [1,2,2,2,2,1]
-            if(this.herobrach[GameRules.Red.GetPlayerID()] == null) {
-                this.herobrach[GameRules.Red.GetPlayerID() as number] = {0:[],1:[],2:[]}
-            }
-            if(this.herobrach[GameRules.Blue.GetPlayerID()] == null) {
-                this.herobrach[GameRules.Blue.GetPlayerID() as number] = {0:[],1:[],2:[]}
-            }
+            this.herobrach[GameRules.Red.GetPlayerID() as number] = {0:[],1:[],2:[]}
+            this.herobrach[GameRules.Blue.GetPlayerID() as number] = {0:[],1:[],2:[]}
             print("初始化分路成功")
             DeepPrintTable(this.herobrach)
             this.RegisterGameEvent()
@@ -312,29 +310,53 @@ export class ChooseHeroCardLoop{
     get RedoptionalheroThatCanChooseOnTheCurrentField(){
         const newTable = this.heroThatCanChooseOnTheCurrentField.filter(value=>{
             let bool = true
-            for(const heorid of this.RedheroSelected){
-                if(value == heorid){
+            for(const heroid of this.BlueheroSelected){
+                if(value == heroid){
+                    bool = false
+                }
+            }
+            for(const heroid of this.RedheroSelected){
+                if(value == heroid){
                     bool = false
                 }
             }
             return bool
         })
         const heroid = newTable[RandomInt(0,newTable.length - 1)]
+        this.BlueheroSelected.push(heroid)
         return heroid
     }
 
     get BlueoptionalheroThatCanChooseOnTheCurrentField(){
         const newTable = this.heroThatCanChooseOnTheCurrentField.filter(value=>{
             let bool = true
-            for(const heorid of this.BlueheroSelected){
-                if(value == heorid){
+            for(const heroid of this.BlueheroSelected){
+                if(value == heroid){
+                    bool = false
+                }
+            }
+            for(const heroid of this.RedheroSelected){
+                if(value == heroid){
                     bool = false
                 }
             }
             return bool
         })
         const heroid = newTable[RandomInt(0,newTable.length - 1)]
+        this.RedheroSelected.push(heroid)
         return heroid
+    }
+    
+
+    Setbranch(branchdata:any,PlayerID:PlayerID){
+        for(const brach in branchdata){
+            for(const index in branchdata[brach]){
+               print("路线为",brach)
+               print("自动分路",branchdata[brach][index])
+               if(!this.herobrach[PlayerID][+brach as unknown as 0|1|2]) this.herobrach[PlayerID][+brach as unknown as 0|1|2] = []
+               this.herobrach[PlayerID][+brach as unknown as 0|1|2].push(branchdata[brach][index])
+            }
+        }
     }
 
 
@@ -354,8 +376,9 @@ export class ChooseHeroCardLoop{
                 }
                 return true
             })
-            this.herobrach[GameRules.Blue.GetPlayerID()][branchindex] == table[RandomInt(0,table.length)]
-            this.RedbranchSelected.push(this.herobrach[GameRules.Blue.GetPlayerID()][branchindex])
+            const heorid = table[RandomInt(0,table.length - 1)]
+            this.herobrach[GameRules.Blue.GetPlayerID()][branchindex as 0|1|2].push(heorid)
+            this.BluebranchSelected.push(heorid)
         }else{
             const table = this.RedheroSelected.filter(value=>{
                 for(let  key = 0 ; key < this.RedbranchSelected.length ; key ++){
@@ -365,8 +388,9 @@ export class ChooseHeroCardLoop{
                 }
                 return true
             })
-            this.herobrach[GameRules.Red.GetPlayerID()][branchindex] == table[RandomInt(0,table.length)]
-            this.RedbranchSelected.push(this.herobrach[GameRules.Red.GetPlayerID()][branchindex])
+            const heorid = table[RandomInt(0,table.length - 1)]
+            this.herobrach[GameRules.Red.GetPlayerID()][branchindex as 0|1|2].push(heorid)
+            this.RedbranchSelected.push(heorid)
         }
     }
 
@@ -392,7 +416,6 @@ export class ChooseHeroCardLoop{
 
     set addBlueHeroCardinlist(herocardid:number){
        if(this.GetcurrentState.remainingOptionalQuantity < 1) return;
-       if(this.BlueheroSelected.includes(herocardid)) return;
        for(const team in this.haveSelectedHero){
            print("当前ID")
            print(this.currentState.id)
@@ -414,7 +437,6 @@ export class ChooseHeroCardLoop{
 
     set addRedHeroCardinlist(herocardid:number){
         if(this.GetcurrentState.remainingOptionalQuantity < 1) return;
-        if(this.RedheroSelected.includes(herocardid)) return;
         for(const team in this.haveSelectedHero){
             print("当前ID")
             print(this.currentState.id)
@@ -433,7 +455,7 @@ export class ChooseHeroCardLoop{
             }
         }
      }
-    
+
     // 设置初始状态
     set SetcuurentsettingState(state:ChooseHerostate){
         state.host = this

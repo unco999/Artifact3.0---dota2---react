@@ -19,6 +19,7 @@ export const Pool = ({...args}) => {
     const heroselected = JsonString2Array(useNetTableKey("Card_group_construction_phase",'heroSelected'))
     const main = useRef<Panel|null>()
 
+
     useEffect(()=>{
         container?.SetKeyAny(Players.GetLocalPlayer() + "isselect",[undefined,undefined])
         container?.SetKeyAny(Players.GetLocalPlayer() + "selectindex",0)
@@ -84,6 +85,6 @@ export const Pool = ({...args}) => {
 
 
     return <Panel ref={Panel=>main.current = Panel} className={"Pool"}>
-        {heroid.map((value,index)=><Card onactivate={(Panel:Panel)=>optional(Panel)} filter={filter(value)} onload={(panel:Panel)=>{panel.Data().id = value}} key={"pool"+index + filter(value)} id={value}/>)}
+        {heroid.map((value,index)=><Card onactivate={(Panel:Panel)=>optional(Panel)} filter={filter(value)} onload={(panel:Panel)=>{panel.Data().id = value}} key={"pool"+index } id={value}/>)}
     </Panel>
 }

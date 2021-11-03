@@ -24,6 +24,19 @@ export class Linkedlist<T> {
         this._length = 0
     }
 
+    getAll(){
+        if(this._head == undefined) return [];
+        const table = []
+        let next = this._head
+        if(next){table.push(next)
+        while(next){
+            next = next._next
+            table.push(next)
+            }
+        }
+        return table
+    }
+
     append(data:T):boolean{
         let new_node = new Node(data)
         if(this._head == undefined){

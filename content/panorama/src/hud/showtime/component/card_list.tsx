@@ -10,11 +10,10 @@ export const CardList = () => {
     const mydata_brach0 = JsonString2Arraystrt0(maindata[Players.GetLocalPlayer()][0])
     const mydata_brach1 = JsonString2Arraystrt0(maindata[Players.GetLocalPlayer()][1])
     const mydata_brach2 = JsonString2Arraystrt0(maindata[Players.GetLocalPlayer()][2])
-    const youdata_brach0 = JsonString2Arraystrt0(maindata[ Players.GetLocalPlayer() == team.red ? team.blue : team.red ][0])
-    const youdata_brach1 = JsonString2Arraystrt0(maindata[Players.GetLocalPlayer() == team.red ? team.blue : team.red][1])
-    const youdata_brach2 = JsonString2Arraystrt0(maindata[Players.GetLocalPlayer() == team.red ? team.blue : team.red][2])
+    const youdata_brach0 = Object.keys(maindata ?? {}).length > 1 ? JsonString2Arraystrt0(maindata[ Players.GetLocalPlayer() == team.red ? team.blue : team.red ][0]) : []
+    const youdata_brach1 = Object.keys(maindata ?? {}).length > 1 ? JsonString2Arraystrt0(maindata[Players.GetLocalPlayer() == team.red ? team.blue : team.red][1]) : []
+    const youdata_brach2 = Object.keys(maindata ?? {}).length > 1 ? JsonString2Arraystrt0(maindata[Players.GetLocalPlayer() == team.red ? team.blue : team.red][2]) : []
 
-    $.Msg(maindata)
 
     return <> 
         <Panel className={"RedCardList"}>  

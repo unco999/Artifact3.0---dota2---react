@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { DOTAHeroImageAttributes, useGameEvent, useNetTableKey, useNetTableValues } from "react-panorama";
 import { ConpoentDataContainer } from "../../ConpoentDataContainer";
 import { teamState } from "./pool";
@@ -6,7 +6,8 @@ import { teamState } from "./pool";
 export const OwendCard = ({...args}) => {
     const cardviewref = useRef<HeroImage|null>()
     const mainref = useRef<Panel|null>()
-    
+    const [drag,setdrag] = useState(true)
+    const branchok = useNetTableKey('Card_group_construction_phase','brachisok')
 
     useEffect(()=>{
         if(args.heroid != -1){
@@ -14,6 +15,12 @@ export const OwendCard = ({...args}) => {
             mainref.current && onload(mainref.current)
         }
     },[args.heroid])
+
+    useEffect(()=>{
+        if(branchok && branchok[Players.GetLocalPlayer()]){
+            branchok[Players.GetLocalPlayer()] == 1 && setdrag(false)
+        }
+    },[branchok])
 
     const onload = (panel:Panel) => { 
         $.RegisterEventHandler( 'DragEnter', panel, OnDragEnter );
@@ -53,7 +60,7 @@ export const OwendCard = ({...args}) => {
 
     }
 
-    return <Panel draggable={true}   ref={panel=>mainref.current = panel} className={args.player + "ownedCard"}>
+    return <Panel draggable={drag}   ref={panel=>mainref.current = panel} className={args.player + "ownedCard"}>
             <Panel className={"Cardframe"}>
             <DOTAHeroImage hittest={false} ref={panel => cardviewref.current = panel} heroid={args.heroid as HeroID} heroimagestyle={"portrait"} className={args.player + "Card"}/>
             </Panel>

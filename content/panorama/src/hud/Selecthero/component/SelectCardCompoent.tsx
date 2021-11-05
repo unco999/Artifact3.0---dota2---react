@@ -17,11 +17,16 @@ export const Card = ({...args}) =>{
 
 
     useEffect(()=>{
-       if(args?.filter === 0){
+       if(args?.filter == 0){
             ref.current?.AddClass("disable")
+            return;
+       }
+       if(args?.filter == 1){
+           ref.current?.RemoveClass("disable")
+           return;
        }
        ref.current?.RemoveClass("highlight")
-    },[args?.filter])
+    })
 
     const tip = (panel:Panel) => {
         const tip = ConpoentDataContainer.Instance.NameGetNode("")

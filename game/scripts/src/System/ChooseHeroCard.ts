@@ -1,5 +1,6 @@
 import { Timers } from "../lib/timers";
 import { reloadable } from "../lib/tstl-utils";
+import { BattleGameLoop, faultCard } from "../Manager/BattleGameLoop";
 
 export abstract class ChooseHerostate{
     host:ChooseHeroCardLoop
@@ -177,8 +178,9 @@ export class ChoosePreGame extends ChooseHerostate{
             print("合格的英雄数量为",count)
             if(count == 5 && bool == true){
                 print("收到了正确的英雄分路表   现在打印数据")
-                DeepPrintTable(this.host.herobrach)
                 this.host.Setbranch(event.branch,event.PlayerID)
+                print("收到分路请求")
+                DeepPrintTable(this.host.herobrach)
                 if(event.PlayerID == GameRules.Red.GetPlayerID()){
                     this.host.redbranchisok = true
                     CustomNetTables.SetTableValue('Card_group_construction_phase','brachisok',{[GameRules.Red.GetPlayerID()]:true})
@@ -202,13 +204,13 @@ export class ChoosePreGame extends ChooseHerostate{
                 this.host.AutoAddbranchHero('red',1)
                 this.host.AutoAddbranchHero('red',2)
                 this.host.AutoAddbranchHero('red',2)
-                const table = this.host.herobrach[GameRules.Red.GetPlayerID()]
+                const _table = this.host.herobrach[GameRules.Red.GetPlayerID()]
                 this.host.redbranchisok = true
                 CustomNetTables.SetTableValue('Card_group_construction_phase','brachisok',{[GameRules.Red.GetPlayerID()]:true})
-                CustomGameEventManager.Send_ServerToPlayer(GameRules.Red,"AUTO_SELECT_BRACH",table)
+                CustomGameEventManager.Send_ServerToPlayer(GameRules.Red,"AUTO_SELECT_BRACH",_table)
             }
             if(!this.host.bluebranchisok){
-                const table = this.host.herobrach[GameRules.Blue.GetPlayerID()]
+                const _table = this.host.herobrach[GameRules.Blue.GetPlayerID()]
                 this.host.AutoAddbranchHero('blue',0)
                 this.host.AutoAddbranchHero('blue',0)
                 this.host.AutoAddbranchHero('blue',1)
@@ -216,10 +218,10 @@ export class ChoosePreGame extends ChooseHerostate{
                 this.host.AutoAddbranchHero('blue',2)
                 this.host.bluebranchisok = true
                 CustomNetTables.SetTableValue('Card_group_construction_phase','brachisok',{[GameRules.Blue.GetPlayerID()]:true})
-                CustomGameEventManager.Send_ServerToPlayer(GameRules.Blue,"AUTO_SELECT_BRACH",table)
+                CustomGameEventManager.Send_ServerToPlayer(GameRules.Blue,"AUTO_SELECT_BRACH",_table)
             }
         }
-        if(this.time === 0){
+        if(this.time === 1){
                 CustomNetTables.SetTableValue('Card_group_construction_phase','herobrach',this.host.herobrach)
                 this.host.SetcuurentsettingState = new showtime()
         }
@@ -234,17 +236,26 @@ export class ChoosePreGame extends ChooseHerostate{
 }
 
 export class showtime extends ChooseHerostate{
+    time = 20
+
     constructor(){
         super()
-        this.registerGameEevent()
     }
 
-    registerGameEevent(){
-        
-    }
 
     override entry(){
         CustomNetTables.SetTableValue("GameMianLoop",'currentLoopName',{current:"showtime"})
+    }
+
+    run(){
+        this.time --;
+        if(this.time == 0){
+            this.host.close()
+            CustomNetTables.SetTableValue('GameMianLoop','currentLoopName',{current:"isbattle"})
+            GameRules.gamemainloop = new BattleGameLoop()
+            GameRules.gamemainloop.StartcuurentsettingState = new faultCard(GameRules.gamemainloop)
+        }
+        return 1
     }
 }
 
@@ -267,6 +278,7 @@ export class ChooseHeroCardLoop{
     bluebranchisok = false
     bluebranchherokv:Record<number,number> = {}
     redbranchherokv:Record<number,number> = {}
+    timerid = ""
 
     constructor(){
             this.haveSelectedHero['BlueSelectstage'] = [-1,-1,-1,-1,-1] //初始化所有的英雄
@@ -353,8 +365,12 @@ export class ChooseHeroCardLoop{
             for(const index in branchdata[brach]){
                print("路线为",brach)
                print("自动分路",branchdata[brach][index])
-               if(!this.herobrach[PlayerID][+brach as unknown as 0|1|2]) this.herobrach[PlayerID][+brach as unknown as 0|1|2] = []
-               this.herobrach[PlayerID][+brach as unknown as 0|1|2].push(branchdata[brach][index])
+               print("打印当前数组")
+               DeepPrintTable(this.herobrach[PlayerID])
+               print("打印数据")
+               DeepPrintTable(branchdata)
+               if(this.herobrach[PlayerID][Number(brach) as unknown as 0|1|2] == undefined) this.herobrach[PlayerID][Number(brach) as unknown as 0|1|2] = []
+               this.herobrach[PlayerID][Number(brach) as unknown as 0|1|2].push(branchdata[brach][index])
             }
         }
     }
@@ -427,7 +443,7 @@ export class ChooseHeroCardLoop{
                        this.BlueheroSelected.push(herocardid)
                        this.GetcurrentState.remainingOptionalQuantity--
                        CustomNetTables.SetTableValue('Card_group_construction_phase','playerHasChosen',this.haveSelectedHero)
-                       CustomNetTables.SetTableValue('Card_group_construction_phase','heroSelected',this.BlueheroSelected)
+                       CustomNetTables.SetTableValue('Card_group_construction_phase','heroSelected',this.BlueheroSelected.concat(this.RedheroSelected))
                        return;
                    }
                }
@@ -448,12 +464,16 @@ export class ChooseHeroCardLoop{
                         this.RedheroSelected.push(herocardid)
                         this.GetcurrentState.remainingOptionalQuantity--
                         CustomNetTables.SetTableValue('Card_group_construction_phase','playerHasChosen',this.haveSelectedHero)
-                        CustomNetTables.SetTableValue('Card_group_construction_phase','heroSelected',this.RedheroSelected)
+                        CustomNetTables.SetTableValue('Card_group_construction_phase','heroSelected',this.RedheroSelected.concat(this.BlueheroSelected))
                         return;
                     }
                 }
             }
         }
+     }
+    
+     close(){
+         Timers.RemoveTimer(this.timerid)
      }
 
     // 设置初始状态
@@ -463,7 +483,7 @@ export class ChooseHeroCardLoop{
         this.blueisok = false
         this.currentState = state
         this.currentState.entry()
-        Timers.CreateTimer(()=>{
+        this.timerid = Timers.CreateTimer(()=>{
             return this.currentState.run()
         })
     }

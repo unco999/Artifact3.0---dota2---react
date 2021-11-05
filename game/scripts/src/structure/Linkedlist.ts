@@ -1,120 +1,245 @@
-import { reloadable } from '../lib/tstl-utils';
+export class LinkedList<T> {
 
-@reloadable
-export class Node<T> {
-    _data:T
-    _prev:Node<T>
-    _next:Node<T>
-    constructor(data:T){
-        this._data = data
-        this._prev = undefined
-        this._next = undefined
+    private _head: LinkedListItem<T>;
+    private _tail: LinkedListItem<T>;
+    private _length: number;
+  
+    constructor(...values: T[]) {
+  
+      this._head = this._tail = null;
+      this._length = 0;
+  
+      if (values.length > 0) {
+        values.forEach((value) => {
+          this.append(value);
+        });
+      }
     }
-}
-
-@reloadable
-export class Linkedlist<T> {
-    private _head:Node<T>
-    private _tail:Node<T>
-    private _length:number;
-
-    constructor(){
-        this._head = undefined;
-        this._tail = undefined;
-        this._length = 0
+  
+    *iterator(): IterableIterator<T> {
+      let currentItem = this._head;
+  
+      while(currentItem) {
+        yield currentItem.value
+        currentItem = currentItem.next
+      }
     }
-
-    getAll(){
-        if(this._head == undefined) return [];
-        const table = []
-        let next = this._head
-        if(next){table.push(next)
-        while(next){
-            next = next._next
-            table.push(next)
+  
+    [Symbol.iterator]() {
+      return this.iterator();
+    }
+  
+    get head(): T {
+      return this._head ? this._head.value : null;
+    }
+  
+    get tail(): T {
+      return this._tail ? this._tail.value : null;
+    }
+  
+    get length(): number {
+      return this._length;
+    }
+  
+    // Adds the element at a specific position inside the linked list
+    insert(val: T, previousItem: T, checkDuplicates: boolean = false): boolean {
+  
+      if (checkDuplicates && this.isDuplicate(val)) {
+        return false;
+      }
+  
+      let newItem: LinkedListItem<T> = new LinkedListItem<T>(val);
+      let currentItem: LinkedListItem<T> = this._head;
+  
+      if (!currentItem) {
+        return false;
+      } else {
+        while (true) {
+          if (currentItem.value === previousItem) {
+            newItem.next = currentItem.next;
+            newItem.prev = currentItem;
+            currentItem.next = newItem;
+  
+            if (newItem.next) {
+              newItem.next.prev = newItem;
+            } else {
+              this._tail = newItem;
             }
-        }
-        return table
-    }
-
-    append(data:T):boolean{
-        let new_node = new Node(data)
-        if(this._head == undefined){
-            this._head = new_node
-            this._tail = new_node
-            this._head._prev = undefined
-            this._tail._next = undefined
-        }else{
-            this._tail._next = new_node
-            new_node._prev = this._tail
-            this._tail = this._tail._next
-        }
-        this._length++
-        return true
-    }
-
-    get len(){
-        return this._length
-    }
-
-    insert(index:number,data:T):boolean{
-        if(index == this._length){
-            return this.append(data)
-        }else{
-            let insert_index = 1;
-            let cur_node = this._head;
-            while(insert_index < index){
-                cur_node = cur_node._next
-                insert_index++
+            this._length++;
+            return true;
+          } else {
+            if (currentItem.next) {
+              currentItem = currentItem.next;
             }
-            let next_node = cur_node._next
-            let new_node = new Node(data)
-            cur_node._next = new_node
-            cur_node._next._prev = cur_node
-        }
-        this._length++
-        return true;
-    }
-
-    remove(index:number):Node<T>{
-        if(index < 0 || index > this._length){
-            return null
-        }else{
-            let del_node = undefined
-            if(index == 0){
-                del_node = this._head
-                this._head = this._head._next
-            }else{
-                let del_index = 0;
-                let pre_node = undefined
-                let cur_node = this._head
-                while(del_index < index){
-                    del_index++
-                    cur_node = cur_node._next;
-                }
-                del_node = cur_node
-                cur_node._next._prev = cur_node._prev
-                cur_node = null
+            else {
+              // can't locate previousItem
+              return false;
             }
-            if(index == this._length){
-                this._tail._prev._next = null
-                this._tail = this._tail._prev
+          }
+        }
+      }
+    }
+  
+    // Adds the element at the end of the linked list
+    append(val: T, checkDuplicates: boolean = false): boolean {
+  
+      if (checkDuplicates && this.isDuplicate(val)) {
+        return false;
+      }
+  
+      let newItem = new LinkedListItem<T>(val);
+  
+      if (!this._tail) {
+        this._head = this._tail = newItem;
+      } else {
+        this._tail.next = newItem;
+        newItem.prev = this._tail;
+        this._tail = newItem;
+      }
+  
+      this._length++;
+      return true;
+    }
+  
+    // Add the element at the beginning of the linked list
+    prepend(val: T, checkDuplicates: boolean = false): boolean {
+  
+      if (checkDuplicates && this.isDuplicate(val)) {
+        return false;
+      }
+      
+      let newItem = new LinkedListItem<T>(val);
+  
+      if (!this._head) {
+        this._head = this._tail = newItem;
+      } else {
+        newItem.next = this._head;
+        this._head.prev = newItem;
+        this._head = newItem;
+      }
+      
+      this._length++;
+      return true;
+    }
+  
+    remove(val: T): T {
+      let currentItem = this._head;
+  
+      if (!currentItem) {
+        return;
+      }
+  
+      if (currentItem.value === val) {
+        this._head = currentItem.next;
+        this._head.prev = null;
+        currentItem.next = currentItem.prev = null;
+        this._length--;
+        return currentItem.value;
+  
+      } else {
+        while (true) {
+          if (currentItem.value === val) {
+            if (currentItem.next) { // special case for last element
+              currentItem.prev.next = currentItem.next;
+              currentItem.next.prev = currentItem.prev;
+              currentItem.next = currentItem.prev = null;
+            } else {
+              currentItem.prev.next = null;
+              this._tail = currentItem.prev;
+              currentItem.next = currentItem.prev = null;
             }
-            this._length--
-            return del_node
+            this._length--;
+            return currentItem.value;
+          } else {
+            if (currentItem.next) {
+              currentItem = currentItem.next;
+            } else {
+              return;
+            }
+          }
         }
+      }
     }
-
-    get(index:number){
-        if(index == 0){
-            return this._head
-        }
-        let cur_node = this._head
-        let cur_index = 1
-        while(cur_index < index){
-            cur_node = cur_node._next
-            cur_index++
-        }
-        return cur_node
+  
+    removeHead(): T {
+      let currentItem = this._head;
+  
+      // empty list
+      if (!currentItem) {
+        return;
+      }
+  
+      // single item list
+      if (!this._head.next) {
+        this._head = null;
+        this._tail = null;
+      
+      // full list
+      } else {
+        this._head.next.prev = null;
+        this._head = this._head.next;
+        currentItem.next = currentItem.prev = null;
+      }
+  
+      this._length--;
+      return currentItem.value;
     }
-}
+  
+    removeTail(): T {
+      let currentItem = this._tail;
+  
+      // empty list
+      if (!currentItem) {
+        return;
+      }
+  
+      // single item list
+      if (!this._tail.prev) {
+        this._head = null;
+        this._tail = null;
+            
+      // full list
+      } else {
+        this._tail.prev.next = null;
+        this._tail = this._tail.prev;
+        currentItem.next = currentItem.prev = null;
+      }
+  
+      this._length--;
+      return currentItem.value;
+    }
+  
+    first(num: number): T[] {
+      let iter = this.iterator();
+      let result = [];
+  
+      let n = Math.min(num, this.length);
+  
+      for (let i = 0; i < n; i++) {
+        let val = iter.next();
+        result.push(val.value);
+      }
+      return result;
+    }
+  
+    toArray(): T[] {
+      return [...this];
+    }
+  
+    private isDuplicate(val: T): boolean {
+      let set = new Set(this.toArray());
+      return set.has(val);
+    }
+  }
+  
+  export class LinkedListItem<T> {
+    value: T;
+    next: LinkedListItem<T>;
+    prev: LinkedListItem<T>;
+  
+    constructor(val: T) {
+      this.value = val;
+      this.next = null;
+      this.prev = null;
+    }
+  }

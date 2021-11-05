@@ -8,7 +8,10 @@ export interface CardParameter{
     Name:string
 }
 
-/** 职业魔法卡需要英雄卡在场才能释放 */
+/** 职业魔法卡需要英雄卡在场才能释放 
+ * 
+ * @魔法卡必须要实现的方法
+*/
 export interface professionalMagicCard{
     SPEEL_ABILITY(uuid:string)
     SPEEL_TARGET(target_uuid:string)
@@ -18,9 +21,9 @@ export interface professionalMagicCard{
 export class Card{
     PlayerID:PlayerID
     UUID:uuid
-    Index?:number
+    Index?:number 
     Name:string
-    Scene:ICAScene
+    Scene:ICAScene //初始化场景  卡牌所在的位置
     
     constructor(CardParameter:CardParameter,Scene:ICAScene){
         this.UUID = DoUniqueString(CardParameter.Name)

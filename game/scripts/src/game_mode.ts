@@ -1,9 +1,9 @@
-import { HandHeapsCardbuilder } from "./instance/Scenesbuilder";
+import { HandHeapsCardbuilder } from "./Build/Scenesbuilder";
 import { Cardheaps, ICASceneManager, ScenesManager } from "./instance/Scenes";
 import { Timers } from "./lib/timers";
 import { reloadable } from "./lib/tstl-utils";
+import { BattleGameLoop } from "./Manager/BattleGameLoop";
 import { ChooseHeroCardLoop, RedSelectstage } from "./System/ChooseHeroCard";
-import { GameMainloopManager } from "./System/GameMainloopManager";
 import { KV } from "./System/KV";
 
 const heroSelectionTime = 0;
@@ -15,7 +15,7 @@ declare global {
         ChooseHeroCardLoop:ChooseHeroCardLoop
         Red:CDOTAPlayer //红队
         Blue:CDOTAPlayer //蓝队
-        gamemainloop:GameMainloopManager
+        gamemainloop:BattleGameLoop
         SceneManager:ICASceneManager
         Cardheaps:Cardheaps
     }
@@ -82,7 +82,7 @@ export class GameMode {
             GameRules.Cardheaps = new Cardheaps(GameRules.Blue.GetPlayerID(),GameRules.SceneManager)
             GameRules.Cardheaps = new Cardheaps(GameRules.Red.GetPlayerID(),GameRules.SceneManager)
             GameRules.Cardheaps.Heapsinit(new HandHeapsCardbuilder())
-            require('./instance/test')
+            
         }
         if (newState == DOTA_GameState.DOTA_GAMERULES_STATE_CUSTOM_GAME_SETUP) {
             if(IsInToolsMode()){

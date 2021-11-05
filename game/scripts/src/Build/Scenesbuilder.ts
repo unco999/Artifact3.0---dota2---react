@@ -1,7 +1,8 @@
 import Queue from "../structure/Queue";
-import { Card, uuid } from "./Card";
-import { ICAScene, IHeapsCardbuilder } from "./Scenes";
+import { Card, uuid } from "../instance/Card";
+import { ICAScene, IHeapsCardbuilder } from "../instance/Scenes";
 
+/** 负责构造手牌 */
 export class HandHeapsCardbuilder implements IHeapsCardbuilder{
     data:Record<uuid,Card> = {}
 

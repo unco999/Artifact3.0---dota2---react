@@ -6,6 +6,7 @@ enum modifilertype {
 
 
 export class CAModifiler{
+    name:string
     modifilertype:modifilertype
     duration:number
 }

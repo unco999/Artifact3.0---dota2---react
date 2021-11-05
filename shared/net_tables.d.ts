@@ -10,5 +10,6 @@ declare interface CustomNetTableDeclarations {
     }
     GameMianLoop:{
         currentLoopName:{current:string}
+        smallCycle:{current:number}
     }
 }

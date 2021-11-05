@@ -4,7 +4,7 @@ import Queue from "../structure/Queue";
  * @场景类下  有手牌  上 中 下路  正在释放场景 坟墓  牌堆
  */
 
-import { Linkedlist } from "../structure/Linkedlist";
+import { LinkedList } from "../structure/Linkedlist";
 import { Card, uuid } from "./Card";
 
 type PlayerScene = Record<PlayerID, ICAScene> | {};
@@ -119,9 +119,39 @@ export class ScenesManager implements ICASceneManager{
     Cardheaps: PlayerScene = {};
     Grave: PlayerScene = {};
 
+    /**注册牌堆 */
     registerCardheapsScene(CAScene: ICAScene){
         this.Cardheaps[CAScene.PlayerID] = CAScene
     }
+
+    /**注册手牌 */
+    registerHandsScene(CAScene:ICAScene){
+        this.Hand[CAScene.PlayerID] = CAScene
+    }
+
+    /**注册上路 */
+    registerGoUpScene(CAScene:ICAScene){
+        this.GoUp[CAScene.PlayerID] = CAScene
+    }
+
+    /**注册中路 */
+    registerMidwayScene(CAScene:ICAScene){
+        this.Midway[CAScene.PlayerID] = CAScene
+    }
     
+    /**注册下路 */
+    registerLaidDownScene(CAScene:ICAScene){
+         this.Midway[CAScene.PlayerID] = CAScene
+    }
+
+    /**注册释放场景 */
+    registerReleaseScene(CAScene:ICAScene){
+        this.Midway[CAScene.PlayerID] = CAScene
+    }
+
+    /**注册坟墓 */
+    registerGraveScene(CAScene:ICAScene){
+        this.Grave[CAScene.PlayerID] = CAScene
+    }
 }
 

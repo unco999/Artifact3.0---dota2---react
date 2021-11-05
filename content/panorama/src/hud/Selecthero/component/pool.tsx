@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
+import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useNetTableKey } from "react-panorama";
 import shortid from "shortid";
 import { JsonString2Array } from "../../../Utils";
@@ -18,6 +18,7 @@ export const Pool = ({...args}) => {
     const heroid = JsonString2Array(useNetTableKey("Card_group_construction_phase","heroThatCanChooseOnTheCurrentField"))
     const heroselected = JsonString2Array(useNetTableKey("Card_group_construction_phase",'heroSelected'))
     const main = useRef<Panel|null>()
+
 
 
     useEffect(()=>{
@@ -62,6 +63,8 @@ export const Pool = ({...args}) => {
         }
     }
 
+
+
     const okbutton = (bool:boolean)=> {
         const okbutton =ConpoentDataContainer.Instance.NameGetNode("okbutton").current
         if(bool){
@@ -75,16 +78,24 @@ export const Pool = ({...args}) => {
         let bool = 1
         for(const key in heroselected){
             const heroided = heroselected[key]
-            if(heroid === +heroided){
+            if(heroid == heroided){
                 bool = 0
             }
         }
         return bool
     }
 
+    const list = useMemo(()=>{
+        const jsx_list = []
+        for(const key in heroid){
+            jsx_list.push(<Card onactivate={(Panel:Panel)=>optional(Panel)} filter={filter(heroid[key])} onload={(panel:Panel)=>{panel.Data().id = heroid[key]}} key={"pool"+ key + filter(heroid[key]) } id={heroid[key]}/>)
+        }
+        return jsx_list
+    },[heroselected,heroid])
+
 
 
     return <Panel ref={Panel=>main.current = Panel} className={"Pool"}>
-        {heroid.map((value,index)=><Card onactivate={(Panel:Panel)=>optional(Panel)} filter={filter(value)} onload={(panel:Panel)=>{panel.Data().id = value}} key={"pool"+index } id={value}/>)}
+        {list}
     </Panel>
 }

@@ -1,5 +1,5 @@
 import { HandHeapsCardbuilder } from "./Build/Scenesbuilder";
-import { Cardheaps, ICASceneManager, ScenesManager } from "./instance/Scenes";
+import { Cardheaps, Hand, ScenesManager } from "./instance/Scenes";
 import { Timers } from "./lib/timers";
 import { reloadable } from "./lib/tstl-utils";
 import { BattleGameLoop } from "./Manager/BattleGameLoop";
@@ -16,8 +16,7 @@ declare global {
         Red:CDOTAPlayer //红队
         Blue:CDOTAPlayer //蓝队
         gamemainloop:BattleGameLoop
-        SceneManager:ICASceneManager
-        Cardheaps:Cardheaps
+        SceneManager:ScenesManager
     }
 }
 
@@ -76,13 +75,19 @@ export class GameMode {
             CustomNetTables.SetTableValue("Card_group_construction_phase","team",{red:GameRules.Red.GetPlayerID(),blue:GameRules.Blue.GetPlayerID()})
             GameRules.ChooseHeroCardLoop = new ChooseHeroCardLoop() // 英雄轮询阶段
             GameRules.ChooseHeroCardLoop.SetcuurentsettingState = new RedSelectstage(1) // 暂时以红队开始选择  选牌次数为一次
+            GameRules.SceneManager = new ScenesManager()
+            const blue_Cardheaps = new Cardheaps(GameRules.Blue.GetPlayerID(),GameRules.SceneManager)
+            const red_Cardheaps = new Cardheaps(GameRules.Red.GetPlayerID(),GameRules.SceneManager)
+            blue_Cardheaps.Heapsinit(new HandHeapsCardbuilder(blue_Cardheaps,GameRules.Blue.GetPlayerID()))
+            red_Cardheaps.Heapsinit(new HandHeapsCardbuilder(red_Cardheaps,GameRules.Red.GetPlayerID()))
+            GameRules.SceneManager.SetCardheapsScene(blue_Cardheaps)
+            GameRules.SceneManager.SetCardheapsScene(red_Cardheaps)
+            const blue_Hand = new Hand(GameRules.Blue.GetPlayerID(),GameRules.SceneManager)
+            const red_Hand = new Hand(GameRules.Red.GetPlayerID(),GameRules.SceneManager)
+            GameRules.SceneManager.SetHandsScene(blue_Hand)
+            GameRules.SceneManager.SetHandsScene(red_Hand)
         }
         if (newState == DOTA_GameState.DOTA_GAMERULES_STATE_GAME_IN_PROGRESS) {
-            GameRules.SceneManager = new ScenesManager()
-            GameRules.Cardheaps = new Cardheaps(GameRules.Blue.GetPlayerID(),GameRules.SceneManager)
-            GameRules.Cardheaps = new Cardheaps(GameRules.Red.GetPlayerID(),GameRules.SceneManager)
-            GameRules.Cardheaps.Heapsinit(new HandHeapsCardbuilder())
-            
         }
         if (newState == DOTA_GameState.DOTA_GAMERULES_STATE_CUSTOM_GAME_SETUP) {
             if(IsInToolsMode()){

@@ -34,13 +34,46 @@ export class Card{
         this.Scene.addCard(this)
     }
 
-    CHANGE_SCENE(Scene:ICAScene){
-        this.Scene.Remove(this.UUID)
-        print(`${this.Name}从${this.Scene.SceneName}场景删除`)
-        this.Scene = Scene
-        this.Scene.addCard(this)
-        print(`${this.Name}添加到${this.Scene.SceneName}场景`)
+    /**是否在手牌 */
+    ishand(){
+        return this.Scene.SceneName === 'Hand'
     }
 
+    /**是否已经上场 */
+    isBattle(){
+        return this.isMideay() || this.isLaidDown || this.isReleaseScene
+    }
+
+    /**是否在中路 */
+    isMideay(){
+        return this.Scene.SceneName == 'Midway'
+    }
+
+    /**是否在下路 */
+    isLaidDown(){
+        return this.Scene.SceneName == 'LaidDown'
+    }
+
+    /**是否释法状态 */
+    isReleaseScene(){
+        return this.Scene.SceneName == 'ReleaseScene'
+    }
+
+    /**是否在牌堆 */
+    isCardheaps(){
+        return this.Scene.SceneName == 'Cardheaps'
+    }
+
+    /**是否在坟墓 */
+    isGrave(){
+        return this.Scene.SceneName == 'Grave'
+    }
+
+    /**发送事件 */
+    update(){
+        CustomGameEventManager.Send_ServerToPlayer(PlayerResource.GetPlayer(this.PlayerID),'S2C_CARD_CHANGE_SCENES',{to_scene:this.Scene.SceneName,uuid:this.UUID})
+    }
+
+    
 }
 

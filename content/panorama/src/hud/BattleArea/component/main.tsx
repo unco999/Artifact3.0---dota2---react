@@ -8,8 +8,6 @@ import { Battle_right_area } from "./battle_right_area";
 
 export const Main = () =>{
     const gameloopname = useNetTableKey("GameMianLoop",'currentLoopName')
-//
-$.Msg(CustomNetTables.GetTableValue("GameMianLoop",'smallCycle'))
 
     return <>
     { gameloopname.current == 'isbattle' &&

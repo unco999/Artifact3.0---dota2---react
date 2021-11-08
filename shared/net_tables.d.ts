@@ -12,4 +12,7 @@ declare interface CustomNetTableDeclarations {
         currentLoopName:{current:string}
         smallCycle:{current:number}
     }
+    Scenes:{
+        [string:string]:Record<number,string>
+    }
 }

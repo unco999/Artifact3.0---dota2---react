@@ -9,6 +9,7 @@ class Unit extends Card{
     HasModifiler:LinkedList<CAModifiler> = new LinkedList() //单位拥有的modiflier
     Equip:LinkedList<Equip> = new LinkedList()
 
+
     constructor(CardParameter:CardParameter,Scene:ICAScene){
         super(CardParameter,Scene);
     }
@@ -17,7 +18,7 @@ class Unit extends Card{
        return this.HasAbilities.includes(abilityname)
     }
 
-    isDebuff(){
+    isbuff(){
         return this.HasModifiler.length > 0
     }
 

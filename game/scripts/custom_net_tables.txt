@@ -4,6 +4,7 @@
     [
         "Card_group_construction_phase",
         "game_timer",
-        "GameMianLoop"
+        "GameMianLoop",
+        "Scenes"
     ]
 }

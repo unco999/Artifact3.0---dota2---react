@@ -33,7 +33,7 @@ export abstract class ChooseHerostate{
 
 export class RedSelectstage extends ChooseHerostate{
     id = "RedSelectstage"
-    time = 5
+    time = 3 
 
     constructor(optionalQuantity:number){
         super()
@@ -77,7 +77,7 @@ export class RedSelectstage extends ChooseHerostate{
 
 export class BlueSelectstage extends ChooseHerostate{
     id = "BlueSelectstage"
-    time = 5
+    time = 2
 
     constructor(optionalQuantity:number){
         super()
@@ -122,7 +122,7 @@ export class BlueSelectstage extends ChooseHerostate{
 /**分路选择 */
 export class ChoosePreGame extends ChooseHerostate{
     id = "ChoosePreGame"
-    time = 20 
+    time = 4
 
     constructor(){
         super()
@@ -236,7 +236,7 @@ export class ChoosePreGame extends ChooseHerostate{
 }
 
 export class showtime extends ChooseHerostate{
-    time = 20
+    time = 1
 
     constructor(){
         super()

@@ -1,3 +1,4 @@
+import { Cardheaps } from "../instance/Scenes";
 import { Timers } from "../lib/timers";
 import { LinkedList } from "../structure/Linkedlist";
 
@@ -7,6 +8,9 @@ enum 游戏循环{
     "伤害结算阶段",
     "商店购买阶段"
 }
+
+
+//第一回合六張牌  5小1大  第一回合結束  商店功能花錢買牌(2元买大技能 1元买小技能)  然後英雄分錄  分完路發兩張   
 
 
 export class GameLoopState{
@@ -25,8 +29,14 @@ export class GameLoopState{
     exit(){
         this.host.Sethistory = this
     }
+
     run(){
-        return 1
+        this.time--
+    }
+
+    /**根据当前回合状态给予过滤 */
+    fiter(){
+        return true
     }
 }
 
@@ -41,6 +51,7 @@ export class heroDeploymentPhase extends GameLoopState{
     }
 
     run(){
+        super.run()
         if(this.time === 0 || this.redisok && this.blueisok){
             this.host.ChangeState(new faultCard(this.host))
         }
@@ -68,11 +79,66 @@ export class faultCard extends GameLoopState{
     entry(){
         super.entry()
         print("出牌阶段进入111")
-        this.cuurent_fault_player = GameRules.Red.GetPlayerID()
+        this.cuurent_fault_player = GameRules.Red.GetPlayerID() // 将当前可以出牌设置为红队
+        print("是否有大技能入队")
+        print(GameRules.SceneManager.GetCardheapsScene(GameRules.Blue.GetPlayerID()).SceneName)
+        print(GameRules.SceneManager.GetCardheapsScene(GameRules.Blue.GetPlayerID()))
+        if(!this.host.init){
+            this.init_give_cards()
+            this.host.init = true;
+        }else{
+            this.give_cards()
+        }
+        GameRules.SceneManager.update()
     }
 
+    give_cards(){
+        for(let i = 0 ; i < 2 ; i ++){
+            for(let count = 0 ; count < 2 ; count ++){
+                if(i == 0){
+                   if(RollPercentage(50)){
+                      //50%几率抽大招
+                      GameRules.SceneManager.change_secens(GameRules.SceneManager.GetCardheapsScene(GameRules.Red.GetPlayerID()).trick_abilidy_dequeue().UUID,"HAND")
+                   }else{
+                      GameRules.SceneManager.change_secens(GameRules.SceneManager.GetCardheapsScene(GameRules.Red.GetPlayerID()).small_ability_dequeue().UUID,"HAND")
+                   }
+                }else{
+                    if(RollPercentage(50)){
+                        //50%几率抽大招
+                        GameRules.SceneManager.change_secens(GameRules.SceneManager.GetCardheapsScene(GameRules.Red.GetPlayerID()).trick_abilidy_dequeue().UUID,"HAND")
+                     }else{
+                        GameRules.SceneManager.change_secens(GameRules.SceneManager.GetCardheapsScene(GameRules.Red.GetPlayerID()).small_ability_dequeue().UUID,"HAND")
+                     }
+                }
+            }
+         }
+    }
+
+    init_give_cards(){
+        for(let i = 0 ; i < 2 ; i ++){
+           for(let count = 0 ; count < 4 ; count ++){
+               if(i == 0){
+                  GameRules.SceneManager.change_secens((GameRules.SceneManager.GetCardheapsScene(GameRules.Red.GetPlayerID())).small_ability_dequeue().UUID,"HAND")
+                  GameRules.SceneManager.change_secens((GameRules.SceneManager.GetCardheapsScene(GameRules.Red.GetPlayerID()) as Cardheaps).trick_abilidy_dequeue().UUID,"HAND")
+                }else{
+                  GameRules.SceneManager.change_secens((GameRules.SceneManager.GetCardheapsScene(GameRules.Red.GetPlayerID()) as Cardheaps).small_ability_dequeue().UUID,"HAND")
+                  GameRules.SceneManager.change_secens((GameRules.SceneManager.GetCardheapsScene(GameRules.Red.GetPlayerID()) as Cardheaps).trick_abilidy_dequeue().UUID,"HAND")  
+                }
+           }
+        } 
+    }
+
+
     run(){
-        this.time--
+        super.run()
+        if(this.time == 0){
+            if(!this.red_haveAnOperation && this.blue_haveAnOpreration){
+                GameRules.gamemainloop.ChangeState(new injurySettlementStage(GameRules.gamemainloop))
+            }else{
+                this.cuurent_fault_player = this.cuurent_fault_player == GameRules.Red.GetPlayerID() ? GameRules.Blue.GetPlayerID() : GameRules.Red.GetPlayerID()
+                this.time = 60;
+            }
+        }
         return 1
     }
 
@@ -93,9 +159,10 @@ export class BattleGameLoop{
     State:GameLoopState
     RoundCount:number = 0
     history:history = {}
+    init:boolean
 
     constructor(){
-
+        
     }
 
     //* 将游戏状态给进历史 */
@@ -111,6 +178,7 @@ export class BattleGameLoop{
         if(state.id == 游戏循环.英雄部署阶段){
             this.RoundCount++
         }
+        CustomNetTables.SetTableValue('GameMianLoop','smallCycle',{current:this.State.id})
     }
 
     set StartcuurentsettingState(state:GameLoopState){
@@ -120,5 +188,9 @@ export class BattleGameLoop{
             if(GameRules.IsGamePaused()) return 1
             return this.State.run()
         })
+    }
+
+    get filter(){
+        return this.State.fiter()
     }
 }

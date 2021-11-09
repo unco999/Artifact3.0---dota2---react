@@ -8,7 +8,7 @@ export class HandHeapsCardbuilder implements IHeapsCardbuilder{
 
     constructor(scenes:Scenes,player:PlayerID){
         for(let i = 0 ; i < 50 ; i++){
-            const card = new Card({"Index":i,"Name":math.random().toString() + ((math.random() > 0.5) ? "trick" : 2),'PlayerID':player},scenes)
+            const card = new Card({"Index":i,"Name":i.toString() + ((math.random() > 0.5) ? "trick" : 2),'PlayerID':player},scenes)
             this.data[card.UUID] = card
             GameRules.SceneManager.global_add(card.UUID,card)
         }

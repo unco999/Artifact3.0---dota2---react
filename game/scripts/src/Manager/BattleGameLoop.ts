@@ -83,13 +83,13 @@ export class faultCard extends GameLoopState{
         print("是否有大技能入队")
         print(GameRules.SceneManager.GetCardheapsScene(GameRules.Blue.GetPlayerID()).SceneName)
         print(GameRules.SceneManager.GetCardheapsScene(GameRules.Blue.GetPlayerID()))
+        GameRules.SceneManager.update()
         if(!this.host.init){
             this.init_give_cards()
             this.host.init = true;
         }else{
             this.give_cards()
         }
-        GameRules.SceneManager.update()
     }
 
     give_cards(){
@@ -99,15 +99,19 @@ export class faultCard extends GameLoopState{
                    if(RollPercentage(50)){
                       //50%几率抽大招
                       GameRules.SceneManager.change_secens(GameRules.SceneManager.GetCardheapsScene(GameRules.Red.GetPlayerID()).trick_abilidy_dequeue().UUID,"HAND")
+                      GameRules.SceneManager.change_secens(GameRules.SceneManager.GetCardheapsScene(GameRules.Blue.GetPlayerID()).trick_abilidy_dequeue().UUID,"HAND")
                    }else{
-                      GameRules.SceneManager.change_secens(GameRules.SceneManager.GetCardheapsScene(GameRules.Red.GetPlayerID()).small_ability_dequeue().UUID,"HAND")
+                    GameRules.SceneManager.change_secens(GameRules.SceneManager.GetCardheapsScene(GameRules.Red.GetPlayerID()).small_ability_dequeue().UUID,"HAND")
+                    GameRules.SceneManager.change_secens(GameRules.SceneManager.GetCardheapsScene(GameRules.Blue.GetPlayerID()).small_ability_dequeue().UUID,"HAND")
                    }
                 }else{
                     if(RollPercentage(50)){
                         //50%几率抽大招
                         GameRules.SceneManager.change_secens(GameRules.SceneManager.GetCardheapsScene(GameRules.Red.GetPlayerID()).trick_abilidy_dequeue().UUID,"HAND")
+                        GameRules.SceneManager.change_secens(GameRules.SceneManager.GetCardheapsScene(GameRules.Blue.GetPlayerID()).trick_abilidy_dequeue().UUID,"HAND")
                      }else{
                         GameRules.SceneManager.change_secens(GameRules.SceneManager.GetCardheapsScene(GameRules.Red.GetPlayerID()).small_ability_dequeue().UUID,"HAND")
+                        GameRules.SceneManager.change_secens(GameRules.SceneManager.GetCardheapsScene(GameRules.Blue.GetPlayerID()).small_ability_dequeue().UUID,"HAND")
                      }
                 }
             }

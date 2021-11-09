@@ -71,3 +71,31 @@
     y:180px;
 }
 
+.MyCard{
+    @extend .defualt;
+    width: 140px;
+    height: 190px;
+    margin: 10px;
+    border-radius: 10px;
+    opacity: 1;
+    margin-left: 40px;
+    transform: rotateY(0deg);
+    transition-duration: 0.5s;
+    transition-property: transform,opacity,pre-transform-scale2d;
+    pre-transform-scale2d:1;
+    &.MyHeaps{
+        pre-transform-scale2d: 0;
+        x:400px;
+    }
+}
+
+.defualt{
+    background-color: gradient( linear, 0% 0%, 0% 100%, from( #373d457a ), to( #4d586075 ) );
+    border-style: solid;
+    border-width: 2px;
+    padding: 4px 10px;
+    border-top-color: #555555b7;
+    border-left-color: #494949c5;
+    border-bottom-color: #333333be;
+    border-right-color: #404040cc;
+}

@@ -6,5 +6,5 @@ declare interface CustomGameEventDeclarations {
     "S2C_CARD_CHANGE_SCENES":{to_scene:string,uuid:string}
     "BLUE_SELECT_HERO_CARD":any
     "RED_SELECT_HERO_CARD":any
-    "S2C_CARD_TO_HAND":{[UUID:string]:string} //卡牌到手牌  返回值是要到达的场景
+    "S2C_CARD_TO_HAND":string[] //卡牌到手牌  返回值是要到达的场景 一个uuid的数组
 }

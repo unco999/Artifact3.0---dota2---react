@@ -70,8 +70,10 @@ export class Card{
     }
 
     /**发送事件 */
-    update(){
-        CustomGameEventManager.Send_ServerToPlayer(PlayerResource.GetPlayer(this.PlayerID),'S2C_CARD_CHANGE_SCENES',{to_scene:this.Scene.SceneName,uuid:this.UUID})
+    update(to:string){
+        print("发送了场景改变事件")
+        print(this.UUID,"我當前的場景是",this.Scene.SceneName,"我要去",to)
+        CustomGameEventManager.Send_ServerToAllClients('S2C_CARD_CHANGE_SCENES',{to_scene:to,uuid:this.UUID})
     }
 
     

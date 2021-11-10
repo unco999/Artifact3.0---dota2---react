@@ -6,6 +6,7 @@ import Queue from "../structure/Queue";
 
 import { LinkedList } from "../structure/Linkedlist";
 import { Card, uuid } from "./Card";
+import { Timers } from "../lib/timers";
 
 type PlayerScene = Record<number, Scenes> ;
 
@@ -33,8 +34,12 @@ export interface IHeapsCardbuilder {
 export class Scenes implements ICAScene{
     SceneName: string;
     CaSceneManager: ScenesManager;
-    CardPool: Record<string, Card> = {};    
+    CardPool: Record<uuid, Card> = {};    
     PlayerID: PlayerID;
+
+    getIndex(Card:Card){
+        return 
+    }
 
     constructor(CaSceneManager:ScenesManager){
         this.CaSceneManager = CaSceneManager
@@ -45,8 +50,8 @@ export class Scenes implements ICAScene{
     }
 
     addCard(Card: Card): Card {
-        this.CardPool[Card.UUID] = Card;
         Card.Scene = this
+        this.CardPool[Card.UUID] = Card;
         return Card;
     }
 
@@ -93,6 +98,7 @@ export class Cardheaps extends Scenes {
     trickCard:Queue
     HeapsCount = 25;  //牌堆生成牌
 
+
     constructor(PlayerID: PlayerID, ICASceneManager: ScenesManager) {
         super(ICASceneManager)
         this.PlayerID = PlayerID
@@ -108,7 +114,6 @@ export class Cardheaps extends Scenes {
     /**小技能出队 */
     small_ability_dequeue():Card{
         const card =  this.CardQueue.dequeue() as Card
-        print("打印ID",card.UUID)
         this.CardPool[card.UUID] = null
         return card
     }
@@ -116,7 +121,6 @@ export class Cardheaps extends Scenes {
     /**大招出队*/
     trick_abilidy_dequeue():Card{
         const card =  this.trickCard.dequeue() as Card
-        print("打印ID",card.UUID)
         this.CardPool[card.UUID] = null
         return card
     }
@@ -128,11 +132,34 @@ export class Cardheaps extends Scenes {
 /**手牌区 */
 export class Hand extends Scenes{
     SceneName = 'Hand'
+    Cardlinked:LinkedList<Card> = new LinkedList()
 
     constructor(PlayerID: PlayerID, ICASceneManager: ScenesManager) {
         super(ICASceneManager)
         this.PlayerID = PlayerID
         ICASceneManager.SetHandsScene(this);
+    }
+
+    addCard(Card:Card){
+        this.CardPool[Card.UUID] = Card
+        Card.Scene = this
+        this.Cardlinked.prepend(Card)
+        Card.Index = this.Cardlinked.length
+        return Card
+    }
+
+    Remove(uuid:uuid){
+        super.Remove(uuid)
+        this.Cardlinked.remove(this.CardPool[uuid])
+        let index = 0
+        for(const card of this.Cardlinked){
+            index++
+            card.Index = index
+        }
+    }
+
+    update_uuid(){
+        return this.Cardlinked.toArray()
     }
 
 
@@ -156,9 +183,21 @@ export class ScenesManager{
     }
 
     register_game_event(){
+        //測試模式下每10秒打印棋局
+        // if(IsInToolsMode()){
+        //     Timers.CreateTimer(()=>{
+        //         print("红色")
+        //         DeepPrintTable(this.GetHandsScene(GameRules.Red.GetPlayerID()).update_uuid())
+        //         DeepPrintTable(this.GetCardheapsScene(GameRules.Red.GetPlayerID()).update_uuid())
+        //         print("蓝色")
+        //         DeepPrintTable(this.GetHandsScene(GameRules.Blue.GetPlayerID()).update_uuid())
+        //         DeepPrintTable(this.GetCardheapsScene(GameRules.Blue.GetPlayerID()).update_uuid())
+        //         return 10
+        //     },[])
+        // }
         CustomGameEventManager.RegisterListener("C2S_CARD_CHANGE_SCENES",(_,event)=>{
             if(!GameRules.gamemainloop.filter) return;
-            this.change_secens(event.uuid,event.to_scene,1)
+            this.change_secens(event.uuid,event.to_scene)
             if(this.All[event.uuid]){
                 this.All[event.uuid].update(event.to_scene)
             }
@@ -211,17 +250,15 @@ export class ScenesManager{
     }
 
     /**牌改变场景*/
-    change_secens(uuid:string,to:string,index:number){
+    change_secens(uuid:string,to:string){
         const card = this.All[uuid]
         const playerid = card.PlayerID
 
         switch(to){
             case 'HAND':{
-                this.All[uuid].Scene.Remove(uuid)
-                this.All[uuid].Index
-                this.All[uuid].update("HAND")
-                this.All[uuid].index = index
+                this.All[uuid].Scene.Remove(uuid)   
                 this.GetHandsScene(playerid).addCard(card)
+                this.All[uuid].update("HAND")
                 break;
             }
             case 'MIDWAY':{
@@ -231,7 +268,6 @@ export class ScenesManager{
                 break;
             }
         }
-
     }
 
     SetCardheapsScene(Scene:Cardheaps){

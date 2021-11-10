@@ -8,7 +8,7 @@ export class HandHeapsCardbuilder implements IHeapsCardbuilder{
 
     constructor(scenes:Scenes,player:PlayerID){
         for(let i = 0 ; i < 50 ; i++){
-            const card = new Card({"Index":i,"Name":i.toString() + ((math.random() > 0.5) ? "trick" : 2),'PlayerID':player},scenes)
+            const card = new Card({"Index":i,"Name":i.toString() + ((math.random() > 0.2) ? "trick" : 2),'PlayerID':player},scenes)
             this.data[card.UUID] = card
             GameRules.SceneManager.global_add(card.UUID,card)
         }
@@ -20,8 +20,11 @@ export class HandHeapsCardbuilder implements IHeapsCardbuilder{
 
     newqueue(): Queue {
         const newQueue = new Queue()
-        for(const key in this.data){
-            newQueue.enqueue(this.data[key])
+        for(const uuid in this.data){
+            print("newQueueuuid",uuid)
+            if(!this.data[uuid].Name.includes("trick")){
+                  newQueue.enqueue(this.data[uuid])
+            }
         }
         return newQueue
     }
@@ -30,6 +33,7 @@ export class HandHeapsCardbuilder implements IHeapsCardbuilder{
         const newQueue = new Queue
         for(const uuid in this.data){
            if(this.data[uuid].Name.includes("trick")){
+              print("dazhao tirick",uuid)
               newQueue.enqueue(this.data[uuid])
            }
         }

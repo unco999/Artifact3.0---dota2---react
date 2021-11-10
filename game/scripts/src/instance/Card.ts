@@ -26,13 +26,14 @@ export class Card{
     Scene:ICAScene //初始化场景  卡牌所在的位置
     
     constructor(CardParameter:CardParameter,Scene:ICAScene){
-        this.UUID = DoUniqueString(GetSystemTimeMS().toString())
+        this.UUID = DoUniqueString(GetSystemTime())
         this.Name = CardParameter.Name
         this.Index = CardParameter.Index
         this.PlayerID = CardParameter.PlayerID
         this.Scene = Scene
         this.Scene.addCard(this)
         this.register_gameevent()
+        print("创造了",this.UUID)
     }
 
     /**注冊原子級別的事件 */
@@ -43,10 +44,6 @@ export class Card{
                     CustomGameEventManager.Send_ServerToAllClients("S2C_GET_CARD",{Name:this.Name,Index:this.Index,uuid:this.UUID})   
             }
         })
-    }
-
-    set index(index:number){
-        this.Index = index 
     }
 
     /**是否在手牌 */

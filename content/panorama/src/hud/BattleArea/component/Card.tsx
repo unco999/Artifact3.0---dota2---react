@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useMachine } from '@xstate/react';
 import { createMachine } from 'xstate';
 import { useGameEvent, useNetTableKey } from "react-panorama";
-import { JsonString2Array } from "../../../Utils";
+import { JsonString2Array, JsonString2Arraystrt0 } from "../../../Utils";
 import shortid from "shortid";
 
 export enum state{
@@ -43,19 +43,29 @@ const Machine = createMachine({
  
 export const Card = (props:{index:number,uuid:string}) => {
     const ref = useRef<Panel|null>()//
+    const [state,setstate] = useState<{Name:string,Index:number,uuid:string}>({Name:'null',Index:-1,uuid:'null'})
     const [xstate,send] = useMachine(Machine,{
         actions:{
             heaps_entry:()=>{ref.current?.AddClass('MyHeaps')},
-            hand_entry:()=>{$.Msg("進入了手牌模式");ref.current?.AddClass('Hand' + props.index)},
+            hand_entry:()=>{
+                const id = GameEvents.Subscribe("S2C_GET_CARD",(event)=>{
+                    setstate(event)
+                    $.Msg("当前卡牌状态",state)
+                    ref.current?.AddClass("MyHand"+ state.Index)
+                    GameEvents.Unsubscribe(id)
+                })
+                GameEvents.SendCustomGameEventToServer("C2S_GET_CARD",{uuid:props.uuid})
+            
+            },
         }
     })
 
+
     useGameEvent("S2C_CARD_CHANGE_SCENES",(event)=>{
-        $.Msg("傳來數據",event.uuid)
-        $.Msg(event.uuid.indexOf(props.uuid))
         if(props.uuid != event.uuid) return
         $.Msg("有牌可以操作")
-        send("to"+event)
+        $.Msg(event.uuid,"uuid要去",event.to_scene)
+        send("to"+event.to_scene)
     },[])
 
     return <DOTAHeroImage ref={Panel => ref.current = Panel} heroimagestyle={'portrait'} heroid={1 as HeroID} className={'MyCard'}/>
@@ -70,14 +80,9 @@ export const CardContext = () => {
         const myCardheaps = CustomNetTables.GetTableValue('Scenes','Cardheaps'+ team.red)
         const Hand = CustomNetTables.GetTableValue('Scenes','Hand'+Players.GetLocalPlayer())
         const myheaps = JsonString2Array(myCardheaps)
-        $.Msg("打印數組")
-        $.Msg(myheaps)
         setmyheaps(myheaps)
     },[])
 
-    useEffect(()=>{
-        $.Msg("面板創建時間")
-    },[])
 
     return <Panel>
         {myheaps.map((uuid,index)=><Card key={shortid.generate()} index={index} uuid={uuid}/>)}

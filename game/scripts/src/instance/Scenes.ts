@@ -27,7 +27,7 @@ export interface ICAScene {
 export interface IHeapsCardbuilder {
     generator(): Record<uuid, Card>;
     newqueue():Queue;
-    // newtrickCard():Queue
+    newtrickCard():Queue
 }
 
 export class Scenes implements ICAScene{
@@ -102,7 +102,7 @@ export class Cardheaps extends Scenes {
     Heapsinit(HeapsCardbuilder: IHeapsCardbuilder) {
         this.CardPool = HeapsCardbuilder.generator();
         this.CardQueue = HeapsCardbuilder.newqueue();
-        // this.trickCard = HeapsCardbuilder.newtrickCard();
+        this.trickCard = HeapsCardbuilder.newtrickCard();
     }
 
     /**小技能出队 */
@@ -151,14 +151,25 @@ export class ScenesManager{
     private Grave: PlayerScene = {};
 
 
+    constructor(){
+        this.register_game_event()
+    }
+
     register_game_event(){
         CustomGameEventManager.RegisterListener("C2S_CARD_CHANGE_SCENES",(_,event)=>{
             if(!GameRules.gamemainloop.filter) return;
-            this.change_secens(event.uuid,event.to_scene)
+            this.change_secens(event.uuid,event.to_scene,1)
             if(this.All[event.uuid]){
                 this.All[event.uuid].update(event.to_scene)
             }
             this.update()
+        })
+        CustomGameEventManager.RegisterListener("C2S_GET_SCENES",(_,event)=>{
+            switch(event.get){
+                case "HAND":{
+                    CustomGameEventManager.Send_ServerToAllClients("S2C_GET_SCENES",this.GetHandsScene(event.PlayerID).update_uuid())
+                }
+            }
         })
     }
 
@@ -183,9 +194,6 @@ export class ScenesManager{
         // const RedLReleaseScene = this.ReleaseScene[GameRules.Red.GetPlayerID()].update_uuid()
         // const BlueGrave = this.Grave[GameRules.Blue.GetPlayerID()].update_uuid()
         // const RedGrave = this.Grave[GameRules.Red.GetPlayerID()].update_uuid()
-        print("打印排毒is是是")
-        DeepPrintTable(BlueCardheaps)
-        DeepPrintTable(RedCardheaps)
         CustomNetTables.SetTableValue('Scenes',"Cardheaps" + GameRules.Blue.GetPlayerID(),BlueCardheaps)
         CustomNetTables.SetTableValue('Scenes',"Cardheaps" + GameRules.Red.GetPlayerID(),RedCardheaps)
         CustomNetTables.SetTableValue('Scenes',"Hand" + GameRules.Blue.GetPlayerID(),BlueHand)
@@ -203,16 +211,17 @@ export class ScenesManager{
     }
 
     /**牌改变场景*/
-    change_secens(uuid:string,to:string){
+    change_secens(uuid:string,to:string,index:number){
         const card = this.All[uuid]
         const playerid = card.PlayerID
 
         switch(to){
             case 'HAND':{
                 this.All[uuid].Scene.Remove(uuid)
+                this.All[uuid].Index
                 this.All[uuid].update("HAND")
+                this.All[uuid].index = index
                 this.GetHandsScene(playerid).addCard(card)
-                print(this.All[uuid].Scene.SceneName)
                 break;
             }
             case 'MIDWAY':{
@@ -254,8 +263,6 @@ export class ScenesManager{
     }
 
     GetCardheapsScene(PlayerID:PlayerID):Cardheaps{
-        print("打印當前牌库")
-        DeepPrintTable(this.Cardheaps[PlayerID])
         return this.Cardheaps[PlayerID] as Cardheaps
     }
 

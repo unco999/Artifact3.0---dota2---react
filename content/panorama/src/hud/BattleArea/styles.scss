@@ -1,4 +1,4 @@
-.Battle_center_area_main{
+.battle_center_area_main{
     width:720px;
     height:720px;
     background-color: black;
@@ -84,10 +84,18 @@
     transition-property: transform,opacity,pre-transform-scale2d;
     pre-transform-scale2d:1;
     &.MyHeaps{
-        pre-transform-scale2d: 0;
+        pre-transform-scale2d:0;
         x:400px;
     }
+    @for $i from 1 to 5 {
+        &.MYHand#{$i}{
+            @extend .defualt;
+            width: 170px;
+            height: 260px;
+        }
+    }
 }
+
 
 .defualt{
     background-color: gradient( linear, 0% 0%, 0% 100%, from( #373d457a ), to( #4d586075 ) );
@@ -98,4 +106,8 @@
     border-left-color: #494949c5;
     border-bottom-color: #333333be;
     border-right-color: #404040cc;
+}
+
+.Card_container_parent{
+
 }

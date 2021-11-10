@@ -140,7 +140,6 @@ export class ChoosePreGame extends ChooseHerostate{
                 print("蓝色已经选过分路了")
                 return
             }
-            DeepPrintTable(event)
             let count = 0
             let bool:boolean = true
             let table:Array<number>
@@ -180,7 +179,6 @@ export class ChoosePreGame extends ChooseHerostate{
                 print("收到了正确的英雄分路表   现在打印数据")
                 this.host.Setbranch(event.branch,event.PlayerID)
                 print("收到分路请求")
-                DeepPrintTable(this.host.herobrach)
                 if(event.PlayerID == GameRules.Red.GetPlayerID()){
                     this.host.redbranchisok = true
                     CustomNetTables.SetTableValue('Card_group_construction_phase','brachisok',{[GameRules.Red.GetPlayerID()]:true})
@@ -288,7 +286,6 @@ export class ChooseHeroCardLoop{
             this.herobrach[GameRules.Red.GetPlayerID() as number] = {0:[],1:[],2:[]}
             this.herobrach[GameRules.Blue.GetPlayerID() as number] = {0:[],1:[],2:[]}
             print("初始化分路成功")
-            DeepPrintTable(this.herobrach)
             this.RegisterGameEvent()
             CustomNetTables.SetTableValue("GameMianLoop","currentLoopName",{current:"selectherocard"})
     }
@@ -366,9 +363,7 @@ export class ChooseHeroCardLoop{
                print("路线为",brach)
                print("自动分路",branchdata[brach][index])
                print("打印当前数组")
-               DeepPrintTable(this.herobrach[PlayerID])
                print("打印数据")
-               DeepPrintTable(branchdata)
                if(this.herobrach[PlayerID][Number(brach) as unknown as 0|1|2] == undefined) this.herobrach[PlayerID][Number(brach) as unknown as 0|1|2] = []
                this.herobrach[PlayerID][Number(brach) as unknown as 0|1|2].push(branchdata[brach][index])
             }

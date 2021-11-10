@@ -21,7 +21,6 @@ export const Okbutton = (props:{playerteam:{red:number,blue:number},loopdata: {
 
 
     const button = () => {
-        $.Msg("输出选择",branchok)
         if(branchok && branchok[Players.GetLocalPlayer()]) return;
         const Pool = ConpoentDataContainer.Instance.NameGetNode('Pool').current
         if(props?.gameloopname?.current == 'branch'){
@@ -36,7 +35,6 @@ export const Okbutton = (props:{playerteam:{red:number,blue:number},loopdata: {
             //        }
             //    }
             // }
-            $.Msg(data)
             GameEvents.SendCustomGameEventToServer("HERO_BRANCH_OVER",{branch:data})
             return
         }

@@ -2,12 +2,12 @@ import Queue from "../structure/Queue";
 import { Card, uuid } from "../instance/Card";
 import { ICAScene, IHeapsCardbuilder, Scenes } from "../instance/Scenes";
 
-/** 负责构造手牌 */
+/** 负责构造牌堆 */
 export class HandHeapsCardbuilder implements IHeapsCardbuilder{
     data:Record<uuid,Card> = {}
 
     constructor(scenes:Scenes,player:PlayerID){
-        for(let i = 0 ; i < 50 ; i++){
+        for(let i = 0 ; i < 25 ; i++){
             const card = new Card({"Index":i,"Name":i.toString() + ((math.random() > 0.2) ? "trick" : 2),'PlayerID':player},scenes)
             this.data[card.UUID] = card
             GameRules.SceneManager.global_add(card.UUID,card)

@@ -49,14 +49,16 @@
 
 .my_Card{
     @extend .defualt;
-    width: 140px;
-    height: 190px;
+    width: 180px;
+    height: 260px;
     border-radius: 10px;
     opacity: 1;
     transition-duration: 0.5s;
     transition-property: transform,opacity,pre-transform-scale2d,position;
     pre-transform-scale2d:1;
     &.my_Heaps{
+        width: 120px;
+        height: 170px;
         pre-transform-scale2d:1;
         x:1300px;
         y:900px;
@@ -64,11 +66,17 @@
     }
     @for $i from 1 to 6 {
         &.my_Hand#{$i}{
-            x:700px + $i * 50px;
-            y:1000px;
+            x:500px + $i * 100px;
+            y:900px;
             z-index:$i;
             &.my_hover{
                 transform: translateY(-200px);
+                &.drag{
+                    z-index: 15;
+                    animation-name: rotation;
+                    animation-duration: 1s;
+                    animation-iteration-count: infinite;
+                }
             }
         }
     }
@@ -84,6 +92,8 @@
     transition-property: transform,opacity,pre-transform-scale2d,position;
     pre-transform-scale2d:1;
     &.you_Heaps{
+        width: 120px;
+        height: 170px;
         pre-transform-scale2d:1;
         x:500px;
         y:0px;
@@ -106,8 +116,8 @@
     height: 300px;  
     @for $i from 1 to 6 {
         &.my_Hand#{$i}{
-            x:700px + $i * 50px;
-            y:800px;
+            x:500px + $i * 100px;
+            y:900px;
             z-index: $i+1;
         }
     }   
@@ -133,7 +143,7 @@
     Panel{
         width: 100px;
         height: 170px;
-        margin-left: 10px;
+        margin-left: 20px;
         border: 1px solid white;
     }
 }
@@ -145,8 +155,18 @@
     Panel{
         width: 100px;
         height: 170px;
-        margin-left: 10px;
+        margin-left: 20px;
         border: 1px solid white;
+    }
+}
+
+.my_Arrow_tip{
+    opacity: 1;
+    transition-duration: 0.2s;
+    transition-property: opacity;
+    z-index: 16;
+    &.hide{
+        opacity: 0;
     }
 }
 
@@ -158,4 +178,6 @@
 .root{
     width: 100%;
     height: 100%;
+    background-color: rgba(0, 0, 0, 0.658);
 }
+

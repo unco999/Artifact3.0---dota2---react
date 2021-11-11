@@ -92,7 +92,7 @@ export class Scenes implements ICAScene{
 
 /**牌堆 需要Heapsinit */
 export class Cardheaps extends Scenes {
-    SceneName = "Cardheaps"
+    SceneName = "HEAPS"
     CardPool: Record<uuid, Card> = {};
     CardQueue:Queue;
     trickCard:Queue
@@ -131,7 +131,7 @@ export class Cardheaps extends Scenes {
 
 /**手牌区 */
 export class Hand extends Scenes{
-    SceneName = 'Hand'
+    SceneName = 'HAND'
     Cardlinked:LinkedList<Card> = new LinkedList()
 
     constructor(PlayerID: PlayerID, ICASceneManager: ScenesManager) {
@@ -162,6 +162,50 @@ export class Hand extends Scenes{
         return this.Cardlinked.toArray()
     }
 
+}
+
+export class Midway extends Scenes{
+    SceneName = 'MIDWAY'
+
+    constructor(PlayerID: PlayerID, ICASceneManager: ScenesManager) {
+        super(ICASceneManager)
+        this.PlayerID = PlayerID
+        ICASceneManager.SetMidwayScene(this);
+    }
+
+    Brachinit(HeapsCardbuilder: IHeapsCardbuilder) {
+        print("初始化成功")
+    }
+
+}
+
+export class GoUp extends Scenes{
+    SceneName = 'GOUP'
+
+    constructor(PlayerID: PlayerID, ICASceneManager: ScenesManager) {
+        super(ICASceneManager)
+        this.PlayerID = PlayerID
+        ICASceneManager.SetGoUpScene(this);
+    }
+
+    Brachinit(HeapsCardbuilder: IHeapsCardbuilder) {
+        print("初始化成功")
+    }
+
+}
+
+export class LaidDown extends Scenes{
+    SceneName = 'LAIDDOWN'
+
+    constructor(PlayerID: PlayerID, ICASceneManager: ScenesManager) {
+        super(ICASceneManager)
+        this.PlayerID = PlayerID
+        ICASceneManager.SetLaidDownScene(this);
+    }
+
+    Brachinit(HeapsCardbuilder: IHeapsCardbuilder) {
+        print("初始化成功")
+    }
 
 }
 
@@ -217,6 +261,14 @@ export class ScenesManager{
         this.All[uuid] = Card
     }
 
+    getAll(PlyaerID:PlayerID){
+        const table = []
+        for(const uuid in this.All){
+            this.All[uuid].PlayerID == PlyaerID && table.push(uuid)
+        }
+        return table
+    }
+
     /** 更新网表至nettable */
     update(){
         const BlueCardheaps = this.GetCardheapsScene(GameRules.Blue.GetPlayerID()).update_uuid()
@@ -225,8 +277,8 @@ export class ScenesManager{
         const RedHand = this.GetHandsScene(GameRules.Red.GetPlayerID()).update_uuid()
         // const BlueGoUp = this.GoUp[GameRules.Blue.GetPlayerID()].update_uuid()
         // const RedGoUp = this.GoUp[GameRules.Red.GetPlayerID()].update_uuid()
-        // const BlueMidway = this.Midway[GameRules.Blue.GetPlayerID()].update_uuid()
-        // const RedMidway = this.Midway[GameRules.Red.GetPlayerID()].update_uuid()
+        const BlueMidway = this.Midway[GameRules.Blue.GetPlayerID()].update_uuid()
+        const RedMidway = this.Midway[GameRules.Red.GetPlayerID()].update_uuid()
         // const BlueLaidDown = this.LaidDown[GameRules.Blue.GetPlayerID()].update_uuid()
         // const RedLaidDown = this.LaidDown[GameRules.Red.GetPlayerID()].update_uuid()
         // const BlueReleaseScene = this.ReleaseScene[GameRules.Blue.GetPlayerID()].update_uuid()
@@ -237,16 +289,19 @@ export class ScenesManager{
         CustomNetTables.SetTableValue('Scenes',"Cardheaps" + GameRules.Red.GetPlayerID(),RedCardheaps)
         CustomNetTables.SetTableValue('Scenes',"Hand" + GameRules.Blue.GetPlayerID(),BlueHand)
         CustomNetTables.SetTableValue('Scenes',"Hand" + GameRules.Red.GetPlayerID(),RedHand)
+        CustomNetTables.SetTableValue("Scenes","ALL"+GameRules.Red.GetPlayerID(),this.getAll(GameRules.Red.GetPlayerID()))
+        CustomNetTables.SetTableValue("Scenes","ALL"+GameRules.Blue.GetPlayerID(),this.getAll(GameRules.Blue.GetPlayerID()))
         // CustomNetTables.SetTableValue('Scenes',"GoUp" + GameRules.Blue.GetPlayerID(),BlueGoUp)
         // CustomNetTables.SetTableValue('Scenes',"GoUp" + GameRules.Red.GetPlayerID(),RedGoUp)
-        // CustomNetTables.SetTableValue('Scenes',"BlueMidway" + GameRules.Blue.GetPlayerID(),BlueMidway)
-        // CustomNetTables.SetTableValue('Scenes',"RedMidway" + GameRules.Red.GetPlayerID(),RedMidway)
+        CustomNetTables.SetTableValue('Scenes',"BlueMidway" + GameRules.Blue.GetPlayerID(),BlueMidway)
+        CustomNetTables.SetTableValue('Scenes',"RedMidway" + GameRules.Red.GetPlayerID(),RedMidway)
         // CustomNetTables.SetTableValue('Scenes',"LaidDown" + GameRules.Blue.GetPlayerID(),BlueLaidDown)
         // CustomNetTables.SetTableValue('Scenes',"LaidDown" + GameRules.Red.GetPlayerID(),RedLaidDown)
         // CustomNetTables.SetTableValue('Scenes',"ReleaseScene" + GameRules.Blue.GetPlayerID(),BlueReleaseScene)
         // CustomNetTables.SetTableValue('Scenes',"ReleaseScene" + GameRules.Red.GetPlayerID(),RedLReleaseScene)
         // CustomNetTables.SetTableValue('Scenes',"Grave" + GameRules.Blue.GetPlayerID(),BlueGrave)
         // CustomNetTables.SetTableValue('Scenes',"Grave" + GameRules.Red.GetPlayerID(),RedGrave)
+        print("打印")
     }
 
     /**牌改变场景*/

@@ -1,3 +1,4 @@
+import { brachinitbuild } from "../Build/brachinitbuild";
 import { Cardheaps } from "../instance/Scenes";
 import { Timers } from "../lib/timers";
 import { LinkedList } from "../structure/Linkedlist";
@@ -80,14 +81,12 @@ export class faultCard extends GameLoopState {
         super.entry();
         this.cuurent_fault_player = GameRules.Red.GetPlayerID(); // 将当前可以出牌设置为红队
         GameRules.SceneManager.update();
-        Timers.CreateTimer(1,()=>{
-            if (!this.host.init) {
-                this.init_give_cards();
-                this.host.init = true;
-            } else {
-                this.give_cards();
-            }
-        })
+        if (!this.host.init) {
+            this.init_give_cards();
+            this.host.init = true;
+        } else {
+            this.give_cards();
+        }
     }
 
 
@@ -115,6 +114,8 @@ export class faultCard extends GameLoopState {
 
     /**第一次进入手牌初始化 */
     init_give_cards() {
+        new brachinitbuild(GameRules.Blue.GetPlayerID()) //注册brach
+        new brachinitbuild(GameRules.Red.GetPlayerID())
         for (let i = 0; i < 2; i++) {
             for (let count = 0; count < 5; count++) {
                 if (i == 0) {

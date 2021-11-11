@@ -6,7 +6,7 @@ import { ICAScene } from "./Scenes";
 
 
 
-class Unit extends Card{
+export class Unit extends Card{
     HasAbilities:string[] // 单位拥有的技能字符串
     HasModifiler:LinkedList<CAModifiler> = new LinkedList() //单位拥有的modiflier
     Equip:LinkedList<Equip> = new LinkedList()

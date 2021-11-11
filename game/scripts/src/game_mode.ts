@@ -1,5 +1,6 @@
+import { brachinitbuild } from "./Build/brachinitbuild";
 import { HandHeapsCardbuilder } from "./Build/Scenesbuilder";
-import { Cardheaps, Hand, ScenesManager } from "./instance/Scenes";
+import { Cardheaps, GoUp, Hand, LaidDown, Midway, ScenesManager } from "./instance/Scenes";
 import { Timers } from "./lib/timers";
 import { reloadable } from "./lib/tstl-utils";
 import { BattleGameLoop } from "./Manager/BattleGameLoop";
@@ -86,6 +87,18 @@ export class GameMode {
             const red_Hand = new Hand(GameRules.Red.GetPlayerID(),GameRules.SceneManager)
             GameRules.SceneManager.SetHandsScene(blue_Hand)
             GameRules.SceneManager.SetHandsScene(red_Hand)
+            const blue_mid = new Midway(GameRules.Blue.GetPlayerID(),GameRules.SceneManager)
+            const red_mid = new Midway(GameRules.Red.GetPlayerID(),GameRules.SceneManager)
+            GameRules.SceneManager.SetMidwayScene(blue_mid)
+            GameRules.SceneManager.SetMidwayScene(red_mid)
+            const blue_goup = new GoUp(GameRules.Blue.GetPlayerID(),GameRules.SceneManager)
+            const red_goup = new GoUp(GameRules.Red.GetPlayerID(),GameRules.SceneManager)
+            GameRules.SceneManager.SetGoUpScene(blue_goup)
+            GameRules.SceneManager.SetGoUpScene(red_goup)
+            const blue_down = new LaidDown(GameRules.Blue.GetPlayerID(),GameRules.SceneManager)
+            const red_down = new LaidDown(GameRules.Red.GetPlayerID(),GameRules.SceneManager)
+            GameRules.SceneManager.SetLaidDownScene(blue_down)
+            GameRules.SceneManager.SetLaidDownScene(red_down)
         }
         if (newState == DOTA_GameState.DOTA_GAMERULES_STATE_GAME_IN_PROGRESS) {
         }

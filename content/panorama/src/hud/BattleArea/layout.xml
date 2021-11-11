@@ -8,6 +8,7 @@
     <styles>
         <include src="s2r://panorama/styles/dotastyles.vcss_c" />
         <include src="./styles.scss" />
+        <include src="./animation.css" />
     </styles>
     <Panel class="root" hittest="false" />
 </root>

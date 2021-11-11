@@ -40,8 +40,7 @@ export class Card{
     register_gameevent(){
         CustomGameEventManager.RegisterListener('C2S_GET_CARD',(_,event)=>{
             if( event.uuid == this.UUID){
-                    print(event.uuid,"這個UUID發送數據給UI了")
-                    CustomGameEventManager.Send_ServerToAllClients("S2C_GET_CARD",{Name:this.Name,Index:this.Index,uuid:this.UUID})   
+                    CustomGameEventManager.Send_ServerToAllClients("S2C_GET_CARD",{Name:this.Name,Index:this.Index,uuid:this.UUID,Scene:this.Scene.SceneName})   
             }
         })
     }

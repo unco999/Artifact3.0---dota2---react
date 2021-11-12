@@ -33,6 +33,7 @@ const Machine = createMachine({
         hand:{
             entry:'hand_entry',
             on:{toHAND:"hand",toHEAPS:"heaps",toMIDWAY:"midway",toGOUP:"goup",toLAIDDOWN:"laiddown"},
+            exit:"hand_exit"
         },
         midway:{
             entry:'midway_entry',
@@ -45,11 +46,12 @@ const Machine = createMachine({
             exit:"goup_exit"
         },
         laiddown:{
-            entry:'laidown_entry',
+            entry:'laiddown_entry',
             on:{toHAND:"hand",toHEAPS:"heaps",toMIDWAY:"midway",toGOUP:"goup",toLAIDDOWN:"laiddown"},
             exit:"laiddown_exit"
         },
         discharge:{
+            //
         },
         equipment:{
         },
@@ -64,7 +66,7 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
     const prefix = useMemo(()=> props.owner == Players.GetLocalPlayer() ? "my_" : "you_",[props])
     const ref = useRef<Panel|null>()
     const dummy = useRef<Panel|null>()
-    const [state,setstate] = useState<{Name:string,Index:number,uuid:string,Scene?:string}>({Name:'null',Index:-1,uuid:'null'})
+    const [state,setstate] = useState<{Id:string,Index:number,uuid:string,Scene?:string}>({Id:'null',Index:-1,uuid:'null'})
     const isdrag = useRef<boolean>(false)
     const [xstate,send] = useMachine(Machine,{
         actions:{
@@ -81,26 +83,28 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
             },
             midway_entry:()=>{
                 $.Msg("有牌去了中路")
-                dummyoperate('add',prefix + 'Midway');
+                dummyoperate('add',prefix + 'Midway' + state.Index);
             },
             midway_exit:()=>{
-                dummyoperate('remove',prefix + 'Midway');
+                dummyoperate('remove',prefix + 'Midway' + state.Index );
             },
             goup_entry:()=>{
-                dummyoperate('add',prefix + 'Goup');
+                dummyoperate('add',prefix + 'Goup' + state.Index );
             },
             goup_exit:()=>{
-                dummyoperate('remove',prefix + 'Goup');
+                dummyoperate('remove',prefix + 'Goup' + state.Index);
             },
             laiddown_entry:()=>{
-                dummyoperate('add',prefix + 'Laiddown');
+                $.Msg("有牌去了下路",prefix + 'Laiddown' + state.Index)
+                dummyoperate('add',prefix + 'Laiddown' + state.Index);
             },
             laiddown_exit:()=>{
-                dummyoperate('remove',prefix + 'Laiddown');
+                dummyoperate('remove',prefix + 'Laiddown' + state.Index);
             },
             heaps_entry:()=>{dummyoperate('add',prefix + 'Heaps');},
             heaps_exit:()=>{dummyoperate('remove',prefix + "Heaps")},
             hand_entry:useCallback(()=>{ dummyoperate('add',prefix + "Hand"+ state.Index)},[state]),
+            hand_exit:useCallback(()=>{ dummyoperate('remove',prefix + "Hand"+ state.Index)},[state]),
         }
     })
 
@@ -148,6 +152,7 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
         dragCallbacks.offsetX = 0; 
         dragCallbacks.offsetY = 0;
         changeCoordinates()
+        splitOptionalPrompt()
         $.Msg("OnDragStart")
     }
 
@@ -157,9 +162,23 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
         isdrag.current = false
         const container = ConpoentDataContainer.Instance.NameGetNode("arrow_tip").current
         container.close()
-        
+        closeOptionalPrompt()
     }
 
+    /**打开分路可选提示器 */
+    const splitOptionalPrompt = () =>{
+        GameEvents.SendCustomGameEventToServer("C2S_GET_CANSPACE",{})
+    }
+
+    /**关闭分路可选提示器 */
+    const closeOptionalPrompt = () =>{
+        const containeise = ConpoentDataContainer.Instance.NameGetGrap("Card_container").current
+        containeise.forEach(container=>{
+            container.close()
+        })
+    }
+
+    //**打开指引提示器 */
     const changeCoordinates = () => {
         //
        const container = ConpoentDataContainer.Instance.NameGetNode("arrow_tip").current
@@ -191,8 +210,20 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
 
     return <>
             <Panel draggable={true} ref={Panel => dummy.current = Panel} onmouseover={()=>ref.current?.AddClass(prefix+"hover")} onmouseout={()=>ref.current?.RemoveClass(prefix+"hover")} className={prefix+"Carddummy"}/>
-            <DOTAHeroImage ref={Panel => ref.current = Panel}  heroimagestyle={'portrait'} heroid={1 as HeroID} className={prefix+'Card'}>
-            </DOTAHeroImage>
+            <Panel ref={Panel => ref.current = Panel}  className={prefix+'Card'} >
+                  <DOTAHeroImage heroimagestyle={'portrait'} heroid={1 as HeroID} />
+                  <Panel className={"threeDimensional"}>
+                <Panel className={"attack"}>
+                    <Label text={1}/>
+                </Panel>
+                <Panel className={"arrmor"}>
+                    <Label text={2}/>
+                </Panel>
+                <Panel className={"heal"}>
+                    <Label text={3}/>
+                </Panel>
+            </Panel>
+            </Panel>
            </>
 }
 

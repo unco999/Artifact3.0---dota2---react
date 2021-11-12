@@ -5,7 +5,7 @@ export type uuid = string;
 export interface CardParameter{
     PlayerID:PlayerID
     Index:number
-    Name:string
+    Id:string
 }
 
 /** 职业魔法卡需要英雄卡在场才能释放 
@@ -22,12 +22,12 @@ export class Card{
     PlayerID:PlayerID
     UUID:uuid
     Index?:number 
-    Name:string
+    Id:string
     Scene:ICAScene //初始化场景  卡牌所在的位置
     
     constructor(CardParameter:CardParameter,Scene:ICAScene){
         this.UUID = DoUniqueString(GetSystemTime())
-        this.Name = CardParameter.Name
+        this.Id = CardParameter.Id
         this.Index = CardParameter.Index
         this.PlayerID = CardParameter.PlayerID
         this.Scene = Scene
@@ -40,7 +40,7 @@ export class Card{
     register_gameevent(){
         CustomGameEventManager.RegisterListener('C2S_GET_CARD',(_,event)=>{
             if( event.uuid == this.UUID){
-                    CustomGameEventManager.Send_ServerToAllClients("S2C_GET_CARD",{Name:this.Name,Index:this.Index,uuid:this.UUID,Scene:this.Scene.SceneName})   
+                    CustomGameEventManager.Send_ServerToAllClients("S2C_GET_CARD",{Id:this.Id,Index:this.Index,uuid:this.UUID,Scene:this.Scene.SceneName})   
             }
         })
     }

@@ -56,6 +56,11 @@
     transition-duration: 0.5s;
     transition-property: transform,opacity,pre-transform-scale2d,position;
     pre-transform-scale2d:1;
+    DOTAHeroImage{
+        width: 80%;
+        height: 80%;
+        align:center top;
+    }
     &.my_Heaps{
         width: 120px;
         height: 170px;
@@ -63,6 +68,30 @@
         x:1300px;
         y:900px;
         transform: rotateZ(90deg);
+    }
+    @for $i from 1 to 6{
+        &.my_Midway#{$i}{
+            width: 100px;
+            height: 170px;
+            x:770px + $i * 50px;
+            y:546px;
+        }
+    }
+    @for $i from 1 to 6{
+        &.my_Goup#{$i}{
+            width: 100px;
+            height: 170px;
+            x:-80px + $i * 120px;
+            y:546px;
+        }
+    }
+    @for $i from 1 to 6{
+        &.my_Laiddown#{$i}{
+            width: 100px;
+            height: 170px;
+            x:1200px + $i * 120px;
+            y:546px;
+        }
     }
     @for $i from 1 to 6 {
         &.my_Hand#{$i}{
@@ -81,6 +110,36 @@
         }
     }
 }
+.threeDimensional{  
+    width: 100%;
+    height: 35px;
+    flow-children:right;
+    vertical-align: bottom;
+    background-color: #000000b9;
+    Label{
+        color: white;
+        text-shadow: 0px 0px 1px 1.5 black;
+        align:center center;
+    }
+    .attack{
+        margin-left: 2.5px;
+        width: 30%;
+        height: 80%;
+        background-color: #e7881abd;
+        border:1px solid black;
+        border-radius: 5px;
+        vertical-align: center;
+    }
+    .arrmor{
+        @extend .attack;
+        background-color: #397ea7bd;
+    }
+    .heal{
+        @extend .attack;
+        background-color: #db4e6dbd;
+    }
+}
+
 
 .you_Card{
     @extend .defualt;
@@ -99,6 +158,30 @@
         y:0px;
         transform: rotateZ(90deg);
     }
+    @for $i from 1 to 6{
+        &.you_Midway#{$i}{
+            width: 100px;
+            height: 170px;
+            x:770px + $i * 50px;
+            y:361px;
+        }
+    }
+    @for $i from 1 to 6{
+        &.you_Goup#{$i}{
+            width: 100px;
+            height: 170px;
+            x:-80px + $i * 120px;
+            y:361px;
+        }
+    }
+    @for $i from 1 to 6{
+        &.you_Laiddown#{$i}{
+            width: 100px;
+            height: 170px;
+            x:1200px + $i * 120px;
+            y:361px;
+        }
+    }
     @for $i from 1 to 6 {
         &.you_Hand#{$i}{
             x:700px + $i * 50px;
@@ -109,6 +192,7 @@
             }
         }
     }
+    
 }
 
 .my_Carddummy{
@@ -140,7 +224,7 @@
     flow-children:right;
     vertical-align: top;
     horizontal-align:center;
-    Panel{
+    .up{
         width: 100px;
         height: 170px;
         margin-left: 20px;
@@ -148,15 +232,18 @@
     }
 }
 
+
+
 .you_Card_container_parent{
     flow-children:right;
     vertical-align: bottom;
     horizontal-align:center;
-    Panel{
+    &.active{
         width: 100px;
         height: 170px;
         margin-left: 20px;
         border: 1px solid white;
+        box-shadow: 3px 3px 15px 5.0 black;
     }
 }
 
@@ -178,6 +265,11 @@
 .root{
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.658);
+    // background-color: rgb(0, 0, 0);
+}
+
+@mixin BATTLESTATE {
+    width: 100px;
+    height: 170px;
 }
 

@@ -1,43 +1,70 @@
 import Queue from "../structure/Queue";
 import { Card, uuid } from "../instance/Card";
-import { ICAScene, IHeapsCardbuilder, Scenes } from "../instance/Scenes";
+import { Cardheaps, GoUp, Hand, ICAScene, IHeapsCardbuilder, LaidDown, Midway, Scenes, ScenesManager } from "../instance/Scenes";
+import { Unit } from "../instance/Unit";
+import { filter } from "../System/filter";
+import { SmallSkill, TrickSkill } from "../instance/Ability";
 
 /** 负责构造牌堆 */
-export class HandHeapsCardbuilder implements IHeapsCardbuilder{
-    data:Record<uuid,Card> = {}
+export class ScenesBuildbehavior {
 
-    constructor(scenes:Scenes,player:PlayerID){
-        for(let i = 0 ; i < 25 ; i++){
-            const card = new Card({"Index":i,"Name":i.toString() + ((math.random() > 0.2) ? "trick" : 2),'PlayerID':player},scenes)
-            this.data[card.UUID] = card
-            GameRules.SceneManager.global_add(card.UUID,card)
-        }
-    }
-
-    generator(): Record<string, Card> {
-        return this.data
-    }
-
-    newqueue(): Queue {
-        const newQueue = new Queue()
-        for(const uuid in this.data){
-            print("newQueueuuid",uuid)
-            if(!this.data[uuid].Name.includes("trick")){
-                  newQueue.enqueue(this.data[uuid])
+    static fitler(option:string,PlayerID:PlayerID){
+        switch(option){
+            case "0":{
+                return GameRules.SceneManager.GetGoUpScene(PlayerID)
+            }
+            case "1":{
+                return GameRules.SceneManager.GetMidwayScene(PlayerID)
+            }
+            case "2":{
+                return GameRules.SceneManager.GetLaidDownScene(PlayerID)
             }
         }
-        return newQueue
     }
 
-    newtrickCard(){
-        const newQueue = new Queue
-        for(const uuid in this.data){
-           if(this.data[uuid].Name.includes("trick")){
-              print("dazhao tirick",uuid)
-              newQueue.enqueue(this.data[uuid])
-           }
-        }
-        return newQueue
+    static ScenesBuild(){
+        GameRules.SceneManager = new ScenesManager()
+        const blue_Cardheaps = new Cardheaps(GameRules.Blue.GetPlayerID(),GameRules.SceneManager)
+        const red_Cardheaps = new Cardheaps(GameRules.Red.GetPlayerID(),GameRules.SceneManager)
+        GameRules.SceneManager.SetCardheapsScene(blue_Cardheaps)
+        GameRules.SceneManager.SetCardheapsScene(red_Cardheaps)
+        const blue_Hand = new Hand(GameRules.Blue.GetPlayerID(),GameRules.SceneManager)
+        const red_Hand = new Hand(GameRules.Red.GetPlayerID(),GameRules.SceneManager)
+        GameRules.SceneManager.SetHandsScene(blue_Hand)
+        GameRules.SceneManager.SetHandsScene(red_Hand)
+        const blue_mid = new Midway(GameRules.Blue.GetPlayerID(),GameRules.SceneManager)
+        const red_mid = new Midway(GameRules.Red.GetPlayerID(),GameRules.SceneManager)
+        GameRules.SceneManager.SetMidwayScene(blue_mid)
+        GameRules.SceneManager.SetMidwayScene(red_mid)
+        const blue_goup = new GoUp(GameRules.Blue.GetPlayerID(),GameRules.SceneManager)
+        const red_goup = new GoUp(GameRules.Red.GetPlayerID(),GameRules.SceneManager)
+        GameRules.SceneManager.SetGoUpScene(blue_goup)
+        GameRules.SceneManager.SetGoUpScene(red_goup)
+        const blue_down = new LaidDown(GameRules.Blue.GetPlayerID(),GameRules.SceneManager)
+        const red_down = new LaidDown(GameRules.Red.GetPlayerID(),GameRules.SceneManager)
+        GameRules.SceneManager.SetLaidDownScene(blue_down)
+        GameRules.SceneManager.SetLaidDownScene(red_down)
+        print("初始化場景完毕")
     }
+
+    static HeapsBuild(PlayerID:PlayerID){
+        for(let i = 0 ; i < 25 ; i++){
+            const SamallSkillcard = new SmallSkill({"Index":i,Id:i.toString() + ((math.random() > 0.2) ? "trick" : 2),'PlayerID':PlayerID},GameRules.SceneManager.GetCardheapsScene(PlayerID))
+            const TrickSkillcard = new TrickSkill({"Index":i,Id:i.toString() + ((math.random() > 0.2) ? "trick" : 2),'PlayerID':PlayerID},GameRules.SceneManager.GetCardheapsScene(PlayerID))
+            GameRules.SceneManager.global_add(SamallSkillcard.UUID,SamallSkillcard)
+            GameRules.SceneManager.global_add(TrickSkillcard.UUID,TrickSkillcard)
+        }
+        const _table = CustomNetTables.GetTableValue("Card_group_construction_phase",'herobrach')[PlayerID.toString()]
+        for(const brach in _table){
+            for(const index in _table[brach]){
+                const unit = new Unit({Id:_table[brach][index],Index:-1,PlayerID:PlayerID},this.fitler(brach,PlayerID))
+                GameRules.SceneManager.global_add(unit.UUID,unit)
+            }
+        }
+    }
+
+
+    
+
 
 }

@@ -1,4 +1,4 @@
-import { brachinitbuild } from "../Build/brachinitbuild";
+import { ScenesBuildbehavior } from "../Build/Scenesbuilder";
 import { Cardheaps } from "../instance/Scenes";
 import { Timers } from "../lib/timers";
 import { LinkedList } from "../structure/Linkedlist";
@@ -80,10 +80,13 @@ export class faultCard extends GameLoopState {
     entry() {
         super.entry();
         this.cuurent_fault_player = GameRules.Red.GetPlayerID(); // 将当前可以出牌设置为红队
-        GameRules.SceneManager.update();
         if (!this.host.init) {
+            ScenesBuildbehavior.ScenesBuild()
+            ScenesBuildbehavior.HeapsBuild(GameRules.Red.GetPlayerID())
+            ScenesBuildbehavior.HeapsBuild(GameRules.Blue.GetPlayerID())
             this.init_give_cards();
             this.host.init = true;
+            GameRules.SceneManager.update();
         } else {
             this.give_cards();
         }
@@ -96,16 +99,16 @@ export class faultCard extends GameLoopState {
             for (let count = 0; count < 2; count++) {
                 if (i == 0) {
                     if (RollPercentage(30)) {
-                        GameRules.SceneManager.change_secens(GameRules.SceneManager.GetCardheapsScene(GameRules.Red.GetPlayerID()).trick_abilidy_dequeue().UUID, "HAND");
+                        GameRules.SceneManager.change_secens(GameRules.SceneManager.GetCardheapsScene(GameRules.Red.GetPlayerID()).Trick_ability_dequeue().UUID, "HAND");
                     } else {
-                        GameRules.SceneManager.change_secens(GameRules.SceneManager.GetCardheapsScene(GameRules.Red.GetPlayerID()).small_ability_dequeue().UUID, "HAND");
+                        GameRules.SceneManager.change_secens(GameRules.SceneManager.GetCardheapsScene(GameRules.Red.GetPlayerID()).Small_ability_dequeue().UUID, "HAND");
                     }
                 } else {
                     if (RollPercentage(50)) {
                         //50%几率抽大招
-                        GameRules.SceneManager.change_secens(GameRules.SceneManager.GetCardheapsScene(GameRules.Blue.GetPlayerID()).trick_abilidy_dequeue().UUID, "HAND");
+                        GameRules.SceneManager.change_secens(GameRules.SceneManager.GetCardheapsScene(GameRules.Blue.GetPlayerID()).Trick_ability_dequeue().UUID, "HAND");
                     } else {
-                        GameRules.SceneManager.change_secens(GameRules.SceneManager.GetCardheapsScene(GameRules.Blue.GetPlayerID()).small_ability_dequeue().UUID, "HAND");
+                        GameRules.SceneManager.change_secens(GameRules.SceneManager.GetCardheapsScene(GameRules.Blue.GetPlayerID()).Small_ability_dequeue().UUID, "HAND");
                     }
                 }
             }
@@ -114,23 +117,21 @@ export class faultCard extends GameLoopState {
 
     /**第一次进入手牌初始化 */
     init_give_cards() {
-        new brachinitbuild(GameRules.Blue.GetPlayerID()) //注册brach
-        new brachinitbuild(GameRules.Red.GetPlayerID())
         for (let i = 0; i < 2; i++) {
             for (let count = 0; count < 5; count++) {
                 if (i == 0) {
                     if (RollPercentage(30)) {
                         //50%几率抽大招
-                        GameRules.SceneManager.change_secens(GameRules.SceneManager.GetCardheapsScene(GameRules.Red.GetPlayerID()).trick_abilidy_dequeue().UUID, "HAND");
+                        GameRules.SceneManager.change_secens(GameRules.SceneManager.GetCardheapsScene(GameRules.Red.GetPlayerID()).Trick_ability_dequeue().UUID, "HAND");
                     } else {
-                        GameRules.SceneManager.change_secens(GameRules.SceneManager.GetCardheapsScene(GameRules.Red.GetPlayerID()).small_ability_dequeue().UUID, "HAND");
+                        GameRules.SceneManager.change_secens(GameRules.SceneManager.GetCardheapsScene(GameRules.Red.GetPlayerID()).Small_ability_dequeue().UUID, "HAND");
                     }
                 } else {
                     if (RollPercentage(30)) {
                         //50%几率抽大招
-                        GameRules.SceneManager.change_secens(GameRules.SceneManager.GetCardheapsScene(GameRules.Blue.GetPlayerID()).trick_abilidy_dequeue().UUID, "HAND");
+                        GameRules.SceneManager.change_secens(GameRules.SceneManager.GetCardheapsScene(GameRules.Blue.GetPlayerID()).Trick_ability_dequeue().UUID, "HAND");
                     } else {
-                        GameRules.SceneManager.change_secens(GameRules.SceneManager.GetCardheapsScene(GameRules.Blue.GetPlayerID()).small_ability_dequeue().UUID, "HAND");
+                        GameRules.SceneManager.change_secens(GameRules.SceneManager.GetCardheapsScene(GameRules.Blue.GetPlayerID()).Small_ability_dequeue().UUID, "HAND");
                     }
                 }
             }

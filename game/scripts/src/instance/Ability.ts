@@ -2,7 +2,7 @@ import { Card, CardParameter, professionalMagicCard } from "./Card";
 import { ICAScene } from "./Scenes";
 
 /**职业魔法卡实例 */
-export class professionalAbilityCard extends Card implements professionalMagicCard{
+export class AbilityCard extends Card implements professionalMagicCard{
 
     constructor(CardParameter:CardParameter,Scene:ICAScene){
         super(CardParameter,Scene)
@@ -19,3 +19,17 @@ export class professionalAbilityCard extends Card implements professionalMagicCa
     }
 
 }
+
+export class TrickSkill extends AbilityCard{
+
+    constructor(CardParameter:CardParameter,Scene:ICAScene){
+        super(CardParameter,Scene)
+    }
+} 
+
+export class SmallSkill extends AbilityCard{
+    
+    constructor(CardParameter:CardParameter,Scene:ICAScene){
+        super(CardParameter,Scene)
+    }
+} 

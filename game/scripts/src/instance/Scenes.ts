@@ -7,6 +7,7 @@ import Queue from "../structure/Queue";
 import { LinkedList } from "../structure/Linkedlist";
 import { Card, uuid } from "./Card";
 import { Timers } from "../lib/timers";
+import { SmallSkill, TrickSkill } from "./Ability";
 
 type PlayerScene = Record<number, Scenes> ;
 
@@ -93,9 +94,6 @@ export class Scenes implements ICAScene{
 /**牌堆 需要Heapsinit */
 export class Cardheaps extends Scenes {
     SceneName = "HEAPS"
-    CardPool: Record<uuid, Card> = {};
-    CardQueue:Queue;
-    trickCard:Queue
     HeapsCount = 25;  //牌堆生成牌
 
 
@@ -105,26 +103,33 @@ export class Cardheaps extends Scenes {
         ICASceneManager.SetCardheapsScene(this);
     }
 
-    Heapsinit(HeapsCardbuilder: IHeapsCardbuilder) {
-        this.CardPool = HeapsCardbuilder.generator();
-        this.CardQueue = HeapsCardbuilder.newqueue();
-        this.trickCard = HeapsCardbuilder.newtrickCard();
-    }
 
-    /**小技能出队 */
-    small_ability_dequeue():Card{
-        const card =  this.CardQueue.dequeue() as Card
-        this.CardPool[card.UUID] = null
-        return card
-    }
-    
-    /**大招出队*/
-    trick_abilidy_dequeue():Card{
-        const card =  this.trickCard.dequeue() as Card
-        this.CardPool[card.UUID] = null
+
+    /**随机抽取一张小技能 */
+    Trick_ability_dequeue():Card{
+        const uuids = Object.keys(this.CardPool)
+        let card:Card
+        while(!card){
+           const extract = this.CardPool[uuids[RandomInt(0,uuids.length)]]
+           if(extract instanceof SmallSkill){
+               card = extract
+           }
+        }
         return card
     }
 
+        /**随机抽取一张大技能 */
+    Small_ability_dequeue():Card{
+            const uuids = Object.keys(this.CardPool)
+            let card:Card
+            while(!card){
+               const extract = this.CardPool[uuids[RandomInt(0,uuids.length)]]
+               if(extract instanceof TrickSkill){
+                   card = extract
+               }
+            }
+            return card
+    }
     
 
 }
@@ -133,6 +138,7 @@ export class Cardheaps extends Scenes {
 export class Hand extends Scenes{
     SceneName = 'HAND'
     Cardlinked:LinkedList<Card> = new LinkedList()
+    CardList:Array<Card|-1> = [-1,-1,-1,-1,-1]
 
     constructor(PlayerID: PlayerID, ICASceneManager: ScenesManager) {
         super(ICASceneManager)
@@ -166,6 +172,7 @@ export class Hand extends Scenes{
 
 export class Midway extends Scenes{
     SceneName = 'MIDWAY'
+    CardList:Array<Card|-1> = [-1,-1,-1,-1,-1]
 
     constructor(PlayerID: PlayerID, ICASceneManager: ScenesManager) {
         super(ICASceneManager)
@@ -173,14 +180,69 @@ export class Midway extends Scenes{
         ICASceneManager.SetMidwayScene(this);
     }
 
-    Brachinit(HeapsCardbuilder: IHeapsCardbuilder) {
-        print("初始化成功")
+    //获得一个当前可选的空位
+    getbrachoption(){
+        let mark = [-1,-1];
+        for(let index = 0 ; index < 2 ; index ++){
+            if(this.CardList[3 - index] === -1){
+                if(mark[0] == -1){
+                    mark[0] = 3 - index
+                    if(mark[0] != -1 && mark[1] != -1){
+                        break;
+                    }
+                }else if (mark[1] == -1){
+                    mark[0] = 3 - index
+                    if(mark[0] != -1 && mark[1] != -1){
+                        break;
+                    }
+                }
+            }
+            if(this.CardList[3 + index] === -1){
+                if(mark[0] == -1){
+                    mark[0] = 3 - index
+                    if(mark[0] != -1 && mark[1] != -1){
+                        break;
+                    }
+                }else if (mark[1] == -1){
+                    mark[0] = 3 - index
+                    if(mark[0] != -1 && mark[1] != -1){
+                        break;
+                    }
+                }
+            }
+        }
+        return mark
     }
+
+    addCard(card:Card){
+        let mark;
+        for(let index = 0 ; index < 2 ; index ++){
+            if(this.CardList[3 - index] === -1){
+                mark = 3 - index
+                break;
+            }
+            if(this.CardList[3 + index] === -1){
+                mark = 3 + index
+                break
+            }
+        }
+        if(!mark){
+            print("自动加入路线出错了")
+        }
+        card.Index = mark
+        this.CardList[mark + 1] = card
+        this.CardPool[card.UUID] = card
+        return card
+    }
+
+
+
 
 }
 
 export class GoUp extends Scenes{
     SceneName = 'GOUP'
+    CardList:Array<Card|-1> = [-1,-1,-1,-1,-1]
 
     constructor(PlayerID: PlayerID, ICASceneManager: ScenesManager) {
         super(ICASceneManager)
@@ -188,14 +250,68 @@ export class GoUp extends Scenes{
         ICASceneManager.SetGoUpScene(this);
     }
 
-    Brachinit(HeapsCardbuilder: IHeapsCardbuilder) {
-        print("初始化成功")
+    getbrachoption(){
+        let mark = [-1,-1];
+        for(let index = 0 ; index < 2 ; index ++){
+            if(this.CardList[3 - index] === -1){
+                if(mark[0] == -1){
+                    mark[0] = 3 - index
+                    if(mark[0] != -1 && mark[1] != -1){
+                        break;
+                    }
+                }else if (mark[1] == -1){
+                    mark[0] = 3 - index
+                    if(mark[0] != -1 && mark[1] != -1){
+                        break;
+                    }
+                }
+            }
+            if(this.CardList[3 + index] === -1){
+                if(mark[0] == -1){
+                    mark[0] = 3 - index
+                    if(mark[0] != -1 && mark[1] != -1){
+                        break;
+                    }
+                }else if (mark[1] == -1){
+                    mark[0] = 3 - index
+                    if(mark[0] != -1 && mark[1] != -1){
+                        break;
+                    }
+                }
+            }
+        }
+        return mark
     }
+
+    addCard(card:Card){
+        let mark;
+        for(let index = 0 ; index < 2 ; index ++){
+            if(this.CardList[3 - index] === -1){
+                mark = 3 - index
+                print("检测到这个数值为-1",mark)
+                break;
+            }
+            if(this.CardList[3 + index] === -1){
+                print("检测到这个数值为-1",mark)
+                mark = 3 + index
+                break
+            }
+        }
+        if(!mark){
+            print("自动加入路线出错了")
+        }
+        card.Index = mark
+        this.CardList[mark + 1] = card
+        this.CardPool[card.UUID] = card
+        return card
+    }
+
 
 }
 
 export class LaidDown extends Scenes{
     SceneName = 'LAIDDOWN'
+    CardList:Array<Card|-1> = [-1,-1,-1,-1,-1]
 
     constructor(PlayerID: PlayerID, ICASceneManager: ScenesManager) {
         super(ICASceneManager)
@@ -203,9 +319,60 @@ export class LaidDown extends Scenes{
         ICASceneManager.SetLaidDownScene(this);
     }
 
-    Brachinit(HeapsCardbuilder: IHeapsCardbuilder) {
-        print("初始化成功")
+    getbrachoption(){
+        let mark = [-1,-1];
+        for(let index = 0 ; index < 2 ; index ++){
+            if(this.CardList[3 - index] === -1){
+                if(mark[0] == -1){
+                    mark[0] = 3 - index
+                    if(mark[0] != -1 && mark[1] != -1){
+                        break;
+                    }
+                }else if (mark[1] == -1){
+                    mark[0] = 3 - index
+                    if(mark[0] != -1 && mark[1] != -1){
+                        break;
+                    }
+                }
+            }
+            if(this.CardList[3 + index] === -1){
+                if(mark[0] == -1){
+                    mark[0] = 3 - index
+                    if(mark[0] != -1 && mark[1] != -1){
+                        break;
+                    }
+                }else if (mark[1] == -1){
+                    mark[0] = 3 - index
+                    if(mark[0] != -1 && mark[1] != -1){
+                        break;
+                    }
+                }
+            }
+        }
+        return mark
     }
+
+    addCard(card:Card){
+        let mark;
+        for(let index = 0 ; index < 2 ; index ++){
+            if(this.CardList[3 - index] === -1){
+                mark = 3 - index
+                break;
+            }
+            if(this.CardList[3 + index] === -1){
+                mark = 3 + index
+                break
+            }
+        }
+        if(!mark){
+            print("自动加入路线出错了")
+        }
+        card.Index = mark
+        this.CardList[mark + 1] = card
+        this.CardPool[card.UUID] = card
+        return card
+    }
+
 
 }
 
@@ -254,6 +421,21 @@ export class ScenesManager{
                 }
             }
         })
+        CustomGameEventManager.RegisterListener('C2S_GET_CANSPACE',(_,event)=>{
+            const table = {};
+            const GoUp = (this.GetGoUpScene(event.PlayerID) as GoUp).getbrachoption();
+            const LaidDown = (this.GetLaidDownScene(event.PlayerID) as LaidDown).getbrachoption();
+            const Midway = (this.GetMidwayScene(event.PlayerID) as Midway).getbrachoption();
+            table[0] = GoUp
+            table[1] = Midway
+            table[2] = LaidDown
+            CustomGameEventManager.Send_ServerToPlayer(PlayerResource.GetPlayer(event.PlayerID),"S2C_SEND_CANSPACE",table)
+        })
+    }
+
+    //**获得一个当前单位能加入的索引 */
+    getoptionbrach(){
+
     }
 
     /** 附加给全局 ALL*/
@@ -271,30 +453,18 @@ export class ScenesManager{
 
     /** 更新网表至nettable */
     update(){
-        const BlueCardheaps = this.GetCardheapsScene(GameRules.Blue.GetPlayerID()).update_uuid()
-        const RedCardheaps = this.GetCardheapsScene(GameRules.Red.GetPlayerID()).update_uuid()
-        const BlueHand = this.GetHandsScene(GameRules.Blue.GetPlayerID()).update_uuid()
-        const RedHand = this.GetHandsScene(GameRules.Red.GetPlayerID()).update_uuid()
         // const BlueGoUp = this.GoUp[GameRules.Blue.GetPlayerID()].update_uuid()
         // const RedGoUp = this.GoUp[GameRules.Red.GetPlayerID()].update_uuid()
-        const BlueMidway = this.Midway[GameRules.Blue.GetPlayerID()].update_uuid()
-        const RedMidway = this.Midway[GameRules.Red.GetPlayerID()].update_uuid()
         // const BlueLaidDown = this.LaidDown[GameRules.Blue.GetPlayerID()].update_uuid()
         // const RedLaidDown = this.LaidDown[GameRules.Red.GetPlayerID()].update_uuid()
         // const BlueReleaseScene = this.ReleaseScene[GameRules.Blue.GetPlayerID()].update_uuid()
         // const RedLReleaseScene = this.ReleaseScene[GameRules.Red.GetPlayerID()].update_uuid()
         // const BlueGrave = this.Grave[GameRules.Blue.GetPlayerID()].update_uuid()
         // const RedGrave = this.Grave[GameRules.Red.GetPlayerID()].update_uuid()
-        CustomNetTables.SetTableValue('Scenes',"Cardheaps" + GameRules.Blue.GetPlayerID(),BlueCardheaps)
-        CustomNetTables.SetTableValue('Scenes',"Cardheaps" + GameRules.Red.GetPlayerID(),RedCardheaps)
-        CustomNetTables.SetTableValue('Scenes',"Hand" + GameRules.Blue.GetPlayerID(),BlueHand)
-        CustomNetTables.SetTableValue('Scenes',"Hand" + GameRules.Red.GetPlayerID(),RedHand)
         CustomNetTables.SetTableValue("Scenes","ALL"+GameRules.Red.GetPlayerID(),this.getAll(GameRules.Red.GetPlayerID()))
         CustomNetTables.SetTableValue("Scenes","ALL"+GameRules.Blue.GetPlayerID(),this.getAll(GameRules.Blue.GetPlayerID()))
         // CustomNetTables.SetTableValue('Scenes',"GoUp" + GameRules.Blue.GetPlayerID(),BlueGoUp)
         // CustomNetTables.SetTableValue('Scenes',"GoUp" + GameRules.Red.GetPlayerID(),RedGoUp)
-        CustomNetTables.SetTableValue('Scenes',"BlueMidway" + GameRules.Blue.GetPlayerID(),BlueMidway)
-        CustomNetTables.SetTableValue('Scenes',"RedMidway" + GameRules.Red.GetPlayerID(),RedMidway)
         // CustomNetTables.SetTableValue('Scenes',"LaidDown" + GameRules.Blue.GetPlayerID(),BlueLaidDown)
         // CustomNetTables.SetTableValue('Scenes',"LaidDown" + GameRules.Red.GetPlayerID(),RedLaidDown)
         // CustomNetTables.SetTableValue('Scenes',"ReleaseScene" + GameRules.Blue.GetPlayerID(),BlueReleaseScene)
@@ -317,9 +487,21 @@ export class ScenesManager{
                 break;
             }
             case 'MIDWAY':{
-                this.All[uuid].Scene.Remove(uuid)
-                this.GetMidwayScene(playerid).addCard(card)
+                this.All[uuid].Scene.Remove(uuid);
+                (this.GetMidwayScene(playerid) as Midway).addCard(card)
                 this.All[uuid].update('MIDWAY')
+                break;
+            }
+            case 'LAIDDOWN':{
+                this.All[uuid].Scene.Remove(uuid)
+                (this.GetLaidDownScene(playerid) as LaidDown).addCard(card)
+                this.All[uuid].update('LAIDDOWN')
+                break;
+            }
+            case 'GOUP':{
+                this.All[uuid].Scene.Remove(uuid)
+                (this.GetGoUpScene(playerid) as GoUp).addCard(card)
+                this.All[uuid].update('GOUP')
                 break;
             }
         }

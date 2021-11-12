@@ -9,6 +9,9 @@ declare interface CustomGameEventDeclarations {
     "S2C_CARD_TO_HAND":string[] //卡牌到手牌  返回值是要到达的场景 一个uuid的数组
     "C2S_GET_SCENES":{get:string}
     "S2C_GET_SCENES":string[]
-    "S2C_GET_CARD":{Name:string,Index:number,uuid:string,Scene:string}
+    "S2C_GET_CARD":{Id:string,Index:number,uuid:string,Scene:string}
     "C2S_GET_CARD":{uuid:string}
+    "C2S_GET_CANSPACE":{} //查询我方可占空格
+    "S2C_SEND_CANSPACE":Record<string,string[]>
+    "C2C_CLOSE_MY_BRACH_TIP":{};
 }

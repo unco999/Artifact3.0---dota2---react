@@ -155,6 +155,7 @@ export class Hand extends Scenes{
     }
 
     Remove(uuid:uuid){
+        print("运行了手牌规则")
         super.Remove(uuid)
         this.Cardlinked.remove(this.CardPool[uuid])
         let index = 0
@@ -162,6 +163,7 @@ export class Hand extends Scenes{
             index++
             card.Index = index
         }
+        print("手炮规则运行完毕")
     }
 
     update_uuid(){
@@ -181,47 +183,34 @@ export class Midway extends Scenes{
     }
 
     //获得一个当前可选的空位
+ 
     getbrachoption(){
-        let mark = [-1,-1];
-        for(let index = 0 ; index < 2 ; index ++){
-            if(this.CardList[3 - index] === -1){
+        let mark = [-1,-1]
+        for(let index = 0; index <= 3 ; index ++){
+            if(this.CardList[2 - index] == -1   ){
                 if(mark[0] == -1){
-                    mark[0] = 3 - index
-                    if(mark[0] != -1 && mark[1] != -1){
-                        break;
-                    }
-                }else if (mark[1] == -1){
-                    mark[0] = 3 - index
-                    if(mark[0] != -1 && mark[1] != -1){
-                        break;
-                    }
+                    mark[0] = 2 - index + 1
                 }
             }
-            if(this.CardList[3 + index] === -1){
-                if(mark[0] == -1){
-                    mark[0] = 3 - index
-                    if(mark[0] != -1 && mark[1] != -1){
-                        break;
-                    }
-                }else if (mark[1] == -1){
-                    mark[0] = 3 - index
-                    if(mark[0] != -1 && mark[1] != -1){
-                        break;
-                    }
+            if(this.CardList[2 + index] == -1){
+                if(mark[1] == -1){
+                    mark[1] = 2 + index + 1
                 }
+            }
+            if(mark[0] != -1 && mark[1] != -1){
+                 break;
             }
         }
         return mark
     }
-
     addCard(card:Card){
         let mark;
-        for(let index = 0 ; index < 2 ; index ++){
-            if(this.CardList[3 - index] === -1){
+        for(let index = 0 ; index < 4 ; index ++){
+            if(this.CardList[3 - index - 1] === -1){
                 mark = 3 - index
                 break;
             }
-            if(this.CardList[3 + index] === -1){
+            if(this.CardList[3 + index - 1] === -1){
                 mark = 3 + index
                 break
             }
@@ -230,12 +219,21 @@ export class Midway extends Scenes{
             print("自动加入路线出错了")
         }
         card.Index = mark
-        this.CardList[mark + 1] = card
+        this.CardList[mark] = card
         this.CardPool[card.UUID] = card
         return card
     }
 
-
+    Remove(uuid){
+        for(let index = 1 ; index < this.CardList.length ; index ++){
+           if(this.CardList[index] instanceof Card){
+               if((this.CardList[index] as Card).UUID == uuid){
+                   this.CardList[index] = -1
+                   this.CardPool[uuid] = null
+               }
+           }
+        }
+     }
 
 
 }
@@ -250,34 +248,22 @@ export class GoUp extends Scenes{
         ICASceneManager.SetGoUpScene(this);
     }
 
+
     getbrachoption(){
-        let mark = [-1,-1];
-        for(let index = 0 ; index < 2 ; index ++){
-            if(this.CardList[3 - index] === -1){
+        let mark = [-1,-1]
+        for(let index = 0; index <= 3 ; index ++){
+            if(this.CardList[2 - index] == -1   ){
                 if(mark[0] == -1){
-                    mark[0] = 3 - index
-                    if(mark[0] != -1 && mark[1] != -1){
-                        break;
-                    }
-                }else if (mark[1] == -1){
-                    mark[0] = 3 - index
-                    if(mark[0] != -1 && mark[1] != -1){
-                        break;
-                    }
+                    mark[0] = 2 - index + 1
                 }
             }
-            if(this.CardList[3 + index] === -1){
-                if(mark[0] == -1){
-                    mark[0] = 3 - index
-                    if(mark[0] != -1 && mark[1] != -1){
-                        break;
-                    }
-                }else if (mark[1] == -1){
-                    mark[0] = 3 - index
-                    if(mark[0] != -1 && mark[1] != -1){
-                        break;
-                    }
+            if(this.CardList[2 + index] == -1){
+                if(mark[1] == -1){
+                    mark[1] = 2 + index + 1
                 }
+            }
+            if(mark[0] != -1 && mark[1] != -1){
+                 break;
             }
         }
         return mark
@@ -285,14 +271,12 @@ export class GoUp extends Scenes{
 
     addCard(card:Card){
         let mark;
-        for(let index = 0 ; index < 2 ; index ++){
-            if(this.CardList[3 - index] === -1){
+        for(let index = 0 ; index < 4 ; index ++){
+            if(this.CardList[3 - index - 1] === -1){
                 mark = 3 - index
-                print("检测到这个数值为-1",mark)
                 break;
             }
-            if(this.CardList[3 + index] === -1){
-                print("检测到这个数值为-1",mark)
+            if(this.CardList[3 + index - 1] === -1){
                 mark = 3 + index
                 break
             }
@@ -301,11 +285,21 @@ export class GoUp extends Scenes{
             print("自动加入路线出错了")
         }
         card.Index = mark
-        this.CardList[mark + 1] = card
+        this.CardList[mark] = card
         this.CardPool[card.UUID] = card
         return card
     }
 
+    Remove(uuid){
+        for(let index = 1 ; index < this.CardList.length ; index ++){
+           if(this.CardList[index] instanceof Card){
+               if((this.CardList[index] as Card).UUID == uuid){
+                   this.CardList[index] = -1
+                   this.CardPool[uuid] = null
+               }
+           }
+        }
+     }
 
 }
 
@@ -320,46 +314,34 @@ export class LaidDown extends Scenes{
     }
 
     getbrachoption(){
-        let mark = [-1,-1];
-        for(let index = 0 ; index < 2 ; index ++){
-            if(this.CardList[3 - index] === -1){
+        let mark = [-1,-1]
+        for(let index = 0; index <= 3 ; index ++){
+            if(this.CardList[2 - index] == -1   ){
                 if(mark[0] == -1){
-                    mark[0] = 3 - index
-                    if(mark[0] != -1 && mark[1] != -1){
-                        break;
-                    }
-                }else if (mark[1] == -1){
-                    mark[0] = 3 - index
-                    if(mark[0] != -1 && mark[1] != -1){
-                        break;
-                    }
+                    mark[0] = 2 - index + 1
                 }
             }
-            if(this.CardList[3 + index] === -1){
-                if(mark[0] == -1){
-                    mark[0] = 3 - index
-                    if(mark[0] != -1 && mark[1] != -1){
-                        break;
-                    }
-                }else if (mark[1] == -1){
-                    mark[0] = 3 - index
-                    if(mark[0] != -1 && mark[1] != -1){
-                        break;
-                    }
+            if(this.CardList[2 + index] == -1){
+                if(mark[1] == -1){
+                    mark[1] = 2 + index + 1
                 }
+            }
+            if(mark[0] != -1 && mark[1] != -1){
+                 break;
             }
         }
         return mark
     }
 
+    
     addCard(card:Card){
         let mark;
-        for(let index = 0 ; index < 2 ; index ++){
-            if(this.CardList[3 - index] === -1){
+        for(let index = 0 ; index < 4 ; index ++){
+            if(this.CardList[3 - index - 1] === -1){
                 mark = 3 - index
                 break;
             }
-            if(this.CardList[3 + index] === -1){
+            if(this.CardList[3 + index - 1] === -1){
                 mark = 3 + index
                 break
             }
@@ -368,12 +350,22 @@ export class LaidDown extends Scenes{
             print("自动加入路线出错了")
         }
         card.Index = mark
-        this.CardList[mark + 1] = card
+        this.CardList[mark] = card
         this.CardPool[card.UUID] = card
         return card
     }
 
-
+    Remove(uuid){
+        for(let index = 1 ; index < this.CardList.length ; index ++){
+           if(this.CardList[index] instanceof Card){
+               if((this.CardList[index] as Card).UUID == uuid){
+                   this.CardList[index] = -1
+                   this.CardPool[uuid] = null
+               }
+           }
+        }
+        print("成功删除场景HAND")
+    }
 }
 
 
@@ -408,11 +400,10 @@ export class ScenesManager{
         // }
         CustomGameEventManager.RegisterListener("C2S_CARD_CHANGE_SCENES",(_,event)=>{
             if(!GameRules.gamemainloop.filter) return;
-            this.change_secens(event.uuid,event.to_scene)
             if(this.All[event.uuid]){
-                this.All[event.uuid].update(event.to_scene)
+                this.All[event.uuid].Index = event.index
             }
-            this.update()
+            this.change_secens(event.uuid,event.to_scene)
         })
         CustomGameEventManager.RegisterListener("C2S_GET_SCENES",(_,event)=>{
             switch(event.get){
@@ -429,6 +420,8 @@ export class ScenesManager{
             table[0] = GoUp
             table[1] = Midway
             table[2] = LaidDown
+            print("分路打印")
+            DeepPrintTable(table)
             CustomGameEventManager.Send_ServerToPlayer(PlayerResource.GetPlayer(event.PlayerID),"S2C_SEND_CANSPACE",table)
         })
     }
@@ -481,25 +474,26 @@ export class ScenesManager{
 
         switch(to){
             case 'HAND':{
-                this.All[uuid].Scene.Remove(uuid)   
+                print(this.All[uuid].Scene.SceneName);
+                this.All[uuid].Scene.Remove(uuid);
                 this.GetHandsScene(playerid).addCard(card)
                 this.All[uuid].update("HAND")
                 break;
             }
             case 'MIDWAY':{
-                this.All[uuid].Scene.Remove(uuid);
+               this.All[uuid].Scene.Remove(uuid);
                 (this.GetMidwayScene(playerid) as Midway).addCard(card)
                 this.All[uuid].update('MIDWAY')
                 break;
             }
             case 'LAIDDOWN':{
-                this.All[uuid].Scene.Remove(uuid)
+                this.All[uuid].Scene.Remove(uuid);
                 (this.GetLaidDownScene(playerid) as LaidDown).addCard(card)
                 this.All[uuid].update('LAIDDOWN')
                 break;
             }
             case 'GOUP':{
-                this.All[uuid].Scene.Remove(uuid)
+                this.All[uuid].Scene.Remove(uuid);
                 (this.GetGoUpScene(playerid) as GoUp).addCard(card)
                 this.All[uuid].update('GOUP')
                 break;

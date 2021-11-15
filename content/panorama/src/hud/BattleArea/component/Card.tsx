@@ -95,7 +95,6 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
                 dummyoperate('remove',prefix + 'Goup' + state.Index);
             },
             laiddown_entry:()=>{
-                $.Msg("有牌去了下路",prefix + 'Laiddown' + state.Index)
                 dummyoperate('add',prefix + 'Laiddown' + state.Index);
             },
             laiddown_exit:()=>{
@@ -126,9 +125,7 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
 
     useGameEvent("S2C_CARD_CHANGE_SCENES",(event)=>{
         if(props.uuid != event.uuid) return
-        $.Msg("有牌可以操作")
-        $.Msg(event.uuid,"uuid要去",event.to_scene)
-        send("to"+event.to_scene)
+        send("to"+event.Scene)
     },[])
 
     //drag事件
@@ -136,9 +133,6 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
         if(xstate.value == 'hand' && props.owner == Players.GetLocalPlayer()){
             $.Msg("给板子注册了事件")
             $.Msg(dummy.current)
-            $.RegisterEventHandler( 'DragEnter', dummy.current!, OnDragEnter );
-            $.RegisterEventHandler( 'DragDrop', dummy.current!, OnDragDrop );
-            $.RegisterEventHandler( 'DragLeave', dummy.current!, OnDragLeave );
             $.RegisterEventHandler( 'DragStart', dummy.current!, OnDragStart );
             $.RegisterEventHandler( 'DragEnd',dummy.current!, OnDragEnd);
         }
@@ -148,6 +142,7 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
         isdrag.current = true
         ref.current?.AddClass('drag')
         const displayPanel = $.CreatePanel( "Panel", $.GetContextPanel(), "cache" ) as HeroImage
+        displayPanel.Data().uuid = state.uuid
         dragCallbacks.displayPanel = displayPanel;
         dragCallbacks.offsetX = 0; 
         dragCallbacks.offsetY = 0;

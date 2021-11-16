@@ -28,3 +28,21 @@
     }
 }
 
+@keyframes 'ability'{
+    0% {
+        transform:rotateX(0deg) rotateY(0deg)  rotateZ(0deg);
+    }
+    25%{
+        transform:rotateX(5deg) rotateY(-5deg)  rotateZ(0deg);
+    }
+    50%{
+        transform:rotateX(-5deg) rotateY(5deg)  rotateZ(0deg);
+    }
+    75%{
+        transform:rotateX(5deg) rotateY(-5deg)  rotateZ(0deg);
+    }
+    100%{
+        transform:rotateX(0deg) rotateY(0deg)  rotateZ(0deg);
+    }
+}
+

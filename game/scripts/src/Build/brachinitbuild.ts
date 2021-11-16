@@ -17,12 +17,6 @@ export class brachinitbuild implements IHeapsCardbuilder{
         }
     }
 
-    to_branch(){
-       for(const brach in this.brach){
-           this.brach[brach as unknown as 1|2|3].forEach(card=> GameRules.SceneManager.change_secens(card.UUID,""))
-       }
-    }
-
     filter(option:string,PlayerID:PlayerID){
         print("打印分录",option)
         switch(option){

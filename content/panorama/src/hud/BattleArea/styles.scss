@@ -61,6 +61,11 @@
         height: 80%;
         align:center top;
     }
+    DOTAAbilityImage{
+        width: 80%;
+        height: 80%;
+        align:center top;
+    }
     &.my_Heaps{
         width: 120px;
         height: 170px;
@@ -75,6 +80,7 @@
             height: 170px;
             x:560px + $i * 120px;
             y:546px;
+            box-shadow: 3px 3px 3px 1.5 black;
         }
     }
     @for $i from 1 to 6{
@@ -83,6 +89,7 @@
             height: 170px;
             x:-80px + $i * 120px;
             y:546px;
+            box-shadow: 3px 3px 3px 1.5 black;
         }
     }
     @for $i from 1 to 6{
@@ -91,6 +98,7 @@
             height: 170px;
             x:1200px + $i * 120px;
             y:546px;
+            box-shadow: 3px 3px 3px 1.5 black;
         }
     }
     @for $i from 1 to 6 {
@@ -108,6 +116,13 @@
                 }
             }
         }
+    }
+    &.my_ability{
+        x:100px;
+        y:800px;
+        animation-name: ability;
+        animation-duration: 5s;
+        animation-iteration-count: infinite;
     }
 }
 .threeDimensional{  
@@ -164,6 +179,7 @@
             height: 170px;
             x:770px + $i * 50px;
             y:361px;
+            box-shadow: 3px 3px 3px 1.5 black;
         }
     }
     @for $i from 1 to 6{
@@ -172,6 +188,7 @@
             height: 170px;
             x:-80px + $i * 120px;
             y:361px;
+            box-shadow: 3px 3px 3px 1.5 black;
         }
     }
     @for $i from 1 to 6{
@@ -180,6 +197,7 @@
             height: 170px;
             x:1200px + $i * 120px;
             y:361px;
+            box-shadow: 3px 3px 3px 1.5 black;
         }
     }
     @for $i from 1 to 6 {
@@ -192,7 +210,13 @@
             }
         }
     }
-    
+    &.my_ability{
+        x:1200px;
+        y:100px;
+        animation-name: ability;
+        animation-duration: 5s;
+        animation-iteration-count: infinite;
+    }
 }
 
 .my_Carddummy{

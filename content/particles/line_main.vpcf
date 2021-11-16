@@ -67,6 +67,11 @@
 			m_flRadiusMin = 15.0
 			m_flRadiusMax = 15.0
 		},
+		{
+			_class = "C_INIT_RandomAlpha"
+			m_nAlphaMin = 23
+			m_nAlphaMax = 31
+		},
 	]
 	m_Operators = 
 	[

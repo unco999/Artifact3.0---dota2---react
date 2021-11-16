@@ -14,19 +14,28 @@ export const Arrow_tip = () => {
 
     useEffect(()=>{
        if(container?.switch){
-            $("#arrow_tip").RemoveClass("hide")
+            $("#arrow_tip").RemoveClass("hide");
+            blanking()
        }else{
-            container?.SetKeyAny("data",{})
             $("#arrow_tip").AddClass("hide")
        }
     },[container?.switch])
+
+    const blanking = () => {
+            for(let key = 0 ; key < 20 ; key ++){
+                $.Msg("清楚index",key);
+                ($("#arrow_tip") as ScenePanel).FireEntityInput(`line_${key}`,"SetControlPoint",`0:0 0 0`);
+                //end   
+                ($("#arrow_tip") as ScenePanel).FireEntityInput(`line_${key}`,"SetControlPoint",`3:0 0 0`);
+            }
+    }
+
 
     useEffect(()=>{
         $.Schedule(0.01,()=>{
             const arrow_data = container?.getKeyString<arrow_data>("data")
             if(arrow_data){
                 for(const index in arrow_data){
-    
                     ($("#arrow_tip") as ScenePanel).FireEntityInput(`line_${index}`,"SetControlPoint",`0: ${arrow_data[index].start.y / (Game.GetScreenHeight() / 1080) - 540} ${arrow_data[index].start.x / (Game.GetScreenWidth() / 1920) - 960} 0`);
                     //end   
                     ($("#arrow_tip") as ScenePanel).FireEntityInput(`line_${index}`,"SetControlPoint",`3: ${arrow_data[index].end.y / (Game.GetScreenHeight() / 1080) - 540} ${arrow_data[index].end.x / (Game.GetScreenWidth() / 1920) - 960} 0`);

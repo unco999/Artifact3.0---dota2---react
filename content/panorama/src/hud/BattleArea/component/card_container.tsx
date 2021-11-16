@@ -49,7 +49,7 @@ export const Card_container = (props:{className:string,index:number,brach:number
                 break
             }
         }
-        GameEvents.SendCustomGameEventToServer("C2S_CARD_CHANGE_SCENES",{to_scene:scene,index:props.index - 1,uuid:dragCallbacks.Data().uuid})
+        GameEvents.SendCustomGameEventToServer("C2S_CARD_CHANGE_SCENES",{to_scene:scene,index:props.index,uuid:dragCallbacks.Data().uuid})
     }
 
 

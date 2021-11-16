@@ -32,7 +32,7 @@ const Machine = createMachine({
         },
         hand:{
             entry:'hand_entry',
-            on:{toHAND:"hand",toHEAPS:"heaps",toMIDWAY:"midway",toGOUP:"goup",toLAIDDOWN:"laiddown"},
+            on:{toHAND:"hand",toHEAPS:"heaps",toMIDWAY:"midway",toGOUP:"goup",toLAIDDOWN:"laiddown",toABILITY:'ability'},
             exit:"hand_exit"
         },
         midway:{
@@ -50,13 +50,16 @@ const Machine = createMachine({
             on:{toHAND:"hand",toHEAPS:"heaps",toMIDWAY:"midway",toGOUP:"goup",toLAIDDOWN:"laiddown"},
             exit:"laiddown_exit"
         },
-        discharge:{
-            //
+        ability:{
+            entry:"ability_entry",
+            on:{toGRAVE:'grave'},
+            exit:"ability_exit"
         },
         equipment:{
         },
         grave:{
-
+            entry:"grave_entry",
+            exit:"grave_exit"
         }
     }
 })
@@ -66,7 +69,8 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
     const prefix = useMemo(()=> props.owner == Players.GetLocalPlayer() ? "my_" : "you_",[props])
     const ref = useRef<Panel|null>()
     const dummy = useRef<Panel|null>()
-    const [state,setstate] = useState<{Id:string,Index:number,uuid:string,Scene?:string}>({Id:'null',Index:-1,uuid:'null'})
+    const preindex = useRef<number>(-1) //板子的上一次索引
+    const [state,setstate] = useState<{Id:string,Index:number,uuid:string,Scene?:string,type?:string,playerid?:PlayerID}>({Id:'null',Index:-1,uuid:'null'})
     const isdrag = useRef<boolean>(false)
     const [xstate,send] = useMachine(Machine,{
         actions:{
@@ -82,33 +86,55 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
 
             },
             midway_entry:()=>{
-                $.Msg("有牌去了中路")
+                preindex.current = state.Index
                 dummyoperate('add',prefix + 'Midway' + state.Index);
             },
             midway_exit:()=>{
-                dummyoperate('remove',prefix + 'Midway' + state.Index );
+                dummyoperate('remove',prefix + 'Midway' + preindex.current );
             },
             goup_entry:()=>{
+                preindex.current = state.Index
                 dummyoperate('add',prefix + 'Goup' + state.Index );
             },
             goup_exit:()=>{
-                dummyoperate('remove',prefix + 'Goup' + state.Index);
+                dummyoperate('remove',prefix + 'Goup' + preindex.current);
             },
             laiddown_entry:()=>{
+                preindex.current = state.Index
                 dummyoperate('add',prefix + 'Laiddown' + state.Index);
             },
             laiddown_exit:()=>{
-                dummyoperate('remove',prefix + 'Laiddown' + state.Index);
+                dummyoperate('remove',prefix + 'Laiddown' + preindex.current);
             },
-            heaps_entry:()=>{dummyoperate('add',prefix + 'Heaps');},
-            heaps_exit:()=>{dummyoperate('remove',prefix + "Heaps")},
-            hand_entry:useCallback(()=>{ dummyoperate('add',prefix + "Hand"+ state.Index)},[state]),
-            hand_exit:useCallback(()=>{ dummyoperate('remove',prefix + "Hand"+ state.Index)},[state]),
+            heaps_entry:()=>{
+                preindex.current = state.Index
+                dummyoperate('add',prefix + 'Heaps');
+            },
+            heaps_exit:()=>{
+                dummyoperate('remove',prefix + "Heaps")
+            },
+            hand_entry:()=>{ 
+                preindex.current = state.Index
+                dummyoperate('add',prefix + "Hand"+ state.Index)
+            },
+            hand_exit:()=>{ dummyoperate('remove',prefix + "Hand"+ preindex.current)
+            },
+            ability_entry:()=>{
+                $.Msg("进入了魔法阶段")
+                disposablePointing()
+                dummyoperate('add',prefix + "ability")
+            },
+            ability_exit:()=>{
+                dummyoperate('remove',prefix + "ability")
+                hidedisposablePointing()
+            },
+            grave_entry:()=>{
+                $.Msg("进入了分厂")
+            }
         }
     })
 
     useEffect(()=>{
-        $.Msg(state)
         state.Scene && send("to" + state.Scene)
     },[state])
 
@@ -125,18 +151,32 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
 
     useGameEvent("S2C_CARD_CHANGE_SCENES",(event)=>{
         if(props.uuid != event.uuid) return
-        send("to"+event.Scene)
-    },[])
+        setstate(event)
+        $.Msg("收到了卡牌改变规则",event)
+    },[setstate,xstate])
 
     //drag事件
     useEffect(()=>{
         if(xstate.value == 'hand' && props.owner == Players.GetLocalPlayer()){
-            $.Msg("给板子注册了事件")
-            $.Msg(dummy.current)
             $.RegisterEventHandler( 'DragStart', dummy.current!, OnDragStart );
             $.RegisterEventHandler( 'DragEnd',dummy.current!, OnDragEnd);
         }
+        if(xstate.value == 'midway' || xstate.value == 'goup' || xstate.value == 'laiddown'){
+            $.RegisterEventHandler( 'DragDrop', ref.current!, OnDragDrop );
+            $.RegisterEventHandler( 'DragEnter', ref.current!, OnDragEnter );
+        }
     },[props.owner,xstate.value])
+
+    //改变index事件
+    useGameEvent("S2C_SEND_INDEX",(event)=>{
+        const keys = Object.keys(event)
+        if(keys[0] == props.uuid && xstate.value == 'hand'){
+            $.Msg("更新index",event[keys[0]])
+            dummyoperate('remove',prefix + "Hand"+ preindex.current)
+            preindex.current = event[keys[0]]
+            dummyoperate('add',prefix + "Hand"+ event[keys[0]])
+        }
+    },[xstate])
 
     const OnDragStart = (panelId:any, dragCallbacks:any) =>{
         isdrag.current = true
@@ -147,7 +187,7 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
         dragCallbacks.offsetX = 0; 
         dragCallbacks.offsetY = 0;
         changeCoordinates()
-        splitOptionalPrompt()
+        state.type == 'Unit' && splitOptionalPrompt()
         $.Msg("OnDragStart")
     }
 
@@ -157,7 +197,7 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
         isdrag.current = false
         const container = ConpoentDataContainer.Instance.NameGetNode("arrow_tip").current
         container.close()
-        closeOptionalPrompt()
+        state.type == 'Unit' && closeOptionalPrompt()
     }
 
     /**打开分路可选提示器 */
@@ -180,6 +220,7 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
        cb()
        container.open()
        function cb(){
+             if(!ref.current?.actualxoffset) return;
              const cursor = GameUI.GetCursorPosition()
              const mouse:arrow_data = {
              0:{start:{x:ref.current!.actualxoffset!,y:ref.current!.actualyoffset,},end:{x:cursor[0],y:cursor[1]}}
@@ -191,34 +232,112 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
        }
     }
 
+    const disposablePointing = () => {
+        const container = ConpoentDataContainer.Instance.NameGetNode("arrow_tip").current
+        function cb(){
+           const mouse:arrow_data = {
+            1:{start:{x:ref.current!.actualxoffset,y:ref.current!.actualyoffset,},end:{x:500,y:600}},
+            2:{start:{x:ref.current!.actualxoffset,y:ref.current!.actualyoffset,},end:{x:700,y:600}},
+            3:{start:{x:ref.current!.actualxoffset,y:ref.current!.actualyoffset,},end:{x:900,y:600}},
+            4:{start:{x:ref.current!.actualxoffset,y:ref.current!.actualyoffset,},end:{x:1100,y:600}},
+            5:{start:{x:ref.current!.actualxoffset,y:ref.current!.actualyoffset,},end:{x:1300,y:600}},
+            6:{start:{x:ref.current!.actualxoffset,y:ref.current!.actualyoffset,},end:{x:1450,y:600}},
+            7:{start:{x:ref.current!.actualxoffset,y:ref.current!.actualyoffset,},end:{x:1600,y:600}},
+            8:{start:{x:ref.current!.actualxoffset,y:ref.current!.actualyoffset,},end:{x:1850,y:600}},
+            }
+            container.SetKeyAny("data",mouse)
+        }
+        $.Schedule(1,cb)
+        container.open()
+    }
+
+    const hidedisposablePointing = () => {
+        const container = ConpoentDataContainer.Instance.NameGetNode("arrow_tip").current
+        container.close()
+    }
+
     const OnDragEnter = () =>{
         $.Msg("OnDragEnter")
     }
 
-    const OnDragDrop = () => {
-        $.Msg("OnDragDrop")
+    const OnDragDrop = (panelId:any, dragCallbacks:any) => {
+        $.Msg('attach',dragCallbacks.Data().uuid)
+        $.Msg('my',props.uuid)
+        GameEvents.SendCustomGameEventToServer("C2S_actingOnCard",{attach:dragCallbacks.Data().uuid,my:props.uuid})
     }
 
     const OnDragLeave = () =>{
         $.Msg("OnDragDrop")
     }
 
+    const Unit = () => {
+        return <>
+         <Panel draggable={true} ref={Panel => dummy.current = Panel} onmouseover={()=>ref.current?.AddClass(prefix+"hover")} onmouseout={()=>ref.current?.RemoveClass(prefix+"hover")} className={prefix+"Carddummy"}/>
+        <Panel ref={Panel => ref.current = Panel}  className={prefix+'Card'} >
+              <DOTAHeroImage heroimagestyle={'portrait'} heroid={1 as HeroID} />
+              <Panel className={"threeDimensional"}>
+            <Panel className={"attack"}>
+                <Label text={1}/>
+            </Panel>
+            <Panel className={"arrmor"}>
+                <Label text={2}/>
+            </Panel>
+            <Panel className={"heal"}>
+                <Label text={3}/>
+            </Panel>
+        </Panel>
+        </Panel>
+        </>
+    }
+
+    const Heaps = () => {
+        return <>
+         <Panel draggable={true} ref={Panel => dummy.current = Panel} onmouseover={()=>ref.current?.AddClass(prefix+"hover")} onmouseout={()=>ref.current?.RemoveClass(prefix+"hover")} className={prefix+"Carddummy"}/>
+        <Panel ref={Panel => ref.current = Panel}  className={prefix+'Card'} >
+              <DOTAHeroImage heroimagestyle={'portrait'} heroid={1 as HeroID} />
+              <Panel className={"threeDimensional"}>
+            <Panel className={"attack"}>
+                <Label text={1}/>
+            </Panel>
+            <Panel className={"arrmor"}>
+                <Label text={2}/>
+            </Panel>
+            <Panel className={"heal"}>
+                <Label text={3}/>
+            </Panel>
+        </Panel>
+        </Panel>
+        </>
+    }
+
+    
+    const Ability = () => {
+        return <>
+         <Panel draggable={true} ref={Panel => dummy.current = Panel} onmouseover={()=>ref.current?.AddClass(prefix+"hover")} onmouseout={()=>ref.current?.RemoveClass(prefix+"hover")} className={prefix+"Carddummy"}/>
+        <Panel ref={Panel => ref.current = Panel}  className={prefix+'Card'} >
+              <DOTAAbilityImage abilityname={"elder_titan_echo_stomp"}/>
+              <Panel className={"threeDimensional"}>
+
+        </Panel>
+        </Panel>
+        </>
+    }
+
+
+    const card_type = () =>{
+        if(state.Scene == 'HEAPS'){
+            return Heaps()
+        }
+        if(state.type == 'Unit'){
+            return Unit()
+        }
+        if(state.type == 'SmallSkill' || state.type == 'TrickSkill'){
+            return Ability()
+        }
+    }
+
     return <>
-            <Panel draggable={true} ref={Panel => dummy.current = Panel} onmouseover={()=>ref.current?.AddClass(prefix+"hover")} onmouseout={()=>ref.current?.RemoveClass(prefix+"hover")} className={prefix+"Carddummy"}/>
-            <Panel ref={Panel => ref.current = Panel}  className={prefix+'Card'} >
-                  <DOTAHeroImage heroimagestyle={'portrait'} heroid={1 as HeroID} />
-                  <Panel className={"threeDimensional"}>
-                <Panel className={"attack"}>
-                    <Label text={1}/>
-                </Panel>
-                <Panel className={"arrmor"}>
-                    <Label text={2}/>
-                </Panel>
-                <Panel className={"heal"}>
-                    <Label text={3}/>
-                </Panel>
-            </Panel>
-            </Panel>
+            {card_type()}
            </>
 }
 

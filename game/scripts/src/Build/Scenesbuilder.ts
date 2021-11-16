@@ -1,8 +1,7 @@
 import Queue from "../structure/Queue";
 import { Card, uuid } from "../instance/Card";
-import { Cardheaps, GoUp, Hand, ICAScene, IHeapsCardbuilder, LaidDown, Midway, Scenes, ScenesManager } from "../instance/Scenes";
+import { Ability, Cardheaps, GoUp, Grave, Hand, ICAScene, IHeapsCardbuilder, LaidDown, Midway, Scenes, ScenesManager } from "../instance/Scenes";
 import { Unit } from "../instance/Unit";
-import { filter } from "../System/filter";
 import { SmallSkill, TrickSkill } from "../instance/Ability";
 
 /** 负责构造牌堆 */
@@ -40,10 +39,18 @@ export class ScenesBuildbehavior {
         const red_goup = new GoUp(GameRules.Red.GetPlayerID(),GameRules.SceneManager)
         GameRules.SceneManager.SetGoUpScene(blue_goup)
         GameRules.SceneManager.SetGoUpScene(red_goup)
-        const blue_down = new LaidDown(GameRules.Blue.GetPlayerID(),GameRules.SceneManager)
-        const red_down = new LaidDown(GameRules.Red.GetPlayerID(),GameRules.SceneManager)
-        GameRules.SceneManager.SetLaidDownScene(blue_down)
-        GameRules.SceneManager.SetLaidDownScene(red_down)
+        const blue_laiddown = new LaidDown(GameRules.Blue.GetPlayerID(),GameRules.SceneManager)
+        const red_laiddown = new LaidDown(GameRules.Red.GetPlayerID(),GameRules.SceneManager)
+        GameRules.SceneManager.SetLaidDownScene(blue_laiddown)
+        GameRules.SceneManager.SetLaidDownScene(red_laiddown)
+        const blue_Ability = new Ability(GameRules.Blue.GetPlayerID(),GameRules.SceneManager)
+        const red_Ability = new Ability(GameRules.Red.GetPlayerID(),GameRules.SceneManager)
+        GameRules.SceneManager.SetAbilityScene(blue_Ability)
+        GameRules.SceneManager.SetAbilityScene(red_Ability)
+        const blue_Grave = new Grave(GameRules.Blue.GetPlayerID(),GameRules.SceneManager)
+        const red_Grave = new Grave(GameRules.Red.GetPlayerID(),GameRules.SceneManager)
+        GameRules.SceneManager.SetGraveScene(blue_Grave)
+        GameRules.SceneManager.SetGraveScene(red_Grave)
         print("初始化場景完毕")
     }
 
@@ -57,10 +64,12 @@ export class ScenesBuildbehavior {
         const _table = CustomNetTables.GetTableValue("Card_group_construction_phase",'herobrach')[PlayerID.toString()]
         for(const brach in _table){
             for(const index in _table[brach]){
-                const unit = new Unit({Id:_table[brach][index],Index:-1,PlayerID:PlayerID},this.fitler(brach,PlayerID))
+                const unit = new Unit({Id:_table[brach][index],Index:-1,PlayerID:PlayerID},GameRules.SceneManager.GetCardheapsScene(PlayerID))
                 GameRules.SceneManager.global_add(unit.UUID,unit)
+                GameRules.SceneManager.change_secens(unit.UUID,this.fitler(brach,PlayerID).SceneName)
             }
         }
+        
     }
 
 

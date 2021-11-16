@@ -7,7 +7,7 @@ import Queue from "../structure/Queue";
 import { LinkedList } from "../structure/Linkedlist";
 import { Card, uuid } from "./Card";
 import { Timers } from "../lib/timers";
-import { SmallSkill, TrickSkill } from "./Ability";
+import { AbilityCard, SmallSkill, TrickSkill } from "./Ability";
 
 type PlayerScene = Record<number, Scenes> ;
 
@@ -156,14 +156,18 @@ export class Hand extends Scenes{
 
     Remove(uuid:uuid){
         print("运行了手牌规则")
+        if(this.Cardlinked.length == 1){
+            this.Cardlinked = new LinkedList()
+        }else{
+            this.Cardlinked.remove(this.CardPool[uuid])
+        }
         super.Remove(uuid)
-        this.Cardlinked.remove(this.CardPool[uuid])
         let index = 0
         for(const card of this.Cardlinked){
             index++
             card.Index = index
+            CustomGameEventManager.Send_ServerToPlayer(PlayerResource.GetPlayer(this.PlayerID),"S2C_SEND_INDEX",{[card.UUID]:card.Index})
         }
-        print("手炮规则运行完毕")
     }
 
     update_uuid(){
@@ -203,7 +207,15 @@ export class Midway extends Scenes{
         }
         return mark
     }
-    addCard(card:Card){
+
+    AutoAddCard(card:Card,index?:number){
+        if(index){
+            print("中路手動兼職",index)
+            super.addCard(card)
+            card.Index = index
+            this.CardList[index - 1] = card
+            return;
+        }
         let mark;
         for(let index = 0 ; index < 4 ; index ++){
             if(this.CardList[3 - index - 1] === -1){
@@ -218,7 +230,9 @@ export class Midway extends Scenes{
         if(!mark){
             print("自动加入路线出错了")
         }
+        print("中路mark情況",mark)
         card.Index = mark
+        card.Scene = this
         this.CardList[mark] = card
         this.CardPool[card.UUID] = card
         return card
@@ -269,7 +283,13 @@ export class GoUp extends Scenes{
         return mark
     }
 
-    addCard(card:Card){
+    AutoAddCard(card:Card,index?:number){
+        if(index){
+            super.addCard(card)
+            card.Index = index
+            this.CardList[index - 1] = card
+            return;
+        }
         let mark;
         for(let index = 0 ; index < 4 ; index ++){
             if(this.CardList[3 - index - 1] === -1){
@@ -285,10 +305,12 @@ export class GoUp extends Scenes{
             print("自动加入路线出错了")
         }
         card.Index = mark
+        card.Scene = this
         this.CardList[mark] = card
         this.CardPool[card.UUID] = card
         return card
     }
+
 
     Remove(uuid){
         for(let index = 1 ; index < this.CardList.length ; index ++){
@@ -334,7 +356,13 @@ export class LaidDown extends Scenes{
     }
 
     
-    addCard(card:Card){
+    AutoAddCard(card:Card,index?:number){
+        if(index){
+            super.addCard(card)
+            card.Index = index
+            this.CardList[index - 1] = card
+            return;
+        }
         let mark;
         for(let index = 0 ; index < 4 ; index ++){
             if(this.CardList[3 - index - 1] === -1){
@@ -350,10 +378,12 @@ export class LaidDown extends Scenes{
             print("自动加入路线出错了")
         }
         card.Index = mark
+        card.Scene = this
         this.CardList[mark] = card
         this.CardPool[card.UUID] = card
         return card
     }
+
 
     Remove(uuid){
         for(let index = 1 ; index < this.CardList.length ; index ++){
@@ -368,6 +398,25 @@ export class LaidDown extends Scenes{
     }
 }
 
+export class Ability extends Scenes {
+    SceneName = "ABILITY"
+
+    constructor(PlayerID: PlayerID, ICASceneManager: ScenesManager) {
+        super(ICASceneManager)
+        this.PlayerID = PlayerID
+        ICASceneManager.SetGraveScene(this);
+    }
+}
+
+
+export class Grave extends Scenes {
+    SceneName = "GRAVE"
+    constructor(PlayerID: PlayerID, ICASceneManager: ScenesManager) {
+        super(ICASceneManager)
+        this.PlayerID = PlayerID
+        ICASceneManager.SetGraveScene(this);
+    }
+}
 
 /**场景管理类 */
 export class ScenesManager{
@@ -379,6 +428,7 @@ export class ScenesManager{
     private ReleaseScene: PlayerScene = {};
     private Cardheaps: PlayerScene = {};
     private Grave: PlayerScene = {};
+    private Ability: PlayerScene = {};
 
 
     constructor(){
@@ -399,11 +449,9 @@ export class ScenesManager{
         //     },[])
         // }
         CustomGameEventManager.RegisterListener("C2S_CARD_CHANGE_SCENES",(_,event)=>{
+            print("有牌要改變場景",event.to_scene,"改變的index為",event.index)
             if(!GameRules.gamemainloop.filter) return;
-            if(this.All[event.uuid]){
-                this.All[event.uuid].Index = event.index
-            }
-            this.change_secens(event.uuid,event.to_scene)
+            this.change_secens(event.uuid,event.to_scene,event.index)
         })
         CustomGameEventManager.RegisterListener("C2S_GET_SCENES",(_,event)=>{
             switch(event.get){
@@ -424,12 +472,19 @@ export class ScenesManager{
             DeepPrintTable(table)
             CustomGameEventManager.Send_ServerToPlayer(PlayerResource.GetPlayer(event.PlayerID),"S2C_SEND_CANSPACE",table)
         })
+        CustomGameEventManager.RegisterListener("C2S_actingOnCard",(_,event)=>{
+            if(this.All[event.attach] instanceof AbilityCard){
+                (this.All[event.attach] as AbilityCard).SPEEL_TARGET(event.my)
+            }        
+        })
     }
 
     //**获得一个当前单位能加入的索引 */
     getoptionbrach(){
 
     }
+
+
 
     /** 附加给全局 ALL*/
     global_add(uuid:uuid,Card:Card){
@@ -468,9 +523,11 @@ export class ScenesManager{
     }
 
     /**牌改变场景*/
-    change_secens(uuid:string,to:string){
+    change_secens(uuid:string,to:string,index?:number){
         const card = this.All[uuid]
         const playerid = card.PlayerID
+
+        print(card.UUID,"要去",to)
 
         switch(to){
             case 'HAND':{
@@ -482,20 +539,32 @@ export class ScenesManager{
             }
             case 'MIDWAY':{
                this.All[uuid].Scene.Remove(uuid);
-                (this.GetMidwayScene(playerid) as Midway).addCard(card)
+                (this.GetMidwayScene(playerid) as Midway).AutoAddCard(card,index)
                 this.All[uuid].update('MIDWAY')
                 break;
             }
             case 'LAIDDOWN':{
                 this.All[uuid].Scene.Remove(uuid);
-                (this.GetLaidDownScene(playerid) as LaidDown).addCard(card)
+                (this.GetLaidDownScene(playerid) as LaidDown).AutoAddCard(card,index)
                 this.All[uuid].update('LAIDDOWN')
                 break;
             }
             case 'GOUP':{
                 this.All[uuid].Scene.Remove(uuid);
-                (this.GetGoUpScene(playerid) as GoUp).addCard(card)
+                (this.GetGoUpScene(playerid) as GoUp).AutoAddCard(card,index)
                 this.All[uuid].update('GOUP')
+                break;
+            }
+            case 'Ability':{
+                this.All[uuid].Scene.Remove(uuid);
+                this.GetAbilityScene(playerid).addCard(card)
+                this.All[uuid].update('ABILITY')
+                break;
+            }
+            case 'Grave':{
+                this.All[uuid].Scene.Remove(uuid);
+                this.GetGraveScene(playerid).addCard(card)
+                this.All[uuid].update('GRAVE')
                 break;
             }
         }
@@ -509,8 +578,13 @@ export class ScenesManager{
         this.Hand[Scene.PlayerID] = Scene
     }
 
+    
     SetGoUpScene(Scene:Scenes){
         this.GoUp[Scene.PlayerID] = Scene
+    }
+
+    SetAbilityScene(Scene:Scenes){
+        this.Ability[Scene.PlayerID] = Scene
     }
 
     SetMidwayScene(Scene:Scenes){
@@ -535,6 +609,10 @@ export class ScenesManager{
 
     GetHandsScene(PlayerID:PlayerID){
         return this.Hand[PlayerID]
+    }
+
+    GetAbilityScene(PlayerID:PlayerID){
+        return this.Ability[PlayerID]
     }
 
     GetGoUpScene(PlayerID:PlayerID){

@@ -11,9 +11,9 @@ export class Unit extends Card{
     HasModifiler:LinkedList<CAModifiler> = new LinkedList() //单位拥有的modiflier
     Equip:LinkedList<Equip> = new LinkedList()
 
-
     constructor(CardParameter:CardParameter,Scene:ICAScene){
         super(CardParameter,Scene);
+        this.type = 'Unit'
     }
 
     isHasAbility(abilityname:string){

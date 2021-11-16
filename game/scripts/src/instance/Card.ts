@@ -24,6 +24,7 @@ export class Card{
     Index?:number 
     Id:string
     Scene:ICAScene //初始化场景  卡牌所在的位置
+    type:string
     
     constructor(CardParameter:CardParameter,Scene:ICAScene){
         this.UUID = DoUniqueString(GetSystemTime())
@@ -40,7 +41,7 @@ export class Card{
     register_gameevent(){
         CustomGameEventManager.RegisterListener('C2S_GET_CARD',(_,event)=>{
             if( event.uuid == this.UUID){
-                    CustomGameEventManager.Send_ServerToAllClients("S2C_GET_CARD",{Id:this.Id,Index:this.Index,uuid:this.UUID,Scene:this.Scene.SceneName})   
+                    CustomGameEventManager.Send_ServerToAllClients("S2C_GET_CARD",{Id:this.Id,Index:this.Index,uuid:this.UUID,Scene:this.Scene.SceneName,type:this.type,playerid:this.PlayerID})   
             }
         })
     }
@@ -84,7 +85,7 @@ export class Card{
     update(to:string){
         print("发送了场景改变事件")
         print(this.UUID,"我當前的場景是",this.Scene.SceneName,"我要去",to,"我的index是",this.Index)  
-        CustomGameEventManager.Send_ServerToAllClients('S2C_CARD_CHANGE_SCENES',{Scene:to,uuid:this.UUID,Index:this.Index,Id:this.Id})
+        CustomGameEventManager.Send_ServerToAllClients('S2C_CARD_CHANGE_SCENES',{Scene:to,uuid:this.UUID,Index:this.Index,Id:this.Id,type:this.type,playerid:this.PlayerID})
     }
 
     

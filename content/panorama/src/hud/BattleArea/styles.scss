@@ -3,6 +3,7 @@
     width: 640px;
     height: 360px;
     y:540px;
+    opacity: 0.5;
 }
 
 .my_battle_center_area_main{
@@ -11,6 +12,7 @@
     height: 360px;
     x:640px;
     y:540px;
+    opacity: 0.5;
 }
 
 .my_battle_right_area_main{
@@ -19,6 +21,7 @@
     height: 360px;
     x:1280px;
     y:540px;
+    opacity: 0.5;
 }
 
 
@@ -27,6 +30,7 @@
     width: 640px;
     height: 360px;
     y:180px;
+    opacity: 0.5;
 }
 
 .you_battle_center_area_main{
@@ -35,6 +39,7 @@
     height: 360px;
     x:640px;
     y:180px;
+    opacity: 0.5;
 }
 
 .you_battle_right_area_main{
@@ -43,6 +48,7 @@
     height: 360px;
     x:1280px;
     y:180px;
+    opacity: 0.5;
 }
 
 
@@ -56,12 +62,7 @@
     transition-duration: 0.5s;
     transition-property: transform,opacity,pre-transform-scale2d,position;
     pre-transform-scale2d:1;
-    DOTAHeroImage{
-        width: 80%;
-        height: 80%;
-        align:center top;
-    }
-    DOTAAbilityImage{
+    .abilityimage{
         width: 80%;
         height: 80%;
         align:center top;
@@ -124,6 +125,14 @@
         animation-duration: 5s;
         animation-iteration-count: infinite;
     }
+    &.my_death{
+        x:100px;
+        y:800px;
+        animation-name: death;
+        animation-duration: 3s;
+        animation-iteration-count: 1;
+        animation-fill-mode:forwards;
+    }
 }
 .threeDimensional{  
     width: 100%;
@@ -153,6 +162,7 @@
         @extend .attack;
         background-color: #db4e6dbd;
     }
+    
 }
 
 
@@ -214,7 +224,7 @@
         x:1200px;
         y:100px;
         animation-name: ability;
-        animation-duration: 5s;
+        animation-duration: 3s;
         animation-iteration-count: infinite;
     }
 }
@@ -234,10 +244,10 @@
 
 
 .defualt{
-    background-color: gradient( linear, 0% 0%, 0% 100%, from( #373d457a ), to( #4d586075 ) );
+    background-color: gradient( linear, 0% 0%, 0% 100%, from( #373d45 ), to( #4d5860 ) );
     border-style: solid;
-    border-width: 2px;
-    padding: 4px 10px;
+    border-width: 1px;
+    padding: 1px 1px;
     border-top-color: #555555b7;
     border-left-color: #494949c5;
     border-bottom-color: #333333be;
@@ -301,11 +311,30 @@
 .root{
     width: 100%;
     height: 100%;
-    // background-color: rgb(0, 0, 0);
+    background-color: rgb(0, 0, 0);
+    background-image: url("file://{images}/background.png");
+    background-size: 100% 100%;
+    z-index: -1;
 }
 
 @mixin BATTLESTATE {
     width: 100px;
     height: 170px;
+}
+
+.card_frame{
+    width:100%;
+    height: 100%;
+    animation-name: clipMe;
+    animation-iteration-count: infinite;
+    animation-duration: 1s;
+    background-image: url("file://{images}/frame.png");
+    background-size: 100% 100%;
+    opacity: 0;
+    transition-duration: 0.5s;
+    transition-property: transform,opacity,pre-transform-scale2d,position;
+    &.show{
+        opacity: 1;
+    }
 }
 

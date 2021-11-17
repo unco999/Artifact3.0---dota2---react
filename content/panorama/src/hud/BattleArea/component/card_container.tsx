@@ -11,7 +11,6 @@ export const Card_container = (props:{className:string,index:number,brach:number
     const container = useInstance("Card_container",uuid,{},undefined,"Card_container")
 
     useGameEvent("S2C_SEND_CANSPACE",(event)=>{
-        $.Msg(event)
         for(const brach in event){
             for(const index in event[brach]){
                 if(+brach == props.brach && +event[brach][index] == props.index){
@@ -54,7 +53,6 @@ export const Card_container = (props:{className:string,index:number,brach:number
 
 
     useEffect(()=>{
-        $.Msg("當前面模開關")
         !container?.switch && mian.current?.RemoveClass("show")
     })
 

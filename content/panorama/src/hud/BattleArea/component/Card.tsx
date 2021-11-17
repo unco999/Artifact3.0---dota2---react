@@ -129,7 +129,8 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
                 hidedisposablePointing()
             },
             grave_entry:()=>{
-                $.Msg("进入了分厂")
+                $.Msg("有单位死亡了")
+                dummyoperate('add',prefix + "death")
             }
         }
     })
@@ -181,6 +182,7 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
     const OnDragStart = (panelId:any, dragCallbacks:any) =>{
         isdrag.current = true
         ref.current?.AddClass('drag')
+        disposablePointing()
         const displayPanel = $.CreatePanel( "Panel", $.GetContextPanel(), "cache" ) as HeroImage
         displayPanel.Data().uuid = state.uuid
         dragCallbacks.displayPanel = displayPanel;
@@ -236,8 +238,8 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
         const container = ConpoentDataContainer.Instance.NameGetNode("arrow_tip").current
         function cb(){
            const mouse:arrow_data = {
-            1:{start:{x:ref.current!.actualxoffset,y:ref.current!.actualyoffset,},end:{x:500,y:600}},
-            2:{start:{x:ref.current!.actualxoffset,y:ref.current!.actualyoffset,},end:{x:700,y:600}},
+            1:{start:{x:ref.current!.actualxoffset,y:ref.current!.actualyoffset,},end:{x:0,y:450}},
+            2:{start:{x:ref.current!.actualxoffset,y:ref.current!.actualyoffset,},end:{x:120,y:450}},
             3:{start:{x:ref.current!.actualxoffset,y:ref.current!.actualyoffset,},end:{x:900,y:600}},
             4:{start:{x:ref.current!.actualxoffset,y:ref.current!.actualyoffset,},end:{x:1100,y:600}},
             5:{start:{x:ref.current!.actualxoffset,y:ref.current!.actualyoffset,},end:{x:1300,y:600}},
@@ -247,7 +249,7 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
             }
             container.SetKeyAny("data",mouse)
         }
-        $.Schedule(1,cb)
+        cb()
         container.open()
     }
 
@@ -292,39 +294,34 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
 
     const Heaps = () => {
         return <>
-         <Panel draggable={true} ref={Panel => dummy.current = Panel} onmouseover={()=>ref.current?.AddClass(prefix+"hover")} onmouseout={()=>ref.current?.RemoveClass(prefix+"hover")} className={prefix+"Carddummy"}/>
-        <Panel ref={Panel => ref.current = Panel}  className={prefix+'Card'} >
-              <DOTAHeroImage heroimagestyle={'portrait'} heroid={1 as HeroID} />
-              <Panel className={"threeDimensional"}>
-            <Panel className={"attack"}>
-                <Label text={1}/>
-            </Panel>
-            <Panel className={"arrmor"}>
-                <Label text={2}/>
-            </Panel>
-            <Panel className={"heal"}>
-                <Label text={3}/>
-            </Panel>
+         <Panel className={prefix+'Card'} ref={Panel => ref.current = Panel}/>
+        </>
+    }
+
+    const frame = useRef<Panel|null>()
+
+    const Ability = () => {
+
+        return <>
+         <Panel draggable={true} ref={Panel => dummy.current = Panel} onmouseover={()=>{frame.current?.AddClass("show");ref.current?.AddClass(prefix+"hover")}} onmouseout={()=>{frame.current?.RemoveClass("show");ref.current?.RemoveClass(prefix+"hover")}} className={prefix+"Carddummy"}/>
+         <Panel ref={Panel => ref.current = Panel}  className={prefix+'Card'} >
+              <Panel ref={Panel=>frame.current = Panel} className={"card_frame"}/>
+              <Panel style={{width:'90%',height:"90%",align:'center center'}}>
+              <DOTAAbilityImage abilityname={"elder_titan_echo_stomp"} className={'abilityimage'}/>
         </Panel>
         </Panel>
         </>
     }
 
-    
-    const Ability = () => {
-        return <>
-         <Panel draggable={true} ref={Panel => dummy.current = Panel} onmouseover={()=>ref.current?.AddClass(prefix+"hover")} onmouseout={()=>ref.current?.RemoveClass(prefix+"hover")} className={prefix+"Carddummy"}/>
-        <Panel ref={Panel => ref.current = Panel}  className={prefix+'Card'} >
-              <DOTAAbilityImage abilityname={"elder_titan_echo_stomp"}/>
-              <Panel className={"threeDimensional"}>
-
-        </Panel>
-        </Panel>
-        </>
+    const You_hand = () => {
+        return <Panel className={prefix+'Card'} ref={Panel => ref.current = Panel}/>
     }
 
 
     const card_type = () =>{
+        if(state.Scene == "HAND" && Players.GetLocalPlayer() != props.owner){
+            return You_hand()
+        }
         if(state.Scene == 'HEAPS'){
             return Heaps()
         }

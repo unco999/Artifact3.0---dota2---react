@@ -15,9 +15,9 @@ export const Arrow_tip = () => {
     useEffect(()=>{
        if(container?.switch){
             $("#arrow_tip").RemoveClass("hide");
-            blanking()
        }else{
             $("#arrow_tip").AddClass("hide")
+            // blanking()
        }
     },[container?.switch])
 

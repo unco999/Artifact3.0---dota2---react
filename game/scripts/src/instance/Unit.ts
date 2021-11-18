@@ -2,7 +2,7 @@ import { LinkedList } from "../structure/Linkedlist";
 import { Card, CardParameter, professionalMagicCard } from "./Card";
 import { Equip } from "./Equip";
 import { CAModifiler } from "./Modifiler";
-import { ICAScene } from "./Scenes";
+import { GoUp, ICAScene } from "./Scenes";
 
 
 
@@ -46,4 +46,15 @@ export class Unit extends Card{
     }
 
 
+}
+
+export class Soldier extends Card{
+    constructor(CardParameter:CardParameter,Scene:ICAScene){
+        super(CardParameter,Scene);
+        this.type = 'Solider'
+    }
+
+    call_add_card(){
+        (this.Scene as GoUp).AutoAddCard(this,this.Index)
+    }
 }

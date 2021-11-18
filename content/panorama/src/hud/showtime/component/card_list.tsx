@@ -16,8 +16,6 @@ export const CardList = () => {
 
     useEffect(()=>{
         if(maindata[Players.GetLocalPlayer()] && maindata[Players.GetLocalPlayer()][0] && Object.values(maindata[Players.GetLocalPlayer()][0]).length > 0){
-            $.Msg("触动了对战面板更新")
-            $.Msg(maindata)
             setmydata_brach0(JsonString2Arraystrt0(maindata[Players.GetLocalPlayer()][0]))
             setmydata_brach1(JsonString2Arraystrt0(maindata[Players.GetLocalPlayer()][1]))
             setmydata_brach2(JsonString2Arraystrt0(maindata[Players.GetLocalPlayer()][2]))

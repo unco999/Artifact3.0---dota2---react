@@ -1,5 +1,5 @@
 import { ScenesBuildbehavior } from "../Build/Scenesbuilder";
-import { Cardheaps } from "../instance/Scenes";
+import { Cardheaps, Scenes } from "../instance/Scenes";
 import { Timers } from "../lib/timers";
 import { LinkedList } from "../structure/Linkedlist";
 
@@ -87,11 +87,22 @@ export class faultCard extends GameLoopState {
             this.init_give_cards();
             this.host.init = true;
             GameRules.SceneManager.update();
+            Timers.CreateTimer(5,()=>{
+                this.init_shuffle()
+            })
         } else {
             this.give_cards();
         }
     }
 
+    init_shuffle(){
+        GameRules.SceneManager.GetGoUpScene(GameRules.Blue.GetPlayerID()).shuffle()
+        GameRules.SceneManager.GetGoUpScene(GameRules.Red.GetPlayerID()).shuffle()
+        GameRules.SceneManager.GetMidwayScene(GameRules.Blue.GetPlayerID()).shuffle()
+        GameRules.SceneManager.GetMidwayScene(GameRules.Red.GetPlayerID()).shuffle()
+        GameRules.SceneManager.GetLaidDownScene(GameRules.Blue.GetPlayerID()).shuffle()
+        GameRules.SceneManager.GetLaidDownScene(GameRules.Red.GetPlayerID()).shuffle()
+    }
 
     //** 重复循环 进入每回合发放手牌 */
     give_cards() {

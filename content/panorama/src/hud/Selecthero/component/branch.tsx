@@ -11,7 +11,8 @@ export const BranchCard = (props:{index:number}) => {
     const [motion,setmotion] = useState(0)
     const max = props.index == 1 || props.index == 3 ? 2 : 1
     const branchok = useNetTableKey('Card_group_construction_phase','brachisok') ?? false
-//
+
+
     useEffect(()=>{
         $.RegisterEventHandler( 'DragEnter', main.current!, OnDragEnter );
         $.RegisterEventHandler( 'DragDrop', main.current!, OnDragDrop );
@@ -20,9 +21,7 @@ export const BranchCard = (props:{index:number}) => {
 
     useEffect(()=>{
         if(branchok && branchok[Players.GetLocalPlayer()]){
-            $.RegisterEventHandler( 'DragEnter', main.current!, ()=>{} );
-            $.RegisterEventHandler( 'DragDrop', main.current!, ()=>{} );
-            $.RegisterEventHandler( 'DragLeave', main.current!, ()=>{} );
+            
         }
     },[branchok])
 
@@ -35,7 +34,6 @@ export const BranchCard = (props:{index:number}) => {
     })
 
     useEffect(()=>{
-        $.Msg('激活了一次brach')
         const container = ConpoentDataContainer.Instance.NameGetNode("Branch").current
         if(!container) return;
         const table = container.getKeyString<Record<number,number[]>>("branch")
@@ -43,7 +41,7 @@ export const BranchCard = (props:{index:number}) => {
     },[motion])
 
     const OnDragEnter = (panelId:any, dragCallbacks:any) => {
-        $.Msg(dragCallbacks.heroid)
+
     }
     
     const OnDragDrop = (panelId:any, dragCallbacks:HeroImage) => {

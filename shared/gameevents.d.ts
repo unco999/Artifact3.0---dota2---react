@@ -25,4 +25,6 @@ declare interface CustomGameEventDeclarations {
     "S2C_cast_Ability":{uuid:string};
     "C2S_GET_INDEX":{uuid:string}
     "S2C_SEND_INDEX":{[keys:string]:number}
+    "C2S_BRUSH_SOLIDER":{}
+    "S2C_BRUSH_SOLIDER":{}
 }

@@ -16,6 +16,12 @@ export class Stack<T> {
         print(this._size)
     }
 
+    shuffle(){
+        print("打印排序")
+        table.sort(this._stack_data,(a,b)=>math.random() > 0.5)
+        DeepPrintTable(this._stack_data)
+    }
+
     get pop(){
         if(this._size < 1){
             return null

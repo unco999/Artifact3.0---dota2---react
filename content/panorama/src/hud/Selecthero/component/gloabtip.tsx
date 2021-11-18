@@ -6,7 +6,7 @@ export const Gloabtip = () => {
     const uuid = useUuid()
     const container = useInstance("Gloabtip",uuid,{},undefined)
     const main = useRef<Panel|null>()
-// /
+
     useEffect(()=>{
         if(container?.switch){
             main.current?.AddClass("show")

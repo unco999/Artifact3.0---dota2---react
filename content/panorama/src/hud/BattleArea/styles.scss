@@ -187,7 +187,7 @@
         &.you_Midway#{$i}{
             width: 100px;
             height: 170px;
-            x:770px + $i * 50px;
+            x:560px + $i * 120px;
             y:361px;
             box-shadow: 3px 3px 3px 1.5 black;
         }
@@ -338,3 +338,22 @@
     }
 }
 
+.my_summon{
+    @extend .defualt;
+    @include BATTLESTATE;   
+    border-radius: 10px;
+    opacity: 1;
+    transition-duration: 0.5s;
+    transition-property: transform,opacity,pre-transform-scale2d,position;
+    pre-transform-scale2d:1;
+}
+
+.you_summon{
+    @extend .defualt;
+    @include BATTLESTATE;
+    border-radius: 10px;
+    opacity: 1;
+    transition-duration: 0.5s;
+    transition-property: transform,opacity,pre-transform-scale2d,position;
+    pre-transform-scale2d:1;
+}

@@ -6,6 +6,7 @@ import { JsonString2Array, JsonString2Arraystrt0 } from "../../../Utils";
 import shortid from "shortid";
 import { ConpoentDataContainer } from "../../ConpoentDataContainer";
 import { arrow_data } from "./arrow_tip";
+import { Summon } from "./summon";
 
 export enum state{
     牌堆,
@@ -67,6 +68,7 @@ const Machine = createMachine({
  
 export const Card = (props:{index:number,uuid:string,owner:number}) => {
     const prefix = useMemo(()=> props.owner == Players.GetLocalPlayer() ? "my_" : "you_",[props])
+    const id = useRef(Math.floor(Math.random() * 20) + 1)
     const ref = useRef<Panel|null>()
     const dummy = useRef<Panel|null>()
     const preindex = useRef<number>(-1) //板子的上一次索引
@@ -158,6 +160,7 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
 
     //drag事件
     useEffect(()=>{
+        if(state.type == "Solider") return;
         if(xstate.value == 'hand' && props.owner == Players.GetLocalPlayer()){
             $.RegisterEventHandler( 'DragStart', dummy.current!, OnDragStart );
             $.RegisterEventHandler( 'DragEnd',dummy.current!, OnDragEnd);
@@ -276,7 +279,7 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
         return <>
          <Panel draggable={true} ref={Panel => dummy.current = Panel} onmouseover={()=>ref.current?.AddClass(prefix+"hover")} onmouseout={()=>ref.current?.RemoveClass(prefix+"hover")} className={prefix+"Carddummy"}/>
         <Panel ref={Panel => ref.current = Panel}  className={prefix+'Card'} >
-              <DOTAHeroImage heroimagestyle={'portrait'} heroid={1 as HeroID} />
+              <DOTAHeroImage heroimagestyle={'portrait'} heroid={id.current as HeroID} />
               <Panel className={"threeDimensional"}>
             <Panel className={"attack"}>
                 <Label text={1}/>
@@ -317,6 +320,12 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
         return <Panel className={prefix+'Card'} ref={Panel => ref.current = Panel}/>
     }
 
+    const Solider = () => {
+        return <Panel className={prefix+'Card'} ref={Panel => ref.current = Panel}>
+                <Label text={"小兵"} style={{fontSize:'30px',color:'white',textShadow:'0px 0px 0px 5.0 black',align:'center center'}}/>
+            </Panel>
+    }
+
 
     const card_type = () =>{
         if(state.Scene == "HAND" && Players.GetLocalPlayer() != props.owner){
@@ -331,6 +340,9 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
         if(state.type == 'SmallSkill' || state.type == 'TrickSkill'){
             return Ability()
         }
+        if(state.type == 'Solider'){
+            return Solider()
+        }
     }
 
     return <>
@@ -339,22 +351,29 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
 }
 
 export const CardContext = (props:{owner:number}) => {
-    const [myheaps,setmyheaps] = useState<string[]>([])
-    const [myhand,setmyhand] = useState<string[]>([])
-    const team = useNetTableKey('Card_group_construction_phase','team')
+    const [allheaps,setallheaps] = useState<string[]>([])
+    const [allsummon,setallsummon] = useState<string[]>([])
 
-    const prefix = props.owner == Players.GetLocalPlayer() ? "my_" : "you_"
+    useGameEvent('S2C_BRUSH_SOLIDER',()=>{
+        const table = CustomNetTables.GetTableValue("Scenes","summon"+props.owner)
+        setallsummon(JsonString2Array(table))
+        $.Msg(table)
+    },[])
 
     useEffect(()=>{                                                             
             $.Schedule(0.5,()=>{
-                const all = CustomNetTables.GetTableValue('Scenes','ALL' + props.owner)
+                const all = CustomNetTables.GetTableValue('Scenes','ALL' + props.owner)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
                 const all_array = JsonString2Array(all)
-                setmyheaps(all_array)    
-            })                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
+                const table = CustomNetTables.GetTableValue("Scenes","summon"+props.owner)
+                setallsummon(JsonString2Array(table))
+                setallheaps(all_array)
+                $.Msg("列怪数量")    
+                $.Msg(table)
+            })
     },[])
 
 
     return <Panel hittest={false} className={"CardContext"}>
-        {myheaps.map((uuid,index)=><Card owner={props.owner}  key={shortid.generate()} index={index} uuid={uuid}/>)}
+        {allheaps.concat(allsummon).map((uuid,index)=><Card owner={props.owner}  key={uuid} index={index} uuid={uuid}/>)}
     </Panel>
 }

@@ -32,9 +32,13 @@ export class Card{
         this.Index = CardParameter.Index
         this.PlayerID = CardParameter.PlayerID
         this.Scene = Scene
-        this.Scene.addCard(this)
+        this.call_add_card()
         this.register_gameevent()
         print("创造了",this.UUID)
+    }
+
+    call_add_card(){
+        this.Scene.addCard(this)
     }
 
     /**注冊原子級別的事件 */

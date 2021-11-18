@@ -8,6 +8,7 @@ import { LinkedList } from "../structure/Linkedlist";
 import { Card, uuid } from "./Card";
 import { Timers } from "../lib/timers";
 import { AbilityCard, SmallSkill, TrickSkill } from "./Ability";
+import { Stack } from "../structure/Stack";
 
 type PlayerScene = Record<number, Scenes> ;
 
@@ -37,6 +38,10 @@ export class Scenes implements ICAScene{
     CaSceneManager: ScenesManager;
     CardPool: Record<uuid, Card> = {};    
     PlayerID: PlayerID;
+
+    shuffle(){
+
+    }
 
     getIndex(Card:Card){
         return 
@@ -186,6 +191,30 @@ export class Midway extends Scenes{
         ICASceneManager.SetMidwayScene(this);
     }
 
+ 
+    shuffle(){
+        const stack = new Stack()
+        const stack_number = new Stack()
+        for(let key =  0; key < this.CardList.length ; key ++){
+            if(this.CardList[key] != -1){
+                stack.Push(this.CardList[key])
+                stack_number.Push(key)
+            }
+        }
+        stack_number.shuffle()
+        this.CardList = [-1,-1,-1,-1,-1]
+        while(stack.Size != 0){
+             const card = stack.pop as Card
+             const index = stack_number.pop as number
+             this.CardList[index] = card
+             card.Index = index
+             card.update(card.Scene.SceneName)
+        }
+        print("打印下路情况")
+        DeepPrintTable(this.CardList)
+    }
+
+
     //获得一个当前可选的空位
  
     getbrachoption(){
@@ -263,6 +292,30 @@ export class GoUp extends Scenes{
     }
 
 
+    shuffle(){
+        const stack = new Stack()
+        const stack_number = new Stack()
+        for(let key =  0; key < this.CardList.length ; key ++){
+            if(this.CardList[key] != -1){
+                stack.Push(this.CardList[key])
+                stack_number.Push(key)
+            }
+        }
+        stack_number.shuffle()
+        this.CardList = [-1,-1,-1,-1,-1]
+        while(stack.Size != 0){
+             const card = stack.pop as Card
+             const index = stack_number.pop as number
+             this.CardList[index] = card
+             card.Index = index
+             card.update(card.Scene.SceneName)
+        }
+        print("打印下路情况")
+        DeepPrintTable(this.CardList)
+    }
+
+
+
     getbrachoption(){
         let mark = [-1,-1]
         for(let index = 0; index <= 3 ; index ++){
@@ -333,6 +386,29 @@ export class LaidDown extends Scenes{
         super(ICASceneManager)
         this.PlayerID = PlayerID
         ICASceneManager.SetLaidDownScene(this);
+    }
+
+
+    shuffle(){
+        const stack = new Stack()
+        const stack_number = new Stack()
+        for(let key =  0; key < this.CardList.length ; key ++){
+            if(this.CardList[key] != -1){
+                stack.Push(this.CardList[key])
+                stack_number.Push(key)
+            }
+        }
+        stack_number.shuffle()
+        this.CardList = [-1,-1,-1,-1,-1]
+        while(stack.Size != 0){
+             const card = stack.pop as Card
+             const index = stack_number.pop as number
+             this.CardList[index] = card
+             card.Index = index
+             card.update(card.Scene.SceneName)
+        }
+        print("打印下路情况")
+        DeepPrintTable(this.CardList)
     }
 
     getbrachoption(){
@@ -499,6 +575,16 @@ export class ScenesManager{
         return table
     }
 
+    get_All_summon(PlyaerID:PlayerID){
+        const table = []
+        for(const uuid in this.All){
+            if(this.All[uuid].PlayerID == PlyaerID && this.All[uuid].type == 'Solider'){
+                 table.push(uuid)
+            }
+        }
+        return table
+    }
+
     /** 更新网表至nettable */
     update(){
         // const BlueGoUp = this.GoUp[GameRules.Blue.GetPlayerID()].update_uuid()
@@ -520,6 +606,12 @@ export class ScenesManager{
         // CustomNetTables.SetTableValue('Scenes',"Grave" + GameRules.Blue.GetPlayerID(),BlueGrave)
         // CustomNetTables.SetTableValue('Scenes',"Grave" + GameRules.Red.GetPlayerID(),RedGrave)
         print("打印")
+    }
+
+    /**更新召唤物列表 */
+    update_summon(){
+        CustomNetTables.SetTableValue("Scenes","summon"+GameRules.Red.GetPlayerID(),this.get_All_summon(GameRules.Red.GetPlayerID()))
+        CustomNetTables.SetTableValue("Scenes","summon"+GameRules.Blue.GetPlayerID(),this.get_All_summon(GameRules.Blue.GetPlayerID()))
     }
 
     /**牌改变场景*/

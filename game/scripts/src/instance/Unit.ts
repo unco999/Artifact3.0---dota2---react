@@ -5,16 +5,37 @@ import { CAModifiler } from "./Modifiler";
 import { GoUp, ICAScene } from "./Scenes";
 
 
-
 export class Unit extends Card{
+
+    constructor(CardParameter:CardParameter,Scene:ICAScene){
+        super(CardParameter,Scene)
+    }
+
+    register_gameevent(){
+        //只有单位有死亡事件  给单位注册死亡事件 执行call death
+        super.register_gameevent()
+        CustomGameEventManager.RegisterListener("TEST_C2S_DEATH",(_,event)=>{
+            if(this.UUID == event.uuid){
+                this.call_death()
+            }
+        })
+    }
+
+    call_death(){
+        this.Scene.CaSceneManager.change_secens(this.UUID,"Grave",-1)
+    }
+    
+}
+export class Hero extends Unit{
     HasAbilities:string[] // 单位拥有的技能字符串
     HasModifiler:LinkedList<CAModifiler> = new LinkedList() //单位拥有的modiflier
     Equip:LinkedList<Equip> = new LinkedList()
 
     constructor(CardParameter:CardParameter,Scene:ICAScene){
         super(CardParameter,Scene);
-        this.type = 'Unit'
+        this.type = 'Hero'
     }
+
 
     isHasAbility(abilityname:string){
        return this.HasAbilities.includes(abilityname)
@@ -44,17 +65,20 @@ export class Unit extends Card{
             this.HasModifiler.remove(modifiler)
         })
     }
-
-
 }
 
-export class Soldier extends Card{
+export class Solider extends Unit{
+
     constructor(CardParameter:CardParameter,Scene:ICAScene){
         super(CardParameter,Scene);
-        this.type = 'Solider'
-    }
-
-    call_add_card(){
+        this.type = 'Solider';
         (this.Scene as GoUp).AutoAddCard(this,this.Index)
     }
+
+    override call_death(){
+        this.Scene.Remove(this.UUID)
+        GameRules.SceneManager.remove(this.UUID)
+        this.update("REMOVE")
+    }
+
 }

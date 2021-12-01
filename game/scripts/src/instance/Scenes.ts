@@ -9,8 +9,9 @@ import { Card, uuid } from "./Card";
 import { Timers } from "../lib/timers";
 import { AbilityCard, SmallSkill, TrickSkill } from "./Ability";
 import { Stack } from "../structure/Stack";
+import { Unit } from "./Unit";
 
-type PlayerScene = Record<number, Scenes> ;
+type PlayerScene = Record<number, Scenes | BattleArea> ;
 
 
 
@@ -181,17 +182,22 @@ export class Hand extends Scenes{
 
 }
 
-export class Midway extends Scenes{
-    SceneName = 'MIDWAY'
+export class BattleArea extends Scenes{
     CardList:Array<Card|-1> = [-1,-1,-1,-1,-1]
 
     constructor(PlayerID: PlayerID, ICASceneManager: ScenesManager) {
         super(ICASceneManager)
         this.PlayerID = PlayerID
-        ICASceneManager.SetMidwayScene(this);
+        this.reigster_gamevent()
     }
 
- 
+    reigster_gamevent(){
+        CustomGameEventManager.RegisterListener("TEST_C2S_CALL_CENTER",()=>{
+            print("开始执行卡片居中")
+            this.call_cetner()
+        })
+    }
+
     shuffle(){
         const stack = new Stack()
         const stack_number = new Stack()
@@ -210,31 +216,36 @@ export class Midway extends Scenes{
              card.Index = index
              card.update(card.Scene.SceneName)
         }
-        print("打印下路情况")
-        DeepPrintTable(this.CardList)
     }
 
-
-    //获得一个当前可选的空位
- 
     getbrachoption(){
         let mark = [-1,-1]
-        for(let index = 0; index <= 3 ; index ++){
-            if(this.CardList[2 - index] == -1   ){
+        for(let index = 0; index < 3 ; index ++){
+            if(this.CardList[3 - index - 1] == -1   ){
                 if(mark[0] == -1){
-                    mark[0] = 2 - index + 1
+                    mark[0] = 3 - index
                 }
             }
-            if(this.CardList[2 + index] == -1){
+            if(this.CardList[3 + index - 1] == -1){
                 if(mark[1] == -1){
-                    mark[1] = 2 + index + 1
+                    mark[1] = 3 + index
                 }
             }
-            if(mark[0] != -1 && mark[1] != -1){
-                 break;
+            if(mark[0] != -1 || mark[1] != -1){
+                 return mark
             }
         }
         return mark
+    }
+
+    Print(){
+        for(let i = 0 ; i < this.CardList.length ; i++){
+           if(this.CardList[i]!= -1){
+               print("当前",this.SceneName,"的",i,"号位置","不为空********************")
+           }else{
+              print("当前",this.SceneName,"的",i,"号位置","空-------------------")
+           }
+        }
     }
 
     AutoAddCard(card:Card,index?:number){
@@ -268,8 +279,8 @@ export class Midway extends Scenes{
     }
 
     Remove(uuid){
-        for(let index = 1 ; index < this.CardList.length ; index ++){
-           if(this.CardList[index] instanceof Card){
+        for(let index = 0 ; index < this.CardList.length ; index ++){
+           if((this.CardList[index]) instanceof Card){
                if((this.CardList[index] as Card).UUID == uuid){
                    this.CardList[index] = -1
                    this.CardPool[uuid] = null
@@ -278,202 +289,45 @@ export class Midway extends Scenes{
         }
      }
 
+     call_cetner(){
+        this.CardList.forEach((card:Card)=>{
+            if(card instanceof Unit){
+                card.center()
+            }
+        })
+     }
 
 }
 
-export class GoUp extends Scenes{
-    SceneName = 'GOUP'
-    CardList:Array<Card|-1> = [-1,-1,-1,-1,-1]
+export class Midway extends BattleArea{
+    SceneName = 'MIDWAY'
 
     constructor(PlayerID: PlayerID, ICASceneManager: ScenesManager) {
-        super(ICASceneManager)
+        super(PlayerID,ICASceneManager)
+        this.PlayerID = PlayerID
+        ICASceneManager.SetMidwayScene(this);
+    }
+}
+export class GoUp extends BattleArea{
+    SceneName = 'GOUP'
+
+    constructor(PlayerID: PlayerID, ICASceneManager: ScenesManager) {
+        super(PlayerID,ICASceneManager)
         this.PlayerID = PlayerID
         ICASceneManager.SetGoUpScene(this);
     }
-
-
-    shuffle(){
-        const stack = new Stack()
-        const stack_number = new Stack()
-        for(let key =  0; key < this.CardList.length ; key ++){
-            if(this.CardList[key] != -1){
-                stack.Push(this.CardList[key])
-                stack_number.Push(key)
-            }
-        }
-        stack_number.shuffle()
-        this.CardList = [-1,-1,-1,-1,-1]
-        while(stack.Size != 0){
-             const card = stack.pop as Card
-             const index = stack_number.pop as number
-             this.CardList[index] = card
-             card.Index = index
-             card.update(card.Scene.SceneName)
-        }
-        print("打印下路情况")
-        DeepPrintTable(this.CardList)
-    }
-
-
-
-    getbrachoption(){
-        let mark = [-1,-1]
-        for(let index = 0; index <= 3 ; index ++){
-            if(this.CardList[2 - index] == -1   ){
-                if(mark[0] == -1){
-                    mark[0] = 2 - index + 1
-                }
-            }
-            if(this.CardList[2 + index] == -1){
-                if(mark[1] == -1){
-                    mark[1] = 2 + index + 1
-                }
-            }
-            if(mark[0] != -1 && mark[1] != -1){
-                 break;
-            }
-        }
-        return mark
-    }
-
-    AutoAddCard(card:Card,index?:number){
-        if(index){
-            super.addCard(card)
-            card.Index = index
-            this.CardList[index - 1] = card
-            return;
-        }
-        let mark;
-        for(let index = 0 ; index < 4 ; index ++){
-            if(this.CardList[3 - index - 1] === -1){
-                mark = 3 - index
-                break;
-            }
-            if(this.CardList[3 + index - 1] === -1){
-                mark = 3 + index
-                break
-            }
-        }
-        if(!mark){
-            print("自动加入路线出错了")
-        }
-        card.Index = mark
-        card.Scene = this
-        this.CardList[mark] = card
-        this.CardPool[card.UUID] = card
-        return card
-    }
-
-
-    Remove(uuid){
-        for(let index = 1 ; index < this.CardList.length ; index ++){
-           if(this.CardList[index] instanceof Card){
-               if((this.CardList[index] as Card).UUID == uuid){
-                   this.CardList[index] = -1
-                   this.CardPool[uuid] = null
-               }
-           }
-        }
-     }
-
 }
 
-export class LaidDown extends Scenes{
+export class LaidDown extends BattleArea{
     SceneName = 'LAIDDOWN'
-    CardList:Array<Card|-1> = [-1,-1,-1,-1,-1]
-
     constructor(PlayerID: PlayerID, ICASceneManager: ScenesManager) {
-        super(ICASceneManager)
+        super(PlayerID,ICASceneManager)
         this.PlayerID = PlayerID
         ICASceneManager.SetLaidDownScene(this);
     }
-
-
-    shuffle(){
-        const stack = new Stack()
-        const stack_number = new Stack()
-        for(let key =  0; key < this.CardList.length ; key ++){
-            if(this.CardList[key] != -1){
-                stack.Push(this.CardList[key])
-                stack_number.Push(key)
-            }
-        }
-        stack_number.shuffle()
-        this.CardList = [-1,-1,-1,-1,-1]
-        while(stack.Size != 0){
-             const card = stack.pop as Card
-             const index = stack_number.pop as number
-             this.CardList[index] = card
-             card.Index = index
-             card.update(card.Scene.SceneName)
-        }
-        print("打印下路情况")
-        DeepPrintTable(this.CardList)
-    }
-
-    getbrachoption(){
-        let mark = [-1,-1]
-        for(let index = 0; index <= 3 ; index ++){
-            if(this.CardList[2 - index] == -1   ){
-                if(mark[0] == -1){
-                    mark[0] = 2 - index + 1
-                }
-            }
-            if(this.CardList[2 + index] == -1){
-                if(mark[1] == -1){
-                    mark[1] = 2 + index + 1
-                }
-            }
-            if(mark[0] != -1 && mark[1] != -1){
-                 break;
-            }
-        }
-        return mark
-    }
-
-    
-    AutoAddCard(card:Card,index?:number){
-        if(index){
-            super.addCard(card)
-            card.Index = index
-            this.CardList[index - 1] = card
-            return;
-        }
-        let mark;
-        for(let index = 0 ; index < 4 ; index ++){
-            if(this.CardList[3 - index - 1] === -1){
-                mark = 3 - index
-                break;
-            }
-            if(this.CardList[3 + index - 1] === -1){
-                mark = 3 + index
-                break
-            }
-        }
-        if(!mark){
-            print("自动加入路线出错了")
-        }
-        card.Index = mark
-        card.Scene = this
-        this.CardList[mark] = card
-        this.CardPool[card.UUID] = card
-        return card
-    }
-
-
-    Remove(uuid){
-        for(let index = 1 ; index < this.CardList.length ; index ++){
-           if(this.CardList[index] instanceof Card){
-               if((this.CardList[index] as Card).UUID == uuid){
-                   this.CardList[index] = -1
-                   this.CardPool[uuid] = null
-               }
-           }
-        }
-        print("成功删除场景HAND")
-    }
 }
 
+//施法场景
 export class Ability extends Scenes {
     SceneName = "ABILITY"
 
@@ -484,7 +338,7 @@ export class Ability extends Scenes {
     }
 }
 
-
+//坟墓场景
 export class Grave extends Scenes {
     SceneName = "GRAVE"
     constructor(PlayerID: PlayerID, ICASceneManager: ScenesManager) {
@@ -565,6 +419,10 @@ export class ScenesManager{
     /** 附加给全局 ALL*/
     global_add(uuid:uuid,Card:Card){
         this.All[uuid] = Card
+    }
+
+    remove(uuid:uuid){
+        this.All[uuid] = null
     }
 
     getAll(PlyaerID:PlayerID){
@@ -671,7 +529,7 @@ export class ScenesManager{
     }
 
     
-    SetGoUpScene(Scene:Scenes){
+    SetGoUpScene(Scene:BattleArea){
         this.GoUp[Scene.PlayerID] = Scene
     }
 
@@ -679,11 +537,11 @@ export class ScenesManager{
         this.Ability[Scene.PlayerID] = Scene
     }
 
-    SetMidwayScene(Scene:Scenes){
+    SetMidwayScene(Scene:BattleArea){
         this.Midway[Scene.PlayerID] = Scene
     }
 
-    SetLaidDownScene(Scene:Scenes){
+    SetLaidDownScene(Scene:BattleArea){
         this.LaidDown[Scene.PlayerID] = Scene
     }
 

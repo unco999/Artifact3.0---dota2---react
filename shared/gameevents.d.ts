@@ -27,4 +27,6 @@ declare interface CustomGameEventDeclarations {
     "S2C_SEND_INDEX":{[keys:string]:number}
     "C2S_BRUSH_SOLIDER":{}
     "S2C_BRUSH_SOLIDER":{}
+    "TEST_C2S_DEATH":{uuid:string}
+    "TEST_C2S_CALL_CENTER":{}
 }

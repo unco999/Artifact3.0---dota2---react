@@ -1,5 +1,5 @@
-import { GoUp, LaidDown, Midway, Scenes } from "../instance/Scenes";
-import { Soldier } from "../instance/Unit";
+import { BattleArea, GoUp, LaidDown, Midway, Scenes } from "../instance/Scenes";
+import { Solider } from "../instance/Unit";
 import { reloadable } from "../lib/tstl-utils";
 
 /** 主要控制刷修小兵 */
@@ -20,13 +20,13 @@ export class brash_solidier{
         const LaidDownSelect = this.route(LaidDown as [number,number])
         const MidwaySelect = this.route(Midway as [number,number])
         GoUpSelect && this.actuallyBrushingSoldiers(GoUpSelect,PlayerID,GameRules.SceneManager.GetGoUpScene(PlayerID))
-        LaidDownSelect && this.actuallyBrushingSoldiers(GoUpSelect,PlayerID,GameRules.SceneManager.GetLaidDownScene(PlayerID))
-        MidwaySelect && this.actuallyBrushingSoldiers(GoUpSelect,PlayerID,GameRules.SceneManager.GetMidwayScene(PlayerID))
+        LaidDownSelect && this.actuallyBrushingSoldiers(LaidDownSelect,PlayerID,GameRules.SceneManager.GetLaidDownScene(PlayerID))
+        MidwaySelect && this.actuallyBrushingSoldiers(MidwaySelect,PlayerID,GameRules.SceneManager.GetMidwayScene(PlayerID))
     }
 
     /**实际刷兵API */
     static actuallyBrushingSoldiers(index:number,PlayerID:PlayerID,scene_name:Scenes){
-        const soldier = new Soldier({Id:math.random().toString(),Index:index,PlayerID:PlayerID},scene_name)
+        const soldier = new Solider({Id:math.random().toString(),Index:index,PlayerID:PlayerID},scene_name)
         GameRules.SceneManager.global_add(soldier.UUID,soldier)
         GameRules.SceneManager.update_summon()
         CustomGameEventManager.Send_ServerToAllClients("S2C_BRUSH_SOLIDER",{})
@@ -35,7 +35,8 @@ export class brash_solidier{
     /**同时刷两边小兵 */
     static brushTwoSoldiers(){
         this.brachSelect(GameRules.Blue.GetPlayerID())
-        this.brachSelect(GameRules.Red.GetPlayerID())
+        this.brachSelect(GameRules.Red.GetPlayerID());
+        (GameRules.SceneManager.GetMidwayScene(GameRules.Blue.GetPlayerID()) as BattleArea).Print()
     }
 
     static route(brach:[number,number]):number{

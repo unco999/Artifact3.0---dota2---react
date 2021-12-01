@@ -1,7 +1,7 @@
 import Queue from "../structure/Queue";
 import { Card, uuid } from "../instance/Card";
 import { Ability, Cardheaps, GoUp, Grave, Hand, ICAScene, IHeapsCardbuilder, LaidDown, Midway, Scenes, ScenesManager } from "../instance/Scenes";
-import { Unit } from "../instance/Unit";
+import { Hero } from "../instance/Unit";
 import { SmallSkill, TrickSkill } from "../instance/Ability";
 
 /** 负责构造牌堆 */
@@ -64,9 +64,10 @@ export class ScenesBuildbehavior {
         const _table = CustomNetTables.GetTableValue("Card_group_construction_phase",'herobrach')[PlayerID.toString()]
         for(const brach in _table){
             for(const index in _table[brach]){
-                const unit = new Unit({Id:_table[brach][index],Index:-1,PlayerID:PlayerID},GameRules.SceneManager.GetCardheapsScene(PlayerID))
-                GameRules.SceneManager.global_add(unit.UUID,unit)
-                GameRules.SceneManager.change_secens(unit.UUID,this.fitler(brach,PlayerID).SceneName)
+                const hero = new Hero({Id:_table[brach][index],Index:-1,PlayerID:PlayerID},GameRules.SceneManager.GetCardheapsScene(PlayerID))
+                GameRules.SceneManager.global_add(hero.UUID,hero)
+                GameRules.SceneManager.change_secens(hero.UUID,this.fitler(brach,PlayerID).SceneName);
+                (hero.Scene as GoUp).AutoAddCard(hero,hero.Index)
             }
         }
         

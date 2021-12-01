@@ -126,12 +126,14 @@
         animation-iteration-count: infinite;
     }
     &.my_death{
-        x:100px;
-        y:800px;
         animation-name: death;
         animation-duration: 3s;
         animation-iteration-count: 1;
         animation-fill-mode:forwards;
+    }
+    &.my_ingrave{
+        x:100px;
+        y:900px;
     }
 }
 .threeDimensional{  
@@ -220,12 +222,22 @@
             }
         }
     }
-    &.my_ability{
+    &.you_ability{
         x:1200px;
         y:100px;
         animation-name: ability;
         animation-duration: 3s;
         animation-iteration-count: infinite;
+    }
+    &.you_death{
+        animation-name: death;
+        animation-duration: 3s;
+        animation-iteration-count: 1;
+        animation-fill-mode:forwards;
+    }
+    &.you_ingrave{
+        x:50px;
+        y:50px;
     }
 }
 

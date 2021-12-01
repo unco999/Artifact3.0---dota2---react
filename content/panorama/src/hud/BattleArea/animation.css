@@ -32,6 +32,31 @@
     0% {
         opacity-brush: gradient( linear, 0% 100%, 100% 0%, from( #ffffffff ), to( #ffffff00 ) );
         opacity: 1;
+        transform:translateX(-10px);
+    }
+    2% {
+        transform:translateX(10px);
+    }
+    4% {
+        transform:translateX(-10px);
+    }
+    9% {
+        transform:translateX(10px);
+    }
+    11% {
+        transform:translateX(-10px);
+    }
+    12% {
+        transform:translateX(10px);
+    }
+    15% {
+        transform:translateX(-10px);
+    }
+    16% {
+        transform:translateX(-10px);
+    }
+    19% {
+        transform:translateX(10px);
     }
     100%{
         opacity-brush: gradient( linear, 100% 100%, 100% 100%, from( #ffffffff ), to( #ffffff00 ) );

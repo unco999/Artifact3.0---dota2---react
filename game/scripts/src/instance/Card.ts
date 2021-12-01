@@ -1,4 +1,4 @@
-import { ICAScene } from "./Scenes";
+import { BattleArea, ICAScene } from "./Scenes";
 
 export type uuid = string;
 
@@ -32,22 +32,31 @@ export class Card{
         this.Index = CardParameter.Index
         this.PlayerID = CardParameter.PlayerID
         this.Scene = Scene
-        this.call_add_card()
         this.register_gameevent()
-        print("创造了",this.UUID)
-    }
-
-    call_add_card(){
         this.Scene.addCard(this)
+        print("创造了",this.UUID)
     }
 
     /**注冊原子級別的事件 */
     register_gameevent(){
         CustomGameEventManager.RegisterListener('C2S_GET_CARD',(_,event)=>{
             if( event.uuid == this.UUID){
-                    CustomGameEventManager.Send_ServerToAllClients("S2C_GET_CARD",{Id:this.Id,Index:this.Index,uuid:this.UUID,Scene:this.Scene.SceneName,type:this.type,playerid:this.PlayerID})   
+                print("收到查询原子事件")
+                CustomGameEventManager.Send_ServerToAllClients("S2C_GET_CARD",{Id:this.Id,Index:this.Index,uuid:this.UUID,Scene:this.Scene.SceneName,type:this.type,playerid:this.PlayerID})   
             }
         })
+    }
+
+    /**卡牌向中移动 */
+    center(){
+        const _scenes = this.Scene as BattleArea
+        if(this.Index > 0 && _scenes.CardList[this.Index + 1 - 1 ] != -1 && this.Index < 3){
+            this.Index++
+        }
+        if(this.Index > 3 && _scenes.CardList[this.Index - 1 - 1 ] != -1 && this.Index < 5){
+            this.Index--
+        }
+        this.update(this.Scene.SceneName)
     }
 
     /**是否在手牌 */

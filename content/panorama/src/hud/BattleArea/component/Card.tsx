@@ -38,17 +38,17 @@ const Machine = createMachine({
         },
         midway:{
             entry:'midway_entry',
-            on:{toHAND:"hand",toHEAPS:"heaps",toMIDWAY:"midway",toGOUP:"goup",toLAIDDOWN:"laiddown"},
+            on:{toHAND:"hand",toHEAPS:"heaps",toMIDWAY:"midway",toGOUP:"goup",toLAIDDOWN:"laiddown",toGRAVE:"grave",toREMOVE:"remove"},
             exit:"midway_exit"
         },
         goup:{
             entry:'goup_entry',
-            on:{toHAND:"hand",toHEAPS:"heaps",toMIDWAY:"midway",toGOUP:"goup",toLAIDDOWN:"laiddown"},
+            on:{toHAND:"hand",toHEAPS:"heaps",toMIDWAY:"midway",toGOUP:"goup",toLAIDDOWN:"laiddown",toGRAVE:"grave",toREMOVE:"remove"},
             exit:"goup_exit"
         },
         laiddown:{
             entry:'laiddown_entry',
-            on:{toHAND:"hand",toHEAPS:"heaps",toMIDWAY:"midway",toGOUP:"goup",toLAIDDOWN:"laiddown"},
+            on:{toHAND:"hand",toHEAPS:"heaps",toMIDWAY:"midway",toGOUP:"goup",toLAIDDOWN:"laiddown",toGRAVE:"grave",toREMOVE:"remove"},
             exit:"laiddown_exit"
         },
         ability:{
@@ -61,6 +61,9 @@ const Machine = createMachine({
         grave:{
             entry:"grave_entry",
             exit:"grave_exit"
+        },
+        remove:{
+            entry:"remove_entry"
         }
     }
 })
@@ -92,21 +95,21 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
                 dummyoperate('add',prefix + 'Midway' + state.Index);
             },
             midway_exit:()=>{
-                dummyoperate('remove',prefix + 'Midway' + preindex.current );
+                // dummyoperate('remove',prefix + 'Midway' + preindex.current );
             },
             goup_entry:()=>{
                 preindex.current = state.Index
                 dummyoperate('add',prefix + 'Goup' + state.Index );
             },
             goup_exit:()=>{
-                dummyoperate('remove',prefix + 'Goup' + preindex.current);
+                // dummyoperate('remove',prefix + 'Goup' + preindex.current);
             },
             laiddown_entry:()=>{
                 preindex.current = state.Index
                 dummyoperate('add',prefix + 'Laiddown' + state.Index);
             },
             laiddown_exit:()=>{
-                dummyoperate('remove',prefix + 'Laiddown' + preindex.current);
+                // dummyoperate('remove',prefix + 'Laiddown' + preindex.current);
             },
             heaps_entry:()=>{
                 preindex.current = state.Index
@@ -123,7 +126,7 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
             },
             ability_entry:()=>{
                 $.Msg("进入了魔法阶段")
-                disposablePointing()
+                disposablePointing()//
                 dummyoperate('add',prefix + "ability")
             },
             ability_exit:()=>{
@@ -131,7 +134,15 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
                 hidedisposablePointing()
             },
             grave_entry:()=>{
-                $.Msg("有单位死亡了")
+                dummyoperate('add',prefix + "death")
+                $.Schedule(1,()=>{
+                    dummyoperate('remove',prefix + 'Laiddown' + state.Index)
+                    dummyoperate('remove',prefix + 'Goup' + state.Index)
+                    dummyoperate('remove',prefix + 'Midway' + state.Index)
+                    dummyoperate('add',prefix + "ingrave")
+                })
+            },
+            remove_entry:()=>{
                 dummyoperate('add',prefix + "death")
             }
         }
@@ -192,7 +203,7 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
         dragCallbacks.offsetX = 0; 
         dragCallbacks.offsetY = 0;
         changeCoordinates()
-        state.type == 'Unit' && splitOptionalPrompt()
+        state.type == 'Hero' && splitOptionalPrompt()
         $.Msg("OnDragStart")
     }
 
@@ -202,7 +213,7 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
         isdrag.current = false
         const container = ConpoentDataContainer.Instance.NameGetNode("arrow_tip").current
         container.close()
-        state.type == 'Unit' && closeOptionalPrompt()
+        state.type == 'Hero' && closeOptionalPrompt()
     }
 
     /**打开分路可选提示器 */
@@ -275,10 +286,10 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
         $.Msg("OnDragDrop")
     }
 
-    const Unit = () => {
+    const Hero = () => {
         return <>
          <Panel draggable={true} ref={Panel => dummy.current = Panel} onmouseover={()=>ref.current?.AddClass(prefix+"hover")} onmouseout={()=>ref.current?.RemoveClass(prefix+"hover")} className={prefix+"Carddummy"}/>
-        <Panel ref={Panel => ref.current = Panel}  className={prefix+'Card'} >
+        <Panel hittest={true} ref={Panel => ref.current = Panel} onmouseactivate={()=>{$.Msg("ggg");GameEvents.SendCustomGameEventToServer("TEST_C2S_DEATH",{uuid:props.uuid})}}  className={prefix+'Card'} >
               <DOTAHeroImage heroimagestyle={'portrait'} heroid={id.current as HeroID} />
               <Panel className={"threeDimensional"}>
             <Panel className={"attack"}>
@@ -304,7 +315,6 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
     const frame = useRef<Panel|null>()
 
     const Ability = () => {
-
         return <>
          <Panel draggable={true} ref={Panel => dummy.current = Panel} onmouseover={()=>{frame.current?.AddClass("show");ref.current?.AddClass(prefix+"hover")}} onmouseout={()=>{frame.current?.RemoveClass("show");ref.current?.RemoveClass(prefix+"hover")}} className={prefix+"Carddummy"}/>
          <Panel ref={Panel => ref.current = Panel}  className={prefix+'Card'} >
@@ -321,7 +331,7 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
     }
 
     const Solider = () => {
-        return <Panel className={prefix+'Card'} ref={Panel => ref.current = Panel}>
+        return <Panel hittest={true} onmouseactivate={()=>{$.Msg("ggg");GameEvents.SendCustomGameEventToServer("TEST_C2S_DEATH",{uuid:props.uuid})}}   className={prefix+'Card'} ref={Panel => ref.current = Panel}>
                 <Label text={"小兵"} style={{fontSize:'30px',color:'white',textShadow:'0px 0px 0px 5.0 black',align:'center center'}}/>
             </Panel>
     }
@@ -334,8 +344,8 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
         if(state.Scene == 'HEAPS'){
             return Heaps()
         }
-        if(state.type == 'Unit'){
-            return Unit()
+        if(state.type == 'Hero'){
+            return Hero()
         }
         if(state.type == 'SmallSkill' || state.type == 'TrickSkill'){
             return Ability()

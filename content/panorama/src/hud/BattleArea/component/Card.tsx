@@ -95,21 +95,24 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
                 dummyoperate('add',prefix + 'Midway' + state.Index);
             },
             midway_exit:()=>{
-                // dummyoperate('remove',prefix + 'Midway' + preindex.current );
+                if(state.type == "Solider" && state.Scene != 'MIDWAY') return;
+                 dummyoperate('remove',prefix + 'Midway' + preindex.current );
             },
             goup_entry:()=>{
                 preindex.current = state.Index
                 dummyoperate('add',prefix + 'Goup' + state.Index );
             },
             goup_exit:()=>{
-                // dummyoperate('remove',prefix + 'Goup' + preindex.current);
+                if(state.type == "Solider" && state.Scene != 'GOUP') return;
+                 dummyoperate('remove',prefix + 'Goup' + preindex.current);
             },
             laiddown_entry:()=>{
                 preindex.current = state.Index
                 dummyoperate('add',prefix + 'Laiddown' + state.Index);
             },
             laiddown_exit:()=>{
-                // dummyoperate('remove',prefix + 'Laiddown' + preindex.current);
+                if(state.type == "Solider" && state.Scene != 'LAIDDOWN') return;
+                 dummyoperate('remove',prefix + 'Laiddown' + preindex.current);
             },
             heaps_entry:()=>{
                 preindex.current = state.Index
@@ -135,12 +138,10 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
             },
             grave_entry:()=>{
                 dummyoperate('add',prefix + "death")
-                $.Schedule(1,()=>{
                     dummyoperate('remove',prefix + 'Laiddown' + state.Index)
                     dummyoperate('remove',prefix + 'Goup' + state.Index)
                     dummyoperate('remove',prefix + 'Midway' + state.Index)
                     dummyoperate('add',prefix + "ingrave")
-                })
             },
             remove_entry:()=>{
                 dummyoperate('add',prefix + "death")

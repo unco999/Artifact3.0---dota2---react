@@ -19,14 +19,15 @@ export class brash_solidier{
         const GoUpSelect = this.route(GoUp as [number,number])
         const LaidDownSelect = this.route(LaidDown as [number,number])
         const MidwaySelect = this.route(Midway as [number,number])
-        GoUpSelect && this.actuallyBrushingSoldiers(GoUpSelect,PlayerID,GameRules.SceneManager.GetGoUpScene(PlayerID))
-        LaidDownSelect && this.actuallyBrushingSoldiers(LaidDownSelect,PlayerID,GameRules.SceneManager.GetLaidDownScene(PlayerID))
-        MidwaySelect && this.actuallyBrushingSoldiers(MidwaySelect,PlayerID,GameRules.SceneManager.GetMidwayScene(PlayerID))
+        GoUpSelect && this.actuallyBrushingSoldiers(GoUpSelect,PlayerID,GameRules.SceneManager.GetGoUpScene(PlayerID) as BattleArea)
+        LaidDownSelect && this.actuallyBrushingSoldiers(LaidDownSelect,PlayerID,GameRules.SceneManager.GetLaidDownScene(PlayerID) as BattleArea)
+        MidwaySelect && this.actuallyBrushingSoldiers(MidwaySelect,PlayerID,GameRules.SceneManager.GetMidwayScene(PlayerID) as BattleArea)
     }
 
     /**实际刷兵API */
-    static actuallyBrushingSoldiers(index:number,PlayerID:PlayerID,scene_name:Scenes){
+    static actuallyBrushingSoldiers(index:number,PlayerID:PlayerID,scene_name:BattleArea){
         const soldier = new Solider({Id:math.random().toString(),Index:index,PlayerID:PlayerID},scene_name)
+        scene_name.AutoAddCard(soldier,index)
         GameRules.SceneManager.global_add(soldier.UUID,soldier)
         GameRules.SceneManager.update_summon()
         CustomGameEventManager.Send_ServerToAllClients("S2C_BRUSH_SOLIDER",{})

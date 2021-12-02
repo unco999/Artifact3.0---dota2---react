@@ -17,9 +17,7 @@ export class Stack<T> {
     }
 
     shuffle(){
-        print("打印排序")
-        table.sort(this._stack_data,(a,b)=>math.random() > 0.5)
-        DeepPrintTable(this._stack_data)
+        table.sort(this._stack_data,(a,b)=>RollPercentage(50))
     }
 
     get pop(){

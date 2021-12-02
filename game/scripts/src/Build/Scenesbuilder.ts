@@ -67,7 +67,6 @@ export class ScenesBuildbehavior {
                 const hero = new Hero({Id:_table[brach][index],Index:-1,PlayerID:PlayerID},GameRules.SceneManager.GetCardheapsScene(PlayerID))
                 GameRules.SceneManager.global_add(hero.UUID,hero)
                 GameRules.SceneManager.change_secens(hero.UUID,this.fitler(brach,PlayerID).SceneName);
-                (hero.Scene as GoUp).AutoAddCard(hero,hero.Index)
             }
         }
         

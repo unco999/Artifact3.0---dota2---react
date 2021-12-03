@@ -1,4 +1,4 @@
-import { BattleArea, ICAScene } from "./Scenes";
+import { BattleArea, GoUp, ICAScene, Midway } from "./Scenes";
 
 export type uuid = string;
 
@@ -47,14 +47,24 @@ export class Card{
         })
     }
 
-    /**卡牌向中移动 */
-    center(){
+    /**卡牌向右边移动 */
+    right(){
         const _scenes = this.Scene as BattleArea
-        if(this.Index > 0 && _scenes.CardList[this.Index + 1 - 1 ] != -1 && this.Index < 3){
-            this.Index++
+        if(_scenes.CardList[this.Index + 1 - 1] == -1 && this.Index < 3){
+                _scenes.CardList[this.Index -1 ] = null
+                this.Index++
+                _scenes.CardList[this.Index -1 ] = this 
         }
-        if(this.Index > 3 && _scenes.CardList[this.Index - 1 - 1 ] != -1 && this.Index < 5){
+        this.update(this.Scene.SceneName)
+    }
+
+    /**卡牌向左边移动 */
+    left(){
+        const _scenes = this.Scene as BattleArea
+        if(this.Index > 3 && _scenes.CardList[this.Index - 1 - 1] == -1 && this.Index <= 5){
+            _scenes.CardList[this.Index - 1] = null
             this.Index--
+            _scenes.CardList[this.Index - 1 ] = this
         }
         this.update(this.Scene.SceneName)
     }

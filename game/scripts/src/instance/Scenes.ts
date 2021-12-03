@@ -199,12 +199,14 @@ export class BattleArea extends Scenes{
     }
 
     shuffle(){
+        print("打印当前对垒")
+        this.Print()
         const stack = new Stack()
         const stack_number = new Stack()
-        for(let key =  0; key < this.CardList.length ; key ++){
+        for(let key =  0; key < this.CardList.length; key ++){
             if(this.CardList[key] != -1){
                 stack.Push(this.CardList[key])
-                stack_number.Push(key)
+                stack_number.Push((this.CardList[key] as Card).Index)
             }
         }
         stack_number.shuffle()
@@ -212,10 +214,14 @@ export class BattleArea extends Scenes{
         while(stack.Size != 0){
              const card = stack.pop as Card
              const index = stack_number.pop as number
-             this.CardList[index] = card
+             this.CardList[index - 1] = card
              card.Index = index
-             card.update(card.Scene.SceneName)
         }
+        this.CardList.forEach(card=>{
+            if(card instanceof Card){
+                card.update(card.Scene.SceneName)
+            }
+        })
     }
 
     getbrachoption(){
@@ -249,7 +255,7 @@ export class BattleArea extends Scenes{
     }
 
     AutoAddCard(card:Card,index?:number){
-        if(index){
+        if(index && index != -1){
             print("中路手動兼職",index)
             super.addCard(card)
             card.Index = index
@@ -289,12 +295,22 @@ export class BattleArea extends Scenes{
         }
      }
 
+
      call_cetner(){
-        this.CardList.forEach((card:Card)=>{
-            if(card instanceof Unit){
-                card.center()
+        for(let index = 0 ; index < 3 ; index ++){
+            if(this.CardList[3 - index -1] == -1){
+                if(this.CardList[3 - index - 1 - 1]){
+                    (this.CardList[3 - index - 1 - 1] as Card).right()
+                }
             }
-        })
+            if(this.CardList[3 + index -1] == -1){
+                if(this.CardList[3 + index - 1 + 1]){
+                    (this.CardList[3 - index - 1 + 1] as Card).left()
+                }
+            }
+         }
+         print("打印分录",this.SceneName)
+         this.Print()
      }
 
 }

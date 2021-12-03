@@ -2,7 +2,7 @@ import { LinkedList } from "../structure/Linkedlist";
 import { Card, CardParameter, professionalMagicCard } from "./Card";
 import { Equip } from "./Equip";
 import { CAModifiler } from "./Modifiler";
-import { GoUp, ICAScene } from "./Scenes";
+import { BattleArea, GoUp, ICAScene } from "./Scenes";
 
 
 export class Unit extends Card{
@@ -22,7 +22,13 @@ export class Unit extends Card{
     }
 
     call_death(){
-        this.Scene.CaSceneManager.change_secens(this.UUID,"Grave",-1)
+        const scene = this.Scene
+        if(scene instanceof BattleArea){
+            scene.Remove(this.UUID)
+            this.Scene.CaSceneManager.change_secens(this.UUID,"Grave",-1)
+        }else{
+            print("你当前不在战斗区域")
+        }
     }
     
 }

@@ -3,6 +3,7 @@ import { Card, uuid } from "../instance/Card";
 import { Ability, Cardheaps, GoUp, Grave, Hand, ICAScene, IHeapsCardbuilder, LaidDown, Midway, Scenes, ScenesManager } from "../instance/Scenes";
 import { Hero } from "../instance/Unit";
 import { SmallSkill, TrickSkill } from "../instance/Ability";
+import { TowerGeneralControl } from "../instance/Tower";
 
 /** 负责构造牌堆 */
 export class ScenesBuildbehavior {
@@ -23,6 +24,7 @@ export class ScenesBuildbehavior {
 
     static ScenesBuild(){
         GameRules.SceneManager = new ScenesManager()
+        GameRules.TowerGeneralControl = new TowerGeneralControl()
         const blue_Cardheaps = new Cardheaps(GameRules.Blue.GetPlayerID(),GameRules.SceneManager)
         const red_Cardheaps = new Cardheaps(GameRules.Red.GetPlayerID(),GameRules.SceneManager)
         GameRules.SceneManager.SetCardheapsScene(blue_Cardheaps)

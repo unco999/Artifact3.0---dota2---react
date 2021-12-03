@@ -290,27 +290,36 @@ export class BattleArea extends Scenes{
                if((this.CardList[index] as Card).UUID == uuid){
                    this.CardList[index] = -1
                    this.CardPool[uuid] = null
+                   print("删除了",uuid)
                }
            }
         }
      }
 
+     /**找左边空位 */
+     findleftnull(){
+        for(let index = 3 ; index > 0 ; index --){
+           if(this.CardList[index - 1] == -1){
+               return index
+           } 
+        }        
+        return -1
+     }
 
      call_cetner(){
-        for(let index = 0 ; index < 3 ; index ++){
-            if(this.CardList[3 - index -1] == -1){
-                if(this.CardList[3 - index - 1 - 1]){
-                    (this.CardList[3 - index - 1 - 1] as Card).right()
-                }
+        const center = this.CardList[3]
+        for(let index = 1 ; index < 3 ; index ++){
+            if(this.CardList[3 - index - 1] != -1){
+                const leftcard = this.CardList[3 - index - 1] as Card
+                leftcard.right()
             }
-            if(this.CardList[3 + index -1] == -1){
-                if(this.CardList[3 + index - 1 + 1]){
-                    (this.CardList[3 - index - 1 + 1] as Card).left()
-                }
+            if(this.CardList[3 + index - 1] != -1){
+                const rightcard = this.CardList[3 + index - 1] as Card
+                rightcard.left()
             }
-         }
-         print("打印分录",this.SceneName)
-         this.Print()
+        }
+        print("打印当前状况",this.SceneName)
+        this.Print()
      }
 
 }

@@ -167,6 +167,44 @@
     
 }
 
+@for $i from 1 to 6{
+    .my_tower#{$i}{
+        border-radius: 15px;
+        width: 100px;
+        height: 100px;
+        x:260px + ($i - 1) * 650px;
+        y:750px;
+        border: 3px solid black;
+        @extend .defualt;
+        z-index: 0;
+        Label{
+            color: chartreuse;
+            font-size: 40px;
+            text-shadow: 0px 0px 10px 4.0 black;
+            align:center center;    
+        }
+    }
+}
+
+@for $i from 1 to 6{
+    .you_tower#{$i}{
+        border-radius: 15px;
+        width: 100px;
+        height: 100px;
+        x:260px + ($i - 1) * 650px;
+        y:230px;
+        border: 3px solid black;
+        @extend .defualt;
+        z-index: 0;
+        Label{
+            color: chartreuse;
+            font-size: 40px;
+            text-shadow: 0px 0px 10px 4.0 black;
+            align:center center;    
+        }
+    }
+}
+
 
 .you_Card{
     @extend .defualt;

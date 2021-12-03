@@ -29,4 +29,7 @@ declare interface CustomGameEventDeclarations {
     "S2C_BRUSH_SOLIDER":{}
     "TEST_C2S_DEATH":{uuid:string}
     "TEST_C2S_CALL_CENTER":{}
+    "C2S_GET_TOWER":{index:number}
+    "S2C_SEND_TOWER":{heal:number,state:"death"|"defualt"}
+    "C2S_ATTACK_TOWER":{damage:number,Attackplayerid:PlayerID,index:number}
 }

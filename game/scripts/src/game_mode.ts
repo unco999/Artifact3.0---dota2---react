@@ -1,6 +1,7 @@
 
 import { GamaEvent_All_register } from "./Build/Gamevent_All_register";
 import { Cardheaps, GoUp, Hand, LaidDown, Midway, ScenesManager } from "./instance/Scenes";
+import { TowerGeneralControl } from "./instance/Tower";
 import { Timers } from "./lib/timers";
 import { reloadable } from "./lib/tstl-utils";
 import { BattleGameLoop } from "./Manager/BattleGameLoop";
@@ -18,6 +19,7 @@ declare global {
         Blue:CDOTAPlayer //蓝队
         gamemainloop:BattleGameLoop
         SceneManager:ScenesManager
+        TowerGeneralControl:TowerGeneralControl
     }
 }
 

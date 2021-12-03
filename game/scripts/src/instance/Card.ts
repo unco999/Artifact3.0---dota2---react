@@ -47,13 +47,25 @@ export class Card{
         })
     }
 
+    /**查找左边是否有空位 */
+    isThereAVacancyOnTheLeft(){
+        const scene = this.Scene as BattleArea
+        return scene.CardList[this.Index - 1 - 1] == -1
+    }
+
+    /**查找右边是否有空位 */
+    findNoVacancyOnTheRight(){
+        const scene = this.Scene as BattleArea
+        return scene.CardList[this.Index - 1 + 1] == -1
+    }
+
     /**卡牌向右边移动 */
     right(){
         const _scenes = this.Scene as BattleArea
-        if(_scenes.CardList[this.Index + 1 - 1] == -1 && this.Index < 3){
-                _scenes.CardList[this.Index -1 ] = null
+        while(this.Index > 0 && _scenes.CardList[this.Index + 1 - 1] == -1 && this.Index < 3){
+                _scenes.CardList[this.Index -1] = -1
                 this.Index++
-                _scenes.CardList[this.Index -1 ] = this 
+                _scenes.CardList[this.Index -1] = this 
         }
         this.update(this.Scene.SceneName)
     }
@@ -61,10 +73,10 @@ export class Card{
     /**卡牌向左边移动 */
     left(){
         const _scenes = this.Scene as BattleArea
-        if(this.Index > 3 && _scenes.CardList[this.Index - 1 - 1] == -1 && this.Index <= 5){
-            _scenes.CardList[this.Index - 1] = null
+        while(this.Index > 3 && _scenes.CardList[this.Index - 1 - 1] == -1 && this.Index <= 5){
+            _scenes.CardList[this.Index - 1] = -1
             this.Index--
-            _scenes.CardList[this.Index - 1 ] = this
+            _scenes.CardList[this.Index - 1] = this
         }
         this.update(this.Scene.SceneName)
     }

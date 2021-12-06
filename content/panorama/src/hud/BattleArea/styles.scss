@@ -51,6 +51,20 @@
     opacity: 0.5;
 }
 
+.my_death_animation1{
+    animation-name: death_animation1;
+    animation-duration: 2s;
+    animation-iteration-count: infinite;
+}
+.my_death_animation2{
+    animation-name: death_animation2;
+    @extend .my_death_animation1
+}
+
+.my_death_animation3{
+    animation-name: death_animation3;
+    @extend .my_death_animation1
+}
 
 
 .my_Card{

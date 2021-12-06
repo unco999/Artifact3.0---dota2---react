@@ -35,4 +35,5 @@ declare interface CustomGameEventDeclarations {
     "C2S_GET_ATTRIBUTE":{uuid:string}
     "S2C_SEND_ATTRIBUTE":{uuid:string,attack:number,arrmor:number,heal:number}
     "TEST_C2S_CALL_ATTACK":{}
+    "S2C_SEND_DEATH_ANIMATION":{uuid:string}
 }

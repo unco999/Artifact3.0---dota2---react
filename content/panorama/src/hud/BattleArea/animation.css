@@ -28,6 +28,33 @@
     }
 }
 
+@keyframes 'death_animation1'{
+    0%{
+        transform:rotateX(0deg) rotateY(0deg) rotateZ(0deg) translateY(0px);
+    }
+    100%{
+        transform:rotateX(0deg) rotateY(0deg) rotateZ(45deg) translateY(100px);
+    }
+}
+
+@keyframes 'death_animation2'{
+    0%{
+        transform:rotateX(0deg) rotateY(0deg) rotateZ(0deg) translateY(0px);
+    }
+    100%{
+        transform:rotateX(0deg) rotateY(0deg) rotateZ(66deg) translateY(100px);
+    }
+}
+
+@keyframes 'death_animation3'{
+    0%{
+        transform:rotateX(0deg) rotateY(0deg) rotateZ(0deg) translateY(0px);
+    }
+    100%{
+        transform:rotateX(0deg) rotateY(0deg) rotateZ(-45deg) translateY(100px);
+    }
+}
+
 @keyframes 'death' {
     0% {
         opacity-brush: gradient( linear, 0% 100%, 100% 0%, from( #ffffffff ), to( #ffffff00 ) );

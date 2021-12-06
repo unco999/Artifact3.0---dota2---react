@@ -182,11 +182,21 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
         }
     }
 
+    /**卡牌改变场景 */
     useGameEvent("S2C_CARD_CHANGE_SCENES",(event)=>{
         if(props.uuid != event.uuid) return
         setstate(event)
         $.Msg("收到了卡牌改变规则",event)
     },[setstate,xstate])
+
+    /**卡牌死亡特效 */
+    useGameEvent("S2C_SEND_DEATH_ANIMATION",(event)=>{
+        if(props.uuid != event.uuid) return
+        ref.current?.AddClass(prefix + "death_animation"+ Math.floor(Math.random() * 3)+1)
+        $.Schedule(2,()=>{
+            // ref.current?.RemoveClass(prefix + "death_animation" + Math.floor(Math.random() * 3)+1)
+        })
+    },[props.uuid])
 
     //drag事件
     useEffect(()=>{

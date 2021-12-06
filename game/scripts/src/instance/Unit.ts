@@ -1,3 +1,4 @@
+import { Timers } from "../lib/timers";
 import { LinkedList } from "../structure/Linkedlist";
 import { Card, CardParameter, professionalMagicCard } from "./Card";
 import { Equip } from "./Equip";
@@ -70,13 +71,15 @@ export class Unit extends Card{
     }
 
     call_death(){
-        const scene = this.Scene
-        if(scene instanceof BattleArea){
-            scene.Remove(this.UUID)
-            this.Scene.CaSceneManager.change_secens(this.UUID,"Grave",-1)
-        }else{
-            print("你当前不在战斗区域")
-        }
+        Timers.CreateTimer(2,()=>{
+            const scene = this.Scene
+            if(scene instanceof BattleArea){
+                scene.Remove(this.UUID)
+                this.Scene.CaSceneManager.change_secens(this.UUID,"Grave",-1)
+            }else{
+                print("你当前不在战斗区域")
+            }
+        })
     }
 
         /**获得所有buff的叠加状态 1 3 得4 偶数为多种状态叠加效果*/

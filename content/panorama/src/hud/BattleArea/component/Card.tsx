@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useMachine } from '@xstate/react';
-import { createMachine } from 'xstate';
+import { createMachine, SingleOrArray } from 'xstate';
 import { useGameEvent, useNetTableKey } from "react-panorama";
 import { JsonString2Array, JsonString2Arraystrt0 } from "../../../Utils";
 import shortid from "shortid";
@@ -75,6 +75,12 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
     const ref = useRef<Panel|null>()
     const dummy = useRef<Panel|null>()
     const preindex = useRef<number>(-1) //板子的上一次索引
+    const [attribute,setattribute] = useState< {
+        uuid: string;
+        attack: number;
+        arrmor: number;
+        heal: number;
+    }>() //获取单位的三维与modifiler
     const [state,setstate] = useState<{Id:string,Index:number,uuid:string,Scene?:string,type?:string,playerid?:PlayerID}>({Id:'null',Index:-1,uuid:'null'})
     const isdrag = useRef<boolean>(false)
     const [xstate,send] = useMachine(Machine,{
@@ -152,6 +158,18 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
     useEffect(()=>{
         state.Scene && send("to" + state.Scene)
     },[state])
+
+    /** uuid获得时发送获取属性回调 */ 
+    useEffect(()=>{
+        GameEvents.SendCustomGameEventToServer("C2S_GET_ATTRIBUTE",{uuid:props.uuid})
+    },[props.uuid])
+
+    /**获取当前属性 */
+    useGameEvent("S2C_SEND_ATTRIBUTE",(event)=>{
+        if(event.uuid == event.uuid){
+            setattribute(event)
+        }
+    },[props.uuid])
 
     /**每次本体动 马甲跟着动 */
     const dummyoperate  = (action:"remove"|"add",classname:string) => {
@@ -294,13 +312,13 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
               <DOTAHeroImage heroimagestyle={'portrait'} heroid={id.current as HeroID} />
               <Panel className={"threeDimensional"}>
             <Panel className={"attack"}>
-                <Label text={1}/>
+                <Label text={attribute?.attack}/>
             </Panel>
             <Panel className={"arrmor"}>
-                <Label text={2}/>
+                <Label text={attribute?.arrmor}/>
             </Panel>
             <Panel className={"heal"}>
-                <Label text={3}/>
+                <Label text={attribute?.heal}/>
             </Panel>
         </Panel>
         </Panel>
@@ -334,6 +352,17 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
     const Solider = () => {
         return <Panel hittest={true} onmouseactivate={()=>{$.Msg("ggg");GameEvents.SendCustomGameEventToServer("TEST_C2S_DEATH",{uuid:props.uuid})}}   className={prefix+'Card'} ref={Panel => ref.current = Panel}>
                 <Label text={"小兵"} style={{fontSize:'30px',color:'white',textShadow:'0px 0px 0px 5.0 black',align:'center center'}}/>
+                <Panel className={"threeDimensional"}>
+                <Panel className={"attack"}>
+                    <Label text={attribute?.attack}/>
+                 </Panel>
+                    <Panel className={"arrmor"}>
+                <Label text={attribute?.arrmor}/>
+                    </Panel>
+                <Panel className={"heal"}>
+                <Label text={attribute?.heal}/>
+                </Panel>
+            </Panel>
             </Panel>
     }
 

@@ -32,4 +32,7 @@ declare interface CustomGameEventDeclarations {
     "C2S_GET_TOWER":{index:number}
     "S2C_SEND_TOWER":{heal:number,state:"death"|"defualt"}
     "C2S_ATTACK_TOWER":{damage:number,Attackplayerid:PlayerID,index:number}
+    "C2S_GET_ATTRIBUTE":{uuid:string}
+    "S2C_SEND_ATTRIBUTE":{uuid:string,attack:number,arrmor:number,heal:number}
+    "TEST_C2S_CALL_ATTACK":{}
 }

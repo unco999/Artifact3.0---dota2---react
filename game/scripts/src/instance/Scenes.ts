@@ -26,6 +26,7 @@ export interface ICAScene {
     UUIDGet(uuid: uuid): Card;
     IndexGet(index: number): Card;
     getAll(): Card[];
+    find_oppose:()=>Scenes
 }
 
 export interface IHeapsCardbuilder {
@@ -50,6 +51,21 @@ export class Scenes implements ICAScene{
 
     constructor(CaSceneManager:ScenesManager){
         this.CaSceneManager = CaSceneManager
+    }
+
+
+    find_oppose(){
+        switch(this.SceneName){
+            case 'MIDWAY':{
+                return GameRules.SceneManager.GetMidwayScene(this.PlayerID == GameRules.Blue.GetPlayerID() ? GameRules.Red.GetPlayerID() : GameRules.Blue.GetPlayerID())
+            }
+            case 'GOUP':{
+                return GameRules.SceneManager.GetGoUpScene(this.PlayerID == GameRules.Blue.GetPlayerID() ? GameRules.Red.GetPlayerID() : GameRules.Blue.GetPlayerID())
+            }
+            case 'LAIDDOWN':{
+                return GameRules.SceneManager.GetLaidDownScene(this.PlayerID == GameRules.Blue.GetPlayerID() ? GameRules.Red.GetPlayerID() : GameRules.Blue.GetPlayerID())
+            }
+        }
     }
 
     Remove(uuid: string) {
@@ -196,6 +212,10 @@ export class BattleArea extends Scenes{
             print("开始执行卡片居中")
             this.call_cetner()
         })
+    }
+
+    index_find(index:number){
+        return this.CardList[index]
     }
 
     shuffle(){

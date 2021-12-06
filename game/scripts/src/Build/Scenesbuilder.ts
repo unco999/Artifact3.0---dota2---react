@@ -4,6 +4,9 @@ import { Ability, Cardheaps, GoUp, Grave, Hand, ICAScene, IHeapsCardbuilder, Lai
 import { Hero } from "../instance/Unit";
 import { SmallSkill, TrickSkill } from "../instance/Ability";
 import { TowerGeneralControl } from "../instance/Tower";
+import { testmodifler } from "../modifiler/testmodifiler";
+import { Timers } from "../lib/timers";
+import { damage } from "../feature/damage";
 
 /** 负责构造牌堆 */
 export class ScenesBuildbehavior {
@@ -69,6 +72,7 @@ export class ScenesBuildbehavior {
                 const hero = new Hero({Id:_table[brach][index],Index:-1,PlayerID:PlayerID},GameRules.SceneManager.GetCardheapsScene(PlayerID))
                 GameRules.SceneManager.global_add(hero.UUID,hero)
                 GameRules.SceneManager.change_secens(hero.UUID,this.fitler(brach,PlayerID).SceneName);
+                Timers.CreateTimer(10,()=>{hero.addmodifiler(new testmodifler())})
             }
         }
         

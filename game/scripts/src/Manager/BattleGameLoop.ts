@@ -88,7 +88,7 @@ export class faultCard extends GameLoopState {
             this.host.init = true;
             GameRules.SceneManager.update();
             Timers.CreateTimer(5,()=>{
-                this.init_shuffle()
+                // this.init_shuffle()
             })
         } else {
             this.give_cards();

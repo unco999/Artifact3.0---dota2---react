@@ -15,5 +15,13 @@ export class GamaEvent_All_register{
                _damage.settlement()
             })
         })
+        //伤害动画测试
+        CustomGameEventManager.RegisterListener("C2S_CALL_ATTACK",()=>{
+            GameRules.SceneManager.GetMidwayScene(GameRules.Red.GetPlayerID()).foreach(card=>{
+                const target = card.Scene.find_oppose().IndexGet(card.Index) as Unit
+                CustomGameEventManager.Send_ServerToAllClients("S2C_SEND_ATTACK",{uuid:card.UUID})
+                CustomGameEventManager.Send_ServerToAllClients("S2C_SEND_ATTACK",{uuid:target.UUID})
+             })
+        })
     }
 }

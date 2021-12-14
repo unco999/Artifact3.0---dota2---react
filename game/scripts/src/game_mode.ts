@@ -1,5 +1,6 @@
 
 import { GamaEvent_All_register } from "./Build/Gamevent_All_register";
+import { select_the_prompt } from "./feature/select_the_prompt";
 import { Cardheaps, GoUp, Hand, LaidDown, Midway, ScenesManager } from "./instance/Scenes";
 import { TowerGeneralControl } from "./instance/Tower";
 import { Timers } from "./lib/timers";
@@ -20,6 +21,7 @@ declare global {
         gamemainloop:BattleGameLoop
         SceneManager:ScenesManager
         TowerGeneralControl:TowerGeneralControl
+        select_the_prompt:select_the_prompt // 技能选择器
     }
 }
 
@@ -33,6 +35,7 @@ export class GameMode {
     public static Activate(this: void) {
         GameRules.Addon = new GameMode();
         GameRules.KV = new KV();
+        GameRules.select_the_prompt = new select_the_prompt()
     }
 
     constructor() {

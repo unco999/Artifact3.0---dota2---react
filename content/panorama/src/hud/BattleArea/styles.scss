@@ -51,21 +51,26 @@
     opacity: 0.5;
 }
 
-.my_death_animation1{
-    animation-name: death_animation1;
-    animation-duration: 2s;
+
+
+.uuid{
+    font-size: 15px;
+    color: #ffffffb9;
+    z-index: 20;
+    text-shadow: 1px 1px 1px 3.0 black;
+}
+
+.skill_ready{
+    animation-name: skill_rotation;
+    animation-duration: 1.5s;
     animation-iteration-count: infinite;
 }
-.my_death_animation2{
-    animation-name: death_animation2;
-    @extend .my_death_animation1
-}
 
-.my_death_animation3{
-    animation-name: death_animation3;
-    @extend .my_death_animation1
+.select_target{
+    animation-name: select_target;
+    animation-duration: 1.5s;
+    animation-iteration-count: infinite;
 }
-
 
 .my_Card{
     @extend .defualt;
@@ -74,7 +79,7 @@
     border-radius: 10px;
     opacity: 1;
     transition-duration: 0.5s;
-    transition-property: transform,opacity,pre-transform-scale2d,position;
+    transition-property: transform,opacity,pre-transform-scale2d,position,saturation;
     pre-transform-scale2d:1;
     .abilityimage{
         width: 80%;
@@ -141,13 +146,32 @@
     }
     &.my_death{
         animation-name: death;
-        animation-duration: 3s;
+        animation-duration: 0.5s;
         animation-iteration-count: 1;
         animation-fill-mode:forwards;
     }
     &.my_ingrave{
         x:100px;
         y:900px;
+    }
+    &.my_attack_animation{
+        animation-name: myhit;
+        animation-duration: 1.5s;
+    }
+    &.my_death_animation1{
+        animation-timing-function: cubic-bezier(0.455, 0.03, 0.515, 0.955);
+        transform: rotateZ(-14deg) translateY(88px);
+        saturation: 0;
+    }
+    &.my_death_animation2{
+        animation-timing-function: cubic-bezier(0.455, 0.03, 0.515, 0.955);
+        transform: rotateZ(-24deg) translateY(88px);
+        saturation: 0;
+    }
+    &.my_death_animation3{
+        animation-timing-function: cubic-bezier(0.455, 0.03, 0.515, 0.955);
+        transform: rotateZ(-44deg) translateY(88px);
+        saturation: 0;
     }
 }
 .threeDimensional{  
@@ -227,7 +251,7 @@
     border-radius: 10px;
     opacity: 1;
     transition-duration: 0.5s;
-    transition-property: transform,opacity,pre-transform-scale2d,position;
+    transition-property: transform,opacity,pre-transform-scale2d,position,saturation;
     pre-transform-scale2d:1;
     &.you_Heaps{
         width: 120px;
@@ -236,6 +260,11 @@
         x:500px;
         y:0px;
         transform: rotateZ(90deg);
+    }
+    &.you_attack_animation{
+        animation-name: youhit;
+        animation-duration: 1.5s;
+        animation-iteration-count: 1;
     }
     @for $i from 1 to 6{
         &.you_Midway#{$i}{
@@ -283,13 +312,28 @@
     }
     &.you_death{
         animation-name: death;
-        animation-duration: 3s;
+        animation-duration: 0.5s;
         animation-iteration-count: 1;
         animation-fill-mode:forwards;
     }
     &.you_ingrave{
         x:50px;
         y:50px;
+    }
+    &.you_death_animation1{
+        animation-timing-function: cubic-bezier(0.355, 0.03, 0.515, 0.955);
+        transform: rotateZ(-40deg) translateY(-88px);
+        saturation: 0;
+    }
+    &.you_death_animation2{
+        animation-timing-function: cubic-bezier(0.455, 0.03, 0.515, 0.955);
+        transform: rotateZ(-22deg) translateY(-88px);
+        saturation: 0;
+    }
+    &.you_death_animation3{
+        animation-timing-function: cubic-bezier(0.455, 0.03, 0.515, 0.955);
+        transform: rotateZ(-33deg) translateY(-88px);
+        saturation: 0;
     }
 }
 

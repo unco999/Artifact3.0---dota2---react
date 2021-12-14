@@ -69,10 +69,9 @@ export class ScenesBuildbehavior {
         const _table = CustomNetTables.GetTableValue("Card_group_construction_phase",'herobrach')[PlayerID.toString()]
         for(const brach in _table){
             for(const index in _table[brach]){
-                const hero = new Hero({Id:_table[brach][index],Index:-1,PlayerID:PlayerID},GameRules.SceneManager.GetCardheapsScene(PlayerID))
+                const hero = new Hero({Id:RandomInt(0,20).toString(),Index:-1,PlayerID:PlayerID},GameRules.SceneManager.GetCardheapsScene(PlayerID))
                 GameRules.SceneManager.global_add(hero.UUID,hero)
                 GameRules.SceneManager.change_secens(hero.UUID,this.fitler(brach,PlayerID).SceneName);
-                Timers.CreateTimer(10,()=>{hero.addmodifiler(new testmodifler())})
             }
         }
         

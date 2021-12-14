@@ -17,6 +17,24 @@ export enum state{
     装备,
 }
 
+enum Magic_brach{
+    "本路",
+    "跨线",
+    "对格"
+}
+
+enum Magic_range{
+    "单体",
+    "近邻",
+    "全体"
+}
+
+enum Magic_team{
+    "友方",
+    "敌方",
+    "双方"
+}
+
 const Machine = createMachine({
     id:'Card',
     initial:'defualt',
@@ -94,7 +112,7 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
                 GameEvents.SendCustomGameEventToServer("C2S_GET_CARD",{uuid:props.uuid})
             },
             defualt_exit:()=>{
-
+//
             },
             midway_entry:()=>{
                 preindex.current = state.Index
@@ -192,10 +210,44 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
     /**卡牌死亡特效 */
     useGameEvent("S2C_SEND_DEATH_ANIMATION",(event)=>{
         if(props.uuid != event.uuid) return
-        ref.current?.AddClass(prefix + "death_animation"+ Math.floor(Math.random() * 3)+1)
-        $.Schedule(2,()=>{
-            // ref.current?.RemoveClass(prefix + "death_animation" + Math.floor(Math.random() * 3)+1)
+        $.Msg("收到死亡事件",props.uuid)
+        const _random = (Math.floor(Math.random() * 3)+1)
+        ref.current?.AddClass(prefix + "death_animation"+ _random)
+        $.Schedule(1.5,()=>{
+            ref.current?.AddClass(prefix + "death")
+            $.Msg("给卡牌加了死亡消失动画")
         })
+    },[props.uuid])
+
+    /**卡牌攻击事件 */
+    useGameEvent("S2C_SEND_ATTACK",(event)=>{
+        if(props.uuid != event.uuid) return
+        $.Msg(props.uuid,"开始攻击了!!!!!!!!!!!")
+        ref.current?.AddClass(prefix + "attack_animation")
+        $.Schedule(1.5,()=>{
+            ref.current?.RemoveClass(prefix + "attack_animation")
+        })
+    },[props.uuid])
+
+    useGameEvent("S2C_SKILL_READY",(event)=>{
+        if(props.uuid != event.uuid) return
+        ref.current?.AddClass("skill_ready")
+        $.Msg(props.uuid + "开始释放法术")
+    },[props.uuid])
+
+    useGameEvent("S2C_SEATCH_TARGET_OPEN",(event)=>{
+        if(props.uuid != event.uuid) return
+        ref.current?.AddClass("select_target")
+    },[props.uuid])
+
+    useGameEvent("S2C_SEATCH_TARGET_OFF",(event)=>{
+        if(props.uuid != event.uuid) return
+        ref.current?.RemoveClass("select_target")
+    },[props.uuid])
+    
+    useGameEvent("S2C_SKILL_OFF",(event)=>{
+        if(props.uuid != event.uuid) return
+        ref.current?.RemoveClass("skill_ready")
     },[props.uuid])
 
     //drag事件
@@ -234,6 +286,13 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
         changeCoordinates()
         state.type == 'Hero' && splitOptionalPrompt()
         $.Msg("OnDragStart")
+        // 发送该技能指引器
+        GameEvents.SendCustomGameEventToServer("C2S_SEATCH_TARGET_OPEN",{
+            has_hero_ability:"10",
+            magic_brach:Magic_brach.本路,
+            magic_range:Magic_range.全体,
+            magic_team:Magic_team.敌方,
+        })
     }
 
     const OnDragEnd = (panelId:any, dragCallbacks:any) =>{
@@ -243,6 +302,12 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
         const container = ConpoentDataContainer.Instance.NameGetNode("arrow_tip").current
         container.close()
         state.type == 'Hero' && closeOptionalPrompt()
+        GameEvents.SendCustomGameEventToServer("C2S_SEATCH_TARGET_OFF",{
+            has_hero_ability:"10",
+            magic_brach:Magic_brach.本路,
+            magic_range:Magic_range.全体,
+            magic_team:Magic_team.敌方,
+        })
     }
 
     /**打开分路可选提示器 */
@@ -319,6 +384,7 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
         return <>
          <Panel draggable={true} ref={Panel => dummy.current = Panel} onmouseover={()=>ref.current?.AddClass(prefix+"hover")} onmouseout={()=>ref.current?.RemoveClass(prefix+"hover")} className={prefix+"Carddummy"}/>
         <Panel hittest={true} ref={Panel => ref.current = Panel} onmouseactivate={()=>{$.Msg("ggg");GameEvents.SendCustomGameEventToServer("TEST_C2S_DEATH",{uuid:props.uuid})}}  className={prefix+'Card'} >
+              <Label text={"id:"+state.Id + "|" + props.uuid} className={"uuid"}/>
               <DOTAHeroImage heroimagestyle={'portrait'} heroid={id.current as HeroID} />
               <Panel className={"threeDimensional"}>
             <Panel className={"attack"}>
@@ -362,6 +428,7 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
     const Solider = () => {
         return <Panel hittest={true} onmouseactivate={()=>{$.Msg("ggg");GameEvents.SendCustomGameEventToServer("TEST_C2S_DEATH",{uuid:props.uuid})}}   className={prefix+'Card'} ref={Panel => ref.current = Panel}>
                 <Label text={"小兵"} style={{fontSize:'30px',color:'white',textShadow:'0px 0px 0px 5.0 black',align:'center center'}}/>
+                <Label text={props.uuid} className={"uuid"}/>
                 <Panel className={"threeDimensional"}>
                 <Panel className={"attack"}>
                     <Label text={attribute?.attack}/>

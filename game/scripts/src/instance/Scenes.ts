@@ -44,7 +44,7 @@ export class Scenes implements ICAScene{
     shuffle(){
 
     }
-
+    
     getIndex(Card:Card){
         return 
     }
@@ -73,7 +73,6 @@ export class Scenes implements ICAScene{
     }
 
     addCard(Card: Card): Card {
-        Card.Scene = this
         this.CardPool[Card.UUID] = Card;
         return Card;
     }
@@ -90,7 +89,7 @@ export class Scenes implements ICAScene{
 
     IndexGet(index: number): Card {
         for (const key in this.CardPool) {
-            if (this.CardPool[key].Index = index) {
+            if (this.CardPool[key].Index == index) {
                 return this.CardPool[key];
             }
         }
@@ -278,6 +277,7 @@ export class BattleArea extends Scenes{
         if(index && index != -1){
             print("中路手動兼職",index)
             super.addCard(card)
+            card.Scene = this
             card.Index = index
             this.CardList[index - 1] = card
             return;
@@ -459,7 +459,65 @@ export class ScenesManager{
 
     }
 
+    /**对格查找 */
+    gather(card:Card){
+       return card.Scene.find_oppose().IndexGet(card.Index)
+    }
 
+    /**敌人近邻查找 */
+    enemyneighbor(Card:Card){
+        const left = Card.Scene.find_oppose().IndexGet(Card.Index - 1) ?? -1
+        const center = this.gather(Card)
+        const right = Card.Scene.find_oppose().IndexGet(Card.Index + 1) ?? -1
+        return {left:left,center:center,right:right}
+    }
+
+    /**友方近邻查找 */
+    friendlyNeighbor(Card:Card){
+        const left = Card.Scene.IndexGet(Card.Index - 1) ?? -1
+        const right = Card.Scene.IndexGet(Card.Index + 1) ?? -1
+        return {left:left,right:right}
+    }
+
+    /**友方本路查找 */
+    friendbrach(Card:Card){
+        return Card.Scene.getAll()
+    }
+
+    /**本路敌对查找 */
+    enemybrach(Card:Card){
+        return Card.Scene.find_oppose().getAll()
+    }
+
+    /**敌人跨线或者全体 */
+    enemyfindAll(Card:Card){
+        const goup = GameRules.SceneManager.GetGoUpScene(Card.PlayerID == GameRules.Blue.GetPlayerID() ? GameRules.Red.GetPlayerID() : GameRules.Blue.GetPlayerID())
+        const midway = GameRules.SceneManager.GetMidwayScene(Card.PlayerID == GameRules.Blue.GetPlayerID() ? GameRules.Red.GetPlayerID() : GameRules.Blue.GetPlayerID())
+        const laiddown = GameRules.SceneManager.GetLaidDownScene(Card.PlayerID == GameRules.Blue.GetPlayerID() ? GameRules.Red.GetPlayerID() : GameRules.Blue.GetPlayerID())
+        const table = [...goup.getAll(),...midway.getAll(),...laiddown.getAll()]
+        return table
+    }
+
+    /**友方跨线或者全体 */
+    friendfindAll(Card:Card){
+        const goup = GameRules.SceneManager.GetGoUpScene(Card.PlayerID)
+        const midway = GameRules.SceneManager.GetMidwayScene(Card.PlayerID)
+        const laiddown = GameRules.SceneManager.GetLaidDownScene(Card.PlayerID)
+        const table = [...goup.getAll(),...midway.getAll(),...laiddown.getAll()]
+        return table
+    }
+
+    /**通过英雄名字找到卡片 */
+    get_hero(name:string){
+        for(const uuid in this.All){
+            print("遍历到的ID",this.All[uuid].Id)
+            if(this.All[uuid].Id == name){
+                print("找到一个相同的ID",name)
+                return this.All[uuid]
+            }
+        }
+        return null
+    }
 
     /** 附加给全局 ALL*/
     global_add(uuid:uuid,Card:Card){
@@ -468,6 +526,8 @@ export class ScenesManager{
 
     remove(uuid:uuid){
         this.All[uuid] = null
+        this.update_summon()
+        this.update()
     }
 
     getAll(PlyaerID:PlayerID){
@@ -508,6 +568,7 @@ export class ScenesManager{
         // CustomNetTables.SetTableValue('Scenes',"ReleaseScene" + GameRules.Red.GetPlayerID(),RedLReleaseScene)
         // CustomNetTables.SetTableValue('Scenes',"Grave" + GameRules.Blue.GetPlayerID(),BlueGrave)
         // CustomNetTables.SetTableValue('Scenes',"Grave" + GameRules.Red.GetPlayerID(),RedGrave)
+        this.update_summon()
         print("打印")
     }
 
@@ -523,30 +584,37 @@ export class ScenesManager{
         const playerid = card.PlayerID
 
         print(card.UUID,"要去",to)
-
+        card.Scene.Remove(card.UUID)
         switch(to){
             case 'HAND':{
-                print(this.All[uuid].Scene.SceneName);
+                const currentscnese = this.GetHandsScene(playerid)
                 this.All[uuid].Scene.Remove(uuid);
                 this.GetHandsScene(playerid).addCard(card)
+                card.Scene = currentscnese
                 this.All[uuid].update("HAND")
                 break;
             }
             case 'MIDWAY':{
-               this.All[uuid].Scene.Remove(uuid);
+                const currentscnese = this.GetMidwayScene(playerid)
+                this.All[uuid].Scene.Remove(uuid);
                 (this.GetMidwayScene(playerid) as Midway).AutoAddCard(card,index)
+                card.Scene = currentscnese
                 this.All[uuid].update('MIDWAY')
                 break;
             }
             case 'LAIDDOWN':{
+                const currentscnese = this.GetLaidDownScene(playerid)
                 this.All[uuid].Scene.Remove(uuid);
                 (this.GetLaidDownScene(playerid) as LaidDown).AutoAddCard(card,index)
+                card.Scene = currentscnese
                 this.All[uuid].update('LAIDDOWN')
                 break;
             }
             case 'GOUP':{
+                const currentscnese = this.GetGoUpScene(playerid)
                 this.All[uuid].Scene.Remove(uuid);
                 (this.GetGoUpScene(playerid) as GoUp).AutoAddCard(card,index)
+                card.Scene = currentscnese
                 this.All[uuid].update('GOUP')
                 break;
             }
@@ -557,8 +625,10 @@ export class ScenesManager{
                 break;
             }
             case 'Grave':{
+                const currentscnese = this.GetGraveScene(playerid)
                 this.All[uuid].Scene.Remove(uuid);
                 this.GetGraveScene(playerid).addCard(card)
+                card.Scene = currentscnese
                 this.All[uuid].update('GRAVE')
                 break;
             }

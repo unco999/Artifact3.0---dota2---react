@@ -35,5 +35,13 @@ declare interface CustomGameEventDeclarations {
     "C2S_GET_ATTRIBUTE":{uuid:string}
     "S2C_SEND_ATTRIBUTE":{uuid:string,attack:number,arrmor:number,heal:number}
     "TEST_C2S_CALL_ATTACK":{}
-    "S2C_SEND_DEATH_ANIMATION":{uuid:string}
+    "S2C_SEND_DEATH_ANIMATION":{uuid:string},
+    "S2C_SEND_ATTACK":{uuid:string},
+    "C2S_CALL_ATTACK":{},
+    "C2S_SEATCH_TARGET_OPEN":{magic_brach:number,magic_range:number,has_hero_ability:string,magic_team:number},
+    "C2S_SEATCH_TARGET_OFF":{magic_brach:number,magic_range:number,has_hero_ability:string,magic_team:number},
+    "S2C_SEATCH_TARGET_OPEN":{uuid:string},
+    "S2C_SEATCH_TARGET_OFF":{uuid:string},
+    "S2C_SKILL_READY":{uuid:string},
+    "S2C_SKILL_OFF":{uuid:string},
 }

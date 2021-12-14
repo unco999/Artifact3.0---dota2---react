@@ -1,18 +1,36 @@
-@keyframes 'hit'{
+@keyframes 'myhit'{
     0% {
         transform:rotateX(0deg) translateY(0px) rotateZ(0deg);
     }
-    5% {
-        transform:rotateX(-25deg) translateY(30px) rotateY(0deg);
+    25% {
+        transform:rotateX(80deg) translateY(160px) rotateY(0deg);
     }
-    10% {
-        transform:rotateX(50deg) translateY(80px) rotateY(0deg);
+    30% {
+        transform:rotateX(-50deg) translateY(-50px) rotateY(0deg);
+    }
+    50% {
+        transform:rotateX(5deg) translateY(0px) rotateY(-15deg);
+    }
+    100% {
+        transform:rotateX(0deg) translateY(0px) rotateZ(0deg);
+    }
+}
+
+@keyframes 'youhit'{
+    0% {
+        transform:rotateX(0deg) translateY(0px) rotateZ(0deg);
     }
     25% {
-        transform:rotateX(-50deg) translateY(-180px) rotateY(0deg);
+        transform:rotateX(-80deg) translateY(-160px) rotateY(0deg);
     }
-    60% {
-        transform:rotateX(5deg) translateY(-180px) rotateY(-15deg);
+    30% {
+        transform:rotateX(50deg) translateY(50px) rotateY(0deg);
+    }
+    50% {
+        transform:rotateX(-5deg) translateY(0px) rotateY(15deg);
+    }
+    100% {
+        transform:rotateX(0deg) translateY(0px) rotateZ(0deg);
     }
 }
 
@@ -28,40 +46,129 @@
     }
 }
 
-@keyframes 'death_animation1'{
-    0%{
-        transform:rotateX(0deg) rotateY(0deg) rotateZ(0deg) translateY(0px);
+@keyframes 'select_target'{
+    0% {
+        transform:rotateX(-5deg) rotateY(5deg) rotateZ(0deg);
+        border: 0px solid green;
+        brightness: 1;
+    }
+    25% {
+        transform:rotateX(-5deg) rotateY(0deg) rotateZ(5deg);
+        border: 3px solid green;
+        brightness: 2;
+    }
+    50%{
+        transform:rotateX(5deg) rotateY(-5deg)  rotateZ(-5deg);
+        brightness: 1;
+        border: 0px solid green;
     }
     100%{
-        transform:rotateX(0deg) rotateY(0deg) rotateZ(45deg) translateY(100px);
+        transform:rotateX(-10deg) rotateY(5deg)  rotateZ(0deg);
+        brightness: 1;
+        border: 0px solid green;
     }
 }
 
-@keyframes 'death_animation2'{
-    0%{
-        transform:rotateX(0deg) rotateY(0deg) rotateZ(0deg) translateY(0px);
+@keyframes 'skill_rotation'{
+    0% {
+        transform:rotateX(0deg) rotateY(0deg) rotateZ(0deg);
+        border: 0px solid gold;
+        brightness: 1;
+    }
+    50% {
+        transform:rotateX(20deg) rotateY(-20deg) rotateZ(-20deg);
+        border: 3px solid gold;
+        brightness: 2;
     }
     100%{
-        transform:rotateX(0deg) rotateY(0deg) rotateZ(66deg) translateY(100px);
+        transform:rotateX(0deg) rotateY(0deg)  rotateZ(0deg);
+        brightness: 1;
+        border: 0px solid gold;
     }
 }
 
-@keyframes 'death_animation3'{
+@keyframes 'my_death_animation1'{
     0%{
-        transform:rotateX(0deg) rotateY(0deg) rotateZ(0deg) translateY(0px);
+        transform:rotateZ(0deg) translateY(0px);
+    }
+    30%{
+        transform:rotateZ(25deg) translateY(60px);
     }
     100%{
-        transform:rotateX(0deg) rotateY(0deg) rotateZ(-45deg) translateY(100px);
+        transform: rotateZ(40deg) translateY(88px);
     }
+}
+
+@keyframes 'my_death_animation2'{
+    0%{
+        transform:rotateZ(0deg) translateY(0px);
+    }
+    30%{
+        transform:rotateZ(15deg) translateY(60px);
+    }
+    100%{
+        transform: rotateZ(144deg) translateY(88px);
+    }
+}
+
+@keyframes 'my_death_animation3'{
+    0%{
+        transform:rotateZ(0deg) translateY(0px);
+    }
+    30%{
+        transform:rotateZ(-15deg) translateY(60px);
+    }
+    100%{
+        transform: rotateZ(-44deg) translateY(88px);
+    }
+}
+
+
+@keyframes 'you_death_animation1'{
+    0%{
+        transform:rotateZ(0deg) translateY(0px);
+    }
+    30%{
+        transform:rotateZ(-25deg) translateY(-60px);
+    }
+    100%{
+        transform: rotateZ(-40deg) translateY(-88px);
+    }
+}
+
+@keyframes 'you_death_animation2'{
+    0%{
+        transform:rotateZ(0deg) translateY(0px);
+    }
+    30%{
+        transform:rotateZ(-15deg) translateY(-60px);
+    }
+    100%{
+        transform: rotateZ(-144deg) translateY(-88px);
+    }
+}
+
+@keyframes 'you_death_animation3'{
+    0%{
+        transform:rotateZ(0deg) translateY(-0px);
+    }
+    30%{
+        transform:rotateZ(-15deg) translateY(-60px);
+    }
+    100%{
+        transform: rotateZ(-44deg) translateY(-88px);
+    }
+}
+
+@keyframes 'skill_ready' {
+    
 }
 
 @keyframes 'death' {
     0% {
-        opacity-brush: gradient( linear, 0% 100%, 100% 0%, from( #ffffffff ), to( #ffffff00 ) );
         opacity: 1;
-        transform:translateX(-10px);
     }
-    2% {
+    /* 2% {
         transform:translateX(10px);
     }
     4% {
@@ -84,9 +191,8 @@
     }
     19% {
         transform:translateX(10px);
-    }
+    } */
     100%{
-        opacity-brush: gradient( linear, 100% 100%, 100% 100%, from( #ffffffff ), to( #ffffff00 ) );
         opacity: 0;
     }
 }

@@ -67,19 +67,19 @@ export class Unit extends Card{
         for(const modifier of this.Modifilers){
             heal += modifier.influenceheal
         }
+        if(heal < 1){
+            return 0
+        }
         return heal
     }
 
     call_death(){
-        Timers.CreateTimer(2,()=>{
             const scene = this.Scene
             if(scene instanceof BattleArea){
-                scene.Remove(this.UUID)
                 this.Scene.CaSceneManager.change_secens(this.UUID,"Grave",-1)
             }else{
                 print("你当前不在战斗区域")
             }
-        })
     }
 
         /**获得所有buff的叠加状态 1 3 得4 偶数为多种状态叠加效果*/
@@ -109,10 +109,10 @@ export class Unit extends Card{
 
         hurt(count:number){
             this.heal -= count
-            if(this.heal < 1){
-                this.heal = 0
+            if(this.GETheal < 1){
                 this.call_death()
             }
+            print(this.UUID,"收到了伤害,当前剩余生命值为",this.GETheal)
             CustomGameEventManager.Send_ServerToPlayer(PlayerResource.GetPlayer(this.PlayerID),"S2C_SEND_ATTRIBUTE",this.attribute)
         }
     
@@ -126,6 +126,13 @@ export class Hero extends Unit{
         this.type = 'Hero'
     }
 
+    override call_death(){  
+        this.Scene.Remove(this.UUID)
+        const newSence = GameRules.SceneManager.GetGraveScene(this.PlayerID)
+        this.Scene = newSence
+        GameRules.SceneManager.GetGraveScene(this.PlayerID).addCard(this)
+        CustomGameEventManager.Send_ServerToAllClients("S2C_SEND_DEATH_ANIMATION",{uuid:this.UUID})
+    }
 
     isHasAbility(abilityname:string){
        return this.HasAbilities.includes(abilityname)
@@ -145,7 +152,7 @@ export class Solider extends Unit{
     override call_death(){  
         this.Scene.Remove(this.UUID)
         GameRules.SceneManager.remove(this.UUID)
-        this.update("REMOVE")
+        CustomGameEventManager.Send_ServerToAllClients("S2C_SEND_DEATH_ANIMATION",{uuid:this.UUID})
     }
 
 }

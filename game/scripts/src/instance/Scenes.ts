@@ -10,6 +10,7 @@ import { Timers } from "../lib/timers";
 import { AbilityCard, SmallSkill, TrickSkill } from "./Ability";
 import { Stack } from "../structure/Stack";
 import { Unit } from "./Unit";
+import "./Ability"
 
 type PlayerScene = Record<number, Scenes | BattleArea> ;
 
@@ -446,11 +447,6 @@ export class ScenesManager{
             print("分路打印")
             DeepPrintTable(table)
             CustomGameEventManager.Send_ServerToPlayer(PlayerResource.GetPlayer(event.PlayerID),"S2C_SEND_CANSPACE",table)
-        })
-        CustomGameEventManager.RegisterListener("C2S_actingOnCard",(_,event)=>{
-            if(this.All[event.attach] instanceof AbilityCard){
-                (this.All[event.attach] as AbilityCard).SPEEL_TARGET(event.my)
-            }        
         })
     }
 

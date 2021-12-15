@@ -32,7 +32,7 @@ export class Unit extends Card{
         })
         CustomGameEventManager.RegisterListener("C2S_GET_ATTRIBUTE",(_,event)=>{
             if(this.UUID == event.uuid){
-                CustomGameEventManager.Send_ServerToPlayer(PlayerResource.GetPlayer(this.PlayerID),"S2C_SEND_ATTRIBUTE",this.attribute)
+                CustomGameEventManager.Send_ServerToAllClients("S2C_SEND_ATTRIBUTE",this.attribute)
             }
         })
     }
@@ -113,7 +113,7 @@ export class Unit extends Card{
                 this.call_death()
             }
             print(this.UUID,"收到了伤害,当前剩余生命值为",this.GETheal)
-            CustomGameEventManager.Send_ServerToPlayer(PlayerResource.GetPlayer(this.PlayerID),"S2C_SEND_ATTRIBUTE",this.attribute)
+            CustomGameEventManager.Send_ServerToAllClients("S2C_SEND_ATTRIBUTE",this.attribute)
         }
     
 }

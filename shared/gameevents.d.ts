@@ -44,4 +44,6 @@ declare interface CustomGameEventDeclarations {
     "S2C_SEATCH_TARGET_OFF":{uuid:string},
     "S2C_SKILL_READY":{uuid:string},
     "S2C_SKILL_OFF":{uuid:string},
+    "C2S_SPELL_SKILL":{SKILL_ID:string},
+    "S2C_HURT_DAMAGE":{particle:string,uuid:string}
 }

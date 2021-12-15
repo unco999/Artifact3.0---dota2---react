@@ -48,22 +48,22 @@
 
 @keyframes 'select_target'{
     0% {
-        transform:rotateX(-5deg) rotateY(5deg) rotateZ(0deg);
+        transform:rotateX(0deg) rotateY(0deg) rotateZ(0deg);
         border: 0px solid green;
         brightness: 1;
     }
     25% {
-        transform:rotateX(-5deg) rotateY(0deg) rotateZ(5deg);
+        transform:rotateX(0deg) rotateY(0deg) rotateZ(5deg);
         border: 3px solid green;
         brightness: 2;
     }
     50%{
-        transform:rotateX(5deg) rotateY(-5deg)  rotateZ(-5deg);
+        transform:rotateX(0deg) rotateY(0deg)  rotateZ(-5deg);
         brightness: 1;
         border: 0px solid green;
     }
     100%{
-        transform:rotateX(-10deg) rotateY(5deg)  rotateZ(0deg);
+        transform:rotateX(0deg) rotateY(0deg)  rotateZ(0deg);
         brightness: 1;
         border: 0px solid green;
     }
@@ -71,17 +71,22 @@
 
 @keyframes 'skill_rotation'{
     0% {
-        transform:rotateX(0deg) rotateY(0deg) rotateZ(0deg);
+        transform:rotateZ(0deg);
         border: 0px solid gold;
         brightness: 1;
     }
+    25% {
+        transform:rotateZ(5deg);
+        border: 3px solid green;
+        brightness: 2;
+    }
     50% {
-        transform:rotateX(20deg) rotateY(-20deg) rotateZ(-20deg);
+        transform:rotateZ(-5deg);
         border: 3px solid gold;
         brightness: 2;
     }
     100%{
-        transform:rotateX(0deg) rotateY(0deg)  rotateZ(0deg);
+        transform:rotateZ(0deg);
         brightness: 1;
         border: 0px solid gold;
     }

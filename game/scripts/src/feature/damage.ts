@@ -20,4 +20,11 @@ export class damage{
             print(this.damageA.UUID,"攻击了",this.damageB.UUID)
         })
     }
+
+    spell_skill_settlement(damage_count:number){        
+        CustomGameEventManager.Send_ServerToAllClients("S2C_HURT_DAMAGE",{particle:"particles/econ/items/shadow_fiend/sf_desolation/sf_rze_dso_scratch.vpcf",uuid:this.damageB.UUID})
+        Timers.CreateTimer(1.5,()=>{
+            this.damageB.hurt(damage_count)
+        })
+    }
 }

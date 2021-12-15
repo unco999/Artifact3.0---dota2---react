@@ -1,24 +1,24 @@
 import { BattleArea } from "../instance/Scenes";
 import { Unit } from "../instance/Unit";
 
-enum select_type{
+export enum select_type{
     单个选择,
     群体,
 }
 
-enum Magic_brach{
+export enum Magic_brach{
     "本路",
     "跨线",
     "对格"
 }
 
-enum Magic_range{
+export enum Magic_range{
     "单体",
     "近邻",
     "全体"
 }
 
-enum Magic_team{
+export enum Magic_team{
     "友方",
     "敌方",
     "双方"

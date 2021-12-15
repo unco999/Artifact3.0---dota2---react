@@ -4,6 +4,7 @@ import { Battle_center_area } from "./battle_center_area";
 import { Battle_left_area } from "./battle_left_area";
 import { Battle_right_area } from "./battle_right_area";
 import { CardContext } from "./Card";
+import { Effect } from "./effect";
 import { MyConpoment } from "./my";
 import { YouConpoment } from "./you";
 

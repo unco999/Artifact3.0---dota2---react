@@ -72,6 +72,54 @@
     animation-iteration-count: infinite;
 }
 
+.my_effect{
+    width: 300px;
+    height: 300px;
+    z-index: 50;
+    @for $i from 1 to 6{
+        &.my_Midway#{$i}{
+            x:560px + $i * 120px - 150px;
+            y:546px - 150px;
+        }
+    }
+    @for $i from 1 to 6{
+        &.my_Goup#{$i}{
+            x:-80px + $i * 120px;
+            y:546px;
+        }
+    }
+    @for $i from 1 to 6{
+        &.my_Laiddown#{$i}{
+            x:1200px + $i * 120px;
+            y:546px;
+        }
+    }
+}
+
+.you_effect{
+    width: 300px;
+    height: 300px;
+    z-index: 50;
+    @for $i from 1 to 6{
+        &.you_Midway#{$i}{
+            x:540px + $i * 120px - 80px;
+            y:361px - 60px;
+        }
+    }
+    @for $i from 1 to 6{
+        &.you_Goup#{$i}{
+            x:-80px + $i * 120px - 80px;
+            y:361px - 60px;
+        }
+    }
+    @for $i from 1 to 6{
+        &.you_Laiddown#{$i}{
+            x:1200px + $i * 120px - 80px;
+            y:361px - 60px;
+        }
+    }
+}
+
 .my_Card{
     @extend .defualt;
     width: 180px;

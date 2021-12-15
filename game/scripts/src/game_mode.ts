@@ -1,6 +1,7 @@
 
 import { GamaEvent_All_register } from "./Build/Gamevent_All_register";
 import { select_the_prompt } from "./feature/select_the_prompt";
+import { spell_skill } from "./feature/spell_skill";
 import { Cardheaps, GoUp, Hand, LaidDown, Midway, ScenesManager } from "./instance/Scenes";
 import { TowerGeneralControl } from "./instance/Tower";
 import { Timers } from "./lib/timers";
@@ -22,6 +23,7 @@ declare global {
         SceneManager:ScenesManager
         TowerGeneralControl:TowerGeneralControl
         select_the_prompt:select_the_prompt // 技能选择器
+        spell_skill:spell_skill
     }
 }
 
@@ -36,6 +38,7 @@ export class GameMode {
         GameRules.Addon = new GameMode();
         GameRules.KV = new KV();
         GameRules.select_the_prompt = new select_the_prompt()
+        GameRules.spell_skill = new spell_skill()
     }
 
     constructor() {

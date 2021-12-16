@@ -41,7 +41,7 @@ const Machine = createMachine({
     states:{
         defualt:{
             entry:"defualt_entry",
-            on:{toHAND:"hand",toHEAPS:"heaps",toMIDWAY:"midway",toGOUP:"goup",toLAIDDOWN:"laiddown"},
+            on:{toHAND:"hand",toHEAPS:"heaps",toMIDWAY:"midway",toGOUP:"goup",toLAIDDOWN:"laiddown",toGRAVE:"grave",toREMOVE:"remove"},
             exit:"defualt_exit"
         },
         heaps:{
@@ -114,14 +114,14 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
                 GameEvents.SendCustomGameEventToServer("C2S_GET_CARD",{uuid:props.uuid})
             },
             defualt_exit:()=>{
-//
+
             },
             midway_entry:()=>{
                 preindex.current = state.Index
                 dummyoperate('add',prefix + 'Midway' + state.Index);
             },
             midway_exit:()=>{
-                if(state.type == "Solider" && state.Scene != 'MIDWAY') return;
+                if(state.Scene != 'MIDWAY') return;
                  dummyoperate('remove',prefix + 'Midway' + preindex.current );
             },
             goup_entry:()=>{
@@ -129,7 +129,7 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
                 dummyoperate('add',prefix + 'Goup' + state.Index );
             },
             goup_exit:()=>{
-                if(state.type == "Solider" && state.Scene != 'GOUP') return;
+                if(state.Scene != 'GOUP') return;
                  dummyoperate('remove',prefix + 'Goup' + preindex.current);
             },
             laiddown_entry:()=>{
@@ -137,7 +137,7 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
                 dummyoperate('add',prefix + 'Laiddown' + state.Index);
             },
             laiddown_exit:()=>{
-                if(state.type == "Solider" && state.Scene != 'LAIDDOWN') return;
+                if(state.Scene != 'LAIDDOWN') return;
                  dummyoperate('remove',prefix + 'Laiddown' + preindex.current);
             },
             heaps_entry:()=>{
@@ -166,6 +166,7 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
                     dummyoperate('remove',prefix + 'Goup' + state.Index)
                     dummyoperate('remove',prefix + 'Midway' + state.Index)
                     dummyoperate('add',prefix + "ingrave")
+                    $.Msg("有牌死亡了")
             },
             remove_entry:()=>{
                 dummyoperate('add',prefix + "death")
@@ -220,6 +221,7 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
         ref.current?.RemoveClass("select_target")
         $.Schedule(1.5,()=>{
             ref.current?.AddClass(prefix + "death")
+            ref.current?.RemoveClass(prefix + "death_animation"+ _random)
             $.Msg("给卡牌加了死亡消失动画")
         })
     },[props.uuid])
@@ -250,9 +252,9 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
 
     //注册unit面板可被拖入事件 比如被魔法击中
     const registrationCanBeHitInTheEvent = (open:boolean) => {
-       open ? $.RegisterEventHandler( 'DragDrop', ref.current!, OnDragDrop ) : $.RegisterEventHandler( 'DragDrop', ref.current!, ()=>{} );
-       open ? $.RegisterEventHandler( 'DragEnter', ref.current!, OnDragEnter ) : $.RegisterEventHandler( 'DragEnter', ref.current!, ()=>{});
-       open ? $.RegisterEventHandler('DragLeave',ref.current!,OnDragLeave) :  $.RegisterEventHandler( 'DragLeave', ref.current!, ()=>{});
+       open ? $.RegisterEventHandler( 'DragDrop', dummy.current!, OnDragDrop ) : $.RegisterEventHandler( 'DragDrop', dummy.current!, ()=>{} );
+       open ? $.RegisterEventHandler( 'DragEnter', dummy.current!, OnDragEnter ) : $.RegisterEventHandler( 'DragEnter', dummy.current!, ()=>{});
+       open ? $.RegisterEventHandler('DragLeave',dummy.current!,OnDragLeave) :  $.RegisterEventHandler( 'DragLeave', dummy.current!, ()=>{});
     }
 
     //技能目标关闭高亮
@@ -268,12 +270,28 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
         ref.current?.RemoveClass("skill_ready")
     },[props.uuid]) 
 
-    //被命中魔法伤害
-    useGameEvent("S2C_HURT_DAMAGE",(event)=>{
-        if(props.uuid != event.uuid) return
-        set_current_effect("particles/econ/items/mirana/mirana_starstorm_bow/mirana_starstorm_starfall_attack.vpcf")
-        $.Msg(props.uuid,"被命中")
-    },[props.uuid])
+    // //被命中魔法伤害
+    // useGameEvent("S2C_HURT_DAMAGE",(event)=>{
+    //     if(props.uuid != event.uuid) return
+    //     set_current_effect("particles/econ/items/mirana/mirana_starstorm_bow/mirana_starstorm_starfall_attack.vpcf")
+    //     $.Msg(props.uuid,"被命中")
+    // },[props.uuid])
+
+    useEffect(()=>{
+        if(state.Scene == "GOUP" || state.Scene == "MIDWAY" || state.Scene == "LAIDDOWN"){
+            const id = GameEvents.Subscribe("S2C_HURT_DAMAGE",(event)=>{
+                if(props.uuid != event.uuid) return
+                $.Msg(props.uuid,"激活了一次事件")
+                set_current_effect("particles/econ/items/centaur/centaur_ti6_gold/centaur_ti6_warstomp_gold.vpcf");
+                ref.current?.AddClass("hurt")
+                $.Schedule(1.5,()=>{
+                    set_current_effect("")
+                    ref.current?.RemoveClass("hurt")
+                })
+            })
+            return ()=>GameEvents.Unsubscribe(id)
+        }
+    },[props.uuid,state])
 
     //drag事件
     useEffect(()=>{
@@ -309,13 +327,13 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
         dragCallbacks.displayPanel = displayPanel;
         dragCallbacks.offsetX = 0; 
         dragCallbacks.offsetY = 0;
-        C2S_SEATCH_TARGET(true) // 打开技能提示器
+        C2S_SEATCH_TARGET(true)
     }
 
     /**技能提示器 */
     const C2S_SEATCH_TARGET = (bool:boolean) =>{
         GameEvents.SendCustomGameEventToServer(bool == true ?  "C2S_SEATCH_TARGET_OPEN" : "C2S_SEATCH_TARGET_OFF",{
-            has_hero_ability:"4",
+            has_hero_ability:"1",
             magic_brach:Magic_brach.本路,
             magic_range:Magic_range.全体,
             magic_team:Magic_team.敌方,
@@ -390,6 +408,7 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
 
     const OnDragDrop = (panelId:any, dragCallbacks:any) => {
         const id = dragCallbacks.Data().id
+        $.Msg("执行了一次客户端释放技能事件")
         GameEvents.SendCustomGameEventToServer("C2S_SPELL_SKILL",{SKILL_ID:id})
     }
 
@@ -422,7 +441,6 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
         $.Msg("当前hero特效",current_effect)
 
         return <>
-         <Panel draggable={true} ref={Panel => dummy.current = Panel} onmouseover={()=>ref.current?.AddClass(prefix+"hover")} onmouseout={()=>ref.current?.RemoveClass(prefix+"hover")} className={prefix+"Carddummy"}/>
         <Panel hittest={true} ref={Panel => ref.current = Panel} onmouseactivate={()=>{$.Msg("ggg");GameEvents.SendCustomGameEventToServer("TEST_C2S_DEATH",{uuid:props.uuid})}}  className={prefix+'Card'} >
               <Label text={"id:"+state.Id + "|" + props.uuid} className={"uuid"}/>
               <DOTAHeroImage heroimagestyle={'portrait'} heroid={id.current as HeroID} />
@@ -438,7 +456,8 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
             </Panel>
         </Panel>
         </Panel>
-        <GenericPanel hittest={false} ref={panel=>{effect.current = panel;effect.current?.AddClass(effect_select_scenes())}} key={shortid.generate()} className={prefix + "effect"}  type={"DOTAParticleScenePanel"} particleName={current_effect} particleonly="true"  startActive="true" cameraOrigin="0 600 0" lookAt="0 0 0" fov="40" />
+        {current_effect != "" &&<GenericPanel hittest={false} ref={panel=>{effect.current = panel;effect.current?.AddClass(effect_select_scenes())}} className={prefix + "effect"}  type={"DOTAParticleScenePanel"} particleName={current_effect} particleonly="true"  startActive="true" cameraOrigin="0 600 0" lookAt="0 0 0" fov="40" />}
+        {effect_select_scenes() != ""  && <Panel draggable={true} ref={Panel => dummy.current = Panel} onmouseover={()=>ref.current?.AddClass(prefix+"hover")} onmouseout={()=>ref.current?.RemoveClass(prefix+"hover")} className={prefix+"Carddummy"}/>}
         </>
     }
 
@@ -467,9 +486,11 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
     }
 
     const Solider = () => {
-        $.Msg("当前特效solider",current_effect)
-        
+        if(state.Scene == 'GRAVE'){
+            return <></>
+        }
         return <>
+        
          <Panel hittest={true} onmouseactivate={()=>{$.Msg("ggg");GameEvents.SendCustomGameEventToServer("TEST_C2S_DEATH",{uuid:props.uuid})}}   className={prefix+'Card'} ref={Panel => ref.current = Panel}>
                 <Label text={"小兵"} style={{fontSize:'30px',color:'white',textShadow:'0px 0px 0px 5.0 black',align:'center center'}}/>
                 <Label text={props.uuid} className={"uuid"}/>
@@ -485,8 +506,9 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
                 </Panel>
             </Panel>
             </Panel>
-            <GenericPanel hittest={false} ref={panel=>{effect.current = panel;effect.current?.AddClass(effect_select_scenes())}} key={shortid.generate()} className={prefix + "effect"}  type={"DOTAParticleScenePanel"} particleName={current_effect} particleonly="true"  startActive="true" cameraOrigin="0 600 0" lookAt="0 0 0" fov="40" />
-            </>
+            {current_effect != "" &&<GenericPanel hittest={false} ref={panel=>{effect.current = panel;effect.current?.AddClass(effect_select_scenes())}} className={prefix + "effect"}  type={"DOTAParticleScenePanel"} particleName={current_effect} particleonly="true"  startActive="true" cameraOrigin="0 600 0" lookAt="0 0 0" fov="40" />}
+            {effect_select_scenes() != "" && <Panel draggable={true} ref={Panel => dummy.current = Panel} onmouseover={()=>ref.current?.AddClass(prefix+"hover")} onmouseout={()=>ref.current?.RemoveClass(prefix+"hover")} className={prefix+"Carddummy"}/>}
+        </>
     }
 
 
@@ -537,6 +559,7 @@ export const CardContext = (props:{owner:number}) => {
 
 
     return <Panel hittest={false} className={"CardContext"}>
-        {allheaps.concat(allsummon).map((uuid,index)=><Card owner={props.owner}  key={uuid} index={index} uuid={uuid}/>)}
+        {allheaps.map((uuid,index)=><Card owner={props.owner}  key={uuid} index={index} uuid={uuid}/>)}
+        {allsummon.map((uuid,index)=><Card owner={props.owner}  key={uuid} index={index} uuid={uuid}/>)}
     </Panel>
 }

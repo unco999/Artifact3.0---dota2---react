@@ -18,6 +18,7 @@ export class spell_skill{
     }
 
     call_spell_skill(id:string){
+        print("服务端执行了释放技能管理器")
         const hero = this.skill_id_find_hero(id)
         const type = this.skill_id_find_type(id)
         const data = GameRules.select_the_prompt.validRangeLookup(type.magic_brach,type.magic_range,type.magic_team,hero.Id)

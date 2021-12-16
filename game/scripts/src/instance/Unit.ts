@@ -76,6 +76,7 @@ export class Unit extends Card{
     call_death(){
             const scene = this.Scene
             if(scene instanceof BattleArea){
+                print("有牌死亡了")
                 this.Scene.CaSceneManager.change_secens(this.UUID,"Grave",-1)
             }else{
                 print("你当前不在战斗区域")
@@ -126,12 +127,11 @@ export class Hero extends Unit{
         this.type = 'Hero'
     }
 
-    override call_death(){  
-        this.Scene.Remove(this.UUID)
-        const newSence = GameRules.SceneManager.GetGraveScene(this.PlayerID)
-        this.Scene = newSence
-        GameRules.SceneManager.GetGraveScene(this.PlayerID).addCard(this)
+    override call_death(){
         CustomGameEventManager.Send_ServerToAllClients("S2C_SEND_DEATH_ANIMATION",{uuid:this.UUID})
+        Timers.CreateTimer(1.5,()=>{
+            this.Scene.CaSceneManager.change_secens(this.UUID,"Grave",-1)
+        })
     }
 
     isHasAbility(abilityname:string){
@@ -150,9 +150,10 @@ export class Solider extends Unit{
     }
 
     override call_death(){  
-        this.Scene.Remove(this.UUID)
-        GameRules.SceneManager.remove(this.UUID)
         CustomGameEventManager.Send_ServerToAllClients("S2C_SEND_DEATH_ANIMATION",{uuid:this.UUID})
+        Timers.CreateTimer(1.5,()=>{
+            this.Scene.CaSceneManager.change_secens(this.UUID,"Grave",-1)
+        })
     }
 
 }

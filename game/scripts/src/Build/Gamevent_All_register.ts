@@ -9,10 +9,14 @@ export class GamaEvent_All_register{
             brash_solidier.brushTwoSoldiers() 
         })
         CustomGameEventManager.RegisterListener("TEST_C2S_CALL_ATTACK",()=>{
-            GameRules.SceneManager.GetMidwayScene(GameRules.Red.GetPlayerID()).foreach(card=>{
+            const redmidway = GameRules.SceneManager.GetMidwayScene(GameRules.Red.GetPlayerID())
+            const bluemidway = GameRules.SceneManager.GetMidwayScene(GameRules.Blue.GetPlayerID())
+            const start = redmidway.quantityOfChessPieces > bluemidway.quantityOfChessPieces ? redmidway : bluemidway
+            start.foreach(card=>{
                const target = card.Scene.find_oppose().IndexGet(card.Index) as Unit
+               print(target,"找到的target为")
                const _damage = new damage(card as Unit,target)
-               _damage.settlement()
+               _damage.attacklement()
             })
         })
         //伤害动画测试

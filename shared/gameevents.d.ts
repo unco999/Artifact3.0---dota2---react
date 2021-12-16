@@ -30,7 +30,7 @@ declare interface CustomGameEventDeclarations {
     "TEST_C2S_DEATH":{uuid:string}
     "TEST_C2S_CALL_CENTER":{}
     "C2S_GET_TOWER":{index:number}
-    "S2C_SEND_TOWER":{heal:number,state:"death"|"defualt"}
+    "S2C_SEND_TOWER":{heal:number,state:"death"|"defualt",brach:number,playerid:PlayerID,uuid:string}
     "C2S_ATTACK_TOWER":{damage:number,Attackplayerid:PlayerID,index:number}
     "C2S_GET_ATTRIBUTE":{uuid:string}
     "S2C_SEND_ATTRIBUTE":{uuid:string,attack:number,arrmor:number,heal:number}
@@ -46,4 +46,6 @@ declare interface CustomGameEventDeclarations {
     "S2C_SKILL_OFF":{uuid:string},
     "C2S_SPELL_SKILL":{SKILL_ID:string},
     "S2C_HURT_DAMAGE":{particle:string,uuid:string}
+    "S2C_TOWER_INIT":{playerid:PlayerID,uuid:string,brach:number,heal:number},
+    "C2S_TOWER_INIT":{owner:PlayerID,brach:number}
 }

@@ -45,6 +45,11 @@ export class Scenes implements ICAScene{
     shuffle(){
 
     }
+
+    /**获得棋子数量 */
+    get quantityOfChessPieces(){
+       return table.maxn(this.CardPool)
+    }
     
     getIndex(Card:Card){
         return 
@@ -94,6 +99,7 @@ export class Scenes implements ICAScene{
                 return this.CardPool[key];
             }
         }
+        return undefined
     }
 
     getAll(): Card[] {
@@ -626,6 +632,7 @@ export class ScenesManager{
                 this.GetGraveScene(playerid).addCard(card)
                 card.Scene = currentscnese
                 this.All[uuid].update('GRAVE')
+                print(this.All[uuid].UUID,"死亡了 去了墓地")
                 break;
             }
         }

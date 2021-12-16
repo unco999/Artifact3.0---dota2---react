@@ -199,8 +199,14 @@
         animation-fill-mode:forwards;
     }
     &.my_ingrave{
-        x:100px;
+        x:320px;
         y:900px;
+        width: 90px;
+        height: 160px;
+        animation-name: grave;
+        animation-duration: 4s;
+        animation-iteration-count: infinite;
+        animation-fill-mode:forwards;
     }
     &.my_attack_animation{
         animation-name: myhit;
@@ -365,8 +371,14 @@
         animation-fill-mode:forwards;
     }
     &.you_ingrave{
-        x:50px;
-        y:50px;
+        x:1500px;
+        y:10px;
+        width: 90px;
+        height: 160px;
+        animation-name: grave;
+        animation-duration: 4s;
+        animation-iteration-count: infinite;
+        animation-fill-mode:forwards;
     }
     &.you_death_animation1{
         animation-timing-function: cubic-bezier(0.355, 0.03, 0.515, 0.955);
@@ -385,9 +397,47 @@
     }
 }
 
+.hurt{
+    animation-name: hurt;
+    animation-duration: 0.5s;
+    animation-iteration-count: 1;
+    animation-fill-mode:forwards;
+}
+
+.you_Carddummy{
+    width: 200px;
+    height: 300px;  
+    z-index: 20;
+    @for $i from 1 to 6{
+        &.you_Midway#{$i}{
+            width: 100px;
+            height: 170px;
+            x:560px + $i * 120px;
+            y:361px;
+        }
+    }
+    @for $i from 1 to 6{
+        &.you_Goup#{$i}{
+            width: 100px;
+            height: 170px;
+            x:-80px + $i * 120px;
+            y:361px;
+        }
+    }
+    @for $i from 1 to 6{
+        &.you_Laiddown#{$i}{
+            width: 100px;
+            height: 170px;
+            x:1200px + $i * 120px;
+            y:361px;
+        }
+    }
+}
+
 .my_Carddummy{
     width: 200px;
     height: 300px;  
+    z-index: 20;
     @for $i from 1 to 6 {
         &.my_Hand#{$i}{
             x:500px + $i * 100px;
@@ -395,7 +445,30 @@
             z-index: $i+1;
         }
     }   
-    z-index: 10;
+    @for $i from 1 to 6{
+        &.my_Midway#{$i}{
+            width: 100px;
+            height: 170px;
+            x:560px + $i * 120px;
+            y:546px;
+        }
+    }
+    @for $i from 1 to 6{
+        &.my_Goup#{$i}{
+            width: 100px;
+            height: 170px;
+            x:-80px + $i * 120px;
+            y:546px;
+        }
+    }
+    @for $i from 1 to 6{
+        &.my_Laiddown#{$i}{
+            width: 100px;
+            height: 170px;
+            x:1200px + $i * 120px;
+            y:546px;
+        }
+    }
 }
 
 

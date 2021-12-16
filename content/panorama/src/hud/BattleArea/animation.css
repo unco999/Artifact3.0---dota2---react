@@ -169,6 +169,98 @@
     
 }
 
+
+@keyframes 'hurt'{
+    3%{
+        transform: rotateZ(-3deg);
+        wash-color: #ff0000;
+    }
+    5%{
+        transform: rotateZ(2deg);
+        wash-color: #ffffff;
+    }
+    7%{
+        transform: rotateZ(-3deg);
+        wash-color: #ff0000;
+    }
+    10%{
+        transform: rotateZ(3deg);
+        wash-color: #ffffff;
+    }
+    13%{
+        transform: rotateZ(-2deg);
+        wash-color: #ff0000;
+    }
+    15%{
+        transform: rotateZ(3deg);
+        wash-color: #ffffff;
+    }
+    18%{
+        transform: rotateZ(-2deg);
+        wash-color: #ff0000;
+    }
+    20%{
+        transform: rotateZ(3deg);
+        wash-color: #ffffff;
+    }
+    23%{
+        transform: rotateZ(-2deg);
+        wash-color: #ff0000;
+    }
+    25%{
+        transform: rotateZ(-2deg);
+        wash-color: #ffffff;
+    }
+    27%{
+        transform: rotateZ(3deg);
+        wash-color: #ff0000;
+    }
+    30%{
+        transform: rotateZ(-2deg);
+        wash-color: #ffffff;
+    }
+    33%{
+        transform: rotateZ(-3deg);
+        wash-color: #ff0000;
+    }
+    56%{
+        transform: rotateZ(2deg);
+        wash-color: #ffffff;
+    }
+    70%{
+        transform: rotateZ(-3deg);
+        wash-color: #ff0000;
+    }
+    76%{
+        transform: rotateZ(3deg);
+        wash-color: #ffffff;
+    }
+    80%{
+        transform: rotateZ(-2deg);
+        wash-color: #ff0000;
+    }
+    90%{
+        transform: rotateZ(3deg);
+        wash-color: #ffffff;
+    }
+    91%{
+        transform: rotateZ(-2deg);
+        wash-color: #ff0000;
+    }
+    92%{
+        transform: rotateZ(3deg);
+        wash-color: #ffffff;
+    }
+    94%{
+        transform: rotateZ(-2deg);
+        wash-color: #ff0000;
+    }
+    95%{
+        transform: rotateZ(-2deg);
+        wash-color: #ffffff;
+    }
+}
+
 @keyframes 'death' {
     0% {
         opacity: 1;
@@ -198,7 +290,7 @@
         transform:translateX(10px);
     } */
     100%{
-        opacity: 0;
+        opacity: 0.3;
     }
 }
 
@@ -242,6 +334,26 @@
         clip: rect(0%, 80%, 0%, 0%);
       }
 }    */
+
+
+@keyframes 'grave' {
+    0% {
+        blur: gaussian( 2 );
+        opacity: 0.1;
+    }
+    25% {
+    }
+    50% {
+        blur: gaussian( 5 );
+        opacity: 0.3;
+    }
+    75% {
+    }
+    100% {
+        blur: gaussian( 2 );
+        opacity: 0.1;
+    }
+}   
 
 
 @keyframes 'clipMe' {

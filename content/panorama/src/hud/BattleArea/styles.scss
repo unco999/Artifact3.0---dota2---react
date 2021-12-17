@@ -483,6 +483,17 @@
     border-right-color: #404040cc;
 }
 
+.defualtoptical{
+    background-color: gradient( linear, 0% 0%, 0% 100%, from( #373d451c ), to( #2a9aeb21 ) );
+    border-style: solid;
+    border-width: 1px;
+    padding: 1px 1px;
+    border-top-color: #555555b7;
+    border-left-color: #494949c5;
+    border-bottom-color: #333333be;
+    border-right-color: #404040cc;
+}
+
 .my_Card_container_parent{
     flow-children:right;
     vertical-align: top;
@@ -585,4 +596,97 @@
     transition-duration: 0.5s;
     transition-property: transform,opacity,pre-transform-scale2d,position;
     pre-transform-scale2d:1;
+}
+
+.my_1energyBarmain{
+    @extend .defualtoptical;
+    width: 400px;
+    height: 33px;
+    x:112px;
+    y:859px;
+}
+
+.my_2energyBarmain{
+    @extend .my_1energyBarmain;
+    x:762px;
+    y:859px;
+}
+
+.my_3energyBarmain{
+    @extend .my_1energyBarmain;
+    x:1412px;
+    y:859px;
+}
+
+.you_1energyBarmain{
+    @extend .defualtoptical;
+    width: 400px;
+    height: 33px;
+    x:762px;
+    y:189px;
+}
+
+.you_2energyBarmain{
+    @extend .defualtoptical;
+    width: 400px;
+    height: 33px;
+    x:1412px;
+    y:189px;
+}
+
+.you_3energyBarmain{
+    @extend .defualtoptical;
+    width: 400px;
+    height: 33px;
+    x:112px;
+    y:189px;
+}
+
+
+.my_2energyBarmain{
+    @extend .defualt;
+    @extend .my_1energyBarmain
+}
+
+.my_energyBlock{
+    width: 90%;
+    height: 100px;
+    background-color: #000000b9;
+    align:center center;
+}
+
+@for $b from 1 to 4{
+@for $i from 0 to 10{
+    .my_#{$b}energy#{$i}{
+        border-radius: 10px;
+        width: 22px;
+        height: 22px;
+        x:(175px + ($b - 1) * 650px ) + ($i - 1) * 35px;
+        y:865px;
+        background-color: red;
+        transition-duration: 2s;
+        transition-property:background-color;
+        &.beUsable{
+            background-color: green;
+        }
+    }
+}
+}
+
+@for $b from 1 to 4{
+    @for $i from 0 to 10{
+        .you_#{$b}energy#{$i}{
+            border-radius: 10px;
+            width: 22px;
+            height: 22px;
+            x:(175px + ($b - 1) * 650px ) + ($i - 1) * 35px;
+            y:195px;
+            background-color: red;
+            transition-duration: 2s;
+            transition-property:background-color;
+            &.beUsable{
+                background-color: green;
+            }
+        }
+    }
 }

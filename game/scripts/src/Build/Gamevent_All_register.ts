@@ -27,5 +27,16 @@ export class GamaEvent_All_register{
                 CustomGameEventManager.Send_ServerToAllClients("S2C_SEND_ATTACK",{uuid:target.UUID})
              })
         })
+
+        CustomGameEventManager.RegisterListener("C2S_TEST_REDUCE",()=>{
+            print("能量条-1")
+            GameRules.energyBarManager.enrgyBarData[GameRules.Blue.GetPlayerID() + "1"].reduceEnergy(1)
+        })
+
+        
+        CustomGameEventManager.RegisterListener("C2S_TEST_MAX_REDUCE",()=>{
+            print("能量条上线+1")
+            GameRules.energyBarManager.enrgyBarData[GameRules.Blue.GetPlayerID() + "1"].current_max_enrygy_add(-1)
+        })
     }
 }

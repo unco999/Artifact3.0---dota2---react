@@ -1,5 +1,6 @@
 
 import { GamaEvent_All_register } from "./Build/Gamevent_All_register";
+import { energyBarManager } from "./feature/energyBar";
 import { select_the_prompt } from "./feature/select_the_prompt";
 import { spell_skill } from "./feature/spell_skill";
 import { Cardheaps, GoUp, Hand, LaidDown, Midway, ScenesManager } from "./instance/Scenes";
@@ -24,6 +25,7 @@ declare global {
         TowerGeneralControl:TowerGeneralControl
         select_the_prompt:select_the_prompt // 技能选择器
         spell_skill:spell_skill
+        energyBarManager:energyBarManager
     }
 }
 
@@ -83,6 +85,7 @@ export class GameMode {
                 }
             }
             CustomNetTables.SetTableValue("Card_group_construction_phase","team",{red:GameRules.Red.GetPlayerID(),blue:GameRules.Blue.GetPlayerID()})
+            GameRules.energyBarManager = new energyBarManager()
             GameRules.ChooseHeroCardLoop = new ChooseHeroCardLoop() // 英雄轮询阶段
             GameRules.ChooseHeroCardLoop.SetcuurentsettingState = new RedSelectstage(1) // 暂时以红队开始选择  选牌次数为一次
         }

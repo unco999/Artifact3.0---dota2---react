@@ -333,7 +333,7 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
     /**技能提示器 */
     const C2S_SEATCH_TARGET = (bool:boolean) =>{
         GameEvents.SendCustomGameEventToServer(bool == true ?  "C2S_SEATCH_TARGET_OPEN" : "C2S_SEATCH_TARGET_OFF",{
-            has_hero_ability:"1",
+            has_hero_ability:"18",
             magic_brach:Magic_brach.本路,
             magic_range:Magic_range.全体,
             magic_team:Magic_team.敌方,

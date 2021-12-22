@@ -663,11 +663,17 @@
         height: 22px;
         x:(175px + ($b - 1) * 650px ) + ($i - 1) * 35px;
         y:865px;
-        background-color: red;
+        background-color: darkgrey;
         transition-duration: 2s;
         transition-property:background-color;
         &.beUsable{
-            background-color: green;
+            background-color: rgb(60, 255, 0);
+        }
+        &.notOwned{
+            background-color: #373d45;
+        }
+        &.consume{
+            background-color: rgb(245, 245, 220);
         }
     }
 }
@@ -685,7 +691,13 @@
             transition-duration: 2s;
             transition-property:background-color;
             &.beUsable{
-                background-color: green;
+                background-color: rgb(60, 255, 0);
+            }
+            &.notOwned{
+                background-color: #373d45;
+            }
+            &.consume{
+                background-color: rgb(245, 245, 220);
             }
         }
     }

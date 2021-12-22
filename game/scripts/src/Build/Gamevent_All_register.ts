@@ -30,13 +30,13 @@ export class GamaEvent_All_register{
 
         CustomGameEventManager.RegisterListener("C2S_TEST_REDUCE",()=>{
             print("能量条-1")
-            GameRules.energyBarManager.enrgyBarData[GameRules.Blue.GetPlayerID() + "1"].reduceEnergy(1)
+            GameRules.energyBarManager.enrgyBarData[GameRules.Blue.GetPlayerID() + "1"].add_cuurent_energy(-1)
         })
 
         
         CustomGameEventManager.RegisterListener("C2S_TEST_MAX_REDUCE",()=>{
             print("能量条上线+1")
-            GameRules.energyBarManager.enrgyBarData[GameRules.Blue.GetPlayerID() + "1"].current_max_enrygy_add(-1)
+            GameRules.energyBarManager.enrgyBarData[GameRules.Blue.GetPlayerID() + "1"].current_max_enrygy_add(1)
         })
     }
 }

@@ -50,7 +50,7 @@ declare interface CustomGameEventDeclarations {
     "C2S_TOWER_INIT":{owner:PlayerID,brach:number}
     "C2S_GET_ENRGY":{uuid:string}
     "S2C_SEND_ENRGY":{uuid:string,max_enrgy:number,current_enrgy:number,cuurent_max:number},
-    "C2S_GET_INIT_ENRGY":{brach:number,playerid:number},
+    "C2S_GET_INIT_ENRGY":{brach:number,PLAYER:number},
     "S2C_SEND_INIT_ENRGY":{playerid:PlayerID,brach:number,max_enrgy:number,current_enrgy:number,uuid:string,cuurent_max:number},
     "C2S_TEST_REDUCE":{},
     "C2S_TEST_MAX_REDUCE":{}

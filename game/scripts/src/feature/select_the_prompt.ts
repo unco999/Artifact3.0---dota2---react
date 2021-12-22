@@ -33,7 +33,7 @@ export class select_the_prompt{
     register_gameevent(){
         //分路提示器
         CustomGameEventManager.RegisterListener("C2S_SEATCH_TARGET_OPEN",(_,event)=>{
-           const find_data = this.validRangeLookup(event.magic_brach,event.magic_range,event.magic_team,event.has_hero_ability)
+           const find_data = this.validRangeLookup(event.PlayerID,event.magic_brach,event.magic_range,event.magic_team,event.has_hero_ability)
            if(!find_data) return
            CustomGameEventManager.Send_ServerToPlayer(PlayerResource.GetPlayer(find_data._self.PlayerID),"S2C_SKILL_READY",{uuid:find_data._self.UUID})
            find_data.table.forEach(unit=>{
@@ -43,7 +43,7 @@ export class select_the_prompt{
            })
         })
         CustomGameEventManager.RegisterListener("C2S_SEATCH_TARGET_OFF",(_,event)=>{
-            const find_data = this.validRangeLookup(event.magic_brach,event.magic_range,event.magic_team,event.has_hero_ability)
+            const find_data = this.validRangeLookup(event.PlayerID,event.magic_brach,event.magic_range,event.magic_team,event.has_hero_ability)
             if(!find_data) return;
             CustomGameEventManager.Send_ServerToPlayer(PlayerResource.GetPlayer(find_data._self.PlayerID),"S2C_SKILL_OFF",{uuid:find_data._self.UUID})
             find_data.table.forEach(unit=>{
@@ -55,8 +55,11 @@ export class select_the_prompt{
     }
 
     /**有效范围查找器 */
-    validRangeLookup(magic_brach:Magic_brach,magic_range:Magic_range,magic_team:Magic_team,has_hero_ability_id:string){
-        const hero = GameRules.SceneManager.get_hero(has_hero_ability_id) as Unit
+    validRangeLookup(PlayerID:PlayerID,magic_brach:Magic_brach,magic_range:Magic_range,magic_team:Magic_team,has_hero_ability_id:string){
+        let hero = GameRules.SceneManager.get_hero(has_hero_ability_id) as Unit
+        /**测试 始终以中间单位为主 */
+        hero = GameRules.SceneManager.GetMidwayScene(GameRules.Blue.GetPlayerID() == PlayerID ? PlayerID : GameRules.Red.GetPlayerID()).IndexGet(3) as Unit
+        /**结束后删除 */
         print("id:" + has_hero_ability_id,"寻找技能目标")
         if(hero == undefined) return;
         if(!(hero.Scene instanceof BattleArea)) return;

@@ -61,6 +61,7 @@ module.exports = {
                     import: './loading-screen/layout.xml',
                     filename: 'custom_loading_screen.xml',
                 },
+                { import: './hud/information/layout.xml',type:'Hud'},
                 { import: './hud/layout.xml', type: 'Hud' },
                 { import: './hud/BattleArea/layout.xml', type: 'Hud' },
                 { import: './end_screen/layout.xml', type: 'EndScreen' },

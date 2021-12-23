@@ -1,7 +1,7 @@
 import { damage } from "../feature/damage";
 import { Timers } from "../lib/timers";
 import { reloadable } from "../lib/tstl-utils";
-import { Card, CardParameter, professionalMagicCard } from "./Card";
+import { Card, CardParameter, CARD_TYPE, professionalMagicCard } from "./Card";
 import { ICAScene } from "./Scenes";
 import { Unit } from "./Unit";
 
@@ -38,8 +38,8 @@ export class AbiliyContainer{
 /**职业魔法卡实例 */
 export class AbilityCard extends Card {
 
-    constructor(CardParameter:CardParameter,Scene:ICAScene){
-        super(CardParameter,Scene)
+    constructor(CardParameter:CardParameter,Scene:ICAScene,type:CARD_TYPE){
+        super(CardParameter,Scene,type)
     }
 
     GameEventToClientTograve(){
@@ -58,8 +58,7 @@ export class AbilityCard extends Card {
 export class TrickSkill extends AbilityCard{
 
     constructor(CardParameter:CardParameter,Scene:ICAScene){
-        super(CardParameter,Scene)
-        this.type = "TrickSkill"
+        super(CardParameter,Scene,"TrickSkill")
     }
 
     ToData() {
@@ -70,8 +69,7 @@ export class TrickSkill extends AbilityCard{
 export class SmallSkill extends AbilityCard{
     
     constructor(CardParameter:CardParameter,Scene:ICAScene){
-        super(CardParameter,Scene)
-        this.type = "SmallSkill"
+        super(CardParameter,Scene,"SmallSkill")
     }
 
     ToData() {

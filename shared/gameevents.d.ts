@@ -58,4 +58,7 @@ declare interface CustomGameEventDeclarations {
     "C2S_SEND_up_equiment":{index:number,uuid:string,item:string}
     "S2C_SEND_UP_EQUIMENT_SHOW":{uuid:string,index:number,item:string}
     "C2S_TEST_RANDOM_EQUIP":{}
+    "S2C_INFORMATION":{information:string}
+    "C2S_GET_EQUIP":{uuid:string}
+    "S2C_SEND_EQUIP":{data:Record<string,string>,uuid:string}
 }

@@ -20,6 +20,21 @@ export const Equipment = (props:{index:number,uuid:string}) =>{
         EQUIPshowName.current = event.item 
     },[])
 
+    useGameEvent("S2C_SEND_EQUIP",(event)=>{
+        if(event.uuid != props.uuid) return;
+        const obj = Object.keys(event.data)
+        $.Msg("收到了手法事件",event)//
+        obj.forEach(key=>{
+            if(props.index.toString() == key){
+                EQUIPshowName.current = event.data[key]
+            }
+        })
+    },[])
+
+    useEffect(()=>{
+        GameEvents.SendCustomGameEventToServer("C2S_GET_EQUIP",{uuid:props.uuid})
+    },[])
+
     const registrationCanBeHitInTheEvent = (open:boolean) => {
         $.Msg(ref.current)
         open ? $.RegisterEventHandler( 'DragDrop', ref.current!, OnDragDrop ) : $.RegisterEventHandler( 'DragDrop', ref.current!, ()=>{} );

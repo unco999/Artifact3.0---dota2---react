@@ -1,7 +1,7 @@
 import Queue from "../structure/Queue";
 import { Card, uuid } from "../instance/Card";
 import { Ability, Cardheaps, GoUp, Grave, Hand, ICAScene, IHeapsCardbuilder, LaidDown, Midway, Scenes, ScenesManager } from "../instance/Scenes";
-import { Hero } from "../instance/Unit";
+import { Hero } from "../instance/Hero"
 import { SmallSkill, TrickSkill } from "../instance/Ability";
 import { TowerGeneralControl } from "../instance/Tower";
 import { testmodifler } from "../modifiler/testmodifiler";
@@ -62,7 +62,7 @@ export class ScenesBuildbehavior {
 
     static HeapsBuild(PlayerID:PlayerID){
         for(let i = 0 ; i < 10 ; i++){
-            const _equit = new EquipCard({Id:"item_robe",Index:1,PlayerID:PlayerID},GameRules.SceneManager.GetCardheapsScene(PlayerID))
+            const _equit = new EquipCard({Id:math.random() > 0.5 ? "item_robe" : "item_blink",Index:1,PlayerID:PlayerID},GameRules.SceneManager.GetCardheapsScene(PlayerID))
             GameRules.SceneManager.global_add(_equit.UUID,_equit)
             GameRules.SceneManager.change_secens(_equit.UUID,"HAND",(GameRules.SceneManager.GetHandsScene(PlayerID) as Hand).max_index);
         }

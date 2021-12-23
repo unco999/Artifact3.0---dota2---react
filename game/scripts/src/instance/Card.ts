@@ -18,15 +18,18 @@ export interface professionalMagicCard{
     SPEEL_SCNECE(scene_name:string)
 }
 
+export type CARD_TYPE = "Hero"|"Solider"|"TrickSkill"|"SmallSkill"|"EQUIP"
+
 export abstract class Card{
     PlayerID:PlayerID
     UUID:uuid
     Index?:number 
     Id:string
     Scene:ICAScene //初始化场景  卡牌所在的位置
-    type:string
+    type:CARD_TYPE
     
-    constructor(CardParameter:CardParameter,Scene:ICAScene){
+    constructor(CardParameter:CardParameter,Scene:ICAScene,type:CARD_TYPE){
+        this.type = type
         this.UUID = DoUniqueString(GetSystemTime())
         this.Id = CardParameter.Id
         this.Index = CardParameter.Index
@@ -90,7 +93,7 @@ export abstract class Card{
 
     /**是否已经上场 */
     isBattle(){
-        return this.isMideay() || this.isLaidDown || this.isReleaseScene
+        return this.isMideay() || this.isLaidDown() || this.isReleaseScene()
     }
 
     /**是否在中路 */

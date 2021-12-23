@@ -1,6 +1,8 @@
 import { Card, CardParameter } from "./Card";
 import { ICAScene } from "./Scenes";
+import { Tower } from "./Tower";
 import { Unit } from "./Unit";
+import { Hero } from "./Hero";
 
 export function ca_register_equip() {
     return function(constructor:any){
@@ -50,11 +52,21 @@ export enum HOOK{
     装备物品及时生效 = 0x00004000,
 }
 
+export type attack_target = "英雄" | "小兵" | "塔"
+export type U3D = {attack:number,arrmor:number,heal:number}
+
+    [HOOK.攻击前]:{my:Card,target:Card,attack_target:attack_target}
+    [HOOK.攻击后]:{my:Card,damage_target/**造成伤害的目标 */:Card,causeSomeDamages/**造成的伤害值 */:number,whetherToKill:boolean,attack_target/**目标类型 */:attack_target}
+}
+
+
+export type hookfuc = (...args:any[])=>boolean
+
 export abstract class Equip{
     unit:Unit|undefined
     id:string
     hook:number
-    hookEvent:Record<number,Function[]> = {}
+    hookEvent:Record<number,hookfuc[]> = {}
     name:string
 
     constructor(hook:number,id:string){
@@ -68,11 +80,13 @@ export abstract class Equip{
     abstract register_hool();
 
     call_hook(hook:HOOK){
+        const table = []
         if(bit.bor(this.hook,hook) == this.hook){
             this.hookEvent[hook] && this.hookEvent[hook].forEach(fuc=>{
-                fuc()
+                table.push(fuc)
             })
         }
+        return table
     }
     
 }
@@ -81,9 +95,8 @@ export class EquipCard extends Card{
     equip:Equip
 
     constructor(CardParameter:CardParameter,Scene:ICAScene){
-        super(CardParameter,Scene)
+        super(CardParameter,Scene,"EQUIP")
         this.equip = EquipContainer.instance.GetEquit(CardParameter.Id)
-        this.type = "EQUIP"
     }
 
     override ToData() {
@@ -110,14 +123,40 @@ export class resurrection extends Equip{
     /**装备及时生效 */
     create(){
         print("装备三维已经增加")
+        return false
     }
 
     deathPreAction(){
         print("死亡前我播放了特效")
+        return false
     }
 
     deathPostAction(){
         print("死亡后我实现了复活")
+        return false
     }
+
+}
+
+@ca_register_equip()
+export class fangTianli extends Equip{
+
+    constructor(){
+        super(
+            HOOK.原始 | HOOK.攻击前 ,"item_blink"
+        )
+    }
+
+    register_hool() {
+        this.hookEvent[HOOK.攻击前] = [this.preattack]
+    }
+
+    /**装备及时生效 */
+    preattack(...args){
+        const [attack,target_type,damage] = args
+        damage()
+        return false
+    }
+
 
 }

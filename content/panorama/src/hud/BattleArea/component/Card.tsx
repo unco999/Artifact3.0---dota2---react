@@ -563,7 +563,6 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
             return Solider()
         }
         if(state.type == 'EQUIP'){
-            $.Msg("有张卡是装备")
             return <>
            <Panel draggable={true} ref={Panel => dummy.current = Panel} onmouseover={()=>{frame.current?.AddClass("show");ref.current?.AddClass(prefix+"hover")}} onmouseout={()=>{frame.current?.RemoveClass("show");ref.current?.RemoveClass(prefix+"hover")}} className={prefix+"Carddummy"}/>
            <Panel ref={Panel => ref.current = Panel}  className={prefix+'Card'} >

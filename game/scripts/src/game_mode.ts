@@ -10,6 +10,7 @@ import { reloadable } from "./lib/tstl-utils";
 import { BattleGameLoop } from "./Manager/BattleGameLoop";
 import { ChooseHeroCardLoop, RedSelectstage } from "./System/ChooseHeroCard";
 import { KV } from "./System/KV";
+import './instance/Equip'
 
 const heroSelectionTime = 0;
 

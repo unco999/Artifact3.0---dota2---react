@@ -58,6 +58,7 @@
     color: #ffffffb9;
     z-index: 20;
     text-shadow: 1px 1px 1px 3.0 black;
+    align:center center;
 }
 
 .skill_ready{
@@ -75,23 +76,23 @@
 .my_effect{
     width: 300px;
     height: 300px;
-    z-index: 50;
+    z-index: 100;
     @for $i from 1 to 6{
         &.my_Midway#{$i}{
-            x:560px + $i * 120px - 150px;
-            y:546px - 150px;
+            x:560px + $i * 120px - 100px;
+            y:546px - 100px;
         }
     }
     @for $i from 1 to 6{
         &.my_Goup#{$i}{
-            x:-80px + $i * 120px;
-            y:546px;
+            x:-80px + $i * 120px - 100px;
+            y:546px - 100px;
         }
     }
     @for $i from 1 to 6{
         &.my_Laiddown#{$i}{
-            x:1200px + $i * 120px;
-            y:546px;
+            x:1200px + $i * 120px - 100px;
+            y:546px - 100px;
         }
     }
 }
@@ -102,20 +103,20 @@
     z-index: 50;
     @for $i from 1 to 6{
         &.you_Midway#{$i}{
-            x:540px + $i * 120px - 80px;
-            y:361px - 60px;
+            x:540px + $i * 120px - 100px;
+            y:361px - 100px;
         }
     }
     @for $i from 1 to 6{
         &.you_Goup#{$i}{
-            x:-80px + $i * 120px - 80px;
-            y:361px - 60px;
+            x:-80px + $i * 120px - 100px;
+            y:361px - 100px;
         }
     }
     @for $i from 1 to 6{
         &.you_Laiddown#{$i}{
-            x:1200px + $i * 120px - 80px;
-            y:361px - 60px;
+            x:1200px + $i * 120px - 100px;
+            y:361px - 100px;
         }
     }
 }
@@ -127,7 +128,7 @@
     border-radius: 10px;
     opacity: 1;
     transition-duration: 0.5s;
-    transition-property: transform,opacity,pre-transform-scale2d,position,saturation;
+    transition-property: width,height,transform,opacity,pre-transform-scale2d,position,saturation;
     pre-transform-scale2d:1;
     .abilityimage{
         width: 80%;
@@ -169,7 +170,7 @@
             box-shadow: 3px 3px 3px 1.5 black;
         }
     }
-    @for $i from 1 to 6 {
+    @for $i from 1 to 30 {
         &.my_Hand#{$i}{
             x:500px + $i * 100px;
             y:900px;
@@ -193,10 +194,10 @@
         animation-iteration-count: infinite;
     }
     &.my_death{
-        animation-name: death;
-        animation-duration: 0.5s;
-        animation-iteration-count: 1;
-        animation-fill-mode:forwards;
+        width: 0px;
+        height: 0px;
+        opacity: 0;
+        transition-duration: 0.1s;
     }
     &.my_ingrave{
         x:320px;
@@ -226,6 +227,13 @@
         animation-timing-function: cubic-bezier(0.455, 0.03, 0.515, 0.955);
         transform: rotateZ(-44deg) translateY(88px);
         saturation: 0;
+    }
+    &.dragEquip{
+        animation-name: high-rotation;
+        animation-duration: 1s;
+        animation-iteration-count: infinite;
+        width: 30px;
+        height: 30px;
     }
 }
 .threeDimensional{  
@@ -347,7 +355,7 @@
             box-shadow: 3px 3px 3px 1.5 black;
         }
     }
-    @for $i from 1 to 6 {
+    @for $i from 1 to 30 {
         &.you_Hand#{$i}{
             x:700px + $i * 50px;
             y:-50px;
@@ -407,7 +415,17 @@
 .you_Carddummy{
     width: 200px;
     height: 300px;  
-    z-index: 20;
+    z-index: 25;
+    &.hide{
+        visibility: collapse;
+    }
+    @for $i from 1 to 30 {
+        &.you_Hand#{$i}{
+            x:700px + $i * 50px;
+            y:-50px;
+            z-index:$i;
+        }
+    }   
     @for $i from 1 to 6{
         &.you_Midway#{$i}{
             width: 100px;
@@ -438,7 +456,10 @@
     width: 200px;
     height: 300px;  
     z-index: 20;
-    @for $i from 1 to 6 {
+    &.hide{
+        visibility: collapse;
+    }
+    @for $i from 1 to 30 {
         &.my_Hand#{$i}{
             x:500px + $i * 100px;
             y:900px;
@@ -482,6 +503,19 @@
     border-bottom-color: #333333be;
     border-right-color: #404040cc;
 }
+
+.lowborder-defualt{
+    background-color: black;
+    width: 100%;
+    height: 100%;
+    border-style: solid;
+    border-width: 0.5px;
+    border-top-color: #555555b7;
+    border-left-color: #494949c5;
+    border-bottom-color: #333333be;
+    border-right-color: #404040cc;
+}
+
 
 .defualtoptical{
     background-color: gradient( linear, 0% 0%, 0% 100%, from( #373d451c ), to( #2a9aeb21 ) );
@@ -701,4 +735,33 @@
             }
         }
     }
+}
+
+.heroimage{
+    width: 100%;
+    height: 80%;
+    align:center bottom;
+}
+
+.EquipmentManager{
+    width: 100%;
+    height: 40px;
+    z-index: 21;
+    flow-children:right;
+    .Equipment{
+        width: 34%;
+        height: 100%;
+        background-color: rgb(0, 0, 0);
+        .beEquipped{
+            @extend .lowborder-defualt;
+            background-color: rgb(0, 0, 0);
+            align:center center;
+        }
+    }
+}
+
+.select{
+    animation-name: high;
+    animation-duration: 1s;
+    animation-iteration-count: infinite;
 }

@@ -18,7 +18,7 @@ export interface professionalMagicCard{
     SPEEL_SCNECE(scene_name:string)
 }
 
-export class Card{
+export abstract class Card{
     PlayerID:PlayerID
     UUID:uuid
     Index?:number 
@@ -37,12 +37,14 @@ export class Card{
         print("创造了",this.UUID)
     }
 
+    abstract ToData():any
+
     /**注冊原子級別的事件 */
     register_gameevent(){
         CustomGameEventManager.RegisterListener('C2S_GET_CARD',(_,event)=>{
             if( event.uuid == this.UUID){
                 print("收到查询原子事件")
-                CustomGameEventManager.Send_ServerToAllClients("S2C_GET_CARD",{Id:this.Id,Index:this.Index,uuid:this.UUID,Scene:this.Scene.SceneName,type:this.type,playerid:this.PlayerID})   
+                CustomGameEventManager.Send_ServerToAllClients("S2C_GET_CARD",{Id:this.Id,Index:this.Index,uuid:this.UUID,Scene:this.Scene.SceneName,type:this.type,playerid:this.PlayerID,data:this.ToData()})   
             }
         })
     }
@@ -118,9 +120,9 @@ export class Card{
 
     /**发送事件 */
     update(to:string){
-        print("发送了场景改变事件")
+        print("发送了场景改变事件","我的的todata是",this.ToData())
         print(this.UUID,"我當前的場景是",this.Scene.SceneName,"我要去",to,"我的index是",this.Index)  
-        CustomGameEventManager.Send_ServerToAllClients('S2C_CARD_CHANGE_SCENES',{Scene:to,uuid:this.UUID,Index:this.Index,Id:this.Id,type:this.type,playerid:this.PlayerID})
+        CustomGameEventManager.Send_ServerToAllClients('S2C_CARD_CHANGE_SCENES',{Scene:to,uuid:this.UUID,Index:this.Index,Id:this.Id,type:this.type,playerid:this.PlayerID,data:this.ToData()})
     }
 
     

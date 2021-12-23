@@ -166,12 +166,27 @@ export class Cardheaps extends Scenes {
 export class Hand extends Scenes{
     SceneName = 'HAND'
     Cardlinked:LinkedList<Card> = new LinkedList()
-    CardList:Array<Card|-1> = [-1,-1,-1,-1,-1]
 
     constructor(PlayerID: PlayerID, ICASceneManager: ScenesManager) {
         super(ICASceneManager)
         this.PlayerID = PlayerID
         ICASceneManager.SetHandsScene(this);
+    }
+
+    find_id_and_remove(id:string):boolean{
+        let bool = false
+        for(const card of this.Cardlinked){
+            if(card.Id == id){
+                bool = true
+                GameRules.SceneManager.change_secens(card.UUID,"REMOVE")
+                this.Cardlinked.remove(card)
+            }
+        }
+        return bool
+    }
+
+    get max_index(){
+        return this.Cardlinked.length
     }
 
     addCard(Card:Card){
@@ -633,6 +648,12 @@ export class ScenesManager{
                 card.Scene = currentscnese
                 this.All[uuid].update('GRAVE')
                 print(this.All[uuid].UUID,"死亡了 去了墓地")
+                break;
+            }
+            case 'REMOVE':{
+                this.All[uuid].Scene.Remove(uuid);
+                this.All[uuid].update('REMOVE')
+                this.remove(uuid)
                 break;
             }
         }

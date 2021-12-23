@@ -7,6 +7,7 @@ import { TowerGeneralControl } from "../instance/Tower";
 import { testmodifler } from "../modifiler/testmodifiler";
 import { Timers } from "../lib/timers";
 import { damage } from "../feature/damage";
+import { EquipCard } from "../instance/Equip";
 
 /** 负责构造牌堆 */
 export class ScenesBuildbehavior {
@@ -60,6 +61,11 @@ export class ScenesBuildbehavior {
     }
 
     static HeapsBuild(PlayerID:PlayerID){
+        for(let i = 0 ; i < 10 ; i++){
+            const _equit = new EquipCard({Id:"item_robe",Index:1,PlayerID:PlayerID},GameRules.SceneManager.GetCardheapsScene(PlayerID))
+            GameRules.SceneManager.global_add(_equit.UUID,_equit)
+            GameRules.SceneManager.change_secens(_equit.UUID,"HAND",(GameRules.SceneManager.GetHandsScene(PlayerID) as Hand).max_index);
+        }
         for(let i = 0 ; i < 25 ; i++){
             const SamallSkillcard = new SmallSkill({"Index":i,Id:i.toString() + ((math.random() > 0.2) ? "trick" : 2),'PlayerID':PlayerID},GameRules.SceneManager.GetCardheapsScene(PlayerID))
             const TrickSkillcard = new TrickSkill({"Index":i,Id:i.toString() + ((math.random() > 0.2) ? "trick" : 2),'PlayerID':PlayerID},GameRules.SceneManager.GetCardheapsScene(PlayerID))

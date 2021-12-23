@@ -49,6 +49,10 @@ export class AbilityCard extends Card {
         })
     }
 
+    ToData() {
+        return ""
+    }
+
 }
 
 export class TrickSkill extends AbilityCard{
@@ -57,6 +61,10 @@ export class TrickSkill extends AbilityCard{
         super(CardParameter,Scene)
         this.type = "TrickSkill"
     }
+
+    ToData() {
+        return ""
+    }
 } 
 
 export class SmallSkill extends AbilityCard{
@@ -64,6 +72,10 @@ export class SmallSkill extends AbilityCard{
     constructor(CardParameter:CardParameter,Scene:ICAScene){
         super(CardParameter,Scene)
         this.type = "SmallSkill"
+    }
+
+    ToData() {
+        return ""
     }
 } 
 

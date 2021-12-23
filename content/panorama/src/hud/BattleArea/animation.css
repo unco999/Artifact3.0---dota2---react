@@ -355,6 +355,39 @@
     }
 }   
 
+@keyframes 'high' {
+    0%{
+        brightness: 1;
+        border: 0px solid green;
+    }
+    50%{
+        brightness: 5;
+        border: 1px solid green;
+    }
+    100%{
+        brightness: 1;
+        border: 0px solid green;
+    }
+}
+
+@keyframes 'high-rotation' {
+    0%{
+        brightness: 1;
+        border: 0px solid green;
+        transform: rotateZ(0deg);
+    }
+    50%{
+        brightness: 5;
+        border: 1px solid green;
+        transform: rotateZ(180deg);
+    }
+    100%{
+        brightness: 1;
+        border: 0px solid green;
+        transform: rotateZ(-180deg);
+    }
+}
+
 
 @keyframes 'clipMe' {
     0% {

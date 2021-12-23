@@ -1,12 +1,13 @@
 import { Timers } from "../lib/timers";
 import { LinkedList } from "../structure/Linkedlist";
 import { Card, CardParameter, professionalMagicCard } from "./Card";
-import { Equip } from "./Equip";
+import { Equip, EquipContainer, HOOK } from "./Equip";
 import { CAModifiler } from "./Modifiler";
-import { BattleArea, GoUp, ICAScene } from "./Scenes";
+import { BattleArea, GoUp, Hand, ICAScene, Scenes } from "./Scenes";
 
 
 export class Unit extends Card{
+
     Modifilers:LinkedList<CAModifiler> = new LinkedList() //单位拥有的modiflier
     attack:number = 10
     arrmor:number = 10
@@ -15,6 +16,7 @@ export class Unit extends Card{
     constructor(CardParameter:CardParameter,Scene:ICAScene){
         super(CardParameter,Scene)
     }
+
 
     /**攻击结算 */
     attack_settlement(){
@@ -116,15 +118,35 @@ export class Unit extends Card{
             print(this.UUID,"收到了伤害,当前剩余生命值为",this.GETheal)
             CustomGameEventManager.Send_ServerToAllClients("S2C_SEND_ATTRIBUTE",this.attribute)
         }
+
+        ToData() {
+            return ""
+        }
     
 }
 export class Hero extends Unit{
+
     HasAbilities:string[] // 单位拥有的技能字符串
     Equip:LinkedList<Equip> = new LinkedList()
 
     constructor(CardParameter:CardParameter,Scene:ICAScene){
         super(CardParameter,Scene);
         this.type = 'Hero'
+        this.unit_register_gameevent()
+    }
+
+    unit_register_gameevent(){
+        CustomGameEventManager.RegisterListener("C2S_SEND_up_equiment",(_,event)=>{
+            if(event.uuid != this.UUID) return;
+            if(!(GameRules.SceneManager.GetHandsScene(this.PlayerID) as Hand).find_id_and_remove(event.item)) return;
+            print("收到力世界")
+            this.Equip.prepend(EquipContainer.instance.GetEquit(event.item))
+            CustomGameEventManager.Send_ServerToAllClients("S2C_SEND_UP_EQUIMENT_SHOW",{uuid:this.UUID,index:event.index,item:event.item})
+            for(const euqip of this.Equip){
+                euqip.call_hook(HOOK.装备物品及时生效)
+            }
+            print("新物品已装备成功")
+        })
     }
 
     override call_death(){
@@ -136,6 +158,10 @@ export class Hero extends Unit{
 
     isHasAbility(abilityname:string){
        return this.HasAbilities.includes(abilityname)
+    }
+
+    ToData() {
+        return ""
     }
 
 }
@@ -154,6 +180,10 @@ export class Solider extends Unit{
         Timers.CreateTimer(1.5,()=>{
             this.Scene.CaSceneManager.change_secens(this.UUID,"Grave",-1)
         })
+    }
+
+    ToData() {
+        return ""
     }
 
 }

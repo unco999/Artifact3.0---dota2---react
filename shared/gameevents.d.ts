@@ -10,13 +10,14 @@ declare interface CustomGameEventDeclarations {
         Scene: string;
         type:string;
         playerid:PlayerID;
+        data:any
     };
     "BLUE_SELECT_HERO_CARD": any;
     "RED_SELECT_HERO_CARD": any;
     "S2C_CARD_TO_HAND": string[]; //卡牌到手牌  返回值是要到达的场景 一个uuid的数组
     "C2S_GET_SCENES": { get: string; };
     "S2C_GET_SCENES": string[];
-    "S2C_GET_CARD": { Id: string, Index: number, uuid: string, Scene: string, type: string,playerid:PlayerID };
+    "S2C_GET_CARD": { Id: string, Index: number, uuid: string, Scene: string, type: string,playerid:PlayerID,data:any};
     "C2S_GET_CARD": { uuid: string; };
     "C2S_GET_CANSPACE": {}; //查询我方可占空格
     "S2C_SEND_CANSPACE": Record<string, string[]>;
@@ -53,5 +54,8 @@ declare interface CustomGameEventDeclarations {
     "C2S_GET_INIT_ENRGY":{brach:number,PLAYER:number},
     "S2C_SEND_INIT_ENRGY":{playerid:PlayerID,brach:number,max_enrgy:number,current_enrgy:number,uuid:string,cuurent_max:number},
     "C2S_TEST_REDUCE":{},
-    "C2S_TEST_MAX_REDUCE":{}
+    "C2S_TEST_MAX_REDUCE":{},
+    "C2S_SEND_up_equiment":{index:number,uuid:string,item:string}
+    "S2C_SEND_UP_EQUIMENT_SHOW":{uuid:string,index:number,item:string}
+    "C2S_TEST_RANDOM_EQUIP":{}
 }

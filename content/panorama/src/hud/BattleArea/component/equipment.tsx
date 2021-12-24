@@ -23,7 +23,6 @@ export const Equipment = (props:{index:number,uuid:string}) =>{
     useGameEvent("S2C_SEND_EQUIP",(event)=>{
         if(event.uuid != props.uuid) return;
         const obj = Object.keys(event.data)
-        $.Msg("收到了手法事件",event)//
         obj.forEach(key=>{
             if(props.index.toString() == key){
                 EQUIPshowName.current = event.data[key]

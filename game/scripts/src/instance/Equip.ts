@@ -3,6 +3,7 @@ import { ICAScene } from "./Scenes";
 import { Tower } from "./Tower";
 import { Unit } from "./Unit";
 import { Hero } from "./Hero";
+import { item_robe_modifiler } from "../modifiler/testmodifiler";
 
 export function ca_register_equip() {
     return function(constructor:any){
@@ -55,8 +56,11 @@ export enum HOOK{
 export type attack_target = "英雄" | "小兵" | "塔"
 export type U3D = {attack:number,arrmor:number,heal:number}
 
-    [HOOK.攻击前]:{my:Card,target:Card,attack_target:attack_target}
-    [HOOK.攻击后]:{my:Card,damage_target/**造成伤害的目标 */:Card,causeSomeDamages/**造成的伤害值 */:number,whetherToKill:boolean,attack_target/**目标类型 */:attack_target}
+
+export type hook_parameter = {
+    [HOOK.攻击前]:{my:Card,target:Card|Tower}
+    [HOOK.攻击后]:{my:Card,damage_target/**造成伤害的目标 */:Card|Tower,causeSomeDamages/**造成的伤害值 */:number}
+    [HOOK.装备物品及时生效]:{my:Hero}
 }
 
 
@@ -67,13 +71,11 @@ export abstract class Equip{
     id:string
     hook:number
     hookEvent:Record<number,hookfuc[]> = {}
-    name:string
 
     constructor(hook:number,id:string){
         this.hook = hook
         this.id = id
         /**测试时填写 */
-        this.name = 'item_robe'
         this.register_hool()
     }
 
@@ -110,31 +112,21 @@ export class resurrection extends Equip{
 
     constructor(){
         super(
-            HOOK.原始 | HOOK.死亡前 | HOOK.死亡后,"item_robe"
+            HOOK.原始 | HOOK.装备物品及时生效,"item_robe"
         )
     }
 
     register_hool() {
-        this.hookEvent[HOOK.死亡前] = [this.deathPreAction]
-        this.hookEvent[HOOK.死亡后] = [this.deathPostAction]
         this.hookEvent[HOOK.装备物品及时生效] = [this.create]
     }
 
     /**装备及时生效 */
-    create(){
-        print("装备三维已经增加")
+    create(hook_parameter:hook_parameter[HOOK.装备物品及时生效]){
+        const my = hook_parameter.my
+        my.addmodifiler(new item_robe_modifiler(my))
         return false
     }
 
-    deathPreAction(){
-        print("死亡前我播放了特效")
-        return false
-    }
-
-    deathPostAction(){
-        print("死亡后我实现了复活")
-        return false
-    }
 
 }
 
@@ -152,9 +144,20 @@ export class fangTianli extends Equip{
     }
 
     /**装备及时生效 */
-    preattack(...args){
-        const [attack,target_type,damage] = args
-        damage()
+    preattack(hook_parameter:hook_parameter[HOOK.攻击前]){
+        print("装备出触发了攻击前特效")
+        const target = hook_parameter.target
+        const my = hook_parameter.my as Hero
+        if(target.constructor.name == 'Hero' || target.constructor.name == 'Solider')
+        {
+            const _enemyneighbor = GameRules.SceneManager.enemyneighbor(my as Card);
+            (_enemyneighbor.center as Unit).hurt(my.Getattack);
+            (_enemyneighbor.left as Unit).hurt(my.Getattack);
+            (_enemyneighbor.right as Unit).hurt(my.Getattack);
+            CustomGameEventManager.Send_ServerToAllClients('SC2_PLAY_EFFECT',{uuid:(_enemyneighbor.center as Unit).UUID,paticle:"particles/econ/items/sven/sven_ti7_sword/sven_ti7_sword_spell_great_cleave_gods_strength_crit.vpcf",cameraOrigin:"0 500 0",lookAt:"0 0 0"})
+            CustomGameEventManager.Send_ServerToAllClients('SC2_PLAY_EFFECT',{uuid:(_enemyneighbor.left as Unit).UUID,paticle:"particles/econ/items/sven/sven_ti7_sword/sven_ti7_sword_spell_great_cleave_gods_strength_crit.vpcf",cameraOrigin:"0 500 0",lookAt:"0 0 0"})
+            CustomGameEventManager.Send_ServerToAllClients('SC2_PLAY_EFFECT',{uuid:(_enemyneighbor.right as Unit).UUID,paticle:"particles/econ/items/sven/sven_ti7_sword/sven_ti7_sword_spell_great_cleave_gods_strength_crit.vpcf",cameraOrigin:"0 500 0",lookAt:"0 0 0"})
+        }
         return false
     }
 

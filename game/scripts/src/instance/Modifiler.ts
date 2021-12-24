@@ -1,31 +1,31 @@
+import { Hero } from "./Hero";
+
 export enum modifilertype {
     "沉默" = 1,
     "冻结" = 3,
+    "无" = 0,
 }
 
 
 
-export class CAModifiler{
-    name:string
-    modifilertype:modifilertype
-    duration:number //持续回合数
-    debuff:boolean //属于负增益吗?
+export abstract class CAModifiler{
+    abstract name:string
+    abstract modifilertype:modifilertype
+    abstract duration:number //持续回合数
+    abstract debuff:boolean //属于负增益吗?
+    abstract thisHero:Hero
 
-    constructor(name:string,modifilertype:modifilertype,duration:number,debuff:boolean){
-        this.name = name
-        this.modifilertype = modifilertype
-        this,duration = duration
-    }
+    abstract EntryExecution();
 
-    get influenceAttack(){
-        return 1
-    }
+    abstract roundExecution();
 
-    get influenceArrmor(){
-        return 1
-    }
+    abstract roundExitExecution();
 
-    get influenceheal(){
-        return 1
-    }
+    abstract get influenceMaxheal();
+
+    abstract get influenceAttack();
+
+    abstract get influenceArrmor();
+
+    abstract get influenceheal();
 }

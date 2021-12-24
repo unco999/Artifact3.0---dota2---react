@@ -4,7 +4,6 @@ import { Ability, Cardheaps, GoUp, Grave, Hand, ICAScene, IHeapsCardbuilder, Lai
 import { Hero } from "../instance/Hero"
 import { SmallSkill, TrickSkill } from "../instance/Ability";
 import { TowerGeneralControl } from "../instance/Tower";
-import { testmodifler } from "../modifiler/testmodifiler";
 import { Timers } from "../lib/timers";
 import { damage } from "../feature/damage";
 import { EquipCard } from "../instance/Equip";

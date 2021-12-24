@@ -20,23 +20,23 @@ export class damage{
         target == 'A' ? this.Set_A_B_D_damage(count) : this.Set_B_A_D_damage(count)
     }
 
-    Set_A_B_D_damage(count:number){
+    Set_A_B_D_damage(count:number,tower?:Tower){
         this.B_A_D = count
-        this.postTheAttackhookHero({my:this.damageB,damage_target:this.damageB,causeSomeDamages:count,whetherToKill:this.damageA.isBattle(),attack_target:"塔"})
+        this.postTheAttackhookHero({my:this.damageA,damage_target:this.damageB??tower,causeSomeDamages:count})
     }
 
-    Set_B_A_D_damage(count:number){
+    Set_B_A_D_damage(count:number,tower?:Tower){
         this.A_B_D = count
-        this.postTheAttackhookHero({my:this.damageB,damage_target:this.damageA,causeSomeDamages:count,whetherToKill:this.damageB.isBattle(),attack_target:"塔"})
+        this.postTheAttackhookHero({my:this.damageB,damage_target:this.damageA??tower,causeSomeDamages:count})
     }
 
     /**返回值为真的时候不进行正常结算 */
     beforeTheAttackhookHero(props:hook_parameter[HOOK.攻击前]){
-        let bool = false
+        let bool = true
         if(props.my.type && props.my.type == 'Hero'){
            const callbacks =(props.my as Hero).GetEquipModifiler<hook_parameter[HOOK.攻击前]>(HOOK.攻击前)
            callbacks.forEach(callback=>{
-               bool = callback({my:props.my,target:props.target,attack_target:props.attack_target})
+               bool = callback(props)
            })
         }
         return bool
@@ -47,7 +47,7 @@ export class damage{
         if(props.my.type && props.my.type == 'Hero'){
            const callbacks = (props.my as Hero).GetEquipModifiler<hook_parameter[HOOK.攻击后]>(HOOK.攻击后)
            callbacks.forEach(callback=>{
-               bool = callback({my:props.my,attack_target:props.attack_target,causeSomeDamages:props.causeSomeDamages,whetherToKill:props.whetherToKill,damage_target:props.damage_target})
+               bool = callback(props)
            })
         }
         return bool
@@ -57,19 +57,20 @@ export class damage{
         CustomGameEventManager.Send_ServerToAllClients("S2C_SEND_ATTACK",{uuid:this.damageA.UUID})
         CustomGameEventManager.Send_ServerToAllClients("S2C_SEND_ATTACK",{uuid:this.damageB.UUID})
         Timers.CreateTimer(1.5,()=>{
-            this.beforeTheAttackhookHero({my:this.damageB,attack_target:"塔",target:this.damageB}) && this.Set_B_A_D_damage(this.damageA.hurt(this.damageB.Getattack))
-            this.beforeTheAttackhookHero({my:this.damageA,attack_target:"塔",target:this.damageB}) && this.Set_A_B_D_damage(this.damageB.hurt(this.damageA.Getattack))
+            this.beforeTheAttackhookHero({my:this.damageB,target:this.damageA}) && this.Set_B_A_D_damage(this.damageA.hurt(this.damageB.Getattack))
+            this.beforeTheAttackhookHero({my:this.damageA,target:this.damageB}) && this.Set_A_B_D_damage(this.damageB.hurt(this.damageA.Getattack))
         })
     }
 
     /** 当damageB target为空时将以塔为目标  */
     attacklement(){
         if(!(this.damageB instanceof Card)){
-            print("执行了攻击塔")
             CustomGameEventManager.Send_ServerToAllClients("S2C_SEND_ATTACK",{uuid:this.damageA.UUID})
-            Timers.CreateTimer(1.5,()=>{
+            const iscover = this.beforeTheAttackhookHero({my:this.damageA,target:GameRules.TowerGeneralControl.getCardScenceTower(PlayerResource.GetPlayer(this.damageA.PlayerID),this.damageA)})
+            iscover && Timers.CreateTimer(1.5,()=>{
                const tower = GameRules.TowerGeneralControl.getCardScenceTower(PlayerResource.GetPlayer(this.damageA.PlayerID),this.damageA) as Tower
                tower.hurt(this.damageA.Getattack)
+               this.Set_A_B_D_damage(this.damageA.Getattack,tower)
             })
         }else{
             this.settlement()
@@ -77,7 +78,6 @@ export class damage{
     }
 
     spell_skill_settlement(damage_count:number){       
-        print("激活---------------------------------------------") 
         CustomGameEventManager.Send_ServerToAllClients("S2C_HURT_DAMAGE",{particle:"particles/econ/items/shadow_fiend/sf_desolation/sf_rze_dso_scratch.vpcf",uuid:this.damageB.UUID})
         Timers.CreateTimer(1.5,()=>{
             this.damageB.hurt(damage_count)

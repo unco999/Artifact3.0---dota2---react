@@ -11,6 +11,7 @@ export class Unit extends Card{
     attack:number = 10
     arrmor:number = 10
     heal:number = 10
+    max_heal:number = 10
 
     constructor(CardParameter:CardParameter,Scene:ICAScene,type:CARD_TYPE){
         super(CardParameter,Scene,type)
@@ -41,7 +42,22 @@ export class Unit extends Card{
 
     addmodifiler(modifiler:CAModifiler){
         this.Modifilers.prepend(modifiler)
-        CustomGameEventManager.Send_ServerToPlayer(PlayerResource.GetPlayer(this.PlayerID),"S2C_SEND_ATTRIBUTE",this.attribute)
+        modifiler.EntryExecution()
+        CustomGameEventManager.Send_ServerToAllClients("S2C_SEND_ATTRIBUTE",this.attribute)
+    }
+
+    removeModifiler(name:string){
+        for(const modifiler of this.Modifilers){
+            if(modifiler.name == name){
+                modifiler.roundExitExecution()
+                if(this.Modifilers.length == 1){
+                    this.Modifilers = new LinkedList()
+                }else{
+                    this.Modifilers.remove(modifiler)
+                }
+            }
+        }
+        CustomGameEventManager.Send_ServerToAllClients("S2C_SEND_ATTRIBUTE",this.attribute)
     }
 
     get attribute(){
@@ -65,14 +81,7 @@ export class Unit extends Card{
     }
 
     get GETheal(){
-        let heal = this.heal
-        for(const modifier of this.Modifilers){
-            heal += modifier.influenceheal
-        }
-        if(heal < 1){
-            return 0
-        }
-        return heal
+        return this.heal
     }
 
     call_death(){

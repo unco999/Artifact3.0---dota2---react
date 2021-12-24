@@ -17,8 +17,8 @@ export class GamaEvent_All_register{
             start.foreach(card=>{
                const target = card.Scene.find_oppose().IndexGet(card.Index) as Unit
                print(target,"找到的target为")
-            //    const _damage = new damage(card as Unit,target)
-            //    _damage.attacklement()
+               const _damage = new damage(card as Unit,target)
+               _damage.attacklement()
             })
         })
         //伤害动画测试

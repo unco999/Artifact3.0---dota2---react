@@ -98,6 +98,7 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
     const effect = useRef<Panel|null>()
     const [current_effect,set_current_effect] = useState("")
     const preindex = useRef<number>(-1) //板子的上一次索引
+    const effect_parameter = useRef<{cameraOrigin:string,lookAt:string}>({cameraOrigin:"0 600 0",lookAt:"0 0 0"}) //特效面板的默认值
     const [attribute,setattribute] = useState<{
         uuid: string;
         attack: number;
@@ -263,6 +264,15 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
     useGameEvent("S2C_SEND_UP_EQUIMENT_SHOW",(event)=>{
         if(props.uuid != event.uuid) return;
         set_current_effect("particles/units/heroes/hero_tusk/tusk_walruspunch_txt_ult.vpcf")
+        $.Schedule(1.5,()=>{
+            set_current_effect("")
+        })
+    },[props.uuid]) 
+
+
+    useGameEvent("SC2_PLAY_EFFECT",(event)=>{
+        if(props.uuid != event.uuid) return;
+        set_current_effect(event.paticle)
         $.Schedule(1.5,()=>{
             set_current_effect("")
         })
@@ -514,7 +524,7 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
                 </Panel>
             </Panel>
             </Panel>
-            {current_effect != "" &&<GenericPanel hittest={false} ref={panel=>{effect.current = panel;effect.current?.AddClass(effect_select_scenes())}} className={prefix + "effect"}  type={"DOTAParticleScenePanel"} particleName={current_effect} particleonly="true"  startActive="true" cameraOrigin="0 600 0" lookAt="0 0 0" fov="40" />}
+            {current_effect != "" &&<GenericPanel hittest={false} ref={panel=>{effect.current = panel;effect.current?.AddClass(effect_select_scenes())}} className={prefix + "effect"}  type={"DOTAParticleScenePanel"} particleName={current_effect} particleonly="true"  startActive="true" cameraOrigin={effect_parameter.current?.cameraOrigin} lookAt={effect_parameter.current?.lookAt} fov="50" />}
             <Panel hittest={true} draggable={true} ref={Panel => dummy.current = Panel} onmouseover={()=>ref.current?.AddClass(prefix+"hover")} onmouseout={()=>ref.current?.RemoveClass(prefix+"hover")} className={prefix+"Carddummy"}/>
         </>
     }
@@ -522,7 +532,6 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
 
     const card_type = useMemo(() =>{
         if(GLOABAL_EVENT.instance.GetDATA("isdrag") == false ){
-            $.Msg("不对 要给板子加上隐藏")
             state.Scene != "HAND" && dummy.current?.AddClass("hide")
         }else{
             $.Msg("把马甲的皮删除")
@@ -552,7 +561,7 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
                 </Panel>
             </Panel>
             </Panel>
-            {current_effect != "" &&<GenericPanel hittest={false} ref={panel=>{effect.current = panel;effect.current?.AddClass(effect_select_scenes())}} className={prefix + "effect"}  type={"DOTAParticleScenePanel"} particleName={current_effect} particleonly="true"  startActive="true" cameraOrigin="0 600 0" lookAt="0 0 300" fov="50" />}
+            {current_effect != "" &&<GenericPanel hittest={false} ref={panel=>{effect.current = panel;effect.current?.AddClass(effect_select_scenes())}} className={prefix + "effect"}  type={"DOTAParticleScenePanel"} particleName={current_effect} particleonly="true"  startActive="true" cameraOrigin={effect_parameter.current?.cameraOrigin} lookAt={effect_parameter.current?.lookAt} fov="50" />}
             <Panel hittest={true}  draggable={true} ref={Panel => dummy.current = Panel} onmouseover={()=>ref.current?.AddClass(prefix+"hover")} onmouseout={()=>ref.current?.RemoveClass(prefix+"hover")} className={prefix+"Carddummy"}/>
             </>
         }
@@ -568,7 +577,7 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
            <Panel ref={Panel => ref.current = Panel}  className={prefix+'Card'} >
               <Panel ref={Panel=>frame.current = Panel} className={"card_frame"}/>
               <Panel style={{width:'90%',height:"90%",align:'center center'}}>
-              <DOTAItemImage itemname={"item_circlet"} style={{width:"100%",height:"100%"}}/>
+              <DOTAItemImage itemname={state.Id} style={{width:"100%",height:"100%"}}/>
             </Panel>
              </Panel>
             </>

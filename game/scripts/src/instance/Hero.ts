@@ -15,9 +15,9 @@ export class Hero extends Unit{
         this.unit_register_gameevent()
     }
 
-    find_Equip(name:string){
+    find_Equip(id:string){
         for(const equip in this.Equips){
-            if(this.Equips[equip].name == name){
+            if(this.Equips[equip].id == id){
                 return equip
             }
         }
@@ -29,11 +29,16 @@ export class Hero extends Unit{
             if(event.uuid != this.UUID) return;
             if(this.find_Equip(event.item)) { CustomGameEventManager.Send_ServerToPlayer(PlayerResource.GetPlayer(this.PlayerID),"S2C_INFORMATION",{information:"你不能装备唯一的物品!"});return}
             if(!(GameRules.SceneManager.GetHandsScene(this.PlayerID) as Hand).find_id_and_remove(event.item)) return;
+            if(this.Equips[event.index]){
+                const EquipModifilerName = this.Equips[event.index].id + "_modifiler"
+                this.removeModifiler(EquipModifilerName)
+            }
             this.Equips[event.index] = EquipContainer.instance.GetEquit(event.item)
             CustomGameEventManager.Send_ServerToAllClients("S2C_SEND_UP_EQUIMENT_SHOW",{uuid:this.UUID,index:event.index,item:event.item})
-            for(const euqip in this.Equips){
-                this.Equips[euqip].call_hook(HOOK.装备物品及时生效)
-            }
+            const callback = this.Equips[event.index].call_hook(HOOK.装备物品及时生效)
+            callback.forEach(value=>{
+                value({my:this})
+            })
             print("新物品已装备成功")
         })
         CustomGameEventManager.RegisterListener("C2S_GET_EQUIP",(_,event)=>{
@@ -41,7 +46,7 @@ export class Hero extends Unit{
             const table = {}
             const equips = this.Equips
             for(const equip in equips){
-                table[equip] = equips[equip].name
+                table[equip] = equips[equip].id
             }
             CustomGameEventManager.Send_ServerToPlayer(PlayerResource.GetPlayer(this.PlayerID),"S2C_SEND_EQUIP",{data:table,uuid:this.UUID})
         })

@@ -61,4 +61,5 @@ declare interface CustomGameEventDeclarations {
     "S2C_INFORMATION":{information:string}
     "C2S_GET_EQUIP":{uuid:string}
     "S2C_SEND_EQUIP":{data:Record<string,string>,uuid:string}
+    "SC2_PLAY_EFFECT":{uuid:string,paticle:string,cameraOrigin:string,lookAt:string}
 }

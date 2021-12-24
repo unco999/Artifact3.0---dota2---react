@@ -12,10 +12,8 @@ export class GLOABAL_EVENT {
 
     SetDATA(key:string,data:any){
         this.DATA[key] = data
-        $.Msg("有事件但是没事件")
         if(this.HOOK[key]){
             this.HOOK[key].forEach(fuc=>fuc((value:Boolean)=>!value))
-            $.Msg("触动了",key,"事件")
         }
     }
 

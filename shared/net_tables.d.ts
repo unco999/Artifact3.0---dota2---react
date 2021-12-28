@@ -10,7 +10,15 @@ declare interface CustomNetTableDeclarations {
     }
     GameMianLoop:{
         currentLoopName:{current:string}
-        smallCycle:{current:number}
+        smallCycle:{current:string}
+        RemainingTime:{cuurent:string}
+        thisRoundOfBluefield:{option:number,skip:number} //option false 未操作 true 已操作  skip 已跳过
+        thisRoundOfRedfield:{option:number,skip:number} //option false 未操作 true 已操作  skip 已跳过
+        uplineSettlement:{cuurent:string}, //上路结算情况
+        midCircuitSettlement:{cuurent:string},//中路结算情况
+        lowerSettlement:{cuurent:string}//下路结算情况
+        current_operate_playerid:{cuurent:string} //当前操作的playerid
+        current_operate_brach:{cuurent:string} //当前策略的路线
     }
     Scenes:{
         [string:string]:Record<number,string>

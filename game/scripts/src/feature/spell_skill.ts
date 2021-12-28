@@ -18,6 +18,13 @@ export class spell_skill{
     }
 
     call_spell_skill(id:string,player:PlayerID){
+        if(player == GameRules.Blue.GetPlayerID()){
+            CustomNetTables.SetTableValue("GameMianLoop",'thisRoundOfBluefield',{"option":1,skip:0})
+            print("设置了蓝色的属性")
+        }else{
+            CustomNetTables.SetTableValue("GameMianLoop","thisRoundOfRedfield",{"option":1,skip:0})
+            print("设置了红色的属性")
+        }
         print("服务端执行了释放技能管理器")
         const hero = this.skill_id_find_hero(id,player)
         const type = this.skill_id_find_type(id,player)

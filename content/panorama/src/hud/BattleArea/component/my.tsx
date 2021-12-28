@@ -6,6 +6,7 @@ import { Battle_right_area } from "./battle_right_area";
 import { CardContext } from "./Card";
 import { EnergyBarManager } from "./energyBar";
 import { Tower } from "./tower";
+import { Turnbased } from "./turn_based";
 
 export const MyConpoment = (props:{red:number,blue:number}) => {
     return <>
@@ -18,6 +19,8 @@ export const MyConpoment = (props:{red:number,blue:number}) => {
     <EnergyBarManager owner={Players.GetLocalPlayer()} brach={1}/>
     <EnergyBarManager owner={Players.GetLocalPlayer()} brach={2}/>
     <EnergyBarManager owner={Players.GetLocalPlayer()} brach={3}/>
+    <Turnbased owend={Players.GetLocalPlayer()}/>
     <Arrow_tip/>
+    <Label text={props.red == Players.GetLocalPlayer() ? "我是红色" : "我是蓝色"} style={{y:"1000px"}}/>
     </>
 }

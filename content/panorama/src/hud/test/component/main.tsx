@@ -1,6 +1,15 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useNetTableValues } from "react-panorama";
 
 export const Main = () =>{
+    const data = useNetTableValues("GameMianLoop")
+    const [update,setupdate] = useState<boolean>(false)
+
+    useEffect(()=>{
+        $.Msg(data)
+        $.Schedule(1,()=>setupdate(value=>!value))
+    },[update])
+
     return <Panel className={'testMain'}>
             <TextButton text={"刷小兵"} className={"defualt"} onactivate={()=>{GameEvents.SendCustomGameEventToServer("C2S_BRUSH_SOLIDER",{})}}/>
             <TextButton text={"结算后卡片居中"} className={"defualt"} onactivate={()=>{GameEvents.SendCustomGameEventToServer("TEST_C2S_CALL_CENTER",{})}}/>

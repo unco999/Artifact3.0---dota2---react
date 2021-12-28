@@ -251,7 +251,7 @@ export class showtime extends ChooseHerostate{
             this.host.close()
             CustomNetTables.SetTableValue('GameMianLoop','currentLoopName',{current:"isbattle"})
             GameRules.gamemainloop = new BattleGameLoop()
-            GameRules.gamemainloop.StartcuurentsettingState = new faultCard(GameRules.gamemainloop)
+            GameRules.gamemainloop.StartcuurentsettingState = new faultCard(GameRules.gamemainloop,1)
         }
         return 1
     }

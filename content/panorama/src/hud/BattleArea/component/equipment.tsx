@@ -13,19 +13,20 @@ export const EquipmentManager = (props:{uuid:string}) =>{
 export const Equipment = (props:{index:number,uuid:string}) =>{
     const uuid = useUuid()
     const ref = useRef<Panel|null>()
-    const EQUIPshowName = useRef("")
+    const [EQUIPshowName,setEQUIPshowName] = useState("")
     
     useGameEvent("S2C_SEND_UP_EQUIMENT_SHOW",(event)=>{
         if(event.index != props.index || event.uuid != props.uuid) return;
-        EQUIPshowName.current = event.item 
+        setEQUIPshowName(event.item) 
     },[])
 
     useGameEvent("S2C_SEND_EQUIP",(event)=>{
         if(event.uuid != props.uuid) return;
+        $.Msg("keys",event)
         const obj = Object.keys(event.data)
         obj.forEach(key=>{
             if(props.index.toString() == key){
-                EQUIPshowName.current = event.data[key]
+                setEQUIPshowName(event.data[key])
             }
         })
     },[])
@@ -63,6 +64,6 @@ export const Equipment = (props:{index:number,uuid:string}) =>{
 
 
     return <Panel  ref={Panel => ref.current = Panel} draggable={true} className={"Equipment"}  hittest={true}>
-        <DOTAItemImage  key={uuid} id={uuid}  itemname={EQUIPshowName.current} className={'beEquipped'} showtooltip={true} />
+        <DOTAItemImage  key={uuid} id={uuid}  itemname={EQUIPshowName} className={'beEquipped'} showtooltip={true} />
     </Panel>
 }

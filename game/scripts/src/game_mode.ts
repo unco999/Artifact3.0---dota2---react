@@ -27,6 +27,7 @@ declare global {
         select_the_prompt:select_the_prompt // 技能选择器
         spell_skill:spell_skill
         energyBarManager:energyBarManager
+        bot:number
     }
 }
 
@@ -75,13 +76,15 @@ export class GameMode {
             for (let i: PlayerID = 0; i <= 24; ++i) {
                 let player = PlayerResource.GetPlayer(i as PlayerID);
                 if (player) {
-                    if(!GameRules.Blue){
-                        GameRules.Blue = player
-                        continue
-                    }
                     if(!GameRules.Red){
                         GameRules.Red = player
+                        if(GameRules.Red.GetPlayerID() == GameRules.bot) print("红色是电脑")
                         continue 
+                    }
+                    if(!GameRules.Blue){
+                        GameRules.Blue = player
+                        if(GameRules.Blue.GetPlayerID() == GameRules.bot) print("蓝色是电脑")
+                        continue
                     }
                 }
             }
@@ -96,8 +99,8 @@ export class GameMode {
             if(IsInToolsMode()){
                 if(GameRules.Blue == undefined){
                     const bot = Tutorial.AddBot("","","",true)
-                    let playerCount = PlayerResource.GetPlayerCount();
-                    GameRules.Blue = PlayerResource.GetPlayer(playerCount as PlayerID)
+                    let playerCount = PlayerResource.GetPlayerCount() - 1;
+                    GameRules.bot = playerCount
                 }
             }
         }

@@ -172,7 +172,7 @@
     }
     @for $i from 1 to 30 {
         &.my_Hand#{$i}{
-            x:500px + $i * 100px;
+            x:300px + $i * 50px;
             y:900px;
             z-index:$i;
             &.my_hover{
@@ -461,7 +461,7 @@
     }
     @for $i from 1 to 30 {
         &.my_Hand#{$i}{
-            x:500px + $i * 100px;
+            x:300px + $i * 50px;
             y:900px;
             z-index: $i+1;
         }
@@ -764,4 +764,82 @@
     animation-name: high;
     animation-duration: 1s;
     animation-iteration-count: infinite;
+}
+
+.my_Turnbased{
+    @extend .defualt;
+    width: 300px;
+    height: 100px;
+    x:1500px;
+    y:950px;
+    flow-children:right;
+    .time{
+        width: 100px;
+        height: 100px;
+        Label{
+            font-size: 36px;
+            color: rgb(22, 255, 99);
+        }
+    }   
+    .coin{
+        width: 100px;
+        height: 100px;
+        Label{
+            font-size: 36px;
+            color: gold;
+        }
+    }
+    .skip{
+        width: 100px;
+        height: 33px;
+    }
+    Label{
+        align:center center;
+    }
+}
+
+.high{
+    background-color: rgb(161, 143, 98);
+}
+
+.frame{
+    flow-children:down;
+}
+
+.you_Turnbased{
+    @extend .my_Turnbased;
+    x:100px;
+    y:30px;
+}
+
+.curtain1{
+    width: 640px;
+    height: 720px;
+    background-color: rgba(0, 0, 0, 0.863);
+    y:180px;
+    &.high{
+        background-color:rgba(0, 0, 0,0)
+    }
+}
+
+.curtain2{
+    width: 640px;
+    height: 720px;
+    background-color: rgba(0, 0, 0, 0.863);
+    y:180px;
+    x:640px;
+    &.high{
+        background-color:rgba(0, 0, 0,0)
+    }
+}
+
+.curtain3{
+    width: 640px;
+    height: 720px;
+    background-color: rgba(0, 0, 0, 0.863);
+    y:180px;
+    x:1280px;
+    &.high{
+        background-color:rgba(0, 0, 0,0)
+    }
 }

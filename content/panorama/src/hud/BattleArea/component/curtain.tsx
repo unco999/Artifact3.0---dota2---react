@@ -9,7 +9,6 @@ export const Curtain = () => {
 
     useEffect(()=>{
         if(table){
-            $.Msg("第一步检测")
             if(table.cuurent == '1'){
                 panel1.current?.AddClass("high")
                 panel2.current?.RemoveClass("high")

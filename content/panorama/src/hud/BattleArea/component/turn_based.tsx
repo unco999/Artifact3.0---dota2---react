@@ -4,12 +4,13 @@ import { useNetTableKey } from "react-panorama";
 export const Turnbased = (props:{owend:number}) =>{
     const RemainningTime = useNetTableKey("GameMianLoop","RemainingTime") ?? 0
     const current_oparation = useNetTableKey("GameMianLoop","current_operate_playerid") ?? {cuurent:""}
+    const cuurent_loop_state = useNetTableKey("GameMianLoop","smallCycle") ?? {current:""}
     const prefix = useMemo(()=> props.owend == Players.GetLocalPlayer() ? "my_" : "you_",[props])
     const ref = useRef<Panel|null>()
 
     const not =  "NOT"
 
-    const label = props.owend == Players.GetLocalPlayer() ? RemainningTime?.cuurent : not
+    const label = parseInt(current_oparation.cuurent) == props.owend ? RemainningTime.cuurent : not
 
     useEffect(()=>{
         if(current_oparation.cuurent == "" ) return;
@@ -47,7 +48,7 @@ export const Turnbased = (props:{owend:number}) =>{
              <Label text={"SKIP"}/>
              </Panel>
              <Panel className={"defualt skip"} onmouseover={panel=>$.DispatchEvent("DOTAShowTextTooltip",panel,"暂时还不知道是什么")} onmouseout={panel=>$.DispatchEvent('DOTAHideTextTooltip')}>
-             <Label text={"unknown"}/>
+             <Label text={$.Localize("loop_state" + cuurent_loop_state.current)}/>
              </Panel>
         </Panel>
     </Panel>

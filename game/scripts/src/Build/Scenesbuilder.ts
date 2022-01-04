@@ -1,6 +1,6 @@
 import Queue from "../structure/Queue";
 import { Card, uuid } from "../instance/Card";
-import { Ability, Cardheaps, GoUp, Grave, Hand, ICAScene, IHeapsCardbuilder, LaidDown, Midway, Scenes, ScenesManager } from "../instance/Scenes";
+import { Ability, Cardheaps, GoUp, Grave, Hand, Hide, ICAScene, IHeapsCardbuilder, LaidDown, Midway, Scenes, ScenesManager } from "../instance/Scenes";
 import { Hero } from "../instance/Hero"
 import { SmallSkill, TrickSkill } from "../instance/Ability";
 import { TowerGeneralControl } from "../instance/Tower";
@@ -56,6 +56,10 @@ export class ScenesBuildbehavior {
         const red_Grave = new Grave(GameRules.Red.GetPlayerID(),GameRules.SceneManager)
         GameRules.SceneManager.SetGraveScene(blue_Grave)
         GameRules.SceneManager.SetGraveScene(red_Grave)
+        const blue_hide = new Hide(GameRules.Blue.GetPlayerID(),GameRules.SceneManager)
+        const red_hide = new Hide(GameRules.Red.GetPlayerID(),GameRules.SceneManager)
+        GameRules.SceneManager.SetHideScene(blue_hide)
+        GameRules.SceneManager.SetHideScene(red_hide)
         print("初始化場景完毕")
     }
 
@@ -63,7 +67,7 @@ export class ScenesBuildbehavior {
         for(let i = 0 ; i < 10 ; i++){
             const _equit = new EquipCard({Id:math.random() > 0.5 ? "item_robe" : "item_blink",Index:1,PlayerID:PlayerID},GameRules.SceneManager.GetCardheapsScene(PlayerID))
             GameRules.SceneManager.global_add(_equit.UUID,_equit)
-            GameRules.SceneManager.change_secens(_equit.UUID,"HAND",(GameRules.SceneManager.GetHandsScene(PlayerID) as Hand).max_index);
+            GameRules.SceneManager.change_secens(_equit.UUID,"HAND");
         }
         for(let i = 0 ; i < 25 ; i++){
             const SamallSkillcard = new SmallSkill({"Index":i,Id:i.toString() + ((math.random() > 0.2) ? "trick" : 2),'PlayerID':PlayerID},GameRules.SceneManager.GetCardheapsScene(PlayerID))

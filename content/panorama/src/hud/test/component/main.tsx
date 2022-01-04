@@ -18,5 +18,6 @@ export const Main = () =>{
             <TextButton text={"能量上线+1"} className={"default"} onactivate={()=>{GameEvents.SendCustomGameEventToServer("C2S_TEST_MAX_REDUCE",{})}}/>
             <TextButton text={"当前能量-1"} className={"default"} onactivate={()=>{GameEvents.SendCustomGameEventToServer("C2S_TEST_REDUCE",{})}}/>
             <TextButton text={"随机增加一张装备牌"} className={"default"} onactivate={()=>{GameEvents.SendCustomGameEventToServer("C2S_TEST_RANDOM_EQUIP",{})}}/>
+            <TextButton text={"临时测试内容"} className={"default"} onactivate={()=>{GameEvents.SendCustomGameEventToServer("C2S_TEST_SCENE_LINK",{SCENE:"asd"})}}/>
         </Panel>
 }

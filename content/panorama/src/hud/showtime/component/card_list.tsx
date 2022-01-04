@@ -25,7 +25,6 @@ export const CardList = () => {
         }
     },[maindata,team])
 
-    $.Msg(maindata)
     
     return <> 
         <Panel className={"RedCardList"}>  

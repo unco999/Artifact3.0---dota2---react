@@ -63,4 +63,7 @@ declare interface CustomGameEventDeclarations {
     "S2C_SEND_EQUIP":{data:Record<string,string>,uuid:string}
     "SC2_PLAY_EFFECT":{uuid:string,paticle:string,cameraOrigin:string,lookAt:string}
     "C2S_CLICK_SKIP":{}
+    "C2S_SEND_TEST":{}
+    "C2S_TEST_STATE":{state:string}
+    "C2S_TEST_SCENE_LINK":{SCENE:string}
 }

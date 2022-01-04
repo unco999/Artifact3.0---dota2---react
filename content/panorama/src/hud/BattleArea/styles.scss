@@ -186,6 +186,16 @@
             }
         }
     }
+    @for $i from 1 to 30{
+        &.my_hidden_area#{$i}{
+            width: 180px;
+            height: 260px;
+            x:300px + $i * 50px;
+            y:1020px;
+            box-shadow: 3px 3px 3px 1.5 black;
+            z-index:20+$i;
+        }
+    }
     &.my_ability{
         x:100px;
         y:800px;

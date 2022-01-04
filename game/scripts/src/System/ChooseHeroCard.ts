@@ -1,6 +1,7 @@
 import { Timers } from "../lib/timers";
 import { reloadable } from "../lib/tstl-utils";
 import { BattleGameLoop, faultCard } from "../Manager/BattleGameLoop";
+import { STRATEGY_BRACH_STATE } from "../Manager/nettablefuc";
 
 export abstract class ChooseHerostate{
     host:ChooseHeroCardLoop
@@ -251,7 +252,7 @@ export class showtime extends ChooseHerostate{
             this.host.close()
             CustomNetTables.SetTableValue('GameMianLoop','currentLoopName',{current:"isbattle"})
             GameRules.gamemainloop = new BattleGameLoop()
-            GameRules.gamemainloop.StartcuurentsettingState = new faultCard(GameRules.gamemainloop,1)
+            GameRules.gamemainloop.StartcuurentsettingState = new faultCard(GameRules.gamemainloop,STRATEGY_BRACH_STATE.上路)
         }
         return 1
     }

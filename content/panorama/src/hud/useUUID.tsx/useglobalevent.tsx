@@ -14,7 +14,6 @@ export const useGlobalEvent = (register_str:string[],boolfuc:Function) => {
         boolfuc() && GLOABAL_EVENT.instance.register(register_str,setupdate)
     },[register_str])
 
-    $.Msg("更新了一次",_update)
 
     return _update
 }

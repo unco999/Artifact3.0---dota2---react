@@ -22,7 +22,6 @@ export const Equipment = (props:{index:number,uuid:string}) =>{
 
     useGameEvent("S2C_SEND_EQUIP",(event)=>{
         if(event.uuid != props.uuid) return;
-        $.Msg("keys",event)
         const obj = Object.keys(event.data)
         obj.forEach(key=>{
             if(props.index.toString() == key){
@@ -36,7 +35,6 @@ export const Equipment = (props:{index:number,uuid:string}) =>{
     },[])
 
     const registrationCanBeHitInTheEvent = (open:boolean) => {
-        $.Msg(ref.current)
         open ? $.RegisterEventHandler( 'DragDrop', ref.current!, OnDragDrop ) : $.RegisterEventHandler( 'DragDrop', ref.current!, ()=>{} );
         open ? $.RegisterEventHandler( 'DragEnter', ref.current!, OnDragEnter ) : $.RegisterEventHandler( 'DragEnter', ref.current!, ()=>{});
         open ? $.RegisterEventHandler('DragLeave',ref.current!,OnDragLeave) :  $.RegisterEventHandler( 'DragLeave', ref.current!, ()=>{});
@@ -49,17 +47,14 @@ export const Equipment = (props:{index:number,uuid:string}) =>{
     const OnDragDrop = (dragCallbacks:Panel,callbacks:Panel) =>{
        const data = callbacks.Data().data
        GameEvents.SendCustomGameEventToServer("C2S_SEND_up_equiment",{index:props.index,uuid:props.uuid,item:data})
-       $.Msg({index:props.index,uuid:props.uuid,item:data})
     }
 
     const OnDragEnter = (panelId:any, dragCallbacks:Panel) =>{
         ref.current?.AddClass("select")
-        $.Msg("进入了")
     }
 
     const OnDragLeave = () =>{
         ref.current?.RemoveClass("select")
-        $.Msg("出去了")
     }
 
 

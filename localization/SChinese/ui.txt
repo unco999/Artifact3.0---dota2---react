@@ -5,3 +5,8 @@
 "branch_1" "我方上路"
 "branch_2" "我方中路"
 "branch_3" "我方下路"
+
+loop_state0 "英雄部署阶段"
+loop_state1 "策略阶段"
+loop_state2 "战斗结算中"
+loop_state3 "商店阶段"

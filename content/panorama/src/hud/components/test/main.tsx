@@ -40,7 +40,7 @@ export const Test = () => {
     ])
 
     const track = () => {
-        $.Msg("开始了")
+
         let time = 0
         $.Schedule(Game.GetGameFrameTime(),function cb(){
             time += Game.GetGameFrameTime();

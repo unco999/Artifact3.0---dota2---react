@@ -12,9 +12,6 @@ import {Curtain} from "./curtain"
 export const Main = () =>{
     const team = useNetTableKey("Card_group_construction_phase","team")
     const gameloopname = useNetTableKey("GameMianLoop",'currentLoopName')
-    const loop = useNetTableKey("GameMianLoop","smallCycle")
-
-    $.Msg("bbb",loop)
 
     return <>
     { gameloopname.current == 'isbattle' &&
@@ -23,7 +20,6 @@ export const Main = () =>{
         <YouConpoment red={team.red} blue={team.blue} />
         <CardContext owner={Players.GetLocalPlayer()}/>
         <CardContext owner={Players.GetLocalPlayer() == team.red ? team.blue : team.red}/>
-        {loop && loop.current == '3' || loop.current == '1'  && <Curtain/>}
     </>
     }
     </>

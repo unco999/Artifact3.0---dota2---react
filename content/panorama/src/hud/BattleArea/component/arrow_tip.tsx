@@ -23,7 +23,6 @@ export const Arrow_tip = () => {
 
     const blanking = () => {
             for(let key = 0 ; key < 20 ; key ++){
-                $.Msg("清楚index",key);
                 ($("#arrow_tip") as ScenePanel).FireEntityInput(`line_${key}`,"SetControlPoint",`0:0 0 0`);
                 //end   
                 ($("#arrow_tip") as ScenePanel).FireEntityInput(`line_${key}`,"SetControlPoint",`3:0 0 0`);

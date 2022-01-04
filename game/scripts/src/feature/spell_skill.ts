@@ -1,5 +1,7 @@
 import { AbiliyContainer } from "../instance/Ability";
 import { Unit } from "../instance/Unit";
+import { optionMask } from "../Manager/statusSwitcher";
+import { Set_option_mask_state } from "../Manager/nettablefuc";
 import { Magic_brach, Magic_range, Magic_team } from "./select_the_prompt";
 
 
@@ -19,11 +21,9 @@ export class spell_skill{
 
     call_spell_skill(id:string,player:PlayerID){
         if(player == GameRules.Blue.GetPlayerID()){
-            CustomNetTables.SetTableValue("GameMianLoop",'thisRoundOfBluefield',{"option":1,skip:0})
-            print("设置了蓝色的属性")
+            Set_option_mask_state(optionMask.蓝队有操作)
         }else{
-            CustomNetTables.SetTableValue("GameMianLoop","thisRoundOfRedfield",{"option":1,skip:0})
-            print("设置了红色的属性")
+            Set_option_mask_state(optionMask.红队有操作)
         }
         print("服务端执行了释放技能管理器")
         const hero = this.skill_id_find_hero(id,player)

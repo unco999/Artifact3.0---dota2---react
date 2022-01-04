@@ -19,6 +19,8 @@ declare interface CustomNetTableDeclarations {
         lowerSettlement:{cuurent:string}//下路结算情况
         current_operate_playerid:{cuurent:string} //当前操作的playerid
         current_operate_brach:{cuurent:string} //当前策略的路线
+        current_battle_brach:{cuurent:string} //当前战斗结算的路线
+        option_mask_state:{cuurent:number} //当前全局状态操作掩码
     }
     Scenes:{
         [string:string]:Record<number,string>

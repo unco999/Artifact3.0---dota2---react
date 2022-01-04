@@ -14,7 +14,6 @@ export const Card_container = (props:{className:string,index:number,brach:number
         for(const brach in event){
             for(const index in event[brach]){
                 if(+brach == props.brach && +event[brach][index] == props.index){
-                    $.Msg("有板通过了检测",props.brach,"-",props.index)
                     mian.current?.AddClass("show")    
                 }    
             }
@@ -29,7 +28,6 @@ export const Card_container = (props:{className:string,index:number,brach:number
     },[])
 
     const OnDragEnter = (panelId:any, dragCallbacks:any) => {
-        $.Msg("板子拖入了")
     }
 
     const OnDragDrop = (panelId:any, dragCallbacks:any) => {

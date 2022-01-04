@@ -44,17 +44,17 @@ const Machine = createMachine({
     states:{
         defualt:{
             entry:"defualt_entry",
-            on:{toHAND:"hand",toHEAPS:"heaps",toMIDWAY:"midway",toGOUP:"goup",toLAIDDOWN:"laiddown",toGRAVE:"grave",toREMOVE:"remove"},
+            on:{toHAND:"hand",toHEAPS:"heaps",toMIDWAY:"midway",toGOUP:"goup",toLAIDDOWN:"laiddown",toGRAVE:"grave",toREMOVE:"remove",toHIDE:'hidden_area'},
             exit:"defualt_exit"
         },
         heaps:{
             entry:'heaps_entry',
-            on:{toHAND:"hand"},
+            on:{toHAND:"hand",toHIDE:'hidden_area'},
             exit:'heaps_exit'
         },
         hand:{
             entry:'hand_entry',
-            on:{toHAND:"hand",toHEAPS:"heaps",toMIDWAY:"midway",toGOUP:"goup",toLAIDDOWN:"laiddown",toABILITY:'ability',toREMOVE:'remove'},
+            on:{toHAND:"hand",toHEAPS:"heaps",toMIDWAY:"midway",toGOUP:"goup",toLAIDDOWN:"laiddown",toABILITY:'ability',toREMOVE:'remove',toHIDE:'hidden_area'},
             exit:"hand_exit"
         },
         midway:{
@@ -80,11 +80,16 @@ const Machine = createMachine({
         equipment:{
         },
         grave:{
+            on:{toHAND:"hand"},
             entry:"grave_entry",
             exit:"grave_exit"
         },
         remove:{
             entry:"remove_entry"
+        },
+        hidden_area:{
+            entry:"hidden_area_entry",
+            exit:"hidden_area_exit"
         }
     }
 })
@@ -114,6 +119,8 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
                 const id = GameEvents.Subscribe("S2C_GET_CARD",(event)=>{
                     if(event.uuid != props.uuid) return; 
                     setstate(event)
+                    $.Msg("收到的card信息")
+                    $.Msg(event)
                     GameEvents.Unsubscribe(id) 
                 })
                 GameEvents.SendCustomGameEventToServer("C2S_GET_CARD",{uuid:props.uuid})
@@ -126,7 +133,6 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
                 dummyoperate('add',prefix + 'Midway' + state.Index);
             },
             midway_exit:()=>{
-                if(state.Scene != 'MIDWAY') return;
                  dummyoperate('remove',prefix + 'Midway' + preindex.current );
             },
             goup_entry:()=>{
@@ -134,7 +140,6 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
                 dummyoperate('add',prefix + 'Goup' + state.Index );
             },
             goup_exit:()=>{
-                if(state.Scene != 'GOUP') return;
                  dummyoperate('remove',prefix + 'Goup' + preindex.current);
             },
             laiddown_entry:()=>{
@@ -142,7 +147,6 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
                 dummyoperate('add',prefix + 'Laiddown' + state.Index);
             },
             laiddown_exit:()=>{
-                if(state.Scene != 'LAIDDOWN') return;
                  dummyoperate('remove',prefix + 'Laiddown' + preindex.current);
             },
             heaps_entry:()=>{
@@ -160,7 +164,6 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
                 dummyoperate('remove',prefix + "Hand"+ preindex.current)
             },
             ability_entry:()=>{
-                $.Msg("进入了魔法阶段")
                 dummyoperate('add',prefix + "ability")
             },
             ability_exit:()=>{
@@ -168,15 +171,26 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
             },
             grave_entry:()=>{
                 dummyoperate('add',prefix + "death")
-                    dummyoperate('remove',prefix + 'Laiddown' + state.Index)
-                    dummyoperate('remove',prefix + 'Goup' + state.Index)
-                    dummyoperate('remove',prefix + 'Midway' + state.Index)
+                    dummyoperate('remove',prefix + 'Laiddown' + preindex.current)
+                    dummyoperate('remove',prefix + 'Goup' + preindex.current)
+                    dummyoperate('remove',prefix + 'Midway' + preindex.current)
+                    preindex.current = state.Index
                     dummyoperate('add',prefix + "ingrave")
-                    $.Msg("有牌死亡了")
+            },
+            grave_exit:()=>{
+                dummyoperate('remove',prefix + "ingrave")
+                dummyoperate('remove',prefix + "death")
+                dummy.current?.RemoveClass("hide")
             },
             remove_entry:()=>{
-                $.Msg("有牌直接被删除了")
                 dummyoperate('add',prefix + "death")
+            },
+            hidden_area_entry:()=>{
+                preindex.current = state.Index
+                dummyoperate('add',prefix + "hidden_area" + state.Index)
+            },
+            hidden_area_exit:()=>{
+                dummyoperate('remove',prefix + "hidden_area" + preindex.current )
             }
         }
     })
@@ -188,9 +202,8 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
     /** uuid获得时发送获取属性回调 */ 
 
     /**获取当前属性 */
-    useGameEvent("S2C_SEND_ATTRIBUTE",(event)=>{
+    useGameEvent("S2C_SEND_ATTRIBUTE",(event)=>{//
         if(event.uuid == props.uuid){
-            $.Msg("客户端受到了伤害事件")
             setattribute(event)
         }
     },[props.uuid])
@@ -216,6 +229,7 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
     useGameEvent("S2C_CARD_CHANGE_SCENES",(event)=>{
         if(props.uuid != event.uuid) return
         setstate(event)
+        send("to" + state.Scene)
     },[setstate,xstate])
 
     /**卡牌死亡特效 */
@@ -233,7 +247,6 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
     /**卡牌攻击事件 */
     useGameEvent("S2C_SEND_ATTACK",(event)=>{
         if(props.uuid != event.uuid) return
-        $.Msg(props.uuid,"开始攻击了!!!!!!!!!!!")
         ref.current?.AddClass(prefix + "attack_animation")
         $.Schedule(1.5,()=>{
             ref.current?.RemoveClass(prefix + "attack_animation")
@@ -243,7 +256,6 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
     useGameEvent("S2C_SKILL_READY",(event)=>{
         if(props.uuid != event.uuid) return
         ref.current?.AddClass("skill_ready")
-        $.Msg(props.uuid + "开始释放法术")
     },[props.uuid])
 
     /**该面板被作为可选目标被高亮 */
@@ -301,9 +313,7 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
     useEffect(()=>{
         if(state.Scene == "GOUP" || state.Scene == "MIDWAY" || state.Scene == "LAIDDOWN"){
             const id = GameEvents.Subscribe("S2C_HURT_DAMAGE",(event)=>{
-                if(props.uuid != event.uuid) return
-                $.Msg(props.uuid,"激活了一次事件")
-                set_current_effect("particles/econ/items/centaur/centaur_ti6_gold/centaur_ti6_warstomp_gold.vpcf");
+                if(props.uuid != event.uuid) return                set_current_effect("particles/econ/items/centaur/centaur_ti6_gold/centaur_ti6_warstomp_gold.vpcf");
                 ref.current?.AddClass("hurt")
                 $.Schedule(1.5,()=>{
                     set_current_effect("")
@@ -314,7 +324,6 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
         }
     },[props.uuid,state])
 
-    $.Msg("状态太太",state)
 
     //drag事件
     useEffect(()=>{
@@ -333,8 +342,8 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
     //改变index事件
     useGameEvent("S2C_SEND_INDEX",(event)=>{
         const keys = Object.keys(event)
-        if(keys[0] == props.uuid && xstate.value == 'hand'){
-            $.Msg("更新index",event[keys[0]])
+        if(keys[0] == props.uuid && xstate.value == 'hand' || xstate.value == 'hide'){
+
             dummyoperate('remove',prefix + "Hand"+ preindex.current)
             preindex.current = event[keys[0]]
             dummyoperate('add',prefix + "Hand"+ event[keys[0]])
@@ -343,7 +352,6 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
 
     const OnDragStart = (panelId:any, dragCallbacks:any) =>{
         const displayPanel = $.CreatePanel( "Panel", $.GetContextPanel(), "cache" ) as HeroImage
-        $.Msg("注册了data是",state.data)
         //**加入拖动的是装备卡片 */
         if(state.type == "EQUIP" && ref.current){
             parent.current = ref.current?.GetParent()
@@ -447,7 +455,6 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
 
     const OnDragDrop = (panelId:any, dragCallbacks:any) => {
         const id = dragCallbacks.Data().id
-        $.Msg("执行了一次客户端释放技能事件")
         GameEvents.SendCustomGameEventToServer("C2S_SPELL_SKILL",{SKILL_ID:id})
     }
 
@@ -455,7 +462,6 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
     }
     
     const OnDragEnter = () =>{
-        $.Msg("鼠标进入了面板")
     }
  
     const effect_select_scenes = () =>{
@@ -492,6 +498,7 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
         return <>
          <Panel draggable={true} ref={Panel => dummy.current = Panel} onmouseover={()=>{frame.current?.AddClass("show");ref.current?.AddClass(prefix+"hover")}} onmouseout={()=>{frame.current?.RemoveClass("show");ref.current?.RemoveClass(prefix+"hover")}} className={prefix+"Carddummy"}/>
          <Panel ref={Panel => ref.current = Panel}  className={prefix+'Card'} >
+             <Label text={props.uuid} className={"uuid"}/>
               <Panel ref={Panel=>frame.current = Panel} className={"card_frame"}/>
               <Panel style={{width:'90%',height:"90%",align:'center center'}}>
               <DOTAAbilityImage abilityname={"elder_titan_echo_stomp"} className={'abilityimage'}/>
@@ -509,7 +516,7 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
             return <></>
         }
         return <>
-         <Panel hittest={true} onmouseactivate={()=>{$.Msg("ggg");GameEvents.SendCustomGameEventToServer("TEST_C2S_DEATH",{uuid:props.uuid})}}   className={prefix+'Card'} ref={Panel => ref.current = Panel}>
+         <Panel hittest={true} onmouseactivate={()=>{GameEvents.SendCustomGameEventToServer("TEST_C2S_DEATH",{uuid:props.uuid})}}   className={prefix+'Card'} ref={Panel => ref.current = Panel}>
                 <Label text={"小兵"} style={{fontSize:'30px',color:'white',textShadow:'0px 0px 0px 5.0 black',align:'center center'}}/>
                 <Label text={props.uuid} className={"uuid"}/>
                 <Panel className={"threeDimensional"}>
@@ -534,7 +541,6 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
         if(GLOABAL_EVENT.instance.GetDATA("isdrag") == false ){
             state.Scene != "HAND" && dummy.current?.AddClass("hide")
         }else{
-            $.Msg("把马甲的皮删除")
             dummy.current?.RemoveClass("hide")
         }
         if(state.Scene == "HAND" && Players.GetLocalPlayer() != props.owner){
@@ -575,6 +581,7 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
             return <>
            <Panel draggable={true} ref={Panel => dummy.current = Panel} onmouseover={()=>{frame.current?.AddClass("show");ref.current?.AddClass(prefix+"hover")}} onmouseout={()=>{frame.current?.RemoveClass("show");ref.current?.RemoveClass(prefix+"hover")}} className={prefix+"Carddummy"}/>
            <Panel ref={Panel => ref.current = Panel}  className={prefix+'Card'} >
+             <Label text={props.uuid} className={"uuid"}/>
               <Panel ref={Panel=>frame.current = Panel} className={"card_frame"}/>
               <Panel style={{width:'90%',height:"90%",align:'center center'}}>
               <DOTAItemImage itemname={state.Id} style={{width:"100%",height:"100%"}}/>
@@ -596,7 +603,6 @@ export const CardContext = (props:{owner:number}) => {
     useGameEvent('S2C_BRUSH_SOLIDER',()=>{
         const table = CustomNetTables.GetTableValue("Scenes","summon"+props.owner)
         setallsummon(JsonString2Array(table))
-        $.Msg(table)
     },[])
 
     useEffect(()=>{                                                             
@@ -606,8 +612,6 @@ export const CardContext = (props:{owner:number}) => {
                 const table = CustomNetTables.GetTableValue("Scenes","summon"+props.owner)
                 setallsummon(JsonString2Array(table))
                 setallheaps(all_array)
-                $.Msg("列怪数量")    
-                $.Msg(table)
             })
     },[])
 

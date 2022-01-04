@@ -14,7 +14,6 @@ export const Tower = (props:{owner:number,index:number}) =>{
 
     useGameEvent("S2C_SEND_TOWER",(event)=>{
         if(uuid.current != event.uuid) return
-        $.Msg(props.owner,"玩家的",props.index,"uuid:"+uuid.current,"编号受到伤害!")
         setstate(event)
     },[prefix])
 
@@ -24,7 +23,6 @@ export const Tower = (props:{owner:number,index:number}) =>{
             if(event.playerid != props.owner) return;
             setstate({...event,state:"defualt"})
             uuid.current = event.uuid
-            $.Msg("塔的编号为",props.owner +","+ props.index,uuid)
             return () => GameEvents.Unsubscribe(id)
         })
         GameEvents.SendCustomGameEventToServer("C2S_TOWER_INIT",{owner:props.owner as PlayerID,brach:props.index})

@@ -25,7 +25,6 @@ export class ConpoentDataContainer {
                     bool = false
                }
             }
-            bool && $.Msg(ComponentNode.name+'被关闭')
             bool && ComponentNode.close()
         })
         this.openlist = []

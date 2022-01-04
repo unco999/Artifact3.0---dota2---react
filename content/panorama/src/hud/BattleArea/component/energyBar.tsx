@@ -13,7 +13,6 @@ export const EnergyBarManager = (props:{owner:number,brach:number}) =>{
         let index = state?.current_enrgy ?? 0
         let current_max = state?.cuurent_max ?? 0
         let max = state?.max_enrgy ?? 0
-        $.Msg(state)
         for(let count = 0 ; count < 10 ; count++){
             let _state_string:"consume"|"notOwned"|"beUsable" = 'notOwned';
             if(count < max && count > index && count <= current_max){
@@ -30,12 +29,9 @@ export const EnergyBarManager = (props:{owner:number,brach:number}) =>{
         return _list
     },[state])
 
-    $.Msg("字符缓冲",prefix)
-
 
     useGameEvent("S2C_SEND_INIT_ENRGY",(event)=>{
         if(event.brach == props.brach && event.playerid == props.owner){
-            $.Msg("hasjkdhadkj")
             uuid.current = event.uuid
             setstate(event)
         }
@@ -43,17 +39,13 @@ export const EnergyBarManager = (props:{owner:number,brach:number}) =>{
 
     useGameEvent("S2C_SEND_ENRGY",(event)=>{
         if(event.uuid != uuid.current) return
-        $.Msg(event)
+
         setstate(event)
     },[prefix])
 
     useEffect(()=>{
         GameEvents.SendCustomGameEventToServer("C2S_GET_INIT_ENRGY",{brach:props.brach,PLAYER:props.owner})
-        $.Msg("发送了初始化请求")
     },[prefix])
-
-    $.Msg("当前路线状态")
-    $.Msg(state)
 
     return <>
     <Panel className={prefix + "energyBarmain"}>

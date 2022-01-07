@@ -10,7 +10,7 @@ export class GamaEvent_All_register{
     static register(){
         //刷小兵组件
         CustomGameEventManager.RegisterListener("C2S_BRUSH_SOLIDER",()=>{
-            brash_solidier.brushTwoSoldiers() 
+            GameRules.brash_solidier.brushTwoSoldiers() 
         })
         CustomGameEventManager.RegisterListener("TEST_C2S_CALL_ATTACK",()=>{
             const redmidway = GameRules.SceneManager.GetMidwayScene(GameRules.Red.GetPlayerID())
@@ -43,7 +43,7 @@ export class GamaEvent_All_register{
             GameRules.energyBarManager.enrgyBarData[GameRules.Blue.GetPlayerID() + "1"].current_max_enrygy_add(1)
         })
         CustomGameEventManager.RegisterListener("C2S_TEST_RANDOM_EQUIP",(_,event)=>{
-            print("手牌加入一张装备牌")
+            print("手牌加入一张装备牌") 
             const max_index = (GameRules.SceneManager.GetHandsScene(event.PlayerID) as Hand).max_index
             const _equit = new EquipCard({Id:"item_robe",Index:max_index,PlayerID:event.PlayerID},GameRules.SceneManager.GetCardheapsScene(event.PlayerID))
             GameRules.SceneManager.global_add(_equit.UUID,_equit)

@@ -143,6 +143,10 @@
         y:900px;
         transform: rotateZ(90deg);
     }
+    &.dragHero{
+        width: 100px;
+        height: 170px;
+    }
     @for $i from 1 to 6{
         &.my_Midway#{$i}{
             width: 100px;
@@ -207,11 +211,10 @@
         width: 0px;
         height: 0px;
         opacity: 0;
-        transition-duration: 0.1s;
     }
     &.my_ingrave{
-        x:320px;
-        y:900px;
+        x:180px;
+        y:910px;
         width: 90px;
         height: 160px;
         animation-name: grave;
@@ -389,7 +392,7 @@
         animation-fill-mode:forwards;
     }
     &.you_ingrave{
-        x:1500px;
+        x:1720px;
         y:10px;
         width: 90px;
         height: 160px;

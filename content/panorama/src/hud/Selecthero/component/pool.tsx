@@ -14,7 +14,7 @@ export const teamState:Record<string,string> = {
 
 export const Pool = ({...args}) => {
     const id = useUuid()
-    const container = useInstance("Pool",id,{},undefined)
+    const {conponent,up} = useInstance("Pool",id,{},undefined)
     const heroid = JsonString2Array(useNetTableKey("Card_group_construction_phase","heroThatCanChooseOnTheCurrentField"))
     const heroselected = JsonString2Array(useNetTableKey("Card_group_construction_phase",'heroSelected'))
     const main = useRef<Panel|null>()
@@ -22,8 +22,8 @@ export const Pool = ({...args}) => {
 
 
     useEffect(()=>{
-        container?.SetKeyAny(Players.GetLocalPlayer() + "isselect",[undefined,undefined])
-        container?.SetKeyAny(Players.GetLocalPlayer() + "selectindex",0)
+        conponent?.SetKeyAny(Players.GetLocalPlayer() + "isselect",[undefined,undefined])
+        conponent?.SetKeyAny(Players.GetLocalPlayer() + "selectindex",0)
     },[args?.loopdata?.currentteam])
 
     useEffect(()=>{
@@ -39,15 +39,15 @@ export const Pool = ({...args}) => {
         if(args?.loopdata?.currentteam){
            if(args.playerteam[teamState[args.loopdata.currentteam]] === Players.GetLocalPlayer()){
                 if(filter(panel.Data().id) === 0) return
-                if(container?.getKeyString(Players.GetLocalPlayer() + "isselect") == null){
-                    container?.SetKeyAny(Players.GetLocalPlayer() + "isselect",[undefined,undefined])
+                if(conponent?.getKeyString(Players.GetLocalPlayer() + "isselect") == null){
+                    conponent?.SetKeyAny(Players.GetLocalPlayer() + "isselect",[undefined,undefined])
                 }
-                const isselect = container!.getKeyString<[number|undefined,number|undefined]>(Players.GetLocalPlayer() + "isselect")
-                const selectindex = container?.getKeyString<number>(Players.GetLocalPlayer() + "selectindex")
-                if(!selectindex) container?.SetKeyAny(Players.GetLocalPlayer() + "selectindex",0)
-                isselect[container!.getKeyString<number>(Players.GetLocalPlayer() + "selectindex")] = panel.Data().id
+                const isselect = conponent!.getKeyString<[number|undefined,number|undefined]>(Players.GetLocalPlayer() + "isselect")
+                const selectindex = conponent?.getKeyString<number>(Players.GetLocalPlayer() + "selectindex")
+                if(!selectindex) conponent?.SetKeyAny(Players.GetLocalPlayer() + "selectindex",0)
+                isselect[conponent!.getKeyString<number>(Players.GetLocalPlayer() + "selectindex")] = panel.Data().id
                 if(args?.loopdata?.remainingOptionalQuantity == 2){
-                    container?.SetKeyAny(Players.GetLocalPlayer() + "selectindex",container!.getKeyString<number>(Players.GetLocalPlayer() + "selectindex") == 1 ? 0 : 1)
+                    conponent?.SetKeyAny(Players.GetLocalPlayer() + "selectindex",conponent!.getKeyString<number>(Players.GetLocalPlayer() + "selectindex") == 1 ? 0 : 1)
                 }
                 let b:boolean = false
                 for(const key in isselect){
@@ -57,8 +57,8 @@ export const Pool = ({...args}) => {
                 }
                 okbutton(b)
            }else{
-                container?.SetKeyAny(Players.GetLocalPlayer() + "isselect",[undefined,undefined])
-                container?.SetKeyAny(Players.GetLocalPlayer() + "selectindex",0)
+                conponent?.SetKeyAny(Players.GetLocalPlayer() + "isselect",[undefined,undefined])
+                conponent?.SetKeyAny(Players.GetLocalPlayer() + "selectindex",0)
            }
         }
     }

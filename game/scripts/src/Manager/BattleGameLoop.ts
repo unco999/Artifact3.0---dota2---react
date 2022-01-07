@@ -14,7 +14,7 @@ export enum 游戏循环 {
 }
 
 const 商店购买时间 = 2
-const 英雄部署时间 = 9000
+const 英雄部署时间 = 989999
 const 战斗结算时间 = 2
 const 策略时间 = 2
 

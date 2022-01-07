@@ -27,16 +27,16 @@ export const BranchCard = (props:{index:number}) => {
 
 
     useEffect(()=>{
-        const container = ConpoentDataContainer.Instance.NameGetNode("Branch").current
-        if(container){
-            container.register_monitor(setmotion)
+        const conponent = ConpoentDataContainer.Instance.NameGetNode("Branch").current
+        if(conponent){
+            conponent.register_monitor(setmotion)
         }
     })
 
     useEffect(()=>{
-        const container = ConpoentDataContainer.Instance.NameGetNode("Branch").current
-        if(!container) return;
-        const table = container.getKeyString<Record<number,number[]>>("branch")
+        const conponent = ConpoentDataContainer.Instance.NameGetNode("Branch").current
+        if(!conponent) return;
+        const table = conponent.getKeyString<Record<number,number[]>>("branch")
         setarray(table[props.index])
     },[motion])
 
@@ -46,8 +46,8 @@ export const BranchCard = (props:{index:number}) => {
     
     const OnDragDrop = (panelId:any, dragCallbacks:HeroImage) => {
         const heroid = dragCallbacks.heroid
-        const container = ConpoentDataContainer.Instance.NameGetNode("Branch").current
-        const table = container.getKeyString<Record<number,number[]>>("branch")
+        const conponent = ConpoentDataContainer.Instance.NameGetNode("Branch").current
+        const table = conponent.getKeyString<Record<number,number[]>>("branch")
         for(const branch in table){
            for(const index in table[branch]){
                if(table[branch][index] == heroid){
@@ -62,7 +62,7 @@ export const BranchCard = (props:{index:number}) => {
                }
            }
         setarray(table[props.index])
-        container.immediatelyupdate()
+        conponent.immediatelyupdate()
         dragCallbacks.DeleteAsync(0)
     }
 
@@ -82,12 +82,12 @@ export const BranchCard = (props:{index:number}) => {
 
 export const Branch = (props:{gameloop:string}) => {
     const uuid = useUuid()
-    const container = useInstance("Branch",uuid,{},undefined)
+    const {conponent,up} = useInstance("Branch",uuid,{},undefined)
     const main = useRef<Panel|null>()
 
     useEffect(()=>{
-        container?.SetKeyAny("branch",{0:[-1,-1],1:[-1],2:[-1,-1]})
-    },[container])
+        conponent?.SetKeyAny("branch",{0:[-1,-1],1:[-1],2:[-1,-1]})
+    },[up])
     
     useEffect(()=>{
         if(props.gameloop === 'branch'){

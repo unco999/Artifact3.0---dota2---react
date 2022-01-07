@@ -6,13 +6,15 @@ import { reloadable } from "../lib/tstl-utils";
 @reloadable
 export class brash_solidier{
 
+
     constructor(){
         CustomGameEventManager.RegisterListener("C2S_BRUSH_SOLIDER",()=>{
-            brash_solidier.brushTwoSoldiers()
+             this.brushTwoSoldiers()
         })
     }
 
-    static brachSelect(PlayerID:PlayerID){
+
+    brachSelect(PlayerID:PlayerID){
         const GoUp = (GameRules.SceneManager.GetGoUpScene(PlayerID) as GoUp).getbrachoption();
         const LaidDown = (GameRules.SceneManager.GetLaidDownScene(PlayerID) as LaidDown).getbrachoption();
         const Midway = (GameRules.SceneManager.GetMidwayScene(PlayerID) as Midway).getbrachoption();
@@ -25,7 +27,7 @@ export class brash_solidier{
     }
 
     /**实际刷兵API */
-    static actuallyBrushingSoldiers(index:number,PlayerID:PlayerID,scene_name:BattleArea){
+    actuallyBrushingSoldiers(index:number,PlayerID:PlayerID,scene_name:BattleArea){
         const soldier = new Solider({Id:math.random().toString(),Index:index,PlayerID:PlayerID},scene_name)
         scene_name.AutoAddCard(soldier,index)
         GameRules.SceneManager.global_add(soldier.UUID,soldier)
@@ -33,14 +35,26 @@ export class brash_solidier{
         CustomGameEventManager.Send_ServerToAllClients("S2C_BRUSH_SOLIDER",{})
     }
 
+    /**自定分路上兵 */
+
+    AutoSolider(PlayerID:PlayerID,scene_name:BattleArea){
+        const soldier = new Solider({Id:math.random().toString(),Index:0,PlayerID:PlayerID},scene_name)
+        scene_name.AutoAddCard(soldier)
+        GameRules.SceneManager.global_add(soldier.UUID,soldier)
+        GameRules.SceneManager.update_summon()
+        CustomGameEventManager.Send_ServerToAllClients("S2C_BRUSH_SOLIDER",{})
+        return soldier
+    }
+
+
     /**同时刷两边小兵 */
-    static brushTwoSoldiers(){
+    brushTwoSoldiers(){
         this.brachSelect(GameRules.Blue.GetPlayerID())
         this.brachSelect(GameRules.Red.GetPlayerID());
         (GameRules.SceneManager.GetMidwayScene(GameRules.Blue.GetPlayerID()) as BattleArea).Print()
     }
 
-    static route(brach:[number,number]):number{
+    route(brach:[number,number]):number{
         print("打印選擇")
         DeepPrintTable(brach)
         const number1 = brach[0]

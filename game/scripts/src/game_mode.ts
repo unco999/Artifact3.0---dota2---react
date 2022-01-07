@@ -11,6 +11,7 @@ import { BattleGameLoop } from "./Manager/BattleGameLoop";
 import { ChooseHeroCardLoop, RedSelectstage } from "./System/ChooseHeroCard";
 import { KV } from "./System/KV";
 import './instance/Equip'
+import { brash_solidier } from "./feature/brush_solidier";
 
 const heroSelectionTime = 0;
 
@@ -27,6 +28,7 @@ declare global {
         select_the_prompt:select_the_prompt // 技能选择器
         spell_skill:spell_skill
         energyBarManager:energyBarManager
+        brash_solidier:brash_solidier
         bot:number
     }
 }
@@ -43,6 +45,7 @@ export class GameMode {
         GameRules.KV = new KV();
         GameRules.select_the_prompt = new select_the_prompt()
         GameRules.spell_skill = new spell_skill()
+        GameRules.brash_solidier = new brash_solidier()
     }
 
     constructor() {

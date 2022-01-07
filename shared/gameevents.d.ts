@@ -19,7 +19,7 @@ declare interface CustomGameEventDeclarations {
     "S2C_GET_SCENES": string[];
     "S2C_GET_CARD": { Id: string, Index: number, uuid: string, Scene: string, type: string,playerid:PlayerID,data:any};
     "C2S_GET_CARD": { uuid: string; };
-    "C2S_GET_CANSPACE": {}; //查询我方可占空格
+    "C2S_GET_CANSPACE": {uuid:string}; //查询我方可占空格
     "S2C_SEND_CANSPACE": Record<string, string[]>;
     "C2C_CLOSE_MY_BRACH_TIP": {};
     "C2S_actingOnCard": { attach: string, my: string; };
@@ -66,4 +66,6 @@ declare interface CustomGameEventDeclarations {
     "C2S_SEND_TEST":{}
     "C2S_TEST_STATE":{state:string}
     "C2S_TEST_SCENE_LINK":{SCENE:string}
+    "C2S_GET_GRAVE_ARRAY":{}
+    "S2C_SEND_GRAVE_ARRAY":string[]
 }

@@ -4,17 +4,17 @@ import useUuid from "../../useUUID.tsx/useUuid";
 
 export const Gloabtip = () => {
     const uuid = useUuid()
-    const container = useInstance("Gloabtip",uuid,{},undefined)
+    const {conponent,up} = useInstance("Gloabtip",uuid,{},undefined)
     const main = useRef<Panel|null>()
 
     useEffect(()=>{
-        if(container?.switch){
+        if(conponent?.switch){
             main.current?.AddClass("show")
         }else{
             main.current?.RemoveClass("show")
         }
-    },[container?.switch])
+    },[up])
     
 
-    return <Panel ref={panel=>main.current = panel} className={'gloabtip'} style={{...container?.csstable}}/>
+    return <Panel ref={panel=>main.current = panel} className={'gloabtip'} style={{...conponent?.csstable}}/>
 }

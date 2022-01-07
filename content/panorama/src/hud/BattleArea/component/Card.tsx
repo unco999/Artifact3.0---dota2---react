@@ -97,6 +97,7 @@ const Machine = createMachine({
  
 export const Card = (props:{index:number,uuid:string,owner:number}) => {
     const prefix = useMemo(()=> props.owner == Players.GetLocalPlayer() ? "my_" : "you_",[props])
+    const graveTipFunction = useRef(()=>{})
     const id = useRef(Math.floor(Math.random() * 20) + 1)
     const ref = useRef<Panel|null>()
     const dummy = useRef<Panel|null>()
@@ -228,9 +229,11 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
     /**卡牌改变场景 */
     useGameEvent("S2C_CARD_CHANGE_SCENES",(event)=>{
         if(props.uuid != event.uuid) return
+        $.Msg("收到事件！！！！！！！！！！")
+        $.Msg(event)
         setstate(event)
         send("to" + state.Scene)
-    },[setstate,xstate])
+    },[])
 
     /**卡牌死亡特效 */
     useGameEvent("S2C_SEND_DEATH_ANIMATION",(event)=>{
@@ -324,6 +327,18 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
         }
     },[props.uuid,state])
 
+    /**注册墓地tip */
+    useEffect(()=>{
+        if(state.Scene == "GRAVE"){
+            const id = GameEvents.Subscribe("S2C_SEND_GRAVE_ARRAY",(event)=>{
+                const table = JsonString2Array(event)
+                graveTipFunction.current = ()=> $.DispatchEvent("DOTAShowTextTooltip",ref.current!,"当前墓地英雄 <br/>" + table.map(str=>str + "<br/>"))
+                GameEvents.Unsubscribe(id)
+            })
+            GameEvents.SendCustomGameEventToServer("C2S_GET_GRAVE_ARRAY",{})
+        }
+    },[state])
+
 
     //drag事件
     useEffect(()=>{
@@ -332,6 +347,11 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
             dummy.current && $.RegisterEventHandler( 'DragStart', dummy.current!, OnDragStart );
             dummy.current && $.RegisterEventHandler( 'DragEnd',dummy.current!, OnDragEnd);
         }
+        // if(state.Scene == 'MIDWAY' || state.Scene == 'GOUP' || state.Scene == 'LAIDDOWN'){
+        //     $.Msg("注册了拖拽事件")
+        //     ref.current && $.RegisterEventHandler( 'DragStart', ref.current!, OnDragStart );
+        //     ref.current && $.RegisterEventHandler( 'DragEnd', ref.current!, OnDragEnd );
+        // }
         //暂时注释掉可以拖入的组件
         // if(xstate.value == 'midway' || xstate.value == 'goup' || xstate.value == 'laiddown'){
         //     $.RegisterEventHandler( 'DragDrop', ref.current!, OnDragDrop );
@@ -351,6 +371,7 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
     },[xstate])
 
     const OnDragStart = (panelId:any, dragCallbacks:any) =>{
+        $.Msg("开始拖拽了")
         const displayPanel = $.CreatePanel( "Panel", $.GetContextPanel(), "cache" ) as HeroImage
         //**加入拖动的是装备卡片 */
         if(state.type == "EQUIP" && ref.current){
@@ -361,6 +382,16 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
             dragCallbacks.offsetY = -30;
             ref.current?.AddClass("dragEquip")
             return
+        }
+        if(state.type == 'Hero' && ref.current){
+            parent.current = ref.current?.GetParent()
+            ref.current.Data().uuid = state.uuid
+            dragCallbacks.displayPanel = ref.current;
+            dragCallbacks.offsetX = 50; 
+            dragCallbacks.offsetY = -150;
+            splitOptionalPrompt()
+            ref.current?.AddClass("dragHero")
+            return 
         }
         dragCallbacks.displayPanel = displayPanel;
         dragCallbacks.offsetX = 0; 
@@ -390,6 +421,13 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
             ref.current?.SetParent(parent.current ?? $.GetContextPanel())
             return
         }
+        if(state.type == "Hero"){
+            ref.current?.RemoveClass("dragHero")//
+            graveTipFunction.current = () => {}
+            ref.current?.SetParent(parent.current ?? $.GetContextPanel())
+            closeOptionalPrompt()
+            return
+        }
         dragCallbacks.DeleteAsync( 0 );
         const container = ConpoentDataContainer.Instance.NameGetNode("arrow_tip").current
         container.close()
@@ -399,7 +437,7 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
 
     /**打开分路可选提示器 */
     const splitOptionalPrompt = () =>{
-        GameEvents.SendCustomGameEventToServer("C2S_GET_CANSPACE",{})
+        GameEvents.SendCustomGameEventToServer("C2S_GET_CANSPACE",{uuid:state.uuid})
     }
 
     /**关闭分路可选提示器 */
@@ -516,7 +554,8 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
             return <></>
         }
         return <>
-         <Panel hittest={true} onmouseactivate={()=>{GameEvents.SendCustomGameEventToServer("TEST_C2S_DEATH",{uuid:props.uuid})}}   className={prefix+'Card'} ref={Panel => ref.current = Panel}>
+         <Panel hittest={true}
+         onmouseactivate={()=>{GameEvents.SendCustomGameEventToServer("TEST_C2S_DEATH",{uuid:props.uuid})}}   className={prefix+'Card'} ref={Panel => ref.current = Panel}>
                 <Label text={"小兵"} style={{fontSize:'30px',color:'white',textShadow:'0px 0px 0px 5.0 black',align:'center center'}}/>
                 <Label text={props.uuid} className={"uuid"}/>
                 <Panel className={"threeDimensional"}>
@@ -551,18 +590,20 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
         }
         if(state.type == 'Hero'){
             return <>
-            <Panel hittest={true} ref={Panel => ref.current = Panel} onmouseactivate={()=>{$.Msg("ggg");/**GameEvents.SendCustomGameEventToServer("TEST_C2S_DEATH",{uuid:props.uuid})**/}}  className={prefix+'Card'} >
+            <Panel hittest={true} draggable={true} ref={Panel => ref.current = Panel} onmouseactivate={()=>{$.Msg("ggg");/**GameEvents.SendCustomGameEventToServer("TEST_C2S_DEATH",{uuid:props.uuid})**/}}  className={prefix+'Card'} 
+            onmouseover={()=>{state.Scene == "GRAVE" && graveTipFunction.current()}} onmouseout={()=>$.DispatchEvent('DOTAHideTextTooltip')}
+            >
                   <EquipmentManager uuid={props.uuid}/>
-                  <Label text={"id:"+state.Id + "|" + props.uuid} className={"uuid"}/>
-                  <DOTAHeroImage className={"heroimage"} heroimagestyle={'portrait'} heroid={id.current as HeroID} />
-                  <Panel className={"threeDimensional"}>
-                <Panel className={"attack"}>
-                    <Label text={attribute?.attack}/>
+                  <Label hittest={false} text={"id:"+state.Id + "|" + props.uuid} className={"uuid"}/>
+                  <DOTAHeroImage hittest={false}  className={"heroimage"} heroimagestyle={'portrait'} heroid={id.current as HeroID} />
+                  <Panel hittest={false}  className={"threeDimensional"}>
+                <Panel hittest={false}  className={"attack"}>
+                    <Label hittest={false}  text={attribute?.attack}/>
                 </Panel>
-                <Panel className={"arrmor"}>
-                    <Label text={attribute?.arrmor}/>
+                <Panel hittest={false}  className={"arrmor"}>
+                    <Label hittest={false}  text={attribute?.arrmor}/>
                 </Panel>
-                <Panel className={"heal"}>
+                <Panel hittest={false}  className={"heal"}>
                     <Label text={attribute?.heal}/>
                 </Panel>
             </Panel>

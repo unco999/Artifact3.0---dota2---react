@@ -11,7 +11,7 @@ export const Okbutton = (props:{playerteam:{red:number,blue:number},loopdata: {
     remainingOptionalQuantity: number;
 },gameloopname:{current:string}}) => {
     const uuid = useUuid()
-    const container = useInstance("okbutton",uuid,{},undefined)
+    const {conponent,up} = useInstance("okbutton",uuid,{},undefined)
     const panel = useRef<Panel|null>()
     const branchok = useNetTableKey('Card_group_construction_phase','brachisok') ?? false
 
@@ -53,7 +53,7 @@ export const Okbutton = (props:{playerteam:{red:number,blue:number},loopdata: {
         }
     }
 
-    return <Panel ref={Panel=>panel.current = Panel} className={"Okbutton" + " " + container?.className} onactivate={()=>button()}>
+    return <Panel ref={Panel=>panel.current = Panel} className={"Okbutton" + " " + conponent?.className} onactivate={()=>button()}>
         <Label text={"确定选择"}/>
             </Panel>
 }

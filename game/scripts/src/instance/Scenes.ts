@@ -9,8 +9,9 @@ import { Card, uuid } from "./Card";
 import { Timers } from "../lib/timers";
 import { AbilityCard, SmallSkill, TrickSkill } from "./Ability";
 import { Stack } from "../structure/Stack";
-import { Unit } from "./Unit";
+import { Solider, Unit } from "./Unit";
 import "./Ability";
+import { brash_solidier } from "../feature/brush_solidier";
 
 type PlayerScene = Record<number, Scenes | BattleArea>;
 
@@ -254,6 +255,7 @@ export class Hand extends Scenes {
         }
         super.Remove(uuid);
         this.again_sort()
+        this.update()
         print("运行了手牌规则 删除了",uuid,"当前数组长度:",this.Cardlinked.length);
     }
 
@@ -270,8 +272,8 @@ export class Hand extends Scenes {
 
 }
 
-export class BattleArea extends Scenes {
-    CardList: Array<Card | -1> = [-1, -1, -1, -1, -1];
+export abstract class BattleArea extends Scenes {
+    CardList: Array<Card | number> = [-1, -1, -1, -1, -1];
 
     constructor(PlayerID: PlayerID, ICASceneManager: ScenesManager) {
         super(ICASceneManager);
@@ -316,24 +318,48 @@ export class BattleArea extends Scenes {
         });
     }
 
-    getbrachoption() {
-        let mark = [-1, -1];
-        for (let index = 0; index < 3; index++) {
-            if (this.CardList[3 - index - 1] == -1) {
-                if (mark[0] == -1) {
-                    mark[0] = 3 - index;
-                }
-            }
-            if (this.CardList[3 + index - 1] == -1) {
-                if (mark[1] == -1) {
-                    mark[1] = 3 + index;
-                }
-            }
-            if (mark[0] != -1 || mark[1] != -1) {
-                return mark;
-            }
+    getbrachoption(uuid?:string) {
+        const _scenes = this.gridLocation()
+        const index_array = _scenes.getAll().map(card => card.Index)
+        let mark = [-1,-1,-1,-1,-1]
+        index_array.forEach(index => {
+            mark[index - 1] = index
+        })
+        if(this.isNull()){
+            print("此路",this.SceneName,"为空")
+            mark[2] = 3
+            return mark
         }
+        this.foreach(card=>{
+            if(card.UUID != uuid){  
+                this.CardList[card.Index - 1 + 1] == -1 && (mark[card.Index - 1 + 1] = card.Index  + 1)
+                this.CardList[card.Index - 1 - 1] == -1 && (mark[card.Index - 1 - 1] = card.Index - 1)
+            }
+        })
+        // let bool = true
+        // this.foreach(card=>{
+        //     if(card instanceof Card){
+        //         bool = false
+        //     }
+        //     mark[card.Index - 1] = -1
+        // })
+        // if(!bool){
+        //     this.CardList[3] = 3 
+        // }
+        print("当前路线为",this.SceneName)
+        DeepPrintTable(mark)
         return mark;
+    
+    }
+
+    isNull(){
+       let bool = true
+       for(const key in this.CardPool){
+            if(this.CardPool[key]){
+                bool = false
+            }
+       }
+       return bool 
     }
 
     Print() {
@@ -347,10 +373,9 @@ export class BattleArea extends Scenes {
     }
 
     AutoAddCard(card: Card, index?: number) {
+        super.addCard(card)
         if (index && index != -1) {
             print("中路手動兼職", index);
-            super.addCard(card);
-            card.Scene = this;
             card.Index = index;
             this.CardList[index - 1] = card;
             return;
@@ -383,7 +408,7 @@ export class BattleArea extends Scenes {
                 if ((this.CardList[index] as Card).UUID == uuid) {
                     this.CardList[index] = -1;
                     this.CardPool[uuid] = null;
-                    print("删除了", uuid);
+                    print("删除了", uuid,"序号为",index);
                 }
             }
         }
@@ -415,6 +440,8 @@ export class BattleArea extends Scenes {
         this.Print();
     }
 
+    abstract gridLocation():Scenes
+
 }
 
 export class Midway extends BattleArea {
@@ -425,6 +452,12 @@ export class Midway extends BattleArea {
         this.PlayerID = PlayerID;
         ICASceneManager.SetMidwayScene(this);
     }
+
+    /**对格场景查找 */
+    gridLocation(){
+       return GameRules.SceneManager.GetMidwayScene(this.PlayerID == GameRules.Red.GetPlayerID() ? GameRules.Blue.GetPlayerID() : GameRules.Red.GetPlayerID())
+    }
+
 }
 export class GoUp extends BattleArea {
     SceneName = 'GOUP';
@@ -434,6 +467,10 @@ export class GoUp extends BattleArea {
         this.PlayerID = PlayerID;
         ICASceneManager.SetGoUpScene(this);
     }
+
+    gridLocation(){
+        return GameRules.SceneManager.GetGoUpScene(this.PlayerID == GameRules.Red.GetPlayerID() ? GameRules.Blue.GetPlayerID() : GameRules.Red.GetPlayerID())
+     }
 }
 
 export class LaidDown extends BattleArea {
@@ -443,6 +480,10 @@ export class LaidDown extends BattleArea {
         this.PlayerID = PlayerID;
         ICASceneManager.SetLaidDownScene(this);
     }
+
+    gridLocation(){
+        return GameRules.SceneManager.GetLaidDownScene(this.PlayerID == GameRules.Red.GetPlayerID() ? GameRules.Blue.GetPlayerID() : GameRules.Red.GetPlayerID())
+     }
 }
 
 //施法场景
@@ -463,6 +504,19 @@ export class Grave extends Scenes {
         super(ICASceneManager);
         this.PlayerID = PlayerID;
         ICASceneManager.SetGraveScene(this);
+        this.register_gamevent()
+    }
+
+    register_gamevent(){
+        CustomGameEventManager.RegisterListener("C2S_GET_GRAVE_ARRAY",()=>this.Send_Client())
+    }
+
+    Send_Client(){
+        const table = []
+        for(const key in this.CardPool){
+           table.push(this.CardPool[key].Id)
+        }
+        CustomGameEventManager.Send_ServerToAllClients("S2C_SEND_GRAVE_ARRAY",table)
     }
 
     addCard(card:Card){
@@ -577,7 +631,15 @@ export class ScenesManager {
         CustomGameEventManager.RegisterListener("C2S_CARD_CHANGE_SCENES", (_, event) => {
             print("有牌要改變場景", event.to_scene, "改變的index為", event.index);
             if (!GameRules.gamemainloop.filter) return;
-            this.change_secens(event.uuid, event.to_scene, event.index);
+            const card = this.change_secens(event.uuid, event.to_scene, event.index);
+            const newScenes = GameRules.SceneManager.GetScenes(event.to_scene,event.PlayerID);
+            const solider = GameRules.brash_solidier.AutoSolider(event.PlayerID,newScenes as BattleArea)
+            if(RollPercentage(100)){
+                let card_index =card.Index
+                let solider_index = solider.Index
+                GameRules.SceneManager.change_secens(card.UUID,card.Scene.SceneName,solider_index)
+                GameRules.SceneManager.change_secens(solider.UUID,solider.Scene.SceneName,card_index)
+            }
         });
         CustomGameEventManager.RegisterListener("C2S_GET_SCENES", (_, event) => {
             switch (event.get) {
@@ -588,14 +650,13 @@ export class ScenesManager {
         });
         CustomGameEventManager.RegisterListener('C2S_GET_CANSPACE', (_, event) => {
             const table = {};
-            const GoUp = (this.GetGoUpScene(event.PlayerID) as GoUp).getbrachoption();
-            const LaidDown = (this.GetLaidDownScene(event.PlayerID) as LaidDown).getbrachoption();
-            const Midway = (this.GetMidwayScene(event.PlayerID) as Midway).getbrachoption();
+            const GoUp = (this.GetGoUpScene(event.PlayerID) as GoUp).getbrachoption(event.uuid);
+            const LaidDown = (this.GetLaidDownScene(event.PlayerID) as LaidDown).getbrachoption(event.uuid);
+            const Midway = (this.GetMidwayScene(event.PlayerID) as Midway).getbrachoption(event.uuid);
             table[0] = GoUp;
             table[1] = Midway;
             table[2] = LaidDown;
             print("分路打印");
-            DeepPrintTable(table);
             CustomGameEventManager.Send_ServerToPlayer(PlayerResource.GetPlayer(event.PlayerID), "S2C_SEND_CANSPACE", table);
         });
     }
@@ -727,7 +788,7 @@ export class ScenesManager {
     /**牌改变场景*/
     change_secens(uuid: string, to: string, index?: number, update?: boolean) {
         const card = this.All[uuid];
-        const playerid = card.PlayerID;
+        const playerid = card.PlayerID; 
 
         print(card.UUID, "要去", to);
         switch (to) {
@@ -793,6 +854,34 @@ export class ScenesManager {
                 break;
             }
         }
+        return card
+    }
+
+    /**获取字符串对应的场景 */
+    GetScenes(ScneseString:string,playerid:PlayerID){
+            switch (ScneseString) {
+                case 'HAND': {
+                    return this.GetHandsScene(playerid)
+                }
+                case 'MIDWAY': {
+                    return this.GetMidwayScene(playerid)
+                }
+                case 'LAIDDOWN': {
+                    return this.GetLaidDownScene(playerid)
+                }
+                case 'GOUP': {
+                    return this.GetGoUpScene(playerid)
+                }
+                case 'Ability': {
+                    return this.GetAbilityScene(playerid)
+                }
+                case 'Grave': {
+                    return this.GetGraveScene(playerid)
+                }
+                case 'HIDE': {
+                    return this.GetHideScene(playerid)
+                }
+            }
     }
 
     SetCardheapsScene(Scene: Cardheaps) {

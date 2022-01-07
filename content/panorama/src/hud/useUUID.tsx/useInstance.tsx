@@ -8,7 +8,7 @@ export enum COMPOENT_FUNCTION {
     'horizontalArrangement'= 'horizontalArrangement',
 } 
 
-export const useInstance = (name:string,uuid:string|undefined,css:Partial<VCSSStyleDeclaration>,send:any,group?:string):ComponentNode|undefined =>{
+export const useInstance = (name:string,uuid:string|undefined,css:Partial<VCSSStyleDeclaration>,send:any,group?:string):{conponent:ComponentNode,up:number} =>{
     const [_updata,_set_update] = useState(0)
     const [component,set_compoent] = useState<ComponentNode>()
     
@@ -23,6 +23,10 @@ export const useInstance = (name:string,uuid:string|undefined,css:Partial<VCSSSt
         set_compoent(ConpoentDataContainer._instance.UuidGetNode(uuid))
     },[_updata])
 
+    if(name == "Card_container"){
+        $.Msg(_updata)
+    }
 
-    return component
+
+    return {conponent:component!,up:_updata}
 }

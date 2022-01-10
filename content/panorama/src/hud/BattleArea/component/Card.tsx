@@ -89,6 +89,7 @@ const Machine = createMachine({
         },
         hidden_area:{
             entry:"hidden_area_entry",
+            on:{toHAND:"hand"},
             exit:"hidden_area_exit"
         }
     }
@@ -192,6 +193,7 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
             },
             hidden_area_exit:()=>{
                 dummyoperate('remove',prefix + "hidden_area" + preindex.current )
+                dummy.current?.RemoveClass("hide")
             }
         }
     })
@@ -539,7 +541,8 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
              <Label text={props.uuid} className={"uuid"}/>
               <Panel ref={Panel=>frame.current = Panel} className={"card_frame"}/>
               <Panel style={{width:'90%',height:"90%",align:'center center'}}>
-              <DOTAAbilityImage abilityname={"elder_titan_echo_stomp"} className={'abilityimage'}/>
+              <DOTAAbilityImage abilityname={(GameUI?.CustomUIConfig() as any)?.Ability?.CardGame[state.Id]?.originname ?? ""} className={'abilityimage'}/>
+              <Label text={(GameUI?.CustomUIConfig() as any)?.Ability?.CardGame[state.Id]?.remark ?? ""}/>
         </Panel>
         </Panel>
         </>
@@ -582,6 +585,9 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
         }else{
             dummy.current?.RemoveClass("hide")
         }
+        if(state.Scene == "REMOVE"){
+            return <></>
+        }
         if(state.Scene == "HAND" && Players.GetLocalPlayer() != props.owner){
             return You_hand()
         }
@@ -595,7 +601,7 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
             >
                   <EquipmentManager uuid={props.uuid}/>
                   <Label hittest={false} text={"id:"+state.Id + "|" + props.uuid} className={"uuid"}/>
-                  <DOTAHeroImage hittest={false}  className={"heroimage"} heroimagestyle={'portrait'} heroid={id.current as HeroID} />
+                  <DOTAHeroImage hittest={false}  className={"heroimage"} heroimagestyle={'portrait'} heroname={(GameUI.CustomUIConfig() as any).CardHero.CardGame[state.Id].name} />
                   <Panel hittest={false}  className={"threeDimensional"}>
                 <Panel hittest={false}  className={"attack"}>
                     <Label hittest={false}  text={attribute?.attack}/>

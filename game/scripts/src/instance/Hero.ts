@@ -60,10 +60,10 @@ export class Hero extends Unit{
         return table
     }
 
-    override call_death(){
+    call_death(){
         CustomGameEventManager.Send_ServerToAllClients("S2C_SEND_DEATH_ANIMATION",{uuid:this.UUID})
-        Timers.CreateTimer(1.5,()=>{
-            this.Scene.CaSceneManager.change_secens(this.UUID,"Grave",-1)
+        Timers.CreateTimer(1,()=>{
+            super.call_death()
         })
     }
 

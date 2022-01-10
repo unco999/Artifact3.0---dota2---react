@@ -12,6 +12,7 @@ import { Stack } from "../structure/Stack";
 import { Solider, Unit } from "./Unit";
 import "./Ability";
 import { brash_solidier } from "../feature/brush_solidier";
+import { BATTLE_BRACH_STATE } from "../Manager/nettablefuc";
 
 type PlayerScene = Record<number, Scenes | BattleArea>;
 
@@ -290,6 +291,11 @@ export abstract class BattleArea extends Scenes {
 
     index_find(index: number) {
         return this.CardList[index];
+    }
+
+    /**若本路线满  返回ture */
+    isFull(){
+        return !this.CardList.includes(-1)
     }
 
     shuffle() {
@@ -628,13 +634,16 @@ export class ScenesManager {
         //         return 10
         //     },[])
         // }
+        /**上英雄卡牌时候   附带小兵刷新  如本路线为满  就不上小兵 */
         CustomGameEventManager.RegisterListener("C2S_CARD_CHANGE_SCENES", (_, event) => {
-            print("有牌要改變場景", event.to_scene, "改變的index為", event.index);
             if (!GameRules.gamemainloop.filter) return;
             const card = this.change_secens(event.uuid, event.to_scene, event.index);
-            const newScenes = GameRules.SceneManager.GetScenes(event.to_scene,event.PlayerID);
+            const newScenes = GameRules.SceneManager.GetScenes(event.to_scene,event.PlayerID) as BattleArea;
+            GameRules.gamemainloop.small_solider_tag[event.PlayerID] = true
+            /** 本路线满了 不刷小兵*/
+            if(newScenes.isFull()) return;
             const solider = GameRules.brash_solidier.AutoSolider(event.PlayerID,newScenes as BattleArea)
-            if(RollPercentage(100)){
+            if(RollPercentage(50)){
                 let card_index =card.Index
                 let solider_index = solider.Index
                 GameRules.SceneManager.change_secens(card.UUID,card.Scene.SceneName,solider_index)
@@ -660,6 +669,22 @@ export class ScenesManager {
             CustomGameEventManager.Send_ServerToPlayer(PlayerResource.GetPlayer(event.PlayerID), "S2C_SEND_CANSPACE", table);
         });
     }
+
+    /**分路实例选择器 */
+    fitler(option:BATTLE_BRACH_STATE,PlayerID:PlayerID){
+        switch(option){
+            case "1":{
+                return GameRules.SceneManager.GetGoUpScene(PlayerID)
+            }
+            case "2":{
+                return GameRules.SceneManager.GetMidwayScene(PlayerID)
+            }
+            case "3":{
+                return GameRules.SceneManager.GetLaidDownScene(PlayerID)
+            }
+        }
+    }
+
 
     //**获得一个当前单位能加入的索引 */
     getoptionbrach() {

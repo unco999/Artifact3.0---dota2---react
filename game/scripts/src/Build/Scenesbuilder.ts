@@ -64,23 +64,37 @@ export class ScenesBuildbehavior {
     }
 
     static HeapsBuild(PlayerID:PlayerID){
-        for(let i = 0 ; i < 10 ; i++){
-            const _equit = new EquipCard({Id:math.random() > 0.5 ? "item_robe" : "item_blink",Index:1,PlayerID:PlayerID},GameRules.SceneManager.GetCardheapsScene(PlayerID))
-            GameRules.SceneManager.global_add(_equit.UUID,_equit)
-            GameRules.SceneManager.change_secens(_equit.UUID,"HAND");
-        }
-        for(let i = 0 ; i < 25 ; i++){
-            const SamallSkillcard = new SmallSkill({"Index":i,Id:i.toString() + ((math.random() > 0.2) ? "trick" : 2),'PlayerID':PlayerID},GameRules.SceneManager.GetCardheapsScene(PlayerID))
-            const TrickSkillcard = new TrickSkill({"Index":i,Id:i.toString() + ((math.random() > 0.2) ? "trick" : 2),'PlayerID':PlayerID},GameRules.SceneManager.GetCardheapsScene(PlayerID))
-            GameRules.SceneManager.global_add(SamallSkillcard.UUID,SamallSkillcard)
-            GameRules.SceneManager.global_add(TrickSkillcard.UUID,TrickSkillcard)
+        // for(let i = 0 ; i < 10 ; i++){
+        //     const _equit = new EquipCard({Id:math.random() > 0.5 ? "item_robe" : "item_blink",Index:1,PlayerID:PlayerID},GameRules.SceneManager.GetCardheapsScene(PlayerID))
+        //     GameRules.SceneManager.global_add(_equit.UUID,_equit)
+        //     GameRules.SceneManager.change_secens(_equit.UUID,"HAND");
+        // }
+        for(let i = 0 ; i < 3 ; i++){
+                const SamallSkillcard = new SmallSkill({"Index":i,Id:i.toString() + ((math.random() > 0.2) ? "trick" : 2),'PlayerID':PlayerID},GameRules.SceneManager.GetCardheapsScene(PlayerID))
+                const TrickSkillcard = new TrickSkill({"Index":i,Id:i.toString() + ((math.random() > 0.2) ? "trick" : 2),'PlayerID':PlayerID},GameRules.SceneManager.GetCardheapsScene(PlayerID))
+                GameRules.SceneManager.global_add(SamallSkillcard.UUID,SamallSkillcard)
+                GameRules.SceneManager.global_add(TrickSkillcard.UUID,TrickSkillcard)
         }
         const _table = CustomNetTables.GetTableValue("Card_group_construction_phase",'herobrach')[PlayerID.toString()]
+        const hero_index_list:Record<number,string[]> = {[GameRules.Blue.GetPlayerID()]:[],[GameRules.Red.GetPlayerID()]:[]}
         for(const brach in _table){
             for(const index in _table[brach]){
-                const hero = new Hero({Id:RandomInt(0,20).toString(),Index:-1,PlayerID:PlayerID},GameRules.SceneManager.GetCardheapsScene(PlayerID))
+                const hero = new Hero({Id:_table[brach][index],Index:-1,PlayerID:PlayerID},GameRules.SceneManager.GetCardheapsScene(PlayerID))
                 GameRules.SceneManager.global_add(hero.UUID,hero)
                 GameRules.SceneManager.change_secens(hero.UUID,this.fitler(brach,PlayerID).SceneName);
+                hero_index_list[PlayerID].push(hero.Id)
+            }
+        }
+        for(const playerid in hero_index_list){
+            for(const heroid of hero_index_list[playerid]){
+                for(let i = 0 ; i < 3 ; i++){
+                    const ability1className = GameRules.KV.GetCardDataKV(Number(heroid)).ability1
+                    const ability2className = GameRules.KV.GetCardDataKV(Number(heroid)).ability2
+                    const SamallSkillcard = new SmallSkill({"Index":i,Id:ability1className,'PlayerID':PlayerID},GameRules.SceneManager.GetCardheapsScene(PlayerID))
+                    const TrickSkillcard = new TrickSkill({"Index":i,Id:ability2className,'PlayerID':PlayerID},GameRules.SceneManager.GetCardheapsScene(PlayerID))
+                    GameRules.SceneManager.global_add(SamallSkillcard.UUID,SamallSkillcard)
+                    GameRules.SceneManager.global_add(TrickSkillcard.UUID,TrickSkillcard)
+                }
             }
         }
         

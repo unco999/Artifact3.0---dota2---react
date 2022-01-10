@@ -1,12 +1,203 @@
 // generate with Xavier's kv generator https://github.com/XavierCHN/x-template
 "CardGame" {
 	"1" {
-		"name" "test"
-		"attack" "10"
-		"arrmor" "10"
+		"name" "npc_dota_hero_zuus"
+		"attack" "6"
+		"arrmor" "0"
 		"health" "10"
-		"ability1" "test_ability"
-		"ability2" "test_ability"
+		"ability1" "SmallSkill_leiji"
+		"ability2" "TrickSkill_leishenzhinu"
+		"remark" "宙斯"
+
+	}
+	"2" {
+		"name" "npc_dota_hero_legion_commander"
+		"attack" "7"
+		"arrmor" "1"
+		"health" "9"
+		"ability1" "SmallSkill_juedou"
+		"ability2" "TrickSkill_qianggong"
+		"remark" "军团"
+
+	}
+	"3" {
+		"name" "npc_dota_hero_sniper"
+		"attack" "6"
+		"arrmor" "0"
+		"health" "9"
+		"ability1" "SmallSkill_baotou"
+		"ability2" "TrickSkill_ansha"
+		"remark" "火枪"
+
+	}
+	"4" {
+		"name" "npc_dota_hero_phantom_assassin"
+		"attack" "7"
+		"arrmor" "1"
+		"health" "9"
+		"ability1" "SmallSkill_huanyingtuxi"
+		"ability2" "TrickSkill_encijietuo"
+		"remark" "幻影刺客"
+
+	}
+	"5" {
+		"name" "npc_dota_hero_axe"
+		"attack" "6"
+		"arrmor" "2"
+		"health" "8"
+		"ability1" "SmallSkill_taotaizhiren"
+		"ability2" "TrickSkill_kuangzhanshizhihou"
+		"remark" "斧王"
+
+	}
+	"6" {
+		"name" "npc_dota_hero_winter_wyvern"
+		"attack" "6"
+		"arrmor" "0"
+		"health" "10"
+		"ability1" "SmallSkill_yanhanzhuoshao"
+		"ability2" "TrickSkill_handongzuzhou"
+		"remark" "冰龙"
+
+	}
+	"7" {
+		"name" "npc_dota_hero_omniknight"
+		"attack" "5"
+		"arrmor" "1"
+		"health" "9"
+		"ability1" "SmallSkill_xili"
+		"ability2" "TrickSkill_shouhutianshi"
+		"remark" "全能骑士"
+
+	}
+	"8" {
+		"name" "npc_dota_hero_luna"
+		"attack" "7"
+		"arrmor" "0"
+		"health" "10"
+		"ability1" "SmallSkill_longpizhan"
+		"ability2" "TrickSkill_mieshenzhan"
+		"remark" "露娜"
+
+	}
+	"9" {
+		"name" "npc_dota_hero_enigma"
+		"attack" "5"
+		"arrmor" "1"
+		"health" "8"
+		"ability1" "SmallSkill_emozhuanhua"
+		"ability2" "TrickSkill_heidong"
+		"remark" "谜团"
+
+	}
+	"10" {
+		"name" "npc_dota_hero_windrunner"
+		"attack" "6"
+		"arrmor" "1"
+		"health" "9"
+		"ability1" "SmallSkill_suboji"
+		"ability2" "TrickSkill_jizhonghuoli"
+		"remark" "风行者"
+
+	}
+	"11" {
+		"name" "npc_dota_hero_furion"
+		"attack" "6"
+		"arrmor" "0"
+		"health" "10"
+		"ability1" "SmallSkill_chuansong"
+		"ability2" "TrickSkill_zirandezhaohuan"
+		"remark" "先知"
+
+	}
+	"12" {
+		"name" "npc_dota_hero_kunkka"
+		"attack" "6"
+		"arrmor" "1"
+		"health" "11"
+		"ability1" "SmallSkill_hongliu"
+		"ability2" "TrickSkill_youlingchuan"
+		"remark" "昆卡"
+
+	}
+	"13" {
+		"name" "npc_dota_hero_terrorblade"
+		"attack" "5"
+		"arrmor" "0"
+		"health" "9"
+		"ability1" "SmallSkill_huohuan"
+		"ability2" "TrickSkill_hunduan"
+		"remark" "恐怖利刃"
+
+	}
+	"14" {
+		"name" "npc_dota_hero_tidehunter"
+		"attack" "5"
+		"arrmor" "2"
+		"health" "8"
+		"ability1" "SmallSkill_julang"
+		"ability2" "TrickSkill_huimie"
+		"remark" "潮汐"
+
+	}
+	"15" {
+		"name" "npc_dota_hero_keeper_of_the_light"
+		"attack" "6"
+		"arrmor" "0"
+		"health" "11"
+		"ability1" "SmallSkill_zhimangzhiguang"
+		"ability2" "TrickSkill_chongjibo"
+		"remark" "光法"
+
+	}
+	"16" {
+		"name" "npc_dota_hero_pugna"
+		"attack" "6"
+		"arrmor" "0"
+		"health" "9"
+		"ability1" "SmallSkill_shengmingjiqu"
+		"ability2" "TrickSkill_youminghongbao"
+		"remark" "帕格纳"
+
+	}
+	"17" {
+		"name" "npc_dota_hero_spirit_breaker"
+		"attack" "7"
+		"arrmor" "1"
+		"health" "9"
+		"ability1" "SmallSkill_julizhongji"
+		"ability2" "TrickSkill_anyingchongchi"
+		"remark" "裂魂人"
+
+	}
+	"18" {
+		"name" "npc_dota_hero_rattletrap"
+		"attack" "5"
+		"arrmor" "1"
+		"health" "10"
+		"ability1" "SmallSkill_zhaominghuojian"
+		"ability2" "TrickSkill_fashegouzhua"
+		"remark" "发条"
+
+	}
+	"19" {
+		"name" "npc_dota_hero_beastmaster"
+		"attack" "5"
+		"arrmor" "1"
+		"health" "10"
+		"ability1" "SmallSkill_yexingzhaohuanyezhu"
+		"ability2" "TrickSkill_yexingzhaohuanzhanying"
+		"remark" "兽王"
+
+	}
+	"20" {
+		"name" "npc_dota_hero_tinker"
+		"attack" "6"
+		"arrmor" "0"
+		"health" "11"
+		"ability1" "SmallSkill_redaofeidan"
+		"ability2" "TrickSkill_jixiexingjun"
+		"remark" "修补匠"
 
 	}
 

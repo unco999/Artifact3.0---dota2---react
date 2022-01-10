@@ -18,7 +18,7 @@ export class GamaEvent_All_register{
             const start = redmidway.quantityOfChessPieces > bluemidway.quantityOfChessPieces ? redmidway : bluemidway
             start.foreach(card=>{
                const target = card.Scene.find_oppose().IndexGet(card.Index) as Unit
-               print(target,"找到的target为")
+               print("攻击方",card.UUID,"受害方",target?.UUID)
                const _damage = new damage(card as Unit,target)
                _damage.attacklement()
             })

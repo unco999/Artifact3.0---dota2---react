@@ -4,7 +4,7 @@ import { useNetTableValues } from "react-panorama";
 export const Main = () =>{
     const data = useNetTableValues("GameMianLoop")
     const [update,setupdate] = useState<boolean>(false)
-
+    
     useEffect(()=>{
         $.Msg(data)
         $.Schedule(1,()=>setupdate(value=>!value))

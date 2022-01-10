@@ -1,6 +1,8 @@
 import { ScenesBuildbehavior } from "../Build/Scenesbuilder";
+import { damage } from "../feature/damage";
 import { AbilityCard } from "../instance/Ability";
-import { Cardheaps, Grave, Hand, Hide, Scenes } from "../instance/Scenes";
+import { BattleArea, Cardheaps, Grave, Hand, Hide, Scenes } from "../instance/Scenes";
+import { Unit } from "../instance/Unit";
 import { Timers } from "../lib/timers";
 import { LinkedList } from "../structure/Linkedlist";
 import { BATTLE_BRACH_STATE, clear_option_mask_state, get_current_battle_brach, loop_end_clear, set_current_battle_brach, set_current_operate_brach, Set_option_mask_state, STRATEGY_BRACH_STATE } from "./nettablefuc";
@@ -13,10 +15,10 @@ export enum 游戏循环 {
     "商店购买阶段"
 }
 
-const 商店购买时间 = 2
-const 英雄部署时间 = 989999
-const 战斗结算时间 = 2
-const 策略时间 = 2
+const 商店购买时间 = 5
+const 英雄部署时间 = 5
+const 战斗结算时间 = 5
+const 策略时间 = 5
 
 //第一回合六張牌  5小1大  第一回合結束  商店功能花錢買牌(2元买大技能 1元买小技能)  然後英雄分錄  分完路發兩張   
 
@@ -109,9 +111,32 @@ export class heroDeploymentPhase extends GameLoopState {
             GameRules.SceneManager.change_secens(grave_card.UUID,"HAND",undefined,false)
         })
         blue_Grave.foreach(grave_card=>{
-            print("循环了")
+            print("蓝方墓地的卡牌有=>",grave_card.UUID,"id为",grave_card.Id)
             GameRules.SceneManager.change_secens(grave_card.UUID,"HAND",undefined,false)
         })
+    }
+
+    /** 把所有hide场景的牌拉回来 */
+    hide_reload(){
+        const red_hide = GameRules.SceneManager.GetHideScene(GameRules.Red.GetPlayerID()) as Hide
+        const blue_hide = GameRules.SceneManager.GetHideScene(GameRules.Blue.GetPlayerID()) as Hide
+        red_hide.foreach(card =>{
+            GameRules.SceneManager.change_secens(card.UUID,"HAND",undefined,false)
+        })
+        blue_hide.foreach(card =>{
+            GameRules.SceneManager.change_secens(card.UUID,"HAND",undefined,false)
+        })
+        // const red_hand = GameRules.SceneManager.GetHandsScene(GameRules.Red.GetPlayerID()) as Hand
+        // const blue_hand = GameRules.SceneManager.GetHandsScene(GameRules.Blue.GetPlayerID()) as Hand
+        // red_hand.update()
+        // blue_hand.update()
+        
+    }
+
+    exit(){
+        super.exit()
+        print("部署阶段退出了")
+        this.hide_reload()
     }
 
     run() {
@@ -348,6 +373,19 @@ export class faultCard extends GameLoopState {
         }
     }
 
+
+    exit(){
+        super.exit()
+        print("当前结算阶段",get_current_battle_brach())
+        if(!this.host.small_solider_tag[GameRules.Red.GetPlayerID()]){
+            const red_solider = GameRules.brash_solidier.AutoSolider(GameRules.Red.GetPlayerID(),ScenesBuildbehavior.fitler(get_current_battle_brach() == "4" ? "0" : get_current_battle_brach(),GameRules.Red.GetPlayerID()) as BattleArea )
+        }
+        if(!this.host.small_solider_tag[GameRules.Blue.GetPlayerID()]){
+            const blue_solider = GameRules.brash_solidier.AutoSolider(GameRules.Blue.GetPlayerID(),ScenesBuildbehavior.fitler(get_current_battle_brach() == "4" ? "0" : get_current_battle_brach(),GameRules.Blue.GetPlayerID()) as BattleArea )
+        }
+        
+    }
+
 }
 
 export class injurySettlementStage extends GameLoopState {
@@ -361,9 +399,35 @@ export class injurySettlementStage extends GameLoopState {
     }
 
     entry(){
-        super.entry()
-        print("当前进入",this.settlementRoute,"路结算")
-        set_current_battle_brach(this.settlementRoute)
+        Timers.CreateTimer(1,()=>{
+            super.entry()
+            print("当前进入",this.settlementRoute,"路结算")
+            set_current_battle_brach(this.settlementRoute)
+            this.settlementModule()
+        })
+    }
+
+    /**战斗结算算法 */
+    settlementModule(){
+            const redrouter = GameRules.SceneManager.fitler(this.settlementRoute,GameRules.Red.GetPlayerID())
+            const bluerouter = GameRules.SceneManager.fitler(this.settlementRoute,GameRules.Blue.GetPlayerID())
+            const start = redrouter.quantityOfChessPieces >= bluerouter.quantityOfChessPieces ? redrouter : bluerouter
+            if(IsInToolsMode()){
+                redrouter.quantityOfChessPieces > bluerouter.quantityOfChessPieces ? print("当前红色比蓝色多,红色先攻击") : print("当前蓝色比红色多,蓝色先攻击")
+            }
+            start.foreach(card=>{
+               const target = card.Scene.find_oppose().IndexGet(card.Index) as Unit
+               print("攻击方",card.UUID,"受害方",target?.UUID)
+               const _damage = new damage(card as Unit,target)
+               _damage.attacklement()
+            })
+    }
+
+    exit(){
+        const redrouter = GameRules.SceneManager.fitler(this.settlementRoute,GameRules.Red.GetPlayerID()) as BattleArea
+        const bluerouter = GameRules.SceneManager.fitler(this.settlementRoute,GameRules.Blue.GetPlayerID()) as BattleArea
+        redrouter.call_cetner()
+        bluerouter.call_cetner()
     }
 
     run(){
@@ -409,6 +473,7 @@ export class BattleGameLoop {
     RoundCount: number = 0;
     history: history = {};
     init: boolean;
+    small_solider_tag:Record<number,boolean> = {}
 
     constructor() {
         

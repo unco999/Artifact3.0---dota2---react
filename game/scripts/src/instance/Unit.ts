@@ -15,6 +15,12 @@ export class Unit extends Card{
 
     constructor(CardParameter:CardParameter,Scene:ICAScene,type:CARD_TYPE){
         super(CardParameter,Scene,type)
+        if(type == "Hero"){
+            const data = GameRules.KV.GetCardDataKV(Number(CardParameter.Id))
+            this.attack = data.attack
+            this.arrmor = data.arrmor
+            this.heal = data.health
+        }
     }
 
 
@@ -87,7 +93,7 @@ export class Unit extends Card{
     call_death(){
             const scene = this.Scene
             if(scene instanceof BattleArea){
-                print("有牌死亡了")
+                print("有牌死亡了,id为=>",this.UUID)
                 this.Scene.CaSceneManager.change_secens(this.UUID,"Grave",-1)
             }else{
                 print("你当前不在战斗区域")
@@ -147,7 +153,7 @@ export class Solider extends Unit{
     override call_death(){  
         CustomGameEventManager.Send_ServerToAllClients("S2C_SEND_DEATH_ANIMATION",{uuid:this.UUID})
         Timers.CreateTimer(1.5,()=>{
-            this.Scene.CaSceneManager.change_secens(this.UUID,"Grave",-1)
+            this.Scene.CaSceneManager.change_secens(this.UUID,"REMOVE",-1)
         })
     }
 

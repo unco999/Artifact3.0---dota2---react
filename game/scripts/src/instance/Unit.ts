@@ -1,7 +1,7 @@
 import { Timers } from "../lib/timers";
 import { LinkedList } from "../structure/Linkedlist";
 import { Card, CardParameter, CARD_TYPE, professionalMagicCard } from "./Card";
-import { CAModifiler } from "./Modifiler";
+import { CAModifiler, HOOK } from "./Modifiler";
 import { BattleArea, GoUp, Hand, ICAScene, Scenes } from "./Scenes";
 
 
@@ -23,7 +23,13 @@ export class Unit extends Card{
         }
     }
 
-
+    hook(hook:HOOK){
+        const list = []
+        for(const modifiler of this.Modifilers){
+            list.push(...modifiler.call_hook(hook))
+        }
+        return list
+    }
 
     /**攻击结算 */
     attack_settlement(){
@@ -48,14 +54,14 @@ export class Unit extends Card{
 
     addmodifiler(modifiler:CAModifiler){
         this.Modifilers.prepend(modifiler)
-        modifiler.EntryExecution()
+        modifiler.call_hook(HOOK.创造时)
         CustomGameEventManager.Send_ServerToAllClients("S2C_SEND_ATTRIBUTE",this.attribute)
     }
 
     removeModifiler(name:string){
         for(const modifiler of this.Modifilers){
             if(modifiler.name == name){
-                modifiler.roundExitExecution()
+                modifiler.call_hook(HOOK.销毁时)
                 if(this.Modifilers.length == 1){
                     this.Modifilers = new LinkedList()
                 }else{
@@ -143,11 +149,13 @@ export class Unit extends Card{
 
 
 export class Solider extends Unit{
-    HasModifiler:LinkedList<CAModifiler> = new LinkedList() //单位拥有的modiflier
 
     constructor(CardParameter:CardParameter,Scene:ICAScene){
         super(CardParameter,Scene,'Solider');
         (this.Scene as GoUp).AutoAddCard(this,this.Index)
+        this.attack = 3
+        this.arrmor = 0
+        this.heal = 6
     }
 
     override call_death(){  

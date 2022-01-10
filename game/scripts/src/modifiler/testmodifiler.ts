@@ -1,34 +1,33 @@
 import { Hero } from "../instance/Hero";
-import { CAModifiler, modifilertype } from "../instance/Modifiler";
+import { CAModifiler, HOOK, modifilertype } from "../instance/Modifiler";
 
-/**春哥甲modifier */
 export class item_robe_modifiler extends CAModifiler{
     name: string = "item_robe_modifiler";
     modifilertype: modifilertype = modifilertype.无;
     duration: number = -1;
     debuff: boolean = false;
-    thisHero: Hero ;
 
-    constructor(Hero:Hero){
-        super()
-        this.thisHero = Hero
+    constructor(){
+        super(HOOK.创造时,"item_robe_modifiler")
         print("创造了装备的modifiler")
     }
 
-    roundExecution() {
-    }
+    constructorinstance = item_robe_modifiler
 
-    EntryExecution(){
-        this.thisHero.max_heal += this.influenceMaxheal
-        this.thisHero.heal = this.thisHero.max_heal
-    }
-
-    roundExitExecution(){
-        this.thisHero.max_heal -= this.influenceMaxheal
-        if(this.thisHero.heal > this.thisHero.max_heal){
+    register_hook_event() {
+        this.setHookEvent(HOOK.创造时,()=>{
+            this.thisHero.max_heal += this.influenceMaxheal
             this.thisHero.heal = this.thisHero.max_heal
-        }
+            return false})
+        this.setHookEvent(HOOK.销毁时,()=>{
+            this.thisHero.max_heal -= this.influenceMaxheal
+            if(this.thisHero.heal > this.thisHero.max_heal){
+                this.thisHero.heal = this.thisHero.max_heal
+            }
+            return false
+        })
     }
+
 
     get influenceMaxheal(): any {
         return 55

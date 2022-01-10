@@ -2,8 +2,9 @@ import { Unit } from "./Unit";
 import { Timers } from "../lib/timers";
 import { LinkedList } from "../structure/Linkedlist";
 import { CardParameter } from "./Card";
-import { Equip, EquipContainer, HOOK } from "./Equip";
+import { Equip, EquipContainer } from "./Equip";
 import { Hand, ICAScene } from "./Scenes";
+import { HOOK } from "./Modifiler";
 
 export class Hero extends Unit{
 
@@ -33,12 +34,9 @@ export class Hero extends Unit{
                 const EquipModifilerName = this.Equips[event.index].id + "_modifiler"
                 this.removeModifiler(EquipModifilerName)
             }
-            this.Equips[event.index] = EquipContainer.instance.GetEquit(event.item)
+            const equip = EquipContainer.instance.GetEquit(event.item)
+            equip.upper(this)
             CustomGameEventManager.Send_ServerToAllClients("S2C_SEND_UP_EQUIMENT_SHOW",{uuid:this.UUID,index:event.index,item:event.item})
-            const callback = this.Equips[event.index].call_hook(HOOK.装备物品及时生效)
-            callback.forEach(value=>{
-                value({my:this})
-            })
             print("新物品已装备成功")
         })
         CustomGameEventManager.RegisterListener("C2S_GET_EQUIP",(_,event)=>{
@@ -50,14 +48,6 @@ export class Hero extends Unit{
             }
             CustomGameEventManager.Send_ServerToPlayer(PlayerResource.GetPlayer(this.PlayerID),"S2C_SEND_EQUIP",{data:table,uuid:this.UUID})
         })
-    }
-
-    GetEquipModifiler<T>(hook:HOOK){
-        const table:Array<(T:T)=>boolean> = []
-        for(const equip in this.Equips){
-            table.push(...this.Equips[equip].call_hook(hook))
-        }
-        return table
     }
 
     call_death(){

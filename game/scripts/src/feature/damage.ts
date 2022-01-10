@@ -1,9 +1,9 @@
 import { Card } from "../instance/Card";
-import { HOOK, hook_parameter } from "../instance/Equip";
 import { Tower } from "../instance/Tower";
 import {Unit} from "../instance/Unit"
 import { Hero } from "../instance/Hero";
 import { Timers } from "../lib/timers";
+import { HOOK, hook_parameter } from "../instance/Modifiler";
 
 export class damage{
     damageA:Unit
@@ -34,7 +34,7 @@ export class damage{
     beforeTheAttackhookHero(props:hook_parameter[HOOK.攻击前]){
         let bool = true
         if(props.my.type && props.my.type == 'Hero'){
-           const callbacks =(props.my as Hero).GetEquipModifiler<hook_parameter[HOOK.攻击前]>(HOOK.攻击前)
+           const callbacks =(props.my as Hero).hook(HOOK.攻击前)
            callbacks.forEach(callback=>{
                bool = callback(props)
            })
@@ -45,7 +45,7 @@ export class damage{
     postTheAttackhookHero(props:hook_parameter[HOOK.攻击后]){
         let bool = false
         if(props.my.type && props.my.type == 'Hero'){
-           const callbacks = (props.my as Hero).GetEquipModifiler<hook_parameter[HOOK.攻击后]>(HOOK.攻击后)
+           const callbacks = (props.my as Hero).hook(HOOK.攻击后)
            callbacks.forEach(callback=>{
                bool = callback(props)
            })

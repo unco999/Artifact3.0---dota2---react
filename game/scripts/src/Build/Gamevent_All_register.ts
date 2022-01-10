@@ -1,6 +1,6 @@
 import { brash_solidier } from "../feature/brush_solidier";
 import { damage } from "../feature/damage";
-import { EquipCard, HOOK } from "../instance/Equip";
+import { EquipCard } from "../instance/Equip";
 import { Hand } from "../instance/Scenes";
 import { Unit } from "../instance/Unit";
 import { reloadable } from "../lib/tstl-utils";
@@ -48,19 +48,6 @@ export class GamaEvent_All_register{
             const _equit = new EquipCard({Id:"item_robe",Index:max_index,PlayerID:event.PlayerID},GameRules.SceneManager.GetCardheapsScene(event.PlayerID))
             GameRules.SceneManager.global_add(_equit.UUID,_equit)
             GameRules.SceneManager.change_secens(_equit.UUID,"HAND",6);
-        })
-        CustomGameEventManager.RegisterListener("C2S_SEND_TEST",()=>{
-           const a = HOOK.原始
-           const b = HOOK.释放技能后
-
-           const c = HOOK.原始 | HOOK.释放技能后
-           const d = c ^ HOOK.释放技能后
-           print("测试1")
-           print(a ^ b)
-
-           print("测试2")
-           print(d)
-            
         })
         // CustomGameEventManager.RegisterListener("C2S_TEST_STATE",(event)=>{
         //     GameRules.GameLoopState

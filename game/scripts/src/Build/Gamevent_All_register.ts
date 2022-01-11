@@ -1,8 +1,10 @@
 import { brash_solidier } from "../feature/brush_solidier";
 import { damage } from "../feature/damage";
-import { EquipCard } from "../instance/Equip";
-import { Hand } from "../instance/Scenes";
+import { EquipCard, EquipContainer } from "../instance/Equip";
+import { HOOK } from "../instance/Modifiler";
+import { Hand, Scenes } from "../instance/Scenes";
 import { Unit } from "../instance/Unit";
+import { Timers } from "../lib/timers";
 import { reloadable } from "../lib/tstl-utils";
 
 @reloadable
@@ -12,15 +14,29 @@ export class GamaEvent_All_register{
         CustomGameEventManager.RegisterListener("C2S_BRUSH_SOLIDER",()=>{
             GameRules.brash_solidier.brushTwoSoldiers() 
         })
+        CustomGameEventManager.RegisterListener("C2S_BUY_ITEM",(_,event)=>{
+            const item = event.itemname
+            const card = new EquipCard({Id:item,Index:-1,PlayerID:event.PlayerID},GameRules.SceneManager.GetCardheapsScene(event.PlayerID))
+            GameRules.SceneManager.global_add(card.UUID,card)
+            GameRules.SceneManager.update()
+            GameRules.SceneManager.change_secens(card.UUID,"HAND")
+            CustomGameEventManager.Send_ServerToAllClients("S2C_BRUSH_ITEM",{})
+        })
         CustomGameEventManager.RegisterListener("TEST_C2S_CALL_ATTACK",()=>{
             const redmidway = GameRules.SceneManager.GetMidwayScene(GameRules.Red.GetPlayerID())
             const bluemidway = GameRules.SceneManager.GetMidwayScene(GameRules.Blue.GetPlayerID())
             const start = redmidway.quantityOfChessPieces > bluemidway.quantityOfChessPieces ? redmidway : bluemidway
-            start.foreach(card=>{
-               const target = card.Scene.find_oppose().IndexGet(card.Index) as Unit
-               print("攻击方",card.UUID,"受害方",target?.UUID)
-               const _damage = new damage(card as Unit,target)
-               _damage.attacklement()
+            let index = 0
+            start.foreach((card:Unit)=>{
+                if(card.isAttackPreHook()){
+                   index += RandomFloat(1,2)
+                }
+                Timers.CreateTimer(index,()=>{
+                    const target = card.Scene.find_oppose().IndexGet(card.Index) as Unit
+                    print("攻击方",card.UUID,"受害方",target?.UUID)
+                    const _damage = new damage(card as Unit,target)
+                    _damage.attacklement()     
+                })
             })
         })
         //伤害动画测试

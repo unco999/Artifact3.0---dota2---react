@@ -1,7 +1,7 @@
 import { Unit } from "./Unit";
 import { Timers } from "../lib/timers";
 import { LinkedList } from "../structure/Linkedlist";
-import { CardParameter } from "./Card";
+import { Card, CardParameter } from "./Card";
 import { Equip, EquipContainer } from "./Equip";
 import { Hand, ICAScene } from "./Scenes";
 import { HOOK } from "./Modifiler";
@@ -50,10 +50,10 @@ export class Hero extends Unit{
         })
     }
 
-    call_death(){
+    call_death(source:Card){
         CustomGameEventManager.Send_ServerToAllClients("S2C_SEND_DEATH_ANIMATION",{uuid:this.UUID})
         Timers.CreateTimer(1,()=>{
-            super.call_death()
+            super.call_death(source)
         })
     }
 

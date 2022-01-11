@@ -1,4 +1,5 @@
 import { Timers } from "../lib/timers";
+import { add_cuurent_glod } from "../Manager/nettablefuc";
 import { LinkedList } from "../structure/Linkedlist";
 import { Card, CardParameter, CARD_TYPE, professionalMagicCard } from "./Card";
 import { CAModifiler, HOOK } from "./Modifiler";
@@ -23,6 +24,17 @@ export class Unit extends Card{
         }
     }
 
+    isAttackPreHook(){
+        for(const modifiler of this.Modifilers){
+            print("当前检查modifiler",modifiler.name)
+           if((modifiler.hook |= HOOK.攻击前) == modifiler.hook){
+               print("该单位有攻击前动画")
+                return true
+           }
+        }
+        return false
+    }
+
     hook(hook:HOOK){
         const list = []
         for(const modifiler of this.Modifilers){
@@ -40,11 +52,6 @@ export class Unit extends Card{
     register_gameevent(){
         //只有单位有死亡事件  给单位注册死亡事件 执行call death
         super.register_gameevent()
-        CustomGameEventManager.RegisterListener("TEST_C2S_DEATH",(_,event)=>{
-            if(this.UUID == event.uuid){
-                this.call_death()
-            }
-        })
         CustomGameEventManager.RegisterListener("C2S_GET_ATTRIBUTE",(_,event)=>{
             if(this.UUID == event.uuid){
                 CustomGameEventManager.Send_ServerToAllClients("S2C_SEND_ATTRIBUTE",this.attribute)
@@ -53,6 +60,7 @@ export class Unit extends Card{
     }
 
     addmodifiler(modifiler:CAModifiler){
+        modifiler.thisHero = this
         this.Modifilers.prepend(modifiler)
         modifiler.call_hook(HOOK.创造时)
         CustomGameEventManager.Send_ServerToAllClients("S2C_SEND_ATTRIBUTE",this.attribute)
@@ -96,11 +104,16 @@ export class Unit extends Card{
         return this.heal
     }
 
-    call_death(){
+    call_death(Source:Card){
             const scene = this.Scene
             if(scene instanceof BattleArea){
-                print("有牌死亡了,id为=>",this.UUID)
+                if(Source instanceof Unit){
+                    Source.hook(HOOK.杀死目标时)
+                    add_cuurent_glod(2,Source.PlayerID) 
+                }
+                this.hook(HOOK.死亡前)
                 this.Scene.CaSceneManager.change_secens(this.UUID,"Grave",-1)
+                this.hook(HOOK.死亡后)
             }else{
                 print("你当前不在战斗区域")
             }
@@ -131,10 +144,10 @@ export class Unit extends Card{
             return this.Modifilers.length > 0
         }
 
-        hurt(count:number){
+        hurt(count:number,damageSourece:Card){
             this.heal -= count
             if(this.GETheal < 1){
-                this.call_death()
+                this.call_death(damageSourece)
             }
             print(this.UUID,"收到了伤害,当前剩余生命值为",this.GETheal)
             CustomGameEventManager.Send_ServerToAllClients("S2C_SEND_ATTRIBUTE",this.attribute)
@@ -160,7 +173,7 @@ export class Solider extends Unit{
 
     override call_death(){  
         CustomGameEventManager.Send_ServerToAllClients("S2C_SEND_DEATH_ANIMATION",{uuid:this.UUID})
-        Timers.CreateTimer(1.5,()=>{
+        Timers.CreateTimer(2,()=>{
             this.Scene.CaSceneManager.change_secens(this.UUID,"REMOVE",-1)
         })
     }

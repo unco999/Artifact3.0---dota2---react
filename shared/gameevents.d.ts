@@ -68,4 +68,7 @@ declare interface CustomGameEventDeclarations {
     "C2S_TEST_SCENE_LINK":{SCENE:string}
     "C2S_GET_GRAVE_ARRAY":{}
     "S2C_SEND_GRAVE_ARRAY":string[]
+    "C2S_BUY_ITEM":{itemname:string}
+    "S2C_BRUSH_ITEM":{}
+    "S2C_BRUSH_ABILITY":{}
 }

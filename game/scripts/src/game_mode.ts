@@ -3,7 +3,7 @@ import { GamaEvent_All_register } from "./Build/Gamevent_All_register";
 import { energyBarManager } from "./feature/energyBar";
 import { select_the_prompt } from "./feature/select_the_prompt";
 import { spell_skill } from "./feature/spell_skill";
-import { Cardheaps, GoUp, Hand, LaidDown, Midway, ScenesManager } from "./instance/Scenes";
+import { BattleArea, Cardheaps, GoUp, Hand, LaidDown, Midway, ScenesManager } from "./instance/Scenes";
 import { TowerGeneralControl } from "./instance/Tower";
 import { Timers } from "./lib/timers";
 import { reloadable } from "./lib/tstl-utils";
@@ -12,6 +12,8 @@ import { ChooseHeroCardLoop, RedSelectstage } from "./System/ChooseHeroCard";
 import { KV } from "./System/KV";
 import './instance/Equip'
 import { brash_solidier } from "./feature/brush_solidier";
+import { add_cuurent_glod, BATTLE_BRACH_STATE } from "./Manager/nettablefuc";
+import './modifiler/testmodifiler'
 
 const heroSelectionTime = 0;
 
@@ -73,6 +75,7 @@ export class GameMode {
         // }
     }
 
+
     private game_rules_state_change() {
         let newState = GameRules.State_Get();
         if( newState == DOTA_GameState.DOTA_GAMERULES_STATE_PRE_GAME){
@@ -92,6 +95,8 @@ export class GameMode {
                 }
             }
             CustomNetTables.SetTableValue("Card_group_construction_phase","team",{red:GameRules.Red.GetPlayerID(),blue:GameRules.Blue.GetPlayerID()})
+            add_cuurent_glod(0,GameRules.Red.GetPlayerID())
+            add_cuurent_glod(0,GameRules.Blue.GetPlayerID())
             GameRules.energyBarManager = new energyBarManager()
             GameRules.ChooseHeroCardLoop = new ChooseHeroCardLoop() // 英雄轮询阶段
             GameRules.ChooseHeroCardLoop.SetcuurentsettingState = new RedSelectstage(1) // 暂时以红队开始选择  选牌次数为一次

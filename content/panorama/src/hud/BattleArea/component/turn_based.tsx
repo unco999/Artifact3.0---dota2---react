@@ -1,10 +1,12 @@
 import React, { useEffect, useMemo, useRef } from "react";
 import { useNetTableKey } from "react-panorama";
+import { ConpoentDataContainer } from "../../ConpoentDataContainer";
 
-export const Turnbased = (props:{owend:number}) =>{
+export const Turnbased = (props:{owend:number,red:number,blue:number}) =>{
     const RemainningTime = useNetTableKey("GameMianLoop","RemainingTime") ?? 0
     const current_oparation = useNetTableKey("GameMianLoop","current_operate_playerid") ?? {cuurent:""}
     const cuurent_loop_state = useNetTableKey("GameMianLoop","smallCycle") ?? {current:""}
+    const cuurent_gold = useNetTableKey("GameMianLoop",props.owend == props.red ? "red_gold" : "blue_gold") ?? {cuurent:0}
     const prefix = useMemo(()=> props.owend == Players.GetLocalPlayer() ? "my_" : "you_",[props])
     const ref = useRef<Panel|null>()
 
@@ -29,16 +31,22 @@ export const Turnbased = (props:{owend:number}) =>{
         return ()=>{$.Msg("还没有到你的回合大哥")}
     }
 
+    const openShop = () =>{
+        const container = ConpoentDataContainer.Instance.NameGetNode("equip_shop").current
+        $.Msg(container)
+        container.open()
+    }
+
 
     return <Panel className={prefix + "Turnbased"}>
         <Panel className={"defualt time"} onmouseover={panel=>$.DispatchEvent("DOTAShowTextTooltip",panel,"倒数计时")} onmouseout={panel=>$.DispatchEvent('DOTAHideTextTooltip')}>
         <Label text={label}/>
         </Panel>
         <Panel className={"defualt coin"} onmouseover={panel=>$.DispatchEvent("DOTAShowTextTooltip",panel,"你的金币呀大傻子")} onmouseout={panel=>$.DispatchEvent('DOTAHideTextTooltip')}>
-        <Label text={54}/>
+        <Label text={cuurent_gold?.cuurent?? 0}/>
         </Panel>
         <Panel className={"defualt frame"}>
-            <Panel className={"defualt skip "} onmouseover={panel=>$.DispatchEvent("DOTAShowTextTooltip",panel,"商店")} onmouseout={panel=>$.DispatchEvent('DOTAHideTextTooltip')}>
+            <Panel className={"defualt skip "} onactivate={()=>openShop()} onmouseover={panel=>$.DispatchEvent("DOTAShowTextTooltip",panel,"商店")} onmouseout={panel=>$.DispatchEvent('DOTAHideTextTooltip')}>
              <Label text={"SHOP"}/>
              </Panel>
              <Panel ref={panel => ref.current = panel} className={"defualt skip" } 

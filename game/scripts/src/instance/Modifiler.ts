@@ -1,6 +1,7 @@
 import { Card } from "./Card";
 import { Hero } from "./Hero";
 import { Tower } from "./Tower";
+import { Unit } from "./Unit";
 
 export enum modifilertype {
     "沉默" = 1,
@@ -10,8 +11,8 @@ export enum modifilertype {
 
 export function ca_register_modifiler() {
     return function(constructor:any){
-        const ability = new constructor() as CAModifiler
-        ModifilerContainer.instance.register(ability)
+        const modifiler = new constructor() as CAModifiler
+        ModifilerContainer.instance.register(modifiler)
     }
 }
 
@@ -39,7 +40,7 @@ export class ModifilerContainer{
 
 
 export enum HOOK{
-    原始 = 294912,
+    原始 = 0x00040000,
     攻击前 = 0x00000001,
     攻击后 = 0x00000002,
     回复前 = 0x00000004,
@@ -57,6 +58,7 @@ export enum HOOK{
     创造时 = 0x00004000,
     销毁时 = 0x00008000,
     装备时 = 0x00010000,
+    杀死目标时 = 0x00020000,
 }
 
 
@@ -78,14 +80,13 @@ export abstract class CAModifiler{
     modifilertype:modifilertype
     duration:number //持续回合数
     debuff:boolean //属于负增益吗?
-    thisHero:Hero
-    id:string
-    hook:number
+    thisHero:Unit
+    id:string;
+    hook:number = HOOK.原始
     hookEvent:Record<number,hookfuc[]> = {}
     abstract constructorinstance
 
-    constructor(hook:number,id:string){
-        this.hook = hook
+    constructor(id:string){
         this.id = id
         this.register_hook_event()
         /**测试时填写 */
@@ -103,6 +104,8 @@ export abstract class CAModifiler{
             this.hookEvent[hook] = []
         }
         this.hookEvent[hook].push(cb)
+        this.hook |= hook
+        print("当前该modifler的hook值为",this.hook)
     }
 
     call_hook(hook:HOOK){

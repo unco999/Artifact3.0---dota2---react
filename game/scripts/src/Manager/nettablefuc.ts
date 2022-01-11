@@ -36,6 +36,17 @@ export function set_current_battle_brach(BATTLE_BRACH_STATE:BATTLE_BRACH_STATE){
     CustomNetTables.SetTableValue("GameMianLoop","current_battle_brach",{cuurent:BATTLE_BRACH_STATE})
 }
 
+export function add_cuurent_glod(count:number,playerid:PlayerID){
+    const key = playerid == GameRules.Red.GetPlayerID() ? "red_gold" : "blue_gold"
+    let origin = CustomNetTables.GetTableValue("GameMianLoop",key)?.cuurent ?? 0
+    CustomNetTables.SetTableValue("GameMianLoop",key,{cuurent:origin += count})
+}
+
+export function get_cuurent_glod(count:number,playerid:PlayerID){
+    const key = playerid == GameRules.Red.GetPlayerID() ? "red_gold" : "blue_gold"
+    return CustomNetTables.GetTableValue("GameMianLoop",key).cuurent
+}
+
 export enum STRATEGY_BRACH_STATE{
     上路 = "1",
     中路 = "2",

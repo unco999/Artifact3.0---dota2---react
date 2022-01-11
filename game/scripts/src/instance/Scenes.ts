@@ -85,9 +85,10 @@ export class Scenes implements ICAScene {
         return Card;
     }
 
-    foreach(callback: (Card: Card) => void) {
+
+    foreach(callback: (Card: Card, index: number) => void) {
         for (const key in this.CardPool) {
-            callback(this.CardPool[key]);
+            callback(this.CardPool[key], +key);
         }
     }
 
@@ -122,11 +123,11 @@ export class Scenes implements ICAScene {
 
     /**打印当前分路的所有卡牌 */
     Print() {
-        const table = this.CardPool
-        for(const key in table){
-            const card = table[key]
-            print("当前分路",this.SceneName)
-            print("卡牌",card.UUID,"索引",card.Index)
+        const table = this.CardPool;
+        for (const key in table) {
+            const card = table[key];
+            print("当前分路", this.SceneName);
+            print("卡牌", card.UUID, "索引", card.Index);
         }
     }
 
@@ -144,9 +145,9 @@ export class Cardheaps extends Scenes {
         ICASceneManager.SetCardheapsScene(this);
     }
 
-    Remove(uuid:string){
-        print(uuid+"离开了牌堆")
-        super.Remove(uuid)
+    Remove(uuid: string) {
+        print(uuid + "离开了牌堆");
+        super.Remove(uuid);
     }
 
 
@@ -160,7 +161,7 @@ export class Cardheaps extends Scenes {
                 card = extract;
             }
         }
-        print("抽取了技能卡牌",card.UUID)
+        print("抽取了技能卡牌", card.UUID);
         return card;
     }
 
@@ -174,7 +175,7 @@ export class Cardheaps extends Scenes {
                 card = extract;
             }
         }
-        print("抽取了技能卡牌",card.UUID)
+        print("抽取了技能卡牌", card.UUID);
         return card;
     }
 
@@ -227,10 +228,10 @@ export class Hand extends Scenes {
                 bool = true;
                 GameRules.SceneManager.change_secens(card.UUID, "REMOVE");
                 this.Cardlinked.remove(card);
-                super.Remove(card.UUID)
+                super.Remove(card.UUID);
             }
         }
-        this.again_sort()
+        this.again_sort();
         return bool;
     }
 
@@ -239,11 +240,11 @@ export class Hand extends Scenes {
     }
 
     addCard(Card: Card) {
-        super.addCard(Card)
+        super.addCard(Card);
         Card.Scene = this;
         this.Cardlinked.append(Card);
-        Card.Index = this.Cardlinked.length
-        print(Card.UUID,"是现在的卡牌序列",Card.Index)
+        Card.Index = this.Cardlinked.length;
+        print(Card.UUID, "是现在的卡牌序列", Card.Index);
         return Card;
     }
 
@@ -251,13 +252,13 @@ export class Hand extends Scenes {
         if (this.Cardlinked.length == 1) {
             this.Cardlinked = new LinkedList();
         } else {
-            print("删除的cardpool",this.CardPool[uuid].UUID)
+            print("删除的cardpool", this.CardPool[uuid].UUID);
             this.Cardlinked.remove(this.CardPool[uuid]);
         }
         super.Remove(uuid);
-        this.again_sort()
-        this.update()
-        print("运行了手牌规则 删除了",uuid,"当前数组长度:",this.Cardlinked.length);
+        this.again_sort();
+        this.update();
+        print("运行了手牌规则 删除了", uuid, "当前数组长度:", this.Cardlinked.length);
     }
 
 
@@ -294,8 +295,8 @@ export abstract class BattleArea extends Scenes {
     }
 
     /**若本路线满  返回ture */
-    isFull(){
-        return !this.CardList.includes(-1)
+    isFull() {
+        return !this.CardList.includes(-1);
     }
 
     shuffle() {
@@ -324,24 +325,24 @@ export abstract class BattleArea extends Scenes {
         });
     }
 
-    getbrachoption(uuid?:string) {
-        const _scenes = this.gridLocation()
-        const index_array = _scenes.getAll().map(card => card.Index)
-        let mark = [-1,-1,-1,-1,-1]
+    getbrachoption(uuid?: string) {
+        const _scenes = this.gridLocation();
+        const index_array = _scenes.getAll().map(card => card.Index);
+        let mark = [-1, -1, -1, -1, -1];
         index_array.forEach(index => {
-            mark[index - 1] = index
-        })
-        if(this.isNull()){
-            print("此路",this.SceneName,"为空")
-            mark[2] = 3
-            return mark
+            mark[index - 1] = index;
+        });
+        if (this.isNull()) {
+            print("此路", this.SceneName, "为空");
+            mark[2] = 3;
+            return mark;
         }
-        this.foreach(card=>{
-            if(card.UUID != uuid){  
-                this.CardList[card.Index - 1 + 1] == -1 && (mark[card.Index - 1 + 1] = card.Index  + 1)
-                this.CardList[card.Index - 1 - 1] == -1 && (mark[card.Index - 1 - 1] = card.Index - 1)
+        this.foreach(card => {
+            if (card.UUID != uuid) {
+                this.CardList[card.Index - 1 + 1] == -1 && (mark[card.Index - 1 + 1] = card.Index + 1);
+                this.CardList[card.Index - 1 - 1] == -1 && (mark[card.Index - 1 - 1] = card.Index - 1);
             }
-        })
+        });
         // let bool = true
         // this.foreach(card=>{
         //     if(card instanceof Card){
@@ -352,20 +353,20 @@ export abstract class BattleArea extends Scenes {
         // if(!bool){
         //     this.CardList[3] = 3 
         // }
-        print("当前路线为",this.SceneName)
-        DeepPrintTable(mark)
+        print("当前路线为", this.SceneName);
+        DeepPrintTable(mark);
         return mark;
-    
+
     }
 
-    isNull(){
-       let bool = true
-       for(const key in this.CardPool){
-            if(this.CardPool[key]){
-                bool = false
+    isNull() {
+        let bool = true;
+        for (const key in this.CardPool) {
+            if (this.CardPool[key]) {
+                bool = false;
             }
-       }
-       return bool 
+        }
+        return bool;
     }
 
     Print() {
@@ -379,7 +380,7 @@ export abstract class BattleArea extends Scenes {
     }
 
     AutoAddCard(card: Card, index?: number) {
-        super.addCard(card)
+        super.addCard(card);
         if (index && index != -1) {
             print("中路手動兼職", index);
             card.Index = index;
@@ -414,7 +415,7 @@ export abstract class BattleArea extends Scenes {
                 if ((this.CardList[index] as Card).UUID == uuid) {
                     this.CardList[index] = -1;
                     this.CardPool[uuid] = null;
-                    print("删除了", uuid,"序号为",index);
+                    print("删除了", uuid, "序号为", index);
                 }
             }
         }
@@ -446,7 +447,7 @@ export abstract class BattleArea extends Scenes {
         this.Print();
     }
 
-    abstract gridLocation():Scenes
+    abstract gridLocation(): Scenes;
 
 }
 
@@ -460,8 +461,8 @@ export class Midway extends BattleArea {
     }
 
     /**对格场景查找 */
-    gridLocation(){
-       return GameRules.SceneManager.GetMidwayScene(this.PlayerID == GameRules.Red.GetPlayerID() ? GameRules.Blue.GetPlayerID() : GameRules.Red.GetPlayerID())
+    gridLocation() {
+        return GameRules.SceneManager.GetMidwayScene(this.PlayerID == GameRules.Red.GetPlayerID() ? GameRules.Blue.GetPlayerID() : GameRules.Red.GetPlayerID());
     }
 
 }
@@ -474,9 +475,9 @@ export class GoUp extends BattleArea {
         ICASceneManager.SetGoUpScene(this);
     }
 
-    gridLocation(){
-        return GameRules.SceneManager.GetGoUpScene(this.PlayerID == GameRules.Red.GetPlayerID() ? GameRules.Blue.GetPlayerID() : GameRules.Red.GetPlayerID())
-     }
+    gridLocation() {
+        return GameRules.SceneManager.GetGoUpScene(this.PlayerID == GameRules.Red.GetPlayerID() ? GameRules.Blue.GetPlayerID() : GameRules.Red.GetPlayerID());
+    }
 }
 
 export class LaidDown extends BattleArea {
@@ -487,9 +488,9 @@ export class LaidDown extends BattleArea {
         ICASceneManager.SetLaidDownScene(this);
     }
 
-    gridLocation(){
-        return GameRules.SceneManager.GetLaidDownScene(this.PlayerID == GameRules.Red.GetPlayerID() ? GameRules.Blue.GetPlayerID() : GameRules.Red.GetPlayerID())
-     }
+    gridLocation() {
+        return GameRules.SceneManager.GetLaidDownScene(this.PlayerID == GameRules.Red.GetPlayerID() ? GameRules.Blue.GetPlayerID() : GameRules.Red.GetPlayerID());
+    }
 }
 
 //施法场景
@@ -510,25 +511,25 @@ export class Grave extends Scenes {
         super(ICASceneManager);
         this.PlayerID = PlayerID;
         ICASceneManager.SetGraveScene(this);
-        this.register_gamevent()
+        this.register_gamevent();
     }
 
-    register_gamevent(){
-        CustomGameEventManager.RegisterListener("C2S_GET_GRAVE_ARRAY",()=>this.Send_Client())
+    register_gamevent() {
+        CustomGameEventManager.RegisterListener("C2S_GET_GRAVE_ARRAY", () => this.Send_Client());
     }
 
-    Send_Client(){
-        const table = []
-        for(const key in this.CardPool){
-           table.push(this.CardPool[key].Id)
+    Send_Client() {
+        const table = [];
+        for (const key in this.CardPool) {
+            table.push(this.CardPool[key].Id);
         }
-        CustomGameEventManager.Send_ServerToAllClients("S2C_SEND_GRAVE_ARRAY",table)
+        CustomGameEventManager.Send_ServerToAllClients("S2C_SEND_GRAVE_ARRAY", table);
     }
 
-    addCard(card:Card){
-        super.addCard(card)
-        print(card.UUID,"加入了墓地！！！！")
-        return card
+    addCard(card: Card) {
+        super.addCard(card);
+        print(card.UUID, "加入了墓地！！！！");
+        return card;
     }
 }
 
@@ -568,7 +569,7 @@ export class Hide extends Scenes {
     }
 
     addCard(Card: Card) {
-        super.addCard(Card)
+        super.addCard(Card);
         this.Cardlinked.append(Card);
         Card.Index = this.Cardlinked.length;
         return Card;
@@ -638,16 +639,16 @@ export class ScenesManager {
         CustomGameEventManager.RegisterListener("C2S_CARD_CHANGE_SCENES", (_, event) => {
             if (!GameRules.gamemainloop.filter) return;
             const card = this.change_secens(event.uuid, event.to_scene, event.index);
-            const newScenes = GameRules.SceneManager.GetScenes(event.to_scene,event.PlayerID) as BattleArea;
-            GameRules.gamemainloop.small_solider_tag[event.PlayerID] = true
+            const newScenes = GameRules.SceneManager.GetScenes(event.to_scene, event.PlayerID) as BattleArea;
+            GameRules.gamemainloop.small_solider_tag[event.PlayerID] = true;
             /** 本路线满了 不刷小兵*/
-            if(newScenes.isFull()) return;
-            const solider = GameRules.brash_solidier.AutoSolider(event.PlayerID,newScenes as BattleArea)
-            if(RollPercentage(50)){
-                let card_index =card.Index
-                let solider_index = solider.Index
-                GameRules.SceneManager.change_secens(card.UUID,card.Scene.SceneName,solider_index)
-                GameRules.SceneManager.change_secens(solider.UUID,solider.Scene.SceneName,card_index)
+            if (newScenes.isFull()) return;
+            const solider = GameRules.brash_solidier.AutoSolider(event.PlayerID, newScenes as BattleArea);
+            if (RollPercentage(50)) {
+                let card_index = card.Index;
+                let solider_index = solider.Index;
+                GameRules.SceneManager.change_secens(card.UUID, card.Scene.SceneName, solider_index);
+                GameRules.SceneManager.change_secens(solider.UUID, solider.Scene.SceneName, card_index);
             }
         });
         CustomGameEventManager.RegisterListener("C2S_GET_SCENES", (_, event) => {
@@ -671,16 +672,16 @@ export class ScenesManager {
     }
 
     /**分路实例选择器 */
-    fitler(option:BATTLE_BRACH_STATE,PlayerID:PlayerID){
-        switch(option){
-            case "1":{
-                return GameRules.SceneManager.GetGoUpScene(PlayerID)
+    fitler(option: BATTLE_BRACH_STATE, PlayerID: PlayerID) {
+        switch (option) {
+            case "1": {
+                return GameRules.SceneManager.GetGoUpScene(PlayerID);
             }
-            case "2":{
-                return GameRules.SceneManager.GetMidwayScene(PlayerID)
+            case "2": {
+                return GameRules.SceneManager.GetMidwayScene(PlayerID);
             }
-            case "3":{
-                return GameRules.SceneManager.GetLaidDownScene(PlayerID)
+            case "3": {
+                return GameRules.SceneManager.GetLaidDownScene(PlayerID);
             }
         }
     }
@@ -698,9 +699,9 @@ export class ScenesManager {
 
     /**敌人近邻查找 */
     enemyneighbor(Card: Card) {
-        const left = Card.Scene.find_oppose().IndexGet(Card.Index - 1) ?? -1;
-        const center = this.gather(Card);
-        const right = Card.Scene.find_oppose().IndexGet(Card.Index + 1) ?? -1;
+        const left = Card.Scene.find_oppose().IndexGet(Card.Index - 1) as Unit ?? -1;
+        const center = this.gather(Card) as Unit;
+        const right = Card.Scene.find_oppose().IndexGet(Card.Index + 1) as Unit ?? -1;
         return { left: left, center: center, right: right };
     }
 
@@ -780,6 +781,37 @@ export class ScenesManager {
         return table;
     }
 
+    get_All_equip(PlyaerID: PlayerID) {
+        const table = [];
+        for (const uuid in this.All) {
+            if (this.All[uuid].PlayerID == PlyaerID && this.All[uuid].type == "EQUIP") {
+                table.push(uuid);
+            }
+        }
+        return table;
+    }
+
+    get_All_Hero(PlyaerID: PlayerID) {
+        const table = [];
+        for (const uuid in this.All) {
+            if (this.All[uuid].PlayerID == PlyaerID && this.All[uuid].type == "Hero") {
+                table.push(uuid);
+            }
+        }
+        return table;
+    }
+
+
+    get_All_Ability(PlyaerID: PlayerID) {
+        const table = [];
+        for (const uuid in this.All) {
+            if (this.All[uuid].PlayerID == PlyaerID && this.All[uuid].type == "SmallSkill" || this.All[uuid].type == "TrickSkill") {
+                table.push(uuid);
+            }
+        }
+        return table;
+    }
+
     /** 更新网表至nettable */
     update() {
         // const BlueGoUp = this.GoUp[GameRules.Blue.GetPlayerID()].update_uuid()
@@ -801,19 +833,39 @@ export class ScenesManager {
         // CustomNetTables.SetTableValue('Scenes',"Grave" + GameRules.Blue.GetPlayerID(),BlueGrave)
         // CustomNetTables.SetTableValue('Scenes',"Grave" + GameRules.Red.GetPlayerID(),RedGrave)
         this.update_summon();
-        print("打印");
+        this.update_equip();
+        this.update_hero()
+        this.update_Ability()
     }
 
-    /**更新召唤物列表 */
+    /**更新英雄卡牌 */
+    update_hero() {
+        CustomNetTables.SetTableValue("Scenes", "equip" + GameRules.Red.GetPlayerID(), this.get_All_Hero(GameRules.Red.GetPlayerID()));
+        CustomNetTables.SetTableValue("Scenes", "equip" + GameRules.Red.GetPlayerID(), this.get_All_Hero(GameRules.Blue.GetPlayerID()));
+    }
+
+    /**更新技能卡牌 */
+    update_Ability() {
+        CustomNetTables.SetTableValue("Scenes", "Ability" + GameRules.Red.GetPlayerID(), this.get_All_Ability(GameRules.Red.GetPlayerID()));
+        CustomNetTables.SetTableValue("Scenes", "Ability" + GameRules.Red.GetPlayerID(), this.get_All_Ability(GameRules.Blue.GetPlayerID()));
+    }
+
+    /**更新召唤物 */
     update_summon() {
         CustomNetTables.SetTableValue("Scenes", "summon" + GameRules.Red.GetPlayerID(), this.get_All_summon(GameRules.Red.GetPlayerID()));
         CustomNetTables.SetTableValue("Scenes", "summon" + GameRules.Blue.GetPlayerID(), this.get_All_summon(GameRules.Blue.GetPlayerID()));
     }
 
+    /**更新装备卡牌 */
+    update_equip() {
+        CustomNetTables.SetTableValue("Scenes", "equip" + GameRules.Red.GetPlayerID(), this.get_All_equip(GameRules.Red.GetPlayerID()));
+        CustomNetTables.SetTableValue("Scenes", "equip" + GameRules.Red.GetPlayerID(), this.get_All_equip(GameRules.Blue.GetPlayerID()));
+    }
+
     /**牌改变场景*/
     change_secens(uuid: string, to: string, index?: number, update?: boolean) {
         const card = this.All[uuid];
-        const playerid = card.PlayerID; 
+        const playerid = card.PlayerID;
 
         print(card.UUID, "要去", to);
         switch (to) {
@@ -868,45 +920,45 @@ export class ScenesManager {
                 this.All[uuid].Scene.Remove(uuid);
                 !update && this.All[uuid].update('REMOVE');
                 this.remove(uuid);
-                break;  
+                break;
             }
             case 'HIDE': {
-                card.Scene.Remove(uuid)
-                const newScene = this.GetHideScene(playerid)
-                card.Scene = newScene
+                card.Scene.Remove(uuid);
+                const newScene = this.GetHideScene(playerid);
+                card.Scene = newScene;
                 card.Scene.addCard(card);
                 !update && this.All[uuid].update('HIDE');
                 break;
             }
         }
-        return card
+        return card;
     }
 
     /**获取字符串对应的场景 */
-    GetScenes(ScneseString:string,playerid:PlayerID){
-            switch (ScneseString) {
-                case 'HAND': {
-                    return this.GetHandsScene(playerid)
-                }
-                case 'MIDWAY': {
-                    return this.GetMidwayScene(playerid)
-                }
-                case 'LAIDDOWN': {
-                    return this.GetLaidDownScene(playerid)
-                }
-                case 'GOUP': {
-                    return this.GetGoUpScene(playerid)
-                }
-                case 'Ability': {
-                    return this.GetAbilityScene(playerid)
-                }
-                case 'Grave': {
-                    return this.GetGraveScene(playerid)
-                }
-                case 'HIDE': {
-                    return this.GetHideScene(playerid)
-                }
+    GetScenes(ScneseString: string, playerid: PlayerID) {
+        switch (ScneseString) {
+            case 'HAND': {
+                return this.GetHandsScene(playerid);
             }
+            case 'MIDWAY': {
+                return this.GetMidwayScene(playerid);
+            }
+            case 'LAIDDOWN': {
+                return this.GetLaidDownScene(playerid);
+            }
+            case 'GOUP': {
+                return this.GetGoUpScene(playerid);
+            }
+            case 'Ability': {
+                return this.GetAbilityScene(playerid);
+            }
+            case 'Grave': {
+                return this.GetGraveScene(playerid);
+            }
+            case 'HIDE': {
+                return this.GetHideScene(playerid);
+            }
+        }
     }
 
     SetCardheapsScene(Scene: Cardheaps) {

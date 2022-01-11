@@ -646,18 +646,35 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
 export const CardContext = (props:{owner:number}) => {
     const [allheaps,setallheaps] = useState<string[]>([])
     const [allsummon,setallsummon] = useState<string[]>([])
+    const [allitem,setallitem] = useState<string[]>([])
+    const [allhero,setallhero] = useState<string[]>([])
+    const [allability,setallability] = useState<string[]>([])
 
     useGameEvent('S2C_BRUSH_SOLIDER',()=>{
         const table = CustomNetTables.GetTableValue("Scenes","summon"+props.owner)
         setallsummon(JsonString2Array(table))
     },[])
 
+    useGameEvent("S2C_BRUSH_ITEM",()=>{
+        const all = CustomNetTables.GetTableValue('Scenes','ALL' + props.owner)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
+        const all_array = JsonString2Array(all)
+        setallheaps(all_array)
+    },[])
+
+    useGameEvent("S2C_BRUSH_ABILITY",()=>{
+        const table = CustomNetTables.GetTableValue("Scenes","Ability"+props.owner)
+        setallability(JsonString2Array(table))
+    },[])
+
+    useGameEvent("C2S_BUY_HERO",()=>{
+        const table = CustomNetTables.GetTableValue("Scenes","hero"+props.owner)
+        setallhero(JsonString2Array(table))
+    },[])
+
     useEffect(()=>{                                                             
             $.Schedule(0.5,()=>{
                 const all = CustomNetTables.GetTableValue('Scenes','ALL' + props.owner)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
                 const all_array = JsonString2Array(all)
-                const table = CustomNetTables.GetTableValue("Scenes","summon"+props.owner)
-                setallsummon(JsonString2Array(table))
                 setallheaps(all_array)
             })
     },[])

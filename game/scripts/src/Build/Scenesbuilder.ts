@@ -64,11 +64,11 @@ export class ScenesBuildbehavior {
     }
 
     static HeapsBuild(PlayerID:PlayerID){
-        // for(let i = 0 ; i < 10 ; i++){
-        //     const _equit = new EquipCard({Id:math.random() > 0.5 ? "item_robe" : "item_blink",Index:1,PlayerID:PlayerID},GameRules.SceneManager.GetCardheapsScene(PlayerID))
-        //     GameRules.SceneManager.global_add(_equit.UUID,_equit)
-        //     GameRules.SceneManager.change_secens(_equit.UUID,"HAND");
-        // }
+        for(let i = 0 ; i < 3 ; i++){
+            const _equit = new EquipCard({Id:"item_bfury",Index:1,PlayerID:PlayerID},GameRules.SceneManager.GetCardheapsScene(PlayerID))
+            GameRules.SceneManager.global_add(_equit.UUID,_equit)
+            GameRules.SceneManager.change_secens(_equit.UUID,"HAND");
+        }
         for(let i = 0 ; i < 3 ; i++){
                 const SamallSkillcard = new SmallSkill({"Index":i,Id:i.toString() + ((math.random() > 0.2) ? "trick" : 2),'PlayerID':PlayerID},GameRules.SceneManager.GetCardheapsScene(PlayerID))
                 const TrickSkillcard = new TrickSkill({"Index":i,Id:i.toString() + ((math.random() > 0.2) ? "trick" : 2),'PlayerID':PlayerID},GameRules.SceneManager.GetCardheapsScene(PlayerID))

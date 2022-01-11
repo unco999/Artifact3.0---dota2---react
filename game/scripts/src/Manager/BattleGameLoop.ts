@@ -17,7 +17,7 @@ export enum 游戏循环 {
 
 const 商店购买时间 = 5
 const 英雄部署时间 = 5
-const 战斗结算时间 = 5
+const 战斗结算时间 = 10
 const 策略时间 = 5
 
 //第一回合六張牌  5小1大  第一回合結束  商店功能花錢買牌(2元买大技能 1元买小技能)  然後英雄分錄  分完路發兩張   
@@ -415,11 +415,17 @@ export class injurySettlementStage extends GameLoopState {
             if(IsInToolsMode()){
                 redrouter.quantityOfChessPieces > bluerouter.quantityOfChessPieces ? print("当前红色比蓝色多,红色先攻击") : print("当前蓝色比红色多,蓝色先攻击")
             }
-            start.foreach(card=>{
-               const target = card.Scene.find_oppose().IndexGet(card.Index) as Unit
-               print("攻击方",card.UUID,"受害方",target?.UUID)
-               const _damage = new damage(card as Unit,target)
-               _damage.attacklement()
+            let index = 0
+            start.foreach((card:Unit)=>{
+                if(card.isAttackPreHook()){
+                   index += RandomFloat(1,2)
+                }
+                Timers.CreateTimer(index,()=>{
+                    const target = card.Scene.find_oppose().IndexGet(card.Index) as Unit
+                    print("攻击方",card.UUID,"受害方",target?.UUID)
+                    const _damage = new damage(card as Unit,target)
+                    _damage.attacklement()     
+                })
             })
     }
 

@@ -12,12 +12,10 @@ module.exports = {
         path: path.resolve(__dirname, 'layout/custom_game'),
         publicPath: 'file://{resources}/layout/custom_game/',
     },
-
     resolve: {
         extensions: ['.ts', '.tsx', '...'],
         symlinks: false,
     },
-
     module: {
         rules: [
             {
@@ -57,7 +55,7 @@ module.exports = {
         new PanoramaTargetPlugin(),
         new PanoramaManifestPlugin({
             entries: [
-                {
+                { 
                     import: './loading-screen/layout.xml',
                     filename: 'custom_loading_screen.xml',
                 },

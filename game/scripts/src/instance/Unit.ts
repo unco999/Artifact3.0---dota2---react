@@ -27,9 +27,9 @@ export class Unit extends Card{
     isAttackPreHook(){
         for(const modifiler of this.Modifilers){
             print("当前检查modifiler",modifiler.name)
-           if((modifiler.hook |= HOOK.攻击前) == modifiler.hook){
+           if(bit.bor(modifiler.hook,HOOK.攻击前) === modifiler.hook){
                print("该单位有攻击前动画")
-                return true
+               return true
            }
         }
         return false
@@ -111,9 +111,16 @@ export class Unit extends Card{
                     Source.hook(HOOK.杀死目标时)
                     add_cuurent_glod(2,Source.PlayerID) 
                 }
-                this.hook(HOOK.死亡前)
-                this.Scene.CaSceneManager.change_secens(this.UUID,"Grave",-1)
-                this.hook(HOOK.死亡后)
+                const PreDeath = this.hook(HOOK.死亡前)
+                let deathbool:boolean = true
+                PreDeath.forEach(hook=>{
+                   deathbool = hook(this,Source)
+                })
+                deathbool && this.Scene.CaSceneManager.change_secens(this.UUID,"Grave",-1)
+                const PostDeath = this.hook(HOOK.死亡后)
+                PostDeath.forEach(hook=>{
+                    hook(this,Source)
+                })
             }else{
                 print("你当前不在战斗区域")
             }

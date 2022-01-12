@@ -52,7 +52,7 @@ export class Hero extends Unit{
 
     call_death(source:Card){
         CustomGameEventManager.Send_ServerToAllClients("S2C_SEND_DEATH_ANIMATION",{uuid:this.UUID})
-        Timers.CreateTimer(1,()=>{
+        Timers.CreateTimer(1.5,()=>{
             super.call_death(source)
         })
     }

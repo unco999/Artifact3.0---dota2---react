@@ -244,7 +244,7 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
         ref.current?.AddClass(prefix + "death_animation"+ _random)
         ref.current?.RemoveClass("select_target")
         $.Schedule(1.5,()=>{
-            ref.current?.AddClass(prefix + "death")
+            // ref.current?.AddClass(prefix + "death")
             ref.current?.RemoveClass(prefix + "death_animation"+ _random)
         })
     },[props.uuid])
@@ -628,7 +628,7 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
             return <>
            <Panel draggable={true} ref={Panel => dummy.current = Panel} onmouseover={()=>{frame.current?.AddClass("show");ref.current?.AddClass(prefix+"hover")}} onmouseout={()=>{frame.current?.RemoveClass("show");ref.current?.RemoveClass(prefix+"hover")}} className={prefix+"Carddummy"}/>
            <Panel ref={Panel => ref.current = Panel}  className={prefix+'Card'} >
-             <Label text={props.uuid} className={"uuid"}/>
+              <Label text={props.uuid} className={"uuid"}/>
               <Panel ref={Panel=>frame.current = Panel} className={"card_frame"}/>
               <Panel style={{width:'90%',height:"90%",align:'center center'}}>
               <DOTAItemImage itemname={state.Id} style={{width:"100%",height:"100%"}}/>

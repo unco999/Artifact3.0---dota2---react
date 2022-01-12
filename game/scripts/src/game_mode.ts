@@ -13,7 +13,8 @@ import { KV } from "./System/KV";
 import './instance/Equip'
 import { brash_solidier } from "./feature/brush_solidier";
 import { add_cuurent_glod, BATTLE_BRACH_STATE } from "./Manager/nettablefuc";
-import './modifiler/testmodifiler'
+import "./modifiler/modifiler"
+import './equip/item'
 
 const heroSelectionTime = 0;
 

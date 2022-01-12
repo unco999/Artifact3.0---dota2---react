@@ -3,7 +3,7 @@ import { ICAScene } from "./Scenes";
 import { Tower } from "./Tower";
 import { Unit } from "./Unit";
 import { Hero } from "./Hero";
-import { item_bfury_modifiler } from "../modifiler/testmodifiler";
+import "../modifiler/modifiler";
 import { CAModifiler, ModifilerContainer } from "./Modifiler";
 
 export function ca_register_equip() {
@@ -59,15 +59,6 @@ export abstract class Equip{
     }
 }
 
-@ca_register_equip()
-export class item_bfury extends Equip{
-    containerInstance =  item_bfury
-    id = this.constructor.name
-    constructor(){
-        super()
-        print("创造装备实例成功",this,this.id)
-    }
-}
 
 export class EquipCard extends Card{
     equip:Equip

@@ -416,13 +416,13 @@ export class injurySettlementStage extends GameLoopState {
                 redrouter.quantityOfChessPieces > bluerouter.quantityOfChessPieces ? print("当前红色比蓝色多,红色先攻击") : print("当前蓝色比红色多,蓝色先攻击")
             }
             let index = 0
+            let defualtindex = 0
             start.foreach((card:Unit)=>{
                 if(card.isAttackPreHook()){
                    index += RandomFloat(1,2)
                 }
-                Timers.CreateTimer(index,()=>{
+                Timers.CreateTimer(card.isAttackPreHook() ? index : defualtindex,()=>{
                     const target = card.Scene.find_oppose().IndexGet(card.Index) as Unit
-                    print("攻击方",card.UUID,"受害方",target?.UUID)
                     const _damage = new damage(card as Unit,target)
                     _damage.attacklement()     
                 })

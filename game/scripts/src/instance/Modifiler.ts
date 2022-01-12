@@ -40,7 +40,7 @@ export class ModifilerContainer{
 
 
 export enum HOOK{
-    原始 = 0x00040000,
+    原始 = 4194304,
     攻击前 = 0x00000001,
     攻击后 = 0x00000002,
     回复前 = 0x00000004,

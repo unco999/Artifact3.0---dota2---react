@@ -83,14 +83,14 @@ export class GameMode {
             for (let i: PlayerID = 0; i <= 24; ++i) {
                 let player = PlayerResource.GetPlayer(i as PlayerID);
                 if (player) {
-                    if(!GameRules.Red){
-                        GameRules.Red = player
-                        if(GameRules.Red.GetPlayerID() == GameRules.bot) print("红色是电脑")
-                        continue 
-                    }
                     if(!GameRules.Blue){
                         GameRules.Blue = player
                         if(GameRules.Blue.GetPlayerID() == GameRules.bot) print("蓝色是电脑")
+                        continue 
+                    }
+                    if(!GameRules.Red){
+                        GameRules.Red = player
+                        if(GameRules.Red.GetPlayerID() == GameRules.bot) print("红色是电脑")
                         continue
                     }
                 }

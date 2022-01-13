@@ -162,6 +162,7 @@ export class faultCard extends GameLoopState {
 
     constructor(context: BattleGameLoop,brach:STRATEGY_BRACH_STATE) {
         super(context);
+        print("初始化operate",brach)
         set_current_operate_brach(brach)
         this.register_gamevent()
     }
@@ -208,7 +209,6 @@ export class faultCard extends GameLoopState {
     entry() {
         super.entry();
         print("进入了策略模式")
-        set_current_operate_brach(STRATEGY_BRACH_STATE.上路)
         this.change_cuurent_fault_player = GameRules.Red.GetPlayerID()
         if (!this.host.init) {
             ScenesBuildbehavior.ScenesBuild()

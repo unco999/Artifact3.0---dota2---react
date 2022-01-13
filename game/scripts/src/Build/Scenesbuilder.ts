@@ -69,12 +69,6 @@ export class ScenesBuildbehavior {
             GameRules.SceneManager.global_add(_equit.UUID,_equit)
             GameRules.SceneManager.change_secens(_equit.UUID,"HAND");
         }
-        for(let i = 0 ; i < 3 ; i++){
-                const SamallSkillcard = new SmallSkill({"Index":i,Id:i.toString() + ((math.random() > 0.2) ? "trick" : 2),'PlayerID':PlayerID},GameRules.SceneManager.GetCardheapsScene(PlayerID))
-                const TrickSkillcard = new TrickSkill({"Index":i,Id:i.toString() + ((math.random() > 0.2) ? "trick" : 2),'PlayerID':PlayerID},GameRules.SceneManager.GetCardheapsScene(PlayerID))
-                GameRules.SceneManager.global_add(SamallSkillcard.UUID,SamallSkillcard)
-                GameRules.SceneManager.global_add(TrickSkillcard.UUID,TrickSkillcard)
-        }
         const _table = CustomNetTables.GetTableValue("Card_group_construction_phase",'herobrach')[PlayerID.toString()]
         const hero_index_list:Record<number,string[]> = {[GameRules.Blue.GetPlayerID()]:[],[GameRules.Red.GetPlayerID()]:[]}
         for(const brach in _table){
@@ -90,8 +84,8 @@ export class ScenesBuildbehavior {
                 for(let i = 0 ; i < 3 ; i++){
                     const ability1className = GameRules.KV.GetCardDataKV(Number(heroid)).ability1
                     const ability2className = GameRules.KV.GetCardDataKV(Number(heroid)).ability2
-                    const SamallSkillcard = new SmallSkill({"Index":i,Id:ability1className,'PlayerID':PlayerID},GameRules.SceneManager.GetCardheapsScene(PlayerID))
-                    const TrickSkillcard = new TrickSkill({"Index":i,Id:ability2className,'PlayerID':PlayerID},GameRules.SceneManager.GetCardheapsScene(PlayerID))
+                    const SamallSkillcard = new SmallSkill({"Index":i,Id:ability1className,'PlayerID':PlayerID},GameRules.SceneManager.GetCardheapsScene(PlayerID),heroid)
+                    const TrickSkillcard = new TrickSkill({"Index":i,Id:ability2className,'PlayerID':PlayerID},GameRules.SceneManager.GetCardheapsScene(PlayerID),heroid)
                     GameRules.SceneManager.global_add(SamallSkillcard.UUID,SamallSkillcard)
                     GameRules.SceneManager.global_add(TrickSkillcard.UUID,TrickSkillcard)
                 }

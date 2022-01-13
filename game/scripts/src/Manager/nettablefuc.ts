@@ -1,5 +1,5 @@
 import { 游戏循环 } from "./BattleGameLoop";
-import { optionMask } from "./statusSwitcher";
+import { optionMask, strategy_Select_Brach } from "./statusSwitcher";
 
 /**设置掩码 并保存至nettable */
 export function Set_option_mask_state(optionMask:optionMask,operate:"add"|"remove" = "add"){
@@ -56,6 +56,7 @@ export enum STRATEGY_BRACH_STATE{
 
 /**设置全局策略路线 nettable */
 export function set_current_operate_brach(STRATEGY_BRACH_STATE:STRATEGY_BRACH_STATE){
+    print("当前的场景序列为=========================>",STRATEGY_BRACH_STATE)
     CustomNetTables.SetTableValue("GameMianLoop",'current_operate_brach',{cuurent:STRATEGY_BRACH_STATE}) 
 }
 

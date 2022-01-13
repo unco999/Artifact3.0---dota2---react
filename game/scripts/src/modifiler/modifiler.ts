@@ -4,6 +4,7 @@ import { BattleArea } from "../instance/Scenes";
 import { Unit } from "../instance/Unit";
 import { Timers } from "../lib/timers";
 
+/**狂战斧 */
 @ca_register_modifiler()
 export class item_bfury_modifiler extends CAModifiler{
     name: string = "item_bfury_modifiler";
@@ -68,7 +69,9 @@ export class item_bfury_modifiler extends CAModifiler{
 
 }
 
-
+/**
+ * 免死甲
+ */
 @ca_register_modifiler()
 export class item_aegis_modifiler extends CAModifiler{
     name: string = "item_aegis_modifiler";
@@ -115,6 +118,9 @@ export class item_aegis_modifiler extends CAModifiler{
 
 }
 
+/**
+ * 复活甲
+ */
 @ca_register_modifiler()
 export class item_force_field_modifiler extends CAModifiler{
     name: string = "item_force_field_modifiler";
@@ -142,10 +148,14 @@ export class item_force_field_modifiler extends CAModifiler{
         })
         this.setHookEvent(HOOK.死亡后,(thishero:Hero,source:Unit)=>{
             print("触发了死亡后特效")
-            Timers.CreateTimer(3,()=>{
-                print("单位回到场上了")
-                GameRules.SceneManager.change_secens(thishero.UUID,this.preDeathBrach,this.preDeathIndex)
+            Timers.CreateTimer(2,()=>{
+                thishero.heal = this.thisHero.max_heal
+                CustomGameEventManager.Send_ServerToAllClients("S2C_SEND_ATTRIBUTE",thishero.attribute)
+                GameRules.SceneManager.change_secens(thishero.UUID,this.preDeathBrach,this.preDeathIndex,false)
+                CustomGameEventManager.Send_ServerToAllClients("SC2_PLAY_EFFECT",{uuid:thishero.UUID,paticle:"particles/econ/items/wraith_king/wraith_king_arcana/wk_arc_reincarn_tombstone_ring_flames.vpcf",cameraOrigin:"0 400 0",lookAt:"0 0 0"})
+           
             })
+            this.logoutHook(HOOK.死亡后)
             return true
         })
     }

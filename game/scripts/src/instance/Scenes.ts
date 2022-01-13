@@ -416,6 +416,8 @@ export abstract class BattleArea extends Scenes {
                     this.CardList[index] = -1;
                     this.CardPool[uuid] = null;
                     print("删除了", uuid, "序号为", index);
+                    print("打印删除后的数据")
+                    this.Print()
                 }
             }
         }
@@ -743,8 +745,7 @@ export class ScenesManager {
     /**通过英雄名字找到卡片 */
     get_hero(name: string) {
         for (const uuid in this.All) {
-            print("遍历到的ID", this.All[uuid].Id);
-            if (this.All[uuid].Id == name) {
+            if (string.format(this.All[uuid].Id) == name) {
                 print("找到一个相同的ID", name);
                 return this.All[uuid];
             }
@@ -832,10 +833,10 @@ export class ScenesManager {
         // CustomNetTables.SetTableValue('Scenes',"ReleaseScene" + GameRules.Red.GetPlayerID(),RedLReleaseScene)
         // CustomNetTables.SetTableValue('Scenes',"Grave" + GameRules.Blue.GetPlayerID(),BlueGrave)
         // CustomNetTables.SetTableValue('Scenes',"Grave" + GameRules.Red.GetPlayerID(),RedGrave)
-        this.update_summon();
-        this.update_equip();
-        this.update_hero()
-        this.update_Ability()
+        // this.update_summon();
+        // this.update_equip();
+        // this.update_hero()
+        // this.update_Ability()
     }
 
     /**更新英雄卡牌 */
@@ -909,9 +910,9 @@ export class ScenesManager {
             }
             case 'Grave': {
                 const currentscnese = this.GetGraveScene(playerid);
-                card.Scene.Remove(uuid);
+                this.All[uuid].Scene.Remove(uuid);
                 card.Scene = currentscnese;
-                this.GetGraveScene(playerid).addCard(card);
+                card.Scene.addCard(card);
                 !update && card.update('GRAVE');
                 print(card.UUID, "死亡了 去了墓地");
                 break;

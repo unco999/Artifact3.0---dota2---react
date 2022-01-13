@@ -31,7 +31,7 @@ export class brash_solidier{
         const soldier = new Solider({Id:math.random().toString(),Index:index,PlayerID:PlayerID},scene_name)
         scene_name.AutoAddCard(soldier,index)
         GameRules.SceneManager.global_add(soldier.UUID,soldier)
-        GameRules.SceneManager.update_summon()
+        GameRules.SceneManager.update()
         CustomGameEventManager.Send_ServerToAllClients("S2C_BRUSH_SOLIDER",{})
     }
 
@@ -41,7 +41,7 @@ export class brash_solidier{
         const soldier = new Solider({Id:math.random().toString(),Index:0,PlayerID:PlayerID},scene_name)
         scene_name.AutoAddCard(soldier)
         GameRules.SceneManager.global_add(soldier.UUID,soldier)
-        GameRules.SceneManager.update_summon()
+        GameRules.SceneManager.update()
         CustomGameEventManager.Send_ServerToAllClients("S2C_BRUSH_SOLIDER",{})
         return soldier
     }

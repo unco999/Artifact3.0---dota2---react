@@ -14,10 +14,28 @@ export const Okbutton = (props:{playerteam:{red:number,blue:number},loopdata: {
     const {conponent,up} = useInstance("okbutton",uuid,{},undefined)
     const panel = useRef<Panel|null>()
     const branchok = useNetTableKey('Card_group_construction_phase','brachisok') ?? false
+    const [motion,setmotion] = useState(0)
 
     useEffect(()=>{
         panel.current?.RemoveClass("hight")
     },[props?.loopdata?.currentteam])
+
+    useEffect(()=>{
+       $.Schedule(1,()=>{
+        const container = ConpoentDataContainer.Instance.NameGetNode("Pool").current
+        container.register_monitor(setmotion)
+       })
+    },[])
+
+    useEffect(()=>{
+        const container = ConpoentDataContainer.Instance.NameGetNode("Pool").current
+        if(!container) return
+        const isselect = container.getKeyString<[number,number]>(Players.GetLocalPlayer() + "isselect")
+        const isok = container.getKeyString(Players.GetLocalPlayer() + "isok")
+        if(isok){
+            panel.current?.AddClass("hight")
+        }
+    },[motion])
 
 
     const button = () => {

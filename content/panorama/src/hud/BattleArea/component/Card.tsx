@@ -80,7 +80,7 @@ const Machine = createMachine({
         equipment:{
         },
         grave:{
-            on:{toHAND:"hand"},
+            on:{toHAND:"hand",toGOUP:"goup",toLAIDDOWN:"laiddown",toGRAVE:"grave"},
             entry:"grave_entry",
             exit:"grave_exit"
         },
@@ -121,14 +121,12 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
                 const id = GameEvents.Subscribe("S2C_GET_CARD",(event)=>{
                     if(event.uuid != props.uuid) return; 
                     setstate(event)
-                    $.Msg("收到的card信息")
-                    $.Msg(event)
                     GameEvents.Unsubscribe(id) 
                 })
                 GameEvents.SendCustomGameEventToServer("C2S_GET_CARD",{uuid:props.uuid})
             },
             defualt_exit:()=>{
-
+                dummyoperate('remove',prefix + "Heaps")
             },
             midway_entry:()=>{
                 preindex.current = state.Index
@@ -231,8 +229,6 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
     /**卡牌改变场景 */
     useGameEvent("S2C_CARD_CHANGE_SCENES",(event)=>{
         if(props.uuid != event.uuid) return
-        $.Msg("收到事件！！！！！！！！！！")
-        $.Msg(event)
         setstate(event)
         send("to" + state.Scene)
     },[])
@@ -373,7 +369,6 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
     },[xstate])
 
     const OnDragStart = (panelId:any, dragCallbacks:any) =>{
-        $.Msg("开始拖拽了")
         const displayPanel = $.CreatePanel( "Panel", $.GetContextPanel(), "cache" ) as HeroImage
         //**加入拖动的是装备卡片 */
         if(state.type == "EQUIP" && ref.current){
@@ -408,10 +403,7 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
     /**技能提示器 */
     const C2S_SEATCH_TARGET = (bool:boolean) =>{
         GameEvents.SendCustomGameEventToServer(bool == true ?  "C2S_SEATCH_TARGET_OPEN" : "C2S_SEATCH_TARGET_OFF",{
-            has_hero_ability:"18",
-            magic_brach:Magic_brach.本路,
-            magic_range:Magic_range.全体,
-            magic_team:Magic_team.敌方,
+            abilityname:state.Id
         })
     }
 
@@ -495,7 +487,7 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
 
     const OnDragDrop = (panelId:any, dragCallbacks:any) => {
         const id = dragCallbacks.Data().id
-        GameEvents.SendCustomGameEventToServer("C2S_SPELL_SKILL",{SKILL_ID:id})
+        GameEvents.SendCustomGameEventToServer("C2S_SPELL_SKILL",{SKILL_ID:id,target_uuid:props.uuid})
     }
 
     const OnDragLeave = () =>{
@@ -651,8 +643,8 @@ export const CardContext = (props:{owner:number}) => {
     const [allability,setallability] = useState<string[]>([])
 
     useGameEvent('S2C_BRUSH_SOLIDER',()=>{
-        const table = CustomNetTables.GetTableValue("Scenes","summon"+props.owner)
-        setallsummon(JsonString2Array(table))
+        const all = CustomNetTables.GetTableValue('Scenes','ALL' + props.owner)
+        setallheaps(JsonString2Array(all))
     },[])
 
     useGameEvent("S2C_BRUSH_ITEM",()=>{
@@ -682,6 +674,5 @@ export const CardContext = (props:{owner:number}) => {
 
     return <Panel hittest={false} className={"CardContext"}>
         {allheaps.map((uuid,index)=><Card owner={props.owner}  key={uuid} index={index} uuid={uuid}/>)}
-        {allsummon.map((uuid,index)=><Card owner={props.owner}  key={uuid} index={index} uuid={uuid}/>)}
     </Panel>
 }

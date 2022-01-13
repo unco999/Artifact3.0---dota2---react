@@ -62,7 +62,7 @@ export const OwendCard = ({...args}) => {
 
     return <Panel draggable={drag}   ref={panel=>mainref.current = panel} className={args.player + "ownedCard"}>
             <Panel className={"Cardframe"}>
-            <DOTAHeroImage hittest={false} ref={panel => cardviewref.current = panel} heroid={args.heroid as HeroID} heroimagestyle={"portrait"} className={args.player + "Card"}/>
+            <DOTAHeroImage hittest={false} ref={panel => cardviewref.current = panel} heroname={(GameUI?.CustomUIConfig() as any).CardHero?.CardGame[args.heroid]?.name ?? ""} heroimagestyle={"portrait"} className={args.player + "Card"}/>
             </Panel>
             <Label text={"英雄名字"} className={"goldenWord"}/>
             <Label text={args.heroid != -1 ? "已选择" : "等待..."}  />

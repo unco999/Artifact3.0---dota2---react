@@ -24,7 +24,6 @@ export const useInstance = (name:string,uuid:string|undefined,css:Partial<VCSSSt
     },[_updata])
 
     if(name == "Card_container"){
-        $.Msg(_updata)
     }
 
 

@@ -56,7 +56,6 @@ export class ConpoentDataContainer {
     NameGetNode(name:string){
         const table:any = {current:undefined}
         for(let key in this.Namehashtable){
-            $.Msg("寻找key为",key,"的组件")
             if(key.search(name) > -1){
                 table.current = this.Namehashtable[key]
                 return table as {current:ComponentNode}

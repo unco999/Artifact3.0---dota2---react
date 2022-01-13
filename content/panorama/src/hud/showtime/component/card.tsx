@@ -12,5 +12,5 @@ export const ShowCard = (props:{heroid:number,delay:number}) =>{
 
 
 
-    return <DOTAHeroImage id={uuid.current} hittest={false} heroid={props.heroid as HeroID}  heroimagestyle={"portrait"} className={"Card"}/>
+    return <DOTAHeroMovie id={uuid.current} hittest={false} heroname={(GameUI?.CustomUIConfig() as any).CardHero?.CardGame[props.heroid]?.name ?? ""}  className={"Card"}/>
 }

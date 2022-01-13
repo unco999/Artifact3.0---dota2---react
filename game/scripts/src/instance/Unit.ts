@@ -115,11 +115,13 @@ export class Unit extends Card{
                 let deathbool:boolean = true
                 PreDeath.forEach(hook=>{
                    deathbool = hook(this,Source)
+                   print(this.UUID,"成功去了墓地")
                 })
-                deathbool && this.Scene.CaSceneManager.change_secens(this.UUID,"Grave",-1)
+                deathbool && GameRules.SceneManager.change_secens(this.UUID,"Grave",-1)
                 const PostDeath = this.hook(HOOK.死亡后)
                 PostDeath.forEach(hook=>{
                     hook(this,Source)
+                    print("当前this的指向场景",this.UUID,this.Scene.SceneName)
                 })
             }else{
                 print("你当前不在战斗区域")

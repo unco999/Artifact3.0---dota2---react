@@ -12,8 +12,6 @@ export const Card_container = (props:{className:string,index:number,brach:number
     const {conponent,up} = useInstance("Card_container",uuid,{},undefined)
 
     useGameEvent("S2C_SEND_CANSPACE",(event)=>{
-        $.Msg("收到数据包")
-        $.Msg(event)
         for(const brach in event){
             for(const index in event[brach]){
                 if(+brach == props.brach && +event[brach][index] != -1 && +index == props.index){
@@ -53,13 +51,11 @@ export const Card_container = (props:{className:string,index:number,brach:number
                 break
             }
         }
-        $.Msg("当前客户端传入index",props.index)
         GameEvents.SendCustomGameEventToServer("C2S_CARD_CHANGE_SCENES",{to_scene:scene,index:props.index,uuid:dragCallbacks.Data().uuid})
     }
 
 
     useEffect(()=>{
-        $.Msg("触发了关闭",conponent?.switch)
         !conponent?.switch && mian.current?.RemoveClass("show")
     },[up])
 

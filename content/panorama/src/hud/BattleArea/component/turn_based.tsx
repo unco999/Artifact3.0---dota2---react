@@ -33,7 +33,6 @@ export const Turnbased = (props:{owend:number,red:number,blue:number}) =>{
 
     const openShop = () =>{
         const container = ConpoentDataContainer.Instance.NameGetNode("equip_shop").current
-        $.Msg(container)
         container.open()
     }
 

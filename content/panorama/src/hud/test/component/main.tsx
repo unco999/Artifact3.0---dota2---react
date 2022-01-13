@@ -7,14 +7,11 @@ export const Main = () =>{
     const [update,setupdate] = useState<boolean>(false)
     
     useEffect(()=>{
-        $.Msg(data)
         $.Schedule(1,()=>setupdate(value=>!value))
     },[update])
 
     const openShop = () =>{
-        $.Msg("好的")
         const container = ConpoentDataContainer.Instance.NameGetNode("equip_shop").current
-        $.Msg(container)
         container.open()
     }
 

@@ -108,6 +108,12 @@ export abstract class CAModifiler{
         print("当前该modifler的hook值为",this.hook)
     }
 
+   logoutHook(hook:HOOK){
+       this.hookEvent[hook] = null
+       this.hook = bit.bxor(this.hook,hook)
+       print("特效已经触发完毕,取消了hook,现在的hook值是",this.hook)
+   }
+
     call_hook(hook:HOOK){
         const table = []
         if(bit.bor(this.hook,hook) == this.hook){

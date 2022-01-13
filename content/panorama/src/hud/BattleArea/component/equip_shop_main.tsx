@@ -12,7 +12,6 @@ export const Equipd_shop_Main = (props:{onwenr:number}) =>{
     const xref = useRef<Panel|null>()
 
     useEffect(()=>{
-        $.Msg("接受到更新了",conponent?.switch)
         if(conponent?.switch == true){
             ref.current?.RemoveClass("hide")
             xref.current?.RemoveClass("hide")

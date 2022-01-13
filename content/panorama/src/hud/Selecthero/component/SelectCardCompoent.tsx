@@ -1,32 +1,35 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { ConpoentDataContainer } from "../../ConpoentDataContainer";
 
 export const Card = ({...args}) =>{
     const ref = useRef<Panel|null>()
+    const [motion,setmotion] = useState(0)
 
     useEffect(()=>{
-        const isselect = ConpoentDataContainer.Instance?.NameGetNode("Pool")?.current?.getKeyString<[number,number]>(Players.GetLocalPlayer() + "isselect")
-        let bool = false
-        for(const key in isselect){
-           if(isselect[key] === args.id){
-               bool = true
-           }
-        }   
-        bool ? ref.current?.AddClass("highlight") : ref.current?.RemoveClass("highlight")
-    })
+        $.Schedule(1,()=>{
+         const container = ConpoentDataContainer.Instance.NameGetNode("Pool").current
+         container.register_monitor(setmotion)
+        })
+     },[])
 
-
-    useEffect(()=>{
-       if(args?.filter == 0){
-            ref.current?.AddClass("disable")
-            return;
-       }
-       if(args?.filter == 1){
-           ref.current?.RemoveClass("disable")
-           return;
-       }
-       ref.current?.RemoveClass("highlight")
-    })
+     useEffect(()=>{
+        const container = ConpoentDataContainer.Instance.NameGetNode("Pool").current
+        if(!container) return
+        const isselect = container.getKeyString<[number,number]>(Players.GetLocalPlayer() + "isselect")
+        if(isselect[0] == args.id || isselect[1] == args.id){
+            ref.current?.AddClass("highlight")
+        }else{
+            ref.current?.RemoveClass("highlight")
+        }
+        const list = container.getKeyString<string[]>(Players.GetLocalPlayer() + "okselect")
+        if(!list) return;
+        for(const heroid of list){
+            if(heroid == args.id){
+                ref.current?.AddClass("disable")
+            }
+        }
+     },[motion])
+ 
 
     const tip = (panel:Panel) => {
         const tip = ConpoentDataContainer.Instance.NameGetNode("")

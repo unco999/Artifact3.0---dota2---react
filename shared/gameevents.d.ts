@@ -39,13 +39,13 @@ declare interface CustomGameEventDeclarations {
     "S2C_SEND_DEATH_ANIMATION":{uuid:string},
     "S2C_SEND_ATTACK":{uuid:string},
     "C2S_CALL_ATTACK":{},
-    "C2S_SEATCH_TARGET_OPEN":{magic_brach:number,magic_range:number,has_hero_ability:string,magic_team:number},
-    "C2S_SEATCH_TARGET_OFF":{magic_brach:number,magic_range:number,has_hero_ability:string,magic_team:number},
+    "C2S_SEATCH_TARGET_OPEN":{abilityname:string},
+    "C2S_SEATCH_TARGET_OFF":{abilityname:string},
     "S2C_SEATCH_TARGET_OPEN":{uuid:string},
     "S2C_SEATCH_TARGET_OFF":{uuid:string},
     "S2C_SKILL_READY":{uuid:string},
     "S2C_SKILL_OFF":{uuid:string},
-    "C2S_SPELL_SKILL":{SKILL_ID:string},
+    "C2S_SPELL_SKILL":{SKILL_ID:string,target_uuid:string},
     "S2C_HURT_DAMAGE":{particle:string,uuid:string}
     "S2C_TOWER_INIT":{playerid:PlayerID,uuid:string,brach:number,heal:number},
     "C2S_TOWER_INIT":{owner:PlayerID,brach:number}

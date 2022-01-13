@@ -18,6 +18,7 @@ export const OwendCardList = ({...args}) => {
         let jsx:JSX.Element[] = []
         if(args.playerHasChosen){
             const arraycode = JsonString2Array(args.playerHasChosen[args.player == 'red' ? "RedSelectstage" : "BlueSelectstage"])
+            $.Msg(arraycode)
             jsx = arraycode.map((code,index) => <OwendCard key={args.player == 'red' ? reduuid.current[index] : blueuuid.current[index]} heroid={code} {...args} num={index + 1}/>)
         }else{
             const arraycode = [-1,-1,-1,-1,-1]

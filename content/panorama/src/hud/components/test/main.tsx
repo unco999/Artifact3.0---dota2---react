@@ -44,7 +44,6 @@ export const Test = () => {
         let time = 0
         $.Schedule(Game.GetGameFrameTime(),function cb(){
             time += Game.GetGameFrameTime();
-            $.Msg(`${(GameUI.GetCursorPosition()[0]) / (Game.GetScreenWidth() / 1920) - 960} ${(GameUI.GetCursorPosition()[1]) / (Game.GetScreenHeight() / 1080) - 540} 0`);
             ($("#uuid1") as ScenePanel).FireEntityInput("test","SetControlPoint",`3: ${(GameUI.GetCursorPosition()[1]) / (Game.GetScreenHeight() / 1080) - 540} ${(GameUI.GetCursorPosition()[0]) / (Game.GetScreenWidth() / 1920) - 960} 0`);//
             $.Schedule(Game.GetGameFrameTime(),cb)//
         })

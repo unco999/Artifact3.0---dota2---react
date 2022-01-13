@@ -15,16 +15,40 @@ export const teamState:Record<string,string> = {
 export const Pool = ({...args}) => {
     const id = useUuid()
     const {conponent,up} = useInstance("Pool",id,{},undefined)
-    const heroid = JsonString2Array(useNetTableKey("Card_group_construction_phase","heroThatCanChooseOnTheCurrentField"))
-    const heroselected = JsonString2Array(useNetTableKey("Card_group_construction_phase",'heroSelected'))
+    const heroid = useNetTableKey("Card_group_construction_phase","heroThatCanChooseOnTheCurrentField")
+    const heroselected = useNetTableKey("Card_group_construction_phase",'heroSelected') 
     const main = useRef<Panel|null>()
-
-
+    const currentSelect = useRef([-1,-1])
+    const cuurentSelcetIndex = useRef<boolean>(false)
+    const SetCuurentSelect = (cuurent_selecet_hero_id:number) => {
+        $.Msg(cuurentSelcetIndex.current)
+        if(cuurentSelcetIndex.current){
+            (currentSelect.current[1] = cuurent_selecet_hero_id) 
+            cuurentSelcetIndex.current =! cuurentSelcetIndex.current
+        }else{
+            (currentSelect.current[0] = cuurent_selecet_hero_id)
+            cuurentSelcetIndex.current =! cuurentSelcetIndex.current
+        }
+        conponent.SetKeyAny(Players.GetLocalPlayer() + "isselect",currentSelect.current)
+    }
+    const clearCurrntSelect = () => {
+        currentSelect.current = [-1,-1]
+        conponent.SetKeyAny(Players.GetLocalPlayer() + "isselect",currentSelect.current)
+    }
+    const isFull = () => {
+        conponent.SetKeyAny(Players.GetLocalPlayer() + "isok",currentSelect.current[0] != -1 && currentSelect.current[1] != -1)
+    }
 
     useEffect(()=>{
-        conponent?.SetKeyAny(Players.GetLocalPlayer() + "isselect",[undefined,undefined])
-        conponent?.SetKeyAny(Players.GetLocalPlayer() + "selectindex",0)
-    },[args?.loopdata?.currentteam])
+        if(!conponent) return
+        clearCurrntSelect()
+    },[args?.loopdata?.currentteam,conponent])
+
+    useEffect(()=>{
+        if(!conponent) return;
+        conponent.SetKeyAny(Players.GetLocalPlayer() + "okselect",JsonString2Array(heroselected))
+    },[heroselected])
+
 
     useEffect(()=>{
         if(args?.gameloop === 'branch'){
@@ -34,36 +58,20 @@ export const Pool = ({...args}) => {
         }
     },[args.gameloop])
 
+    useEffect(()=>{
+        $.Msg(heroid)
+    },[heroid])
+
 
     const optional = (panel:Panel) => {
-        if(args?.loopdata?.currentteam){
-           if(args.playerteam[teamState[args.loopdata.currentteam]] === Players.GetLocalPlayer()){
-                if(filter(panel.Data().id) === 0) return
-                if(conponent?.getKeyString(Players.GetLocalPlayer() + "isselect") == null){
-                    conponent?.SetKeyAny(Players.GetLocalPlayer() + "isselect",[undefined,undefined])
-                }
-                const isselect = conponent!.getKeyString<[number|undefined,number|undefined]>(Players.GetLocalPlayer() + "isselect")
-                const selectindex = conponent?.getKeyString<number>(Players.GetLocalPlayer() + "selectindex")
-                if(!selectindex) conponent?.SetKeyAny(Players.GetLocalPlayer() + "selectindex",0)
-                isselect[conponent!.getKeyString<number>(Players.GetLocalPlayer() + "selectindex")] = panel.Data().id
-                if(args?.loopdata?.remainingOptionalQuantity == 2){
-                    conponent?.SetKeyAny(Players.GetLocalPlayer() + "selectindex",conponent!.getKeyString<number>(Players.GetLocalPlayer() + "selectindex") == 1 ? 0 : 1)
-                }
-                let b:boolean = false
-                for(const key in isselect){
-                    if(isselect[key] != undefined){
-                        b = true
-                    }
-                }
-                okbutton(b)
-           }else{
-                conponent?.SetKeyAny(Players.GetLocalPlayer() + "isselect",[undefined,undefined])
-                conponent?.SetKeyAny(Players.GetLocalPlayer() + "selectindex",0)
-           }
+        $.Msg("当前选择玩家为",args?.loopdata?.currentteam)
+        if( args.playerteam[teamState[args?.loopdata?.currentteam]] == Players.GetLocalPlayer()){
+            SetCuurentSelect(panel.Data().id)
+            isFull()
         }
     }
 
-
+ 
 
     const okbutton = (bool:boolean)=> {
         const okbutton =ConpoentDataContainer.Instance.NameGetNode("okbutton").current
@@ -74,28 +82,18 @@ export const Pool = ({...args}) => {
         }
     }
 
-    const filter = (heroid:number) => {
-        let bool = 1
-        for(const key in heroselected){
-            const heroided = heroselected[key]
-            if(heroid == heroided){
-                bool = 0
-            }
-        }
-        return bool
-    }
 
-    const list = useMemo(()=>{
+    const list = ()=>{
         const jsx_list = []
         for(const key in heroid){
-            jsx_list.push(<Card onactivate={(Panel:Panel)=>optional(Panel)} filter={filter(heroid[key])} onload={(panel:Panel)=>{panel.Data().id = heroid[key]}} key={"pool"+ key + filter(heroid[key]) } id={heroid[key]}/>)
+            jsx_list.push(<Card onactivate={(Panel:Panel)=>optional(Panel)} onload={(panel:Panel)=>{panel.Data().id = heroid[key]}} key={"pool"+ key } id={heroid[key]}/>)
         }
         return jsx_list
-    },[heroselected,heroid])
+    }
 
 
 
     return <Panel ref={Panel=>main.current = Panel} className={"Pool"}>
-        {list}
+        {list()}
     </Panel>
 }

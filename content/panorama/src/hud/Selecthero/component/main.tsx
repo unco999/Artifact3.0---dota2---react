@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useNetTableKey } from "react-panorama";
 import { BaseBoard } from "./baseboard";
 import { Branch } from "./branch";
@@ -17,6 +17,14 @@ export const Main = () => {
     const filter = () => {
         return gameloopname?.current === 'selectherocard' ||  gameloopname?.current === "branch" 
     }
+
+    useEffect(()=>{
+        function cb(){
+            $.Msg("当前选择玩家",loopdata?.currentteam)
+            $.Schedule(1,cb)
+        }
+        cb()
+    },[])
 
     return <> 
         {

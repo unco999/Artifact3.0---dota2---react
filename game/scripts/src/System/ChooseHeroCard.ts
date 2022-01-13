@@ -78,7 +78,7 @@ export class RedSelectstage extends ChooseHerostate{
 
 export class BlueSelectstage extends ChooseHerostate{
     id = "BlueSelectstage"
-    time = 2
+    time = 10
 
     constructor(optionalQuantity:number){
         super()
@@ -250,9 +250,16 @@ export class showtime extends ChooseHerostate{
         this.time --;
         if(this.time == 0){
             this.host.close()
-            CustomNetTables.SetTableValue('GameMianLoop','currentLoopName',{current:"isbattle"})
-            GameRules.gamemainloop = new BattleGameLoop()
-            GameRules.gamemainloop.StartcuurentsettingState = new faultCard(GameRules.gamemainloop,STRATEGY_BRACH_STATE.上路)
+            CustomNetTables.SetTableValue('GameMianLoop','currentLoopName',{current:"showtime"})
+            print("蓝队选的英雄")
+            DeepPrintTable(this.host.BlueheroSelected)
+            print("红队选的英雄")
+            DeepPrintTable(this.host.RedheroSelected)
+            Timers.CreateTimer(10,()=>{
+                CustomNetTables.SetTableValue('GameMianLoop','currentLoopName',{current:"isbattle"})
+                GameRules.gamemainloop = new BattleGameLoop()
+                GameRules.gamemainloop.StartcuurentsettingState = new faultCard(GameRules.gamemainloop,STRATEGY_BRACH_STATE.上路)
+            })
         }
         return 1
     }
@@ -296,6 +303,10 @@ export class ChooseHeroCardLoop{
             if(this.currentState.id == "RedSelectstage" && PlayerResource.GetPlayer(event.PlayerID) == GameRules.Red){
                 for(const key in event.array){
                     if(event.array[key] == -1) continue
+                    if(this.RedheroSelected.includes(event.array[key]) || this.BlueheroSelected.includes((event.array[key]))){
+                        CustomGameEventManager.Send_ServerToPlayer(PlayerResource.GetPlayer(event.PlayerID),"S2C_INFORMATION",{information:"这张已经被选了"})
+                        return
+                    }
                     this.addRedHeroCardinlist = event.array[key]
                     if(this.currentState.remainingOptionalQuantity === 0){
                         this.blueisok = true
@@ -306,6 +317,10 @@ export class ChooseHeroCardLoop{
         CustomGameEventManager.RegisterListener("BLUE_SELECT_HERO_CARD",(_,event)=>{
             if(this.currentState.id == "BlueSelectstage" && PlayerResource.GetPlayer(event.PlayerID) == GameRules.Blue){
                 for(const key in event.array){
+                    if(this.RedheroSelected.includes(event.array[key]) || this.BlueheroSelected.includes((event.array[key]))){
+                        CustomGameEventManager.Send_ServerToPlayer(PlayerResource.GetPlayer(event.PlayerID),"S2C_INFORMATION",{information:"这张已经被选了"})
+                        return
+                    }
                     if(event.array[key] == -1) continue
                     this.addBlueHeroCardinlist = event.array[key]
                     if(this.currentState.remainingOptionalQuantity === 0){
@@ -333,7 +348,6 @@ export class ChooseHeroCardLoop{
             return bool
         })
         const heroid = newTable[RandomInt(0,newTable.length - 1)]
-        this.BlueheroSelected.push(heroid)
         return heroid
     }
 
@@ -353,7 +367,6 @@ export class ChooseHeroCardLoop{
             return bool
         })
         const heroid = newTable[RandomInt(0,newTable.length - 1)]
-        this.RedheroSelected.push(heroid)
         return heroid
     }
     
@@ -428,6 +441,7 @@ export class ChooseHeroCardLoop{
 
     set addBlueHeroCardinlist(herocardid:number){
        if(this.GetcurrentState.remainingOptionalQuantity < 1) return;
+       print("当前UI选择的herocardid",herocardid)
        for(const team in this.haveSelectedHero){
            print("当前ID")
            print(this.currentState.id)
@@ -449,6 +463,7 @@ export class ChooseHeroCardLoop{
 
     set addRedHeroCardinlist(herocardid:number){
         if(this.GetcurrentState.remainingOptionalQuantity < 1) return;
+        print("当前UI选择的herocardid",herocardid)
         for(const team in this.haveSelectedHero){
             print("当前ID")
             print(this.currentState.id)

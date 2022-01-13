@@ -41,18 +41,20 @@ export const Okbutton = (props:{playerteam:{red:number,blue:number},loopdata: {
     const button = () => {
         if(branchok && branchok[Players.GetLocalPlayer()]) return;
         const Pool = ConpoentDataContainer.Instance.NameGetNode('Pool').current
-        if(props?.gameloopname?.current == 'branch'){
+        const loop = CustomNetTables.GetTableValue("GameMianLoop","currentLoopName")?.current
+        if(loop == 'branch'){
             const Branch = ConpoentDataContainer.Instance.NameGetNode('Branch').current
             const data = Branch.getKeyString<{1:Array<number>,2:Array<number>,3:Array<number>}>("branch")
-            // const newdata:Record<number,number[]> = {}
-            // for(const key in data){
-            //    for(const index in data[+key as 1 | 2 | 3]){
-            //        if(!newdata[+key]) newdata[+key] = []
-            //        if(data[+key as 1 | 2 | 3][index] != -1){
-            //            newdata[+key].push(data[+key as 1 | 2 | 3][index])
-            //        }
-            //    }
-            // }
+            $.Msg("打印当前分路选择",data)
+            const newdata:Record<number,number[]> = {}
+            for(const key in data){
+               for(const index in data[+key as 1 | 2 | 3]){
+                   if(!newdata[+key]) newdata[+key] = []
+                   if(data[+key as 1 | 2 | 3][index] != -1){
+                       newdata[+key].push(data[+key as 1 | 2 | 3][index])
+                   }
+               }
+            }
             GameEvents.SendCustomGameEventToServer("HERO_BRANCH_OVER",{branch:data})
             return
         }

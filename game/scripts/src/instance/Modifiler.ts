@@ -131,4 +131,8 @@ export abstract class CAModifiler{
     abstract get influenceArrmor();
 
     abstract get influenceheal();
+
+    get faulty(){
+        return 0
+    }
 }

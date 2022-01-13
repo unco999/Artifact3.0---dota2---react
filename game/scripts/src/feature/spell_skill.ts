@@ -27,11 +27,15 @@ export class spell_skill{
             Set_option_mask_state(optionMask.红队有操作)
         }
         print("服务端执行了释放技能管理器")
-        const hero = this.skill_id_find_hero(id,player)
-        const type = this.skill_id_find_type(id,player)
-        const data = GameRules.select_the_prompt.validRangeLookup(player,type.magic_brach,type.magic_range,type.magic_team,hero.Id)
-        const ability = AbiliyContainer.instance.GetAbility(id)
-        ability.spell_skill(data.table as (Unit|number)[],target)
+        const abilityInstance = AbiliyContainer.instance.GetAbility(id)
+        if(GameRules.select_the_prompt.splitLimiter(abilityInstance.heroid,player)){
+            const hero = GameRules.SceneManager.get_hero(abilityInstance.heroid) as Unit
+            const data = GameRules.select_the_prompt.validRangeLookup(player,abilityInstance.Magic_brach,abilityInstance.Magic_range,abilityInstance.Magic_team,abilityInstance.heroid)
+            const ability = AbiliyContainer.instance.GetAbility(id)
+            ability.spell_skill(data.table as (Unit|number)[],target,hero)
+        }else{
+            print("非法操作")
+        }
     }
 
     /**通过技能id寻找英雄id */

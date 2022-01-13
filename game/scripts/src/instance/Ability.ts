@@ -112,8 +112,8 @@ export class ability_templater{
     Magic_team:Magic_team
     Magic_range:Magic_range
 
-    spell_skill(table:(Unit|number)[],target?:string){
-
+    spell_skill(table:(Unit|number)[],target?:string,hero?:Unit){
+        
     }
 
     constructor(id:string){
@@ -121,6 +121,9 @@ export class ability_templater{
     }
 }
 
+/**
+ * 雷击
+ */
 @ca_register_ability()
 export class SmallSkill_leiji extends ability_templater{
     Magic_brach = Magic_brach.对格
@@ -132,23 +135,32 @@ export class SmallSkill_leiji extends ability_templater{
         super("SmallSkill_leiji")
     }
 
-    spell_skill(table:(Unit|number)[],target?:string){
+    spell_skill(table:(Unit|number)[],target?:string,hero?:Unit){
         // const hero = GameRules.SceneManager.get_hero(this.heorheroid) as Unit
-        const hero = GameRules.SceneManager.GetMidwayScene(GameRules.Blue.GetPlayerID()).IndexGet(3) as Unit
-        super.spell_skill(table)
         table.forEach(target=>{
             if(typeof(target) != 'number'){
                 if(target.Index){
                     const _damage = new damage(hero,target)
-                    _damage.spell_skill_settlement(this.damage_calculate(math.abs(hero.Index - target.Index)),hero)
+                    _damage.spell_skill_settlement(this.damage_calculate(hero),hero)
+                    CustomGameEventManager.Send_ServerToAllClients("SC2_PLAY_EFFECT",{uuid:target.UUID,paticle:"particles/econ/items/zeus/arcana_chariot/zeus_arcana_kill_remnant.vpcf",cameraOrigin:'0 400 0',lookAt:'0 0 0'})
                 }   
             }
         })
     }
 
     /**伤害结算方法 */
-    damage_calculate(distance:number){
-        return 3 - distance
+    damage_calculate(hero:Unit){
+        let damage = 0
+        if(hero.Getfaulty == 1){
+            damage = 3
+        }
+        if(hero.Getfaulty == 2){
+            damage = 5
+        }
+        if(hero.Getfaulty == 3){
+            damage = 8
+        }
+        return damage
     }
 }
 

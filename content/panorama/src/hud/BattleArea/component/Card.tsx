@@ -271,7 +271,7 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
     const registrationCanBeHitInTheEvent = (open:boolean) => {
         open ? $.RegisterEventHandler( 'DragDrop', dummy.current!, OnDragDrop ) : $.RegisterEventHandler( 'DragDrop', dummy.current!, ()=>{} );
         open ? $.RegisterEventHandler( 'DragEnter', dummy.current!, OnDragEnter ) : $.RegisterEventHandler( 'DragEnter', dummy.current!, ()=>{});
-        open ? $.RegisterEventHandler('DragLeave',dummy.current!,OnDragLeave) :  $.RegisterEventHandler( 'DragLeave', dummy.current!, ()=>{});
+        open ? $.RegisterEventHandler( 'DragLeave',dummy.current!,OnDragLeave) :  $.RegisterEventHandler( 'DragLeave', dummy.current!, ()=>{});
     }
 
     useGameEvent("S2C_SEND_UP_EQUIMENT_SHOW",(event)=>{
@@ -390,6 +390,10 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
             ref.current?.AddClass("dragHero")
             return 
         }
+        if(state.type == 'SmallSkill' || state.type == "TrickSkill"  && ref.current){
+            displayPanel.Data().id = state.Id
+            $.Msg("当前拖动的id",state.Id)
+        }
         dragCallbacks.displayPanel = displayPanel;
         dragCallbacks.offsetX = 0; 
         dragCallbacks.offsetY = 0;
@@ -485,8 +489,10 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
         container.close()
     }
 
-    const OnDragDrop = (panelId:any, dragCallbacks:any) => {
+    const OnDragDrop = (_:any,dragCallbacks:any) => {
+        $.Msg(dragCallbacks)
         const id = dragCallbacks.Data().id
+        $.Msg("被拖入的id",id)
         GameEvents.SendCustomGameEventToServer("C2S_SPELL_SKILL",{SKILL_ID:id,target_uuid:props.uuid})
     }
 

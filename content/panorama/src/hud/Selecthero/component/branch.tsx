@@ -19,11 +19,6 @@ export const BranchCard = (props:{index:number}) => {
         $.RegisterEventHandler( 'DragLeave', main.current!, OnDragLeave );
     },[])
 
-    useEffect(()=>{
-        if(branchok && branchok[Players.GetLocalPlayer()]){
-            
-        }
-    },[branchok])
 
 
     useEffect(()=>{
@@ -31,7 +26,7 @@ export const BranchCard = (props:{index:number}) => {
         if(conponent){
             conponent.register_monitor(setmotion)
         }
-    })
+    },[])
 
     useEffect(()=>{
         const conponent = ConpoentDataContainer.Instance.NameGetNode("Branch").current
@@ -41,13 +36,15 @@ export const BranchCard = (props:{index:number}) => {
     },[motion])
 
     const OnDragEnter = (panelId:any, dragCallbacks:any) => {
-
+        
     }
     
     const OnDragDrop = (panelId:any, dragCallbacks:HeroImage) => {
         const heroid = dragCallbacks.heroid
+        $.Msg("拖拽进去的id是",heroid)
         const conponent = ConpoentDataContainer.Instance.NameGetNode("Branch").current
         const table = conponent.getKeyString<Record<number,number[]>>("branch")
+        if(!table)return;
         for(const branch in table){
            for(const index in table[branch]){
                if(table[branch][index] == heroid){
@@ -62,7 +59,6 @@ export const BranchCard = (props:{index:number}) => {
                }
            }
         setarray(table[props.index])
-        conponent.immediatelyupdate()
         dragCallbacks.DeleteAsync(0)
     }
 
@@ -87,7 +83,7 @@ export const Branch = (props:{gameloop:string}) => {
 
     useEffect(()=>{
         conponent?.SetKeyAny("branch",{0:[-1,-1],1:[-1],2:[-1,-1]})
-    },[up])
+    },[conponent])
     
     useEffect(()=>{
         if(props.gameloop === 'branch'){

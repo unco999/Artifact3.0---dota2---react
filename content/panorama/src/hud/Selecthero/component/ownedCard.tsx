@@ -36,9 +36,9 @@ export const OwendCard = ({...args}) => {
         if(args.playerteam[args.player] != Players.GetLocalPlayer()) return 
         var displayPanel = $.CreatePanel( "DOTAHeroImage", $.GetContextPanel(), "test" ) as HeroImage
         // 在创建的那个panel里面保存一些数据，在其他的回调中可以用
-        displayPanel.heroid = args.heroid as HeroID;
+        displayPanel.heroname = (GameUI?.CustomUIConfig() as any).CardHero?.CardGame[args.heroid]?.name ?? ""
         displayPanel.AddClass("dragicon")
-        displayPanel.Data().heorid = {heroid:args.herois}
+        displayPanel.Data().heroid = args.heroid
         dragCallbacks.displayPanel = displayPanel;
         dragCallbacks.offsetX = 0; 
         dragCallbacks.offsetY = 0;

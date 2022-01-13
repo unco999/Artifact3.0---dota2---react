@@ -18,7 +18,7 @@ export enum 游戏循环 {
 const 商店购买时间 = 5
 const 英雄部署时间 = 5
 const 战斗结算时间 = 10
-const 策略时间 = 5
+const 策略时间 = 9999
 
 //第一回合六張牌  5小1大  第一回合結束  商店功能花錢買牌(2元买大技能 1元买小技能)  然後英雄分錄  分完路發兩張   
 
@@ -259,9 +259,9 @@ export class faultCard extends GameLoopState {
     /**第一次进入手牌初始化 */
     init_give_cards() {
         for (let i = 0; i < 2; i++) {
-            for (let count = 0; count < 5; count++) {
+            for (let count = 0; count < 15; count++) {
                 if (i == 0) {
-                    if (RollPercentage(30)) {
+                    if (RollPercentage(70)) {
                         //50%几率抽大招
                         GameRules.SceneManager.change_secens(GameRules.SceneManager.GetCardheapsScene(GameRules.Red.GetPlayerID()).Trick_ability_dequeue().UUID, "HAND");
                     } else {

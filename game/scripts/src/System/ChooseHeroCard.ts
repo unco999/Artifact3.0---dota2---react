@@ -123,7 +123,7 @@ export class BlueSelectstage extends ChooseHerostate{
 /**分路选择 */
 export class ChoosePreGame extends ChooseHerostate{
     id = "ChoosePreGame"
-    time = 4
+    time = 15
 
     constructor(){
         super()

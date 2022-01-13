@@ -13,7 +13,8 @@ export class Unit extends Card{
     arrmor:number = 10
     heal:number = 10
     max_heal:number = 10
-
+    private faulty:number = 1  //技能伤害层数
+ 
     constructor(CardParameter:CardParameter,Scene:ICAScene,type:CARD_TYPE){
         super(CardParameter,Scene,type)
         if(type == "Hero"){
@@ -99,6 +100,15 @@ export class Unit extends Card{
         }
         return arrmor
     }
+
+    get Getfaulty(){
+        let faulty = this.faulty
+        for(const modifier of this.Modifilers){
+            faulty += modifier.faulty
+        }
+        return faulty
+    }
+
 
     get GETheal(){
         return this.heal

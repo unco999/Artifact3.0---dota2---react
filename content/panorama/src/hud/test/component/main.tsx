@@ -1,10 +1,17 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useNetTableValues } from "react-panorama";
 import { ConpoentDataContainer } from "../../ConpoentDataContainer";
 
 export const Main = () =>{
     const data = useNetTableValues("GameMianLoop")
     const [update,setupdate] = useState<boolean>(false)
+    const list = useMemo(() =>{
+        const _list = []
+        for(let i = 55 ; i < 120 ; i++) {
+            _list.push(i)
+        }
+        return _list
+    },[])
     
     useEffect(()=>{
         $.Schedule(1,()=>setupdate(value=>!value))
@@ -24,5 +31,13 @@ export const Main = () =>{
             <TextButton text={"能量上线+1"} className={"default"} onactivate={()=>{GameEvents.SendCustomGameEventToServer("C2S_TEST_MAX_REDUCE",{})}}/>
             <TextButton text={"当前能量-1"} className={"default"} onactivate={()=>{GameEvents.SendCustomGameEventToServer("C2S_TEST_REDUCE",{})}}/>
             <TextButton text={"随机增加一张装备牌"} className={"default"} onactivate={()=>{GameEvents.SendCustomGameEventToServer("C2S_TEST_RANDOM_EQUIP",{})}}/>
+            <Panel style={{flowChildren:'right-wrap',width:'100%',height:'100%'}}>
+            {list.map(heroid=>{
+                return <Panel>
+                <Label text={heroid} style={{zIndex:10,color:'white'}}/>
+                <DOTAHeroImage heroimagestyle="icon" heroid={heroid as HeroID}/>
+                </Panel>
+            })}
+            </Panel>
         </Panel>
 }

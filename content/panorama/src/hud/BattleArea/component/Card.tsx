@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useMachine } from '@xstate/react';
 import { createMachine, SingleOrArray } from 'xstate';
 import { useGameEvent, useNetTableKey } from "react-panorama";
@@ -35,7 +35,8 @@ enum Magic_range{
 enum Magic_team{
     "友方",
     "敌方",
-    "双方"
+    "双方",
+    "自己"
 }
 
 const Machine = createMachine({
@@ -44,7 +45,7 @@ const Machine = createMachine({
     states:{
         defualt:{
             entry:"defualt_entry",
-            on:{toHAND:"hand",toHEAPS:"heaps",toMIDWAY:"midway",toGOUP:"goup",toLAIDDOWN:"laiddown",toGRAVE:"grave",toREMOVE:"remove",toHIDE:'hidden_area'},
+            on:{toHAND:"hand",toABILITY:"ability",toHEAPS:"heaps",toMIDWAY:"midway",toGOUP:"goup",toLAIDDOWN:"laiddown",toGRAVE:"grave",toREMOVE:"remove",toHIDE:'hidden_area'},
             exit:"defualt_exit"
         },
         heaps:{
@@ -96,7 +97,7 @@ const Machine = createMachine({
 })
 
  
-export const Card = (props:{index:number,uuid:string,owner:number}) => {
+export const Card = (props:{index:number,uuid:string,owner:number,view_stage:number}) => {
     const prefix = useMemo(()=> props.owner == Players.GetLocalPlayer() ? "my_" : "you_",[props])
     const graveTipFunction = useRef(()=>{})
     const id = useRef(Math.floor(Math.random() * 20) + 1)
@@ -263,16 +264,38 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
     useGameEvent("S2C_SEATCH_TARGET_OPEN",(event)=>{
         if(props.uuid != event.uuid) return
         ref.current?.AddClass("select_target")
-        registrationCanBeHitInTheEvent(true)
         // set_current_effect("particles/killstreak/killstreak_ti10_hud_lv1.vpcf")
     },[props.uuid])
 
-    //注册unit面板可被拖入事件 比如被魔法击中
-    const registrationCanBeHitInTheEvent = (open:boolean) => {
-        open ? $.RegisterEventHandler( 'DragDrop', dummy.current!, OnDragDrop ) : $.RegisterEventHandler( 'DragDrop', dummy.current!, ()=>{} );
-        open ? $.RegisterEventHandler( 'DragEnter', dummy.current!, OnDragEnter ) : $.RegisterEventHandler( 'DragEnter', dummy.current!, ()=>{});
-        open ? $.RegisterEventHandler( 'DragLeave',dummy.current!,OnDragLeave) :  $.RegisterEventHandler( 'DragLeave', dummy.current!, ()=>{});
+
+    
+    const OnDragDrop = (_:any,dragCallbacks:any) => {
+        const id = dragCallbacks.Data().id
+        const cardid = dragCallbacks.Data().cardid
+        GameEvents.SendCustomGameEventToServer("C2S_SPELL_SKILL",{SKILL_ID:id,target_uuid:props.uuid,spell_ability_card_uuid:cardid})
+        C2S_SEATCH_TARGET(false,dragCallbacks.Data().id) // 关闭技能提示器
     }
+
+    const OnDragLeave = () =>{
+    }
+    
+    const OnDragEnter = () =>{
+    }
+
+    useEffect(()=>{
+        if(!state.Scene) return;
+        if(!dummy.current) return; 
+        if(state.Scene == "MIDWAY" || state.Scene == "GOUP" || state.Scene == "LAIDDOWN"){
+            $.RegisterEventHandler( 'DragDrop', dummy.current!, OnDragDrop ) 
+            $.RegisterEventHandler( 'DragEnter', dummy.current!, OnDragEnter )
+            $.RegisterEventHandler( 'DragLeave',dummy.current!,OnDragLeave) 
+        }else{
+            $.RegisterEventHandler( 'DragDrop', dummy.current!, ()=>{} ) 
+            $.RegisterEventHandler( 'DragEnter', dummy.current!, ()=>{} )
+            $.RegisterEventHandler( 'DragLeave',dummy.current!,()=>{}) 
+        }
+    },[state])
+
 
     useGameEvent("S2C_SEND_UP_EQUIMENT_SHOW",(event)=>{
         if(props.uuid != event.uuid) return;
@@ -295,7 +318,6 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
     useGameEvent("S2C_SEATCH_TARGET_OFF",(event)=>{
         if(props.uuid != event.uuid) return
         ref.current?.RemoveClass("select_target")
-        registrationCanBeHitInTheEvent(false)
     },[props.uuid])
     
     //技能释放主体提示
@@ -304,26 +326,31 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
         ref.current?.RemoveClass("skill_ready")
     },[props.uuid]) 
 
-    // //被命中魔法伤害
-    // useGameEvent("S2C_HURT_DAMAGE",(event)=>{
-    //     if(props.uuid != event.uuid) return
-    //     set_current_effect("particles/econ/items/mirana/mirana_starstorm_bow/mirana_starstorm_starfall_attack.vpcf")
-    //     $.Msg(props.uuid,"被命中")
-    // },[props.uuid])
+    //被命中魔法伤害
+    useGameEvent("S2C_HURT_DAMAGE",(event)=>{
+        if(props.uuid != event.uuid) return
+        ref.current?.AddClass("hurt")
+        set_current_effect(event.particle)
+                 $.Schedule(1.5,()=>{
+                     ref.current?.RemoveClass("hurt")
+                     set_current_effect("")
+                 })
+    },[props.uuid])
 
-    useEffect(()=>{
-        if(state.Scene == "GOUP" || state.Scene == "MIDWAY" || state.Scene == "LAIDDOWN"){
-            const id = GameEvents.Subscribe("S2C_HURT_DAMAGE",(event)=>{
-                if(props.uuid != event.uuid) return                set_current_effect("particles/econ/items/centaur/centaur_ti6_gold/centaur_ti6_warstomp_gold.vpcf");
-                ref.current?.AddClass("hurt")
-                $.Schedule(1.5,()=>{
-                    set_current_effect("")
-                    ref.current?.RemoveClass("hurt")
-                })
-            })
-            return ()=>GameEvents.Unsubscribe(id)
-        }
-    },[props.uuid,state])
+    // useEffect(()=>{
+    //     if(state.Scene == "GOUP" || state.Scene == "MIDWAY" || state.Scene == "LAIDDOWN"){
+    //         const id = GameEvents.Subscribe("S2C_HURT_DAMAGE",(event)=>{
+    //             if(props.uuid != event.uuid) return                
+    //             set_current_effect("particles/econ/items/centaur/centaur_ti6_gold/centaur_ti6_warstomp_gold.vpcf");
+    //             ref.current?.AddClass("hurt")
+    //             $.Schedule(1.5,()=>{
+    //                 set_current_effect("")
+    //                 ref.current?.RemoveClass("hurt")
+    //             })
+    //         })
+    //         return ()=>GameEvents.Unsubscribe(id)
+    //     }
+    // },[props.uuid,state])
 
     /**注册墓地tip */
     useEffect(()=>{
@@ -369,6 +396,9 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
     },[xstate])
 
     const OnDragStart = (panelId:any, dragCallbacks:any) =>{
+        if(props.view_stage == 1){
+            return
+        }
         const displayPanel = $.CreatePanel( "Panel", $.GetContextPanel(), "cache" ) as HeroImage
         //**加入拖动的是装备卡片 */
         if(state.type == "EQUIP" && ref.current){
@@ -392,7 +422,9 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
         }
         if(state.type == 'SmallSkill' || state.type == "TrickSkill"  && ref.current){
             displayPanel.Data().id = state.Id
-            $.Msg("当前拖动的id",state.Id)
+            displayPanel.Data().cardid = state.uuid
+            displayPanel.Data().data = state.data
+            $.Msg("当前拖动的id",state.data)
         }
         dragCallbacks.displayPanel = displayPanel;
         dragCallbacks.offsetX = 0; 
@@ -405,9 +437,9 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
     }
 
     /**技能提示器 */
-    const C2S_SEATCH_TARGET = (bool:boolean) =>{
+    const C2S_SEATCH_TARGET = (bool:boolean,id?:string) =>{
         GameEvents.SendCustomGameEventToServer(bool == true ?  "C2S_SEATCH_TARGET_OPEN" : "C2S_SEATCH_TARGET_OFF",{
-            abilityname:state.Id
+            abilityname:id ? id : state.Id 
         })
     }
 
@@ -426,11 +458,14 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
             closeOptionalPrompt()
             return
         }
+        if(state.type == 'SmallSkill' || state.type == "TrickSkill"){
+            closeOptionalPrompt()
+        }
         dragCallbacks.DeleteAsync( 0 );
         const container = ConpoentDataContainer.Instance.NameGetNode("arrow_tip").current
         container.close()
         state.type == 'Hero' && closeOptionalPrompt()
-        C2S_SEATCH_TARGET(false) // 关闭技能提示器
+        C2S_SEATCH_TARGET(false,dragCallbacks.Data().id) // 关闭技能提示器
     }
 
     /**打开分路可选提示器 */
@@ -487,19 +522,6 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
     const hidedisposablePointing = () => {
         const container = ConpoentDataContainer.Instance.NameGetNode("arrow_tip").current
         container.close()
-    }
-
-    const OnDragDrop = (_:any,dragCallbacks:any) => {
-        $.Msg(dragCallbacks)
-        const id = dragCallbacks.Data().id
-        $.Msg("被拖入的id",id)
-        GameEvents.SendCustomGameEventToServer("C2S_SPELL_SKILL",{SKILL_ID:id,target_uuid:props.uuid})
-    }
-
-    const OnDragLeave = () =>{
-    }
-    
-    const OnDragEnter = () =>{
     }
  
     const effect_select_scenes = () =>{
@@ -571,7 +593,7 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
                 </Panel>
             </Panel>
             </Panel>
-            {current_effect != "" &&<GenericPanel hittest={false} ref={panel=>{effect.current = panel;effect.current?.AddClass(effect_select_scenes())}} className={prefix + "effect"}  type={"DOTAParticleScenePanel"} particleName={current_effect} particleonly="true"  startActive="true" cameraOrigin={effect_parameter.current?.cameraOrigin} lookAt={effect_parameter.current?.lookAt} fov="50" />}
+            {current_effect != "" &&<GenericPanel hittest={false} key={shortid.generate()} ref={panel=>{effect.current = panel;effect.current?.AddClass(effect_select_scenes())}} className={prefix + "effect"}  type={"DOTAParticleScenePanel"} particleName={current_effect} particleonly="true"  startActive="true" cameraOrigin={effect_parameter.current?.cameraOrigin} lookAt={effect_parameter.current?.lookAt} fov="50" />}
             <Panel hittest={true} draggable={true} ref={Panel => dummy.current = Panel} onmouseover={()=>ref.current?.AddClass(prefix+"hover")} onmouseout={()=>ref.current?.RemoveClass(prefix+"hover")} className={prefix+"Carddummy"}/>
         </>
     }
@@ -612,7 +634,7 @@ export const Card = (props:{index:number,uuid:string,owner:number}) => {
                 </Panel>
             </Panel>
             </Panel>
-            {current_effect != "" &&<GenericPanel hittest={false} ref={panel=>{effect.current = panel;effect.current?.AddClass(effect_select_scenes())}} className={prefix + "effect"}  type={"DOTAParticleScenePanel"} particleName={current_effect} particleonly="true"  startActive="true" cameraOrigin={effect_parameter.current?.cameraOrigin} lookAt={effect_parameter.current?.lookAt} fov="50" />}
+            {current_effect != "" &&<GenericPanel key={shortid.generate()} hittest={false} ref={panel=>{effect.current = panel;effect.current?.AddClass(effect_select_scenes())}} className={prefix + "effect"}  type={"DOTAParticleScenePanel"} particleName={current_effect} particleonly="true"  startActive="true" cameraOrigin={effect_parameter.current?.cameraOrigin} lookAt={effect_parameter.current?.lookAt} fov="50" />}
             <Panel hittest={true}  draggable={true} ref={Panel => dummy.current = Panel} onmouseover={()=>ref.current?.AddClass(prefix+"hover")} onmouseout={()=>ref.current?.RemoveClass(prefix+"hover")} className={prefix+"Carddummy"}/>
             </>
         }
@@ -647,6 +669,7 @@ export const CardContext = (props:{owner:number}) => {
     const [allitem,setallitem] = useState<string[]>([])
     const [allhero,setallhero] = useState<string[]>([])
     const [allability,setallability] = useState<string[]>([])
+    const view_stage = useNetTableKey('GameMianLoop','effect_view_stage')
 
     useGameEvent('S2C_BRUSH_SOLIDER',()=>{
         const all = CustomNetTables.GetTableValue('Scenes','ALL' + props.owner)
@@ -679,6 +702,6 @@ export const CardContext = (props:{owner:number}) => {
 
 
     return <Panel hittest={false} className={"CardContext"}>
-        {allheaps.map((uuid,index)=><Card owner={props.owner}  key={uuid} index={index} uuid={uuid}/>)}
+        {allheaps.map((uuid,index)=><Card owner={props.owner} view_stage={view_stage?.cuurent ?? 0}  key={uuid} index={index} uuid={uuid}/>)}
     </Panel>
 }

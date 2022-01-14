@@ -1,7 +1,8 @@
 import { AbiliyContainer } from "../instance/Ability";
 import { BattleArea } from "../instance/Scenes";
 import { Unit } from "../instance/Unit";
-import { get_current_battle_brach, get_current_operate_brach } from "../Manager/nettablefuc";
+import { Timers } from "../lib/timers";
+import { get_current_battle_brach, get_current_operate_brach, toggle_effect_view_stage } from "../Manager/nettablefuc";
 
 export enum select_type{
     单个选择,
@@ -23,7 +24,8 @@ export enum Magic_range{
 export enum Magic_team{
     "友方",
     "敌方",
-    "双方"
+    "双方",
+    "自己"
 }
 
 export class select_the_prompt{
@@ -61,27 +63,90 @@ export class select_the_prompt{
            const abilityinstance = AbiliyContainer.instance.GetAbility(event.abilityname)
            print("找到的魔法实例",abilityinstance,"他的魔法卡名称为",abilityinstance.id)
            if(!this.splitLimiter(abilityinstance.heroid,event.PlayerID)) return;
-           const find_data = this.validRangeLookup(event.PlayerID,abilityinstance.Magic_brach,abilityinstance.Magic_range,abilityinstance.Magic_team,abilityinstance.heroid)
-           if(!find_data) return
-           CustomGameEventManager.Send_ServerToPlayer(PlayerResource.GetPlayer(find_data._self.PlayerID),"S2C_SKILL_READY",{uuid:find_data._self.UUID})
+           let find_data = this.validRangeLookup(event.PlayerID,abilityinstance.Magic_brach,abilityinstance.Magic_range,abilityinstance.Magic_team,abilityinstance.heroid)
+           if(abilityinstance.wounded){
+               find_data.table = find_data.table.filter(card=>{
+                    if(typeof(card) != "number"){
+                        if((card as Unit).max_heal !=  (card as Unit).GETheal){
+                            return true
+                        }
+                    }
+                })
+           }
+           if(abilityinstance.displacement != -1){
+               const hero = GameRules.SceneManager.get_hero(abilityinstance.heroid)
+               const scene = hero.Scene as BattleArea
+               let _list = []
+               const _table = {}
+               switch(abilityinstance.displacement){
+                   case 1:{
+                        _list = scene.GetAllSpace()
+                   }
+                   case 2:{
+                        const midway = (GameRules.SceneManager.GetMidwayScene(event.PlayerID) as BattleArea).GetAllSpace()
+                        const goup = (GameRules.SceneManager.GetGoUpScene(event.PlayerID) as BattleArea).GetAllSpace()
+                        const laiddown = (GameRules.SceneManager.GetLaidDownScene(event.PlayerID) as BattleArea).GetAllSpace()
+                        table[0] = goup;
+                        table[1] = midway;
+                        table[2] = laiddown;
+                   }
+               }
+               _table[scene.GetSceneIndex()] = _list
+               CustomGameEventManager.Send_ServerToPlayer(PlayerResource.GetPlayer(hero.PlayerID),"S2C_SEND_CANSPACE",_table)
+           }
+           if(!find_data || !find_data.table) return
            find_data.table.forEach(unit=>{
                 if(unit instanceof Unit){
                     CustomGameEventManager.Send_ServerToPlayer(PlayerResource.GetPlayer(find_data._self.PlayerID),"S2C_SEATCH_TARGET_OPEN",{uuid:unit.UUID})
                 }
            })
+           CustomGameEventManager.Send_ServerToPlayer(PlayerResource.GetPlayer(find_data._self.PlayerID),"S2C_SKILL_READY",{uuid:find_data._self.UUID})
         })
         CustomGameEventManager.RegisterListener("C2S_SEATCH_TARGET_OFF",(_,event)=>{
+            print("收到了关闭通知",event.abilityname)
             const abilityinstance = AbiliyContainer.instance.GetAbility(event.abilityname)
             const find_data = this.validRangeLookup(event.PlayerID,abilityinstance.Magic_brach,abilityinstance.Magic_range,abilityinstance.Magic_team,abilityinstance.heroid)
             if(!find_data) return;
             CustomGameEventManager.Send_ServerToPlayer(PlayerResource.GetPlayer(find_data._self.PlayerID),"S2C_SKILL_OFF",{uuid:find_data._self.UUID})
             find_data.table.forEach(unit=>{
                  if(unit instanceof Unit){
+                     print("需要关闭特效的面板id",unit.UUID)
                      CustomGameEventManager.Send_ServerToPlayer(PlayerResource.GetPlayer(find_data._self.PlayerID),"S2C_SEATCH_TARGET_OFF",{uuid:unit.UUID})
                  }
             })
         })
+        CustomGameEventManager.RegisterListener("C2S_REP_SKILL",(_,event)=>{
+            const abilityinstance = AbiliyContainer.instance.GetAbility(event.abilityname)
+            const find_data = this.validRangeLookup(event.PlayerID,abilityinstance.Magic_brach,abilityinstance.Magic_range,abilityinstance.Magic_team,abilityinstance.heroid)
+            const brachkey = event.to
+            let index = event.index
+            let scnese:BattleArea
+            print("当前传入的index",index)
+            switch(brachkey){
+                case "0":{
+                    scnese = GameRules.SceneManager.GetGoUpScene(event.PlayerID) as BattleArea
+                    break
+                }
+                case "1":{
+                    scnese = GameRules.SceneManager.GetMidwayScene(event.PlayerID) as BattleArea
+                    break
+                }
+                case "2":{
+                    scnese = GameRules.SceneManager.GetLaidDownScene(event.PlayerID) as BattleArea
+                    break
+                }
+            }
+            GameRules.SceneManager.change_secens(event.uuid,"ABILITY",+get_current_operate_brach())
+            toggle_effect_view_stage()
+            Timers.CreateTimer(2,()=>{
+                GameRules.SceneManager.change_secens(find_data._self.UUID,scnese.SceneName,+index)
+                abilityinstance.post_move_spell_skill(find_data.table as (number|Unit)[],undefined,find_data._self)
+                GameRules.SceneManager.change_secens(event.uuid,"REMOVE",+get_current_operate_brach())
+                toggle_effect_view_stage()
+            })
+        })
     }
+    
 
     /**有效范围查找器 */
     validRangeLookup(PlayerID:PlayerID,magic_brach:Magic_brach,magic_range:Magic_range,magic_team:Magic_team,has_hero_ability_id:string){
@@ -92,12 +157,18 @@ export class select_the_prompt{
         if(hero == undefined) return;
         if(!(hero.Scene instanceof BattleArea)) return;
         print("成功开始搜索目标")
+        if(magic_team == Magic_team.自己){
+            return {_self:hero,table:[],type:select_type.单个选择}
+        }
         if(magic_brach == Magic_brach.对格){
             const gather = GameRules.SceneManager.gather(hero) as Unit
             return {_self:hero,table:[gather],type:select_type.单个选择}
         }
         //本路友方单体
         if(magic_brach == Magic_brach.本路 && magic_range == Magic_range.全体 && magic_team == Magic_team.友方){
+            return {_self:hero,table:[...GameRules.SceneManager.friendbrach(hero)],type:select_type.单个选择}
+        }
+        if(magic_brach == Magic_brach.本路 && magic_range == Magic_range.单体 && magic_team == Magic_team.友方){
             return {_self:hero,table:[...GameRules.SceneManager.friendbrach(hero)],type:select_type.单个选择}
         }
         //本路敌方单体

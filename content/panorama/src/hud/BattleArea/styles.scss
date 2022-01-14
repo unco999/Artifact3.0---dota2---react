@@ -352,6 +352,13 @@
         animation-duration: 1.5s;
         animation-iteration-count: 1;
     }
+    &.you_ability{
+        x:1500px;
+        y:30px;
+        animation-name: ability;
+        animation-duration: 5s;
+        animation-iteration-count: infinite;
+    }
     @for $i from 1 to 6{
         &.you_Midway#{$i}{
             width: 100px;

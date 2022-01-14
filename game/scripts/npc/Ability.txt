@@ -3,7 +3,7 @@
 	"SmallSkill_leiji" {
 		"isbig" "1"
 		"cost" "3"
-		"heroid" "1"
+		"heroid" "22"
 		"remark" "雷击：眩晕一名敌方英雄，并造成3/5/8点魔法伤害"
 		"id" "1"
 		"originname" "zuus_lightning_bolt"
@@ -12,7 +12,7 @@
 	"SmallSkill_juedou" {
 		"isbig" "1"
 		"cost" "2"
-		"heroid" "2"
+		"heroid" "104"
 		"remark" "决斗:选择一个敌方英雄与其发生战斗"
 		"id" "2"
 		"originname" "legion_commander_duel"
@@ -21,7 +21,7 @@
 	"SmallSkill_baotou" {
 		"isbig" "1"
 		"cost" "3"
-		"heroid" "3"
+		"heroid" "35"
 		"remark" "爆头：选择火枪的一个敌方近邻造成5/7/10点物理伤害"
 		"id" "3"
 		"originname" "sniper_headshot"
@@ -30,7 +30,7 @@
 	"SmallSkill_huanyingtuxi" {
 		"isbig" "1"
 		"cost" "4"
-		"heroid" "4"
+		"heroid" "44"
 		"remark" "幻影突袭：选择一个敌方单位造成4/6/9点物理伤害，并移动到一个友方空格"
 		"id" "4"
 		"originname" "phantom_assassin_phantom_strike"
@@ -39,7 +39,7 @@
 	"SmallSkill_taotaizhiren" {
 		"isbig" "1"
 		"cost" "3"
-		"heroid" "5"
+		"heroid" "2"
 		"remark" "淘汰之刃：惩处一个负伤的敌方近邻"
 		"id" "5"
 		"originname" "axe_culling_blade"
@@ -48,7 +48,7 @@
 	"SmallSkill_yanhanzhuoshao" {
 		"isbig" "1"
 		"cost" "3"
-		"heroid" "6"
+		"heroid" "112"
 		"remark" "严寒灼烧：冰龙移动到一个友方空格，并使其获得5点攻击力"
 		"id" "6"
 		"originname" "abyssal_underlord_pit_of_malice"
@@ -57,7 +57,7 @@
 	"SmallSkill_xili" {
 		"isbig" "1"
 		"cost" "4"
-		"heroid" "7"
+		"heroid" "57"
 		"remark" "洗礼：为一个友方单位恢复3/5/7点生命值，并对该单位的敌方近邻造成3/5/7点纯粹伤害"
 		"id" "7"
 		"originname" "omniknight_purification"
@@ -66,7 +66,7 @@
 	"SmallSkill_longpizhan" {
 		"isbig" "1"
 		"cost" "3"
-		"heroid" "8"
+		"heroid" "25"
 		"remark" "龙破斩：选择一个敌方单位，对其和其近邻造成3/5/7点伤害"
 		"id" "8"
 		"originname" "luna_lucent_beam"
@@ -75,7 +75,7 @@
 	"SmallSkill_emozhuanhua" {
 		"isbig" "1"
 		"cost" "3"
-		"heroid" "9"
+		"heroid" "33"
 		"remark" "恶魔转化：惩处一个友方单位召唤3个3攻3血的小谜团"
 		"id" "9"
 		"originname" "enigma_demonic_conversion"
@@ -84,7 +84,7 @@
 	"SmallSkill_suboji" {
 		"isbig" "1"
 		"cost" "3"
-		"heroid" "10"
+		"heroid" "21"
 		"remark" "束缚击：选择一个敌方单位，使其和其右边的一个敌方单位眩晕"
 		"id" "10"
 		"originname" "windrunner_shackleshot"
@@ -93,7 +93,7 @@
 	"SmallSkill_chuansong" {
 		"isbig" "1"
 		"cost" "2"
-		"heroid" "11"
+		"heroid" "53"
 		"remark" "传送：将先知移动到地图的任意友方空格"
 		"id" "11"
 		"originname" "furion_teleportation"
@@ -102,7 +102,7 @@
 	"SmallSkill_hongliu" {
 		"isbig" "1"
 		"cost" "4"
-		"heroid" "12"
+		"heroid" "23"
 		"remark" "洪流：眩晕昆卡的敌方近邻，并造成3点伤害"
 		"id" "12"
 		"originname" "kunkka_torrent"
@@ -111,7 +111,7 @@
 	"SmallSkill_huohuan" {
 		"isbig" "1"
 		"cost" "3"
-		"heroid" "13"
+		"heroid" "109"
 		"remark" "惑幻：召唤一个等同于恐怖利刃基础数值的幻想"
 		"id" "13"
 		"originname" "terrorblade_conjure_image"
@@ -120,7 +120,7 @@
 	"SmallSkill_julang" {
 		"isbig" "1"
 		"cost" "3"
-		"heroid" "14"
+		"heroid" "29"
 		"remark" "巨浪：选择一个敌方单位，移除其抗性值"
 		"id" "14"
 		"originname" "tidehunter_gush"
@@ -129,7 +129,7 @@
 	"SmallSkill_zhimangzhiguang" {
 		"isbig" "1"
 		"cost" "3"
-		"heroid" "15"
+		"heroid" "90"
 		"remark" "致盲之光：将一个敌方单位移动到另一个敌方空格中，并对其造成3/5/8点魔法伤害
 
 "
@@ -140,7 +140,7 @@
 	"SmallSkill_shengmingjiqu" {
 		"isbig" "1"
 		"cost" "4"
-		"heroid" "16"
+		"heroid" "45"
 		"remark" "生命汲取：选择一个单位造成3/5/8点伤害，并恢复帕格纳等量生命值"
 		"id" "16"
 		"originname" "pugna_decrepify"
@@ -149,7 +149,7 @@
 	"SmallSkill_julizhongji" {
 		"isbig" "1"
 		"cost" "2"
-		"heroid" "17"
+		"heroid" "71"
 		"remark" "巨力重击：眩晕对格敌方单位，并使其移动到一个敌方空格内"
 		"id" "17"
 		"originname" "spirit_breaker_greater_bash"
@@ -158,7 +158,7 @@
 	"SmallSkill_zhaominghuojian" {
 		"isbig" "1"
 		"cost" "4"
-		"heroid" "18"
+		"heroid" "51"
 		"remark" "照明火箭：选择一个敌方单位对其近邻造成3/5/7点物理伤害（跨线技能）"
 		"id" "18"
 
@@ -166,7 +166,7 @@
 	"SmallSkill_yexingzhaohuanyezhu" {
 		"isbig" "1"
 		"cost" "3"
-		"heroid" "19"
+		"heroid" "38"
 		"remark" "野性呼唤豪猪：召唤一只4攻7血的豪猪"
 		"id" "19"
 
@@ -174,7 +174,7 @@
 	"SmallSkill_redaofeidan" {
 		"isbig" "1"
 		"cost" "3"
-		"heroid" "20"
+		"heroid" "34"
 		"remark" "热导飞弹：对敌方单位随机释放3枚导弹,每枚导弹造成3/5/7点伤害"
 		"id" "20"
 
@@ -182,7 +182,7 @@
 	"TrickSkill_leishenzhinu" {
 		"isbig" "2"
 		"cost" "6"
-		"heroid" "1"
+		"heroid" "22"
 		"remark" "雷神之怒：对所有兵线上的每名敌方英雄造成3/5/7点纯粹伤害"
 		"id" "21"
 		"originname" "sandking_epicenter"
@@ -191,7 +191,7 @@
 	"TrickSkill_qianggong" {
 		"isbig" "2"
 		"cost" "5"
-		"heroid" "2"
+		"heroid" "104"
 		"remark" "强攻：解除一个友方单位的控制效果，并获得4攻击力回复4生命值"
 		"id" "22"
 		"originname" "legion_commander_press_the_attack"
@@ -200,7 +200,7 @@
 	"TrickSkill_ansha" {
 		"isbig" "2"
 		"cost" "6"
-		"heroid" "3"
+		"heroid" "35"
 		"remark" "暗杀：对一个敌方单位造成10点纯粹伤害并眩晕（跨线技能）"
 		"id" "23"
 		"originname" "sniper_assassinate"
@@ -209,7 +209,7 @@
 	"TrickSkill_encijietuo" {
 		"isbig" "2"
 		"cost" "5"
-		"heroid" "4"
+		"heroid" "44"
 		"remark" "恩赐解脱：惩处一名敌方英雄"
 		"id" "24"
 		"originname" "phantom_assassin_coup_de_grace"
@@ -218,7 +218,7 @@
 	"TrickSkill_kuangzhanshizhihou" {
 		"isbig" "2"
 		"cost" "5"
-		"heroid" "5"
+		"heroid" "2"
 		"remark" "狂战士之吼：斧王与敌方近邻战斗"
 		"id" "25"
 		"originname" "axe_berserkers_call"
@@ -227,7 +227,7 @@
 	"TrickSkill_handongzuzhou" {
 		"isbig" "2"
 		"cost" "5"
-		"heroid" "6"
+		"heroid" "112"
 		"remark" "寒冬诅咒：选择一个敌方英雄，使其与另一个敌方英雄决斗"
 		"id" "26"
 		"originname" "winter_wyvern_winters_curse"
@@ -236,7 +236,7 @@
 	"TrickSkill_shouhutianshi" {
 		"isbig" "2"
 		"cost" "5"
-		"heroid" "7"
+		"heroid" "57"
 		"remark" "守护天使：使本回合所有的友方单位获得伤害免疫"
 		"id" "27"
 		"originname" "omniknight_guardian_angel"
@@ -245,7 +245,7 @@
 	"TrickSkill_mieshenzhan" {
 		"isbig" "2"
 		"cost" "5"
-		"heroid" "8"
+		"heroid" "25"
 		"remark" "神灭斩：对一个敌方单位造11/14/17点魔法伤害"
 		"id" "28"
 		"originname" "luna_eclipse"
@@ -254,7 +254,7 @@
 	"TrickSkill_heidong" {
 		"isbig" "2"
 		"cost" "6"
-		"heroid" "9"
+		"heroid" "33"
 		"remark" "黑洞：对正面3格单位造成眩晕，并造成5/7/10点魔法伤害"
 		"id" "29"
 		"originname" "enigma_black_hole"
@@ -263,7 +263,7 @@
 	"TrickSkill_jizhonghuoli" {
 		"isbig" "2"
 		"cost" "7"
-		"heroid" "10"
+		"heroid" "21"
 		"remark" "集中火力：选择一个敌方单位或者敌方防御塔造成3次5/6/8点纯粹伤害"
 		"id" "30"
 		"originname" "windrunner_focusfire"
@@ -272,7 +272,7 @@
 	"TrickSkill_zirandezhaohuan" {
 		"isbig" "2"
 		"cost" "5"
-		"heroid" "11"
+		"heroid" "53"
 		"remark" "自然的召唤：召唤3攻6血的小树人直到上限"
 		"id" "31"
 		"originname" "furion_force_of_nature"
@@ -281,7 +281,7 @@
 	"TrickSkill_youlingchuan" {
 		"isbig" "2"
 		"cost" "6"
-		"heroid" "12"
+		"heroid" "23"
 		"remark" "幽灵船：对一个敌方英雄施放一艘船使其眩晕并造成6点伤害，路径上的所有友方英雄获得2点抗性（跨线技能）"
 		"id" "32"
 		"originname" "kunkka_ghostship"
@@ -290,7 +290,7 @@
 	"TrickSkill_hunduan" {
 		"isbig" "2"
 		"cost" "4"
-		"heroid" "13"
+		"heroid" "109"
 		"remark" "魂断：选择一个单位，使恐怖利刃和其交换当前生命值"
 		"id" "33"
 		"originname" "terrorblade_sunder"
@@ -299,7 +299,7 @@
 	"TrickSkill_huimie" {
 		"isbig" "2"
 		"cost" "6"
-		"heroid" "14"
+		"heroid" "29"
 		"remark" "毁灭：本回合眩晕所有敌方单位，并造成2/3/4点物理伤害"
 		"id" "34"
 		"originname" "tidehunter_ravage"
@@ -308,7 +308,7 @@
 	"TrickSkill_chongjibo" {
 		"isbig" "2"
 		"cost" "6"
-		"heroid" "15"
+		"heroid" "90"
 		"remark" "冲击波：对本路全体敌方单位造成5/7/10点魔法伤害"
 		"id" "35"
 		"originname" "keeper_of_the_light_illuminate"
@@ -317,7 +317,7 @@
 	"TrickSkill_youminghongbao" {
 		"isbig" "2"
 		"cost" "5"
-		"heroid" "16"
+		"heroid" "45"
 		"remark" "幽冥轰爆：对敌方近邻和防御塔造成5/7/10点伤害"
 		"id" "36"
 
@@ -325,7 +325,7 @@
 	"TrickSkill_anyingchongchi" {
 		"isbig" "2"
 		"cost" "4"
-		"heroid" "17"
+		"heroid" "71"
 		"remark" "暗影冲刺：选择一个敌方英雄与之战斗,裂魂人进入与该英雄距离最近的友方空格（跨线技能）"
 		"id" "37"
 
@@ -333,7 +333,7 @@
 	"TrickSkill_fashegouzhua" {
 		"isbig" "2"
 		"cost" "5"
-		"heroid" "18"
+		"heroid" "51"
 		"remark" "发射钩爪：发条移动到一个友方空格，对该空格的对格敌方目标造成眩晕和6点物理伤害（跨线技能）"
 		"id" "38"
 
@@ -341,7 +341,7 @@
 	"TrickSkill_yexingzhaohuanzhanying" {
 		"isbig" "2"
 		"cost" "5"
-		"heroid" "19"
+		"heroid" "38"
 		"remark" "野性呼唤战鹰：召唤一只6攻9血的战鹰（跨线技能）"
 		"id" "39"
 
@@ -349,7 +349,7 @@
 	"TrickSkill_jixiexingjun" {
 		"isbig" "2"
 		"cost" "6"
-		"heroid" "20"
+		"heroid" "34"
 		"remark" "机械行军：对所有兵线上的敌方单位造成3/4/6点魔法伤害"
 		"id" "40"
 

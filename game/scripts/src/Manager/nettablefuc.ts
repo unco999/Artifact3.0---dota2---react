@@ -60,6 +60,11 @@ export function set_current_operate_brach(STRATEGY_BRACH_STATE:STRATEGY_BRACH_ST
     CustomNetTables.SetTableValue("GameMianLoop",'current_operate_brach',{cuurent:STRATEGY_BRACH_STATE}) 
 }
 
+export function toggle_effect_view_stage(){
+    const bool = CustomNetTables.GetTableValue("GameMianLoop","effect_view_stage") ?? {cuurent:0}
+    CustomNetTables.SetTableValue("GameMianLoop","effect_view_stage",bool.cuurent ? {cuurent:0} : {cuurent:1})
+}
+
 /**获取全局策略路线 nettable */
 export function get_current_operate_brach(){
     const nettable = CustomNetTables.GetTableValue("GameMianLoop","current_operate_brach") ?? {cuurent:STRATEGY_BRACH_STATE.不在此状态}

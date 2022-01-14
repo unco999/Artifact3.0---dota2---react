@@ -45,7 +45,7 @@ declare interface CustomGameEventDeclarations {
     "S2C_SEATCH_TARGET_OFF":{uuid:string},
     "S2C_SKILL_READY":{uuid:string},
     "S2C_SKILL_OFF":{uuid:string},
-    "C2S_SPELL_SKILL":{SKILL_ID:string,target_uuid:string},
+    "C2S_SPELL_SKILL":{SKILL_ID:string,target_uuid:string,spell_ability_card_uuid:string},
     "S2C_HURT_DAMAGE":{particle:string,uuid:string}
     "S2C_TOWER_INIT":{playerid:PlayerID,uuid:string,brach:number,heal:number},
     "C2S_TOWER_INIT":{owner:PlayerID,brach:number}
@@ -71,4 +71,6 @@ declare interface CustomGameEventDeclarations {
     "C2S_BUY_ITEM":{itemname:string}
     "S2C_BRUSH_ITEM":{}
     "S2C_BRUSH_ABILITY":{}
+    "C2S_REP_SKILL":{abilityname:string,to:string,index:string,uuid:string} //置换位移技能
+    "S2C_OFF_ALL_SPACE":{}
 }

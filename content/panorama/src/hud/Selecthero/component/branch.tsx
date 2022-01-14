@@ -82,6 +82,7 @@ export const Branch = (props:{gameloop:string}) => {
     const main = useRef<Panel|null>()
 
     useEffect(()=>{
+        $.Msg("设置了一次")
         conponent?.SetKeyAny("branch",{0:[-1,-1],1:[-1],2:[-1,-1]})
     },[conponent])
     

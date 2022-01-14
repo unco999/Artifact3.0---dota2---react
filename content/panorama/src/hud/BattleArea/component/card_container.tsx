@@ -12,6 +12,7 @@ export const Card_container = (props:{className:string,index:number,brach:number
     const {conponent,up} = useInstance("Card_container",uuid,{},undefined)
 
     useGameEvent("S2C_SEND_CANSPACE",(event)=>{
+        $.Msg("收到事件",event)
         for(const brach in event){
             for(const index in event[brach]){
                 if(+brach == props.brach && +event[brach][index] != -1 && +index == props.index){
@@ -20,6 +21,12 @@ export const Card_container = (props:{className:string,index:number,brach:number
             }
         }
     },[])
+
+    useGameEvent("S2C_OFF_ALL_SPACE",()=>{
+        mian.current?.RemoveClass("show")
+    },[])
+
+
 
     useEffect(()=>{
         if(props.onwer == Players.GetLocalPlayer()){
@@ -31,7 +38,18 @@ export const Card_container = (props:{className:string,index:number,brach:number
     const OnDragEnter = (panelId:any, dragCallbacks:any) => {
     }
 
+    const abilityreplacement = () => {
+        
+    }
+
     const OnDragDrop = (panelId:any, dragCallbacks:any) => {
+        $.Msg("传入的事件")
+        $.Msg(dragCallbacks.Data())
+
+        if(dragCallbacks.Data().data?.replacementCard){
+             GameEvents.SendCustomGameEventToServer("C2S_REP_SKILL",{abilityname:dragCallbacks.Data().id,to:props.brach.toString(),index:props.index.toString(),uuid:dragCallbacks.Data().cardid})
+             return;
+        }
         const card_container_list = ConpoentDataContainer.Instance.NameGetGrap("Card_container").current
         card_container_list.forEach(container =>{
             container.close()

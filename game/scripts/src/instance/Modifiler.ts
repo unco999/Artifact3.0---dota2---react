@@ -92,6 +92,14 @@ export abstract class CAModifiler{
         /**测试时填写 */
     }
 
+    /**回合计算 */
+    roundCalculation(){
+        this.duration--
+        if(this.duration <= 0){
+            this.thisHero.removeModifiler(this.name)
+        }
+    }
+
 
     clone(){
         return new this.constructorinstance()

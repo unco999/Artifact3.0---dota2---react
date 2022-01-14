@@ -1,5 +1,5 @@
 declare interface CustomNetTableDeclarations {
-    Card_group_construction_phase:{   //轮选极端
+    Card_group_construction_phase:{   //轮选
         playerHasChosen:Record<string,number[]> //每个玩家拥有英雄
         heroThatCanChooseOnTheCurrentField:number[] //当前场上可选英雄
         selectloop:{timeLeft:number,currentteam:string,optionalnumber:number,remainingOptionalQuantity:number}
@@ -23,6 +23,7 @@ declare interface CustomNetTableDeclarations {
         option_mask_state:{cuurent:number} //当前全局状态操作掩码
         red_gold:{cuurent:number} //红色的金币
         blue_gold:{cuurent:number} // 蓝色的金币
+        effect_view_stage:{cuurent:number} // 1是正在播放特效 0是没有播放
     }
     Scenes:{
         [string:string]:Record<number,string>

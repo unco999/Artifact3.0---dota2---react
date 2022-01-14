@@ -22,7 +22,19 @@ export class Unit extends Card{
             this.attack = data.attack
             this.arrmor = data.arrmor
             this.heal = data.health
+            this.max_heal = this.heal
         }
+    }
+
+    roundCalculation(){
+        for(const modifiler of this.Modifilers){
+            modifiler.roundCalculation()
+        }
+    }
+
+    /**是否受伤 */
+    isinjuried(){
+        return this.max_heal != this.GETheal
     }
 
     isAttackPreHook(){
@@ -171,6 +183,15 @@ export class Unit extends Card{
             print(this.UUID,"收到了伤害,当前剩余生命值为",this.GETheal)
             CustomGameEventManager.Send_ServerToAllClients("S2C_SEND_ATTRIBUTE",this.attribute)
             return count
+        }
+
+        cure(count:number,Source:Card){
+            if(this.GETheal + count > this.max_heal){
+                this.heal = this.max_heal
+                return count
+            }
+            this.heal+=count
+            print(this.UUID,"收到了回复,当前剩余生命值为",this.GETheal)
         }
 
         ToData() {

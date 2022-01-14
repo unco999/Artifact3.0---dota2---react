@@ -178,3 +178,55 @@ export class item_force_field_modifiler extends CAModifiler{
     }
 
 }
+
+
+
+
+/**
+ * 严寒灼烧
+ */
+ @ca_register_modifiler()
+ export class abyssal_underlord_pit_of_malice_modifiler extends CAModifiler{
+     name: string = "abyssal_underlord_pit_of_malice_modifiler";
+     modifilertype: modifilertype = modifilertype.无;
+     duration: number = -1;
+     debuff: boolean = false;
+     preDeathIndex:number //死亡前的序号
+     preDeathBrach:string //死亡前的场景名字
+ 
+     constructor(){
+         super("abyssal_underlord_pit_of_malice_modifiler")
+         print("创造了装备的modifiler")
+     }
+ 
+     constructorinstance = item_force_field_modifiler
+ 
+     register_hook_event() {
+         this.setHookEvent(HOOK.创造时,()=>{
+            this.duration = 1
+            return false
+         })
+         this.setHookEvent(HOOK.死亡后,()=>{
+             this.thisHero.removeModifiler(this.name)
+             return false
+         })
+     }
+ 
+ 
+     get influenceMaxheal(): any {
+         return 0
+     }
+ 
+     get influenceAttack(): any {
+         return 5
+     }
+ 
+     get influenceArrmor(): any {
+         return 0
+     }
+     
+     get influenceheal(): any {
+         return 0
+     }
+ 
+ }

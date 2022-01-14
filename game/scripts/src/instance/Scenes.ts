@@ -283,6 +283,34 @@ export abstract class BattleArea extends Scenes {
         this.reigster_gamevent();
     }
 
+    /**返回当前场景序号 */
+    abstract GetSceneIndex()
+
+    /**找最近空格 */
+    GetrecentSpace(index:number) {
+        for(let i = 0 ; i < 3 ; i++){
+            if(this.CardList[index - 1 + i] == -1){
+                return i
+            }
+            if(this.CardList[index - 1 - i] == -1){
+                return i
+            }
+        }
+        return -1
+    }
+    
+    GetAllSpace(){
+        const list = []
+        for(let key = 0 ; key < this.CardList.length ; key ++){
+            if(typeof(this.CardList[key]) == 'number') {
+                list.push(key + 1)
+            }else{
+                list.push(-1)
+            }
+        }
+        return list
+    }
+
     reigster_gamevent() {
         CustomGameEventManager.RegisterListener("TEST_C2S_CALL_CENTER", () => {
             print("开始执行卡片居中");
@@ -462,6 +490,10 @@ export class Midway extends BattleArea {
         ICASceneManager.SetMidwayScene(this);
     }
 
+    GetSceneIndex(){
+        return 1
+    }
+
     /**对格场景查找 */
     gridLocation() {
         return GameRules.SceneManager.GetMidwayScene(this.PlayerID == GameRules.Red.GetPlayerID() ? GameRules.Blue.GetPlayerID() : GameRules.Red.GetPlayerID());
@@ -477,6 +509,12 @@ export class GoUp extends BattleArea {
         ICASceneManager.SetGoUpScene(this);
     }
 
+    
+    GetSceneIndex(){
+        return 0
+    }
+
+
     gridLocation() {
         return GameRules.SceneManager.GetGoUpScene(this.PlayerID == GameRules.Red.GetPlayerID() ? GameRules.Blue.GetPlayerID() : GameRules.Red.GetPlayerID());
     }
@@ -489,6 +527,12 @@ export class LaidDown extends BattleArea {
         this.PlayerID = PlayerID;
         ICASceneManager.SetLaidDownScene(this);
     }
+
+    
+    GetSceneIndex(){
+        return 2
+    }
+
 
     gridLocation() {
         return GameRules.SceneManager.GetLaidDownScene(this.PlayerID == GameRules.Red.GetPlayerID() ? GameRules.Blue.GetPlayerID() : GameRules.Red.GetPlayerID());
@@ -753,6 +797,10 @@ export class ScenesManager {
         return null;
     }
 
+    get_card(uuid:string){
+        return this.All[uuid]
+    }
+
     /** 附加给全局 ALL*/
     global_add(uuid: uuid, Card: Card) {
         this.All[uuid] = Card;
@@ -863,6 +911,7 @@ export class ScenesManager {
         CustomNetTables.SetTableValue("Scenes", "equip" + GameRules.Red.GetPlayerID(), this.get_All_equip(GameRules.Blue.GetPlayerID()));
     }
 
+
     /**牌改变场景*/
     change_secens(uuid: string, to: string, index?: number, update?: boolean) {
         const card = this.All[uuid];
@@ -902,9 +951,10 @@ export class ScenesManager {
                 !update && this.All[uuid].update('GOUP');
                 break;
             }
-            case 'Ability': {
+            case 'ABILITY': {
                 this.All[uuid].Scene.Remove(uuid);
                 this.GetAbilityScene(playerid).addCard(card);
+                card.Scene = this.GetAbilityScene(playerid)
                 !update && this.All[uuid].update('ABILITY');
                 break;
             }

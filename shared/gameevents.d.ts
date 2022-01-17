@@ -41,7 +41,7 @@ declare interface CustomGameEventDeclarations {
     "C2S_CALL_ATTACK":{},
     "C2S_SEATCH_TARGET_OPEN":{abilityname:string},
     "C2S_SEATCH_TARGET_OFF":{abilityname:string},
-    "S2C_SEATCH_TARGET_OPEN":{uuid:string},
+    "S2C_SEATCH_TARGET_OPEN":{uuid:string,type:string},
     "S2C_SEATCH_TARGET_OFF":{uuid:string},
     "S2C_SKILL_READY":{uuid:string},
     "S2C_SKILL_OFF":{uuid:string},
@@ -73,4 +73,9 @@ declare interface CustomGameEventDeclarations {
     "S2C_BRUSH_ABILITY":{}
     "C2S_REP_SKILL":{abilityname:string,to:string,index:string,uuid:string} //置换位移技能
     "S2C_OFF_ALL_SPACE":{}
+    "C2S_GET_MODIFILER":{uuid:string}
+    "S2C_SEND_MODIFILER":{uuid:string,data:Array<{name:string,duration:string,texture:string,id:string}>}
+    "S2C_HIGH_TOWER":{uuid:string}
+    "S2C_OFF_HIGH_TOWER":{uuid:string}
+    "C2S_SPELL_TOWER":{uuid:string,abilityname:string,towerPlayer:string,towerindex:number}
 }

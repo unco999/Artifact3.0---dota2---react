@@ -1,5 +1,7 @@
 import { BattleArea, GoUp, LaidDown, Midway, Scenes } from "../instance/Scenes";
+import { Summoning } from "../instance/Summoning";
 import { Solider } from "../instance/Unit";
+import { Timers } from "../lib/timers";
 import { reloadable } from "../lib/tstl-utils";
 
 /** 主要控制刷修小兵 */
@@ -33,6 +35,21 @@ export class brash_solidier{
         GameRules.SceneManager.global_add(soldier.UUID,soldier)
         GameRules.SceneManager.update()
         CustomGameEventManager.Send_ServerToAllClients("S2C_BRUSH_SOLIDER",{})
+    }
+
+    /**
+     * 玩家召唤物刷新
+     */
+    playerSummoning(id:string,count:number,playerid:PlayerID,scene_name:BattleArea,index?:number){
+        for(let key = 0 ; key < count ; key ++) {
+            Timers.CreateTimer(key+1,()=>{
+                const summoning = new Summoning({Id:id,Index:index??-1,PlayerID:playerid},scene_name)
+                GameRules.SceneManager.global_add(summoning.UUID,summoning)
+                GameRules.SceneManager.update()
+                GameRules.SceneManager.change_secens(summoning.UUID,scene_name.SceneName,index)
+                CustomGameEventManager.Send_ServerToAllClients("S2C_BRUSH_SOLIDER",{})
+            })
+        }
     }
 
     /**自定分路上兵 */

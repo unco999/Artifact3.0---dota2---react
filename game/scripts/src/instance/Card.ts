@@ -18,7 +18,7 @@ export interface professionalMagicCard{
     SPEEL_SCNECE(scene_name:string)
 }
 
-export type CARD_TYPE = "Hero"|"Solider"|"TrickSkill"|"SmallSkill"|"EQUIP"
+export type CARD_TYPE = "Hero"|"Solider"|"TrickSkill"|"SmallSkill"|"EQUIP"|"Summoned"
 
 export abstract class Card{
     PlayerID:PlayerID
@@ -93,22 +93,26 @@ export abstract class Card{
 
     /**是否已经上场 */
     isBattle(){
-        return this.isMideay() || this.isLaidDown() || this.isReleaseScene()
+        return this.isMideay() || this.isLaidDown() || this.isReleaseScene() || this.isGoUP()
+    }
+
+    isGoUP(){
+        return this.Scene.SceneName == 'GOUP'
     }
 
     /**是否在中路 */
     isMideay(){
-        return this.Scene.SceneName == 'Midway'
+        return this.Scene.SceneName == 'MIDWAY'
     }
 
     /**是否在下路 */
     isLaidDown(){
-        return this.Scene.SceneName == 'LaidDown'
+        return this.Scene.SceneName == 'LAIDDOWN'
     }
 
     /**是否释法状态 */
     isReleaseScene(){
-        return this.Scene.SceneName == 'ReleaseScene'
+        return this.Scene.SceneName == 'ABILITY'
     }
 
     /**是否在牌堆 */

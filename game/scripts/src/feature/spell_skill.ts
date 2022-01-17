@@ -2,7 +2,6 @@ import { ability_templater, AbiliyContainer } from "../instance/Ability";
 import { Unit } from "../instance/Unit";
 import { optionMask } from "../Manager/statusSwitcher";
 import { get_current_operate_brach, Set_option_mask_state, toggle_effect_view_stage } from "../Manager/nettablefuc";
-import { Magic_brach, Magic_range, Magic_team } from "./select_the_prompt";
 import { Card, uuid } from "../instance/Card";
 import { Timers } from "../lib/timers";
 
@@ -19,6 +18,22 @@ export class spell_skill{
         CustomGameEventManager.RegisterListener("C2S_SPELL_SKILL",(_,event)=>{
             this.call_spell_skill(event.SKILL_ID,event.PlayerID,event.target_uuid,event.spell_ability_card_uuid)
             CustomGameEventManager.Send_ServerToAllClients("S2C_OFF_ALL_SPACE",{})   
+            print("释放了技能")
+        })
+        CustomGameEventManager.RegisterListener("C2S_SPELL_TOWER",(_,event)=>{
+            const abilityInstance = AbiliyContainer.instance.GetAbility(event.abilityname)
+            const spell_ability_card_uuid = event.uuid
+            GameRules.SceneManager.change_secens(spell_ability_card_uuid,"ABILITY",+get_current_operate_brach())
+            toggle_effect_view_stage()
+            Timers.CreateTimer(3,()=>{
+                const hero = GameRules.SceneManager.get_hero(abilityInstance.heroid) as Unit
+                const tower = GameRules.TowerGeneralControl.getCardScenceTower(PlayerResource.GetPlayer(event.PlayerID),hero)
+                GameRules.SceneManager.change_secens(spell_ability_card_uuid,"REMOVE",+get_current_operate_brach())
+                const data = GameRules.select_the_prompt.validRangeLookup(hero.PlayerID,abilityInstance.Magic_brach,abilityInstance.Magic_range,abilityInstance.Magic_team,abilityInstance.heroid)
+                abilityInstance.spell_tower(data.table,undefined,hero,tower)
+                toggle_effect_view_stage()
+            })
+
         })
     }
 
@@ -53,14 +68,5 @@ export class spell_skill{
         }
     }
 
-    /**通过技能id寻找英雄id */
-    skill_id_find_hero(id:string,player:PlayerID){
-        return GameRules.SceneManager.GetMidwayScene(GameRules.Blue.GetPlayerID() == player ? player : GameRules.Red.GetPlayerID()).IndexGet(3) as Unit
-    }
-
-    /**通过技能id找到技能的类型 */
-    skill_id_find_type(id:string,player:PlayerID){
-        return {magic_brach:Magic_brach.本路, magic_range: Magic_range.全体, magic_team: Magic_team.敌方, has_hero_ability_id:"1"}
-    }
 
 }

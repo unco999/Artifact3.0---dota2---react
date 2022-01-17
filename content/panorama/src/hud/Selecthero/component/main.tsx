@@ -17,15 +17,6 @@ export const Main = () => {
     const filter = () => {
         return gameloopname?.current === 'selectherocard' ||  gameloopname?.current === "branch" 
     }
-
-    useEffect(()=>{
-        function cb(){
-            $.Msg("当前选择玩家",loopdata?.currentteam)
-            $.Schedule(1,cb)
-        }
-        cb()
-    },[])
-
     return <> 
         {
         filter() &&

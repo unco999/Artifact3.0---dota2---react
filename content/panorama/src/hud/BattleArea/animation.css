@@ -46,28 +46,299 @@
     }
 }
 
-@keyframes 'select_target'{
+@keyframes 'select_target0'{
     0% {
-        transform:rotateX(0deg) rotateY(0deg) rotateZ(0deg);
         border: 0px solid green;
         brightness: 1;
     }
     25% {
-        transform:rotateX(0deg) rotateY(0deg) rotateZ(5deg);
         border: 3px solid green;
+        brightness: 2;
+    }
+    50%{
+        brightness: 1;
+        border: 0px solid green;
+    }
+    100%{
+        brightness: 1;
+        border: 0px solid green;
+    }
+}
+
+@keyframes 'select_target1'{
+    0% {
+        border: 0px solid red;
+        brightness: 1;
+    }
+    25% {
+        border: 3px solid red;
+        brightness: 2;
+    }
+    50%{
+        brightness: 1;
+        border: 0px solid red;
+    }
+    100%{
+        brightness: 1;
+        border: 0px solid red;
+    }
+}
+
+@keyframes 'select_target2'{
+    0% {
+        transform:rotateX(0deg) rotateY(0deg) rotateZ(0deg);
+        border: 0px solid yellow;
+        brightness: 1;
+    }
+    25% {
+        transform:rotateX(0deg) rotateY(0deg) rotateZ(2deg);
+        border: 3px solid yellow;
+        brightness: 2;
+    }
+    50%{
+        transform:rotateX(0deg) rotateY(0deg)  rotateZ(-2deg);
+        brightness: 1;
+        border: 0px solid yellow;
+    }
+    100%{
+        transform:rotateX(0deg) rotateY(0deg)  rotateZ(0deg);
+        brightness: 1;
+        border: 0px solid yellow;
+    }
+}
+
+@keyframes 'select_target3'{
+    0% {
+        transform:rotateX(0deg) rotateY(0deg) rotateZ(0deg);
+        border: 0px solid yellow;
+        brightness: 1;
+    }
+    25% {
+        transform:rotateX(0deg) rotateY(0deg) rotateZ(5deg);
+        border: 3px solid yellow;
         brightness: 2;
     }
     50%{
         transform:rotateX(0deg) rotateY(0deg)  rotateZ(-5deg);
         brightness: 1;
-        border: 0px solid green;
+        border: 0px solid yellow;
     }
     100%{
         transform:rotateX(0deg) rotateY(0deg)  rotateZ(0deg);
         brightness: 1;
-        border: 0px solid green;
+        border: 0px solid yellow;
     }
 }
+
+@keyframes 'select_target4'{
+    0% {
+        transform:rotateX(0deg) rotateY(0deg) rotateZ(0deg);
+        border: 0px solid yellow;
+        brightness: 1;
+    }
+    25% {
+        transform:rotateX(0deg) rotateY(0deg) rotateZ(11deg);
+        border: 3px solid yellow;
+        brightness: 2;
+    }
+    50%{
+        transform:rotateX(0deg) rotateY(0deg)  rotateZ(-11deg);
+        brightness: 1;
+        border: 0px solid yellow;
+    }
+    100%{
+        transform:rotateX(0deg) rotateY(0deg)  rotateZ(0deg);
+        brightness: 1;
+        border: 0px solid yellow;
+    }
+}
+
+@keyframes 'select_target5'{
+    0% {
+        border: 0px solid yellow;
+        brightness: 1;
+    }
+    25% {
+        border: 3px solid yellow;
+        brightness: 2;
+    }
+    50%{
+        brightness: 1;
+        border: 0px solid yellow;
+    }
+    100%{
+        brightness: 1;
+        border: 0px solid yellow;
+    }
+}
+
+@keyframes 'select_target6'{
+    0% {
+        transform:rotateX(0deg) rotateY(0deg) rotateZ(0deg);
+        border: 0px solid yellow;
+        brightness: 1;
+    }
+    25% {
+        transform:rotateX(0deg) rotateY(0deg) rotateZ(5deg);
+        border: 3px solid yellow;
+        brightness: 2;
+    }
+    50%{
+        transform:rotateX(0deg) rotateY(0deg)  rotateZ(-5deg);
+        brightness: 1;
+        border: 0px solid yellow;
+    }
+    100%{
+        transform:rotateX(0deg) rotateY(0deg)  rotateZ(0deg);
+        brightness: 1;
+        border: 0px solid yellow;
+    }
+}
+
+@keyframes 'select_target7'{
+    0% {
+        transform:rotateX(0deg) rotateY(0deg) rotateZ(0deg);
+        border: 0px solid yellow;
+        brightness: 1;
+    }
+    25% {
+        transform:rotateX(0deg) rotateY(0deg) rotateZ(5deg);
+        border: 3px solid yellow;
+        brightness: 2;
+    }
+    50%{
+        transform:rotateX(0deg) rotateY(0deg)  rotateZ(-5deg);
+        brightness: 1;
+        border: 0px solid yellow;
+    }
+    100%{
+        transform:rotateX(0deg) rotateY(0deg)  rotateZ(0deg);
+        brightness: 1;
+        border: 0px solid yellow;
+    }
+}
+
+@keyframes 'select_target8'{
+    0% {
+        transform:rotateX(0deg) rotateY(0deg) rotateZ(0deg);
+        border: 0px solid yellow;
+        brightness: 1;
+    }
+    25% {
+        transform:rotateX(0deg) rotateY(0deg) rotateZ(11deg);
+        border: 3px solid yellow;
+        brightness: 2;
+    }
+    50%{
+        transform:rotateX(0deg) rotateY(0deg)  rotateZ(-11deg);
+        brightness: 1;
+        border: 0px solid yellow;
+    }
+    100%{
+        transform:rotateX(0deg) rotateY(0deg)  rotateZ(0deg);
+        brightness: 1;
+        border: 0px solid yellow;
+    }
+}
+
+@keyframes 'select_target9'{
+    0% {
+        transform:rotateX(0deg) rotateY(0deg) rotateZ(0deg);
+        border: 0px solid yellow;
+        brightness: 1;
+    }
+    25% {
+        transform:rotateX(0deg) rotateY(0deg) rotateZ(11deg);
+        border: 3px solid yellow;
+        brightness: 2;
+    }
+    50%{
+        transform:rotateX(0deg) rotateY(0deg)  rotateZ(-11deg);
+        brightness: 1;
+        border: 0px solid yellow;
+    }
+    100%{
+        transform:rotateX(0deg) rotateY(0deg)  rotateZ(0deg);
+        brightness: 1;
+        border: 0px solid yellow;
+    }
+}
+
+
+@keyframes 'select_target10'{
+    0% {
+        transform:rotateX(0deg) rotateY(0deg) rotateZ(0deg);
+        border: 0px solid yellow;
+        brightness: 1;
+    }
+    25% {
+        transform:rotateX(0deg) rotateY(0deg) rotateZ(11deg);
+        border: 3px solid yellow;
+        brightness: 2;
+    }
+    50%{
+        transform:rotateX(0deg) rotateY(0deg)  rotateZ(-11deg);
+        brightness: 1;
+        border: 0px solid yellow;
+    }
+    100%{
+        transform:rotateX(0deg) rotateY(0deg)  rotateZ(0deg);
+        brightness: 1;
+        border: 0px solid yellow;
+    }
+}
+
+@keyframes 'select_target11'{
+    0% {
+        transform:rotateX(0deg) rotateY(0deg) rotateZ(0deg);
+        border: 0px solid yellow;
+        brightness: 1;
+    }
+    25% {
+        transform:rotateX(0deg) rotateY(0deg) rotateZ(11deg);
+        border: 3px solid yellow;
+        brightness: 2;
+    }
+    50%{
+        transform:rotateX(0deg) rotateY(0deg)  rotateZ(-11deg);
+        brightness: 1;
+        border: 0px solid yellow;
+    }
+    100%{
+        transform:rotateX(0deg) rotateY(0deg)  rotateZ(0deg);
+        brightness: 1;
+        border: 0px solid yellow;
+    }
+}
+
+@keyframes 'select_target12'{
+    0% {
+        transform:rotateX(0deg) rotateY(0deg) rotateZ(0deg);
+        border: 0px solid yellow;
+        brightness: 1;
+    }
+    25% {
+        transform:rotateX(0deg) rotateY(0deg) rotateZ(11deg);
+        border: 3px solid yellow;
+        brightness: 2;
+    }
+    50%{
+        transform:rotateX(0deg) rotateY(0deg)  rotateZ(-11deg);
+        brightness: 1;
+        border: 0px solid yellow;
+    }
+    100%{
+        transform:rotateX(0deg) rotateY(0deg)  rotateZ(0deg);
+        brightness: 1;
+        border: 0px solid yellow;
+    }
+}
+
+
+
+
+
+
 
 @keyframes 'skill_rotation'{
     0% {

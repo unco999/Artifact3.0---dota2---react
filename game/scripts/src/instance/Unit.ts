@@ -2,7 +2,7 @@ import { Timers } from "../lib/timers";
 import { add_cuurent_glod } from "../Manager/nettablefuc";
 import { LinkedList } from "../structure/Linkedlist";
 import { Card, CardParameter, CARD_TYPE, professionalMagicCard } from "./Card";
-import { CAModifiler, HOOK } from "./Modifiler";
+import { CAModifiler, HOOK, modifilertype } from "./Modifiler";
 import { BattleArea, GoUp, Hand, ICAScene, Scenes } from "./Scenes";
 
 
@@ -24,6 +24,27 @@ export class Unit extends Card{
             this.heal = data.health
             this.max_heal = this.heal
         }
+    }
+
+    update_modifiler_to_client(){
+        const list = []
+        for(const modifiler of this.Modifilers){
+            list.push({name:modifiler.name,duration:modifiler.duration,texture:modifiler.texture,id:modifiler.id})
+        }
+        const table = {}
+        table["uuid"] = this.UUID
+        table["data"] = list
+        if(list.length > 0){
+            CustomGameEventManager.Send_ServerToAllClients("S2C_SEND_MODIFILER",table)
+        }
+    }
+
+    /**是否处于无法攻击状态 */
+    isunableToAttack(){
+        for(const modifiler of this.Modifilers){
+           return bit.bor(modifiler.modifilertype,modifilertype.晕眩) == modifiler.modifilertype
+        }
+        return false
     }
 
     roundCalculation(){
@@ -70,13 +91,26 @@ export class Unit extends Card{
                 CustomGameEventManager.Send_ServerToAllClients("S2C_SEND_ATTRIBUTE",this.attribute)
             }
         })
+        CustomGameEventManager.RegisterListener("C2S_GET_MODIFILER",(_,event)=>{
+            if(event.uuid == this.UUID){
+                this.update_modifiler_to_client()
+            }
+        })
     }
 
     addmodifiler(modifiler:CAModifiler){
+        for(const _modifiler of this.Modifilers){
+            if(_modifiler.id == modifiler.id){
+                _modifiler.duration = modifiler.duration
+                this.update_modifiler_to_client()
+                return;
+            }
+        }
         modifiler.thisHero = this
         this.Modifilers.prepend(modifiler)
         modifiler.call_hook(HOOK.创造时)
         CustomGameEventManager.Send_ServerToAllClients("S2C_SEND_ATTRIBUTE",this.attribute)
+        this.update_modifiler_to_client()
     }
 
     removeModifiler(name:string){
@@ -90,6 +124,7 @@ export class Unit extends Card{
                 }
             }
         }
+        this.update_modifiler_to_client()
         CustomGameEventManager.Send_ServerToAllClients("S2C_SEND_ATTRIBUTE",this.attribute)
     }
 
@@ -175,7 +210,21 @@ export class Unit extends Card{
             return this.Modifilers.length > 0
         }
 
-        hurt(count:number,damageSourece:Card){
+
+        Prehurt(damageSourece:Card,attack_type:"defualt"|"ability"|"purely"){
+            let bool = false
+               const callbacks = this.hook(HOOK.被攻击前)
+               callbacks.forEach(callback=>{
+                   bool = callback(attack_type,this,damageSourece)
+               })
+            return bool
+        }
+    
+
+        hurt(count:number,damageSourece:Card,attack_type:"defualt"|"ability"|"purely"){
+            if(this.Prehurt(damageSourece,attack_type)){
+                return
+            }
             this.heal -= count
             if(this.GETheal < 1){
                 this.call_death(damageSourece)
@@ -195,7 +244,7 @@ export class Unit extends Card{
         }
 
         ToData() {
-            return ""
+            return 
         }
     
 }
@@ -218,7 +267,7 @@ export class Solider extends Unit{
         })
     }
 
-    ToData() {
+    ToData():any {
         return ""
     }
 

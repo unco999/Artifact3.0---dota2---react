@@ -7,8 +7,8 @@ export const ShowCard = (props:{heroid:number,delay:number}) =>{
     const panel = useRef<Panel|null>()
     
     useEffect(()=>{
-        $.Schedule(props.delay,()=>$(`#${uuid.current}`).AddClass("show"))
-    },[])
+         $.Schedule(props.delay,()=>$(`#${uuid.current}`).AddClass("show"))
+    },[props.delay])
 
 
 

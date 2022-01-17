@@ -23,8 +23,8 @@ export class GamaEvent_All_register{
             CustomGameEventManager.Send_ServerToAllClients("S2C_BRUSH_ITEM",{})
         })
         CustomGameEventManager.RegisterListener("TEST_C2S_CALL_ATTACK",()=>{
-            const redmidway = GameRules.SceneManager.GetMidwayScene(GameRules.Red.GetPlayerID())
-            const bluemidway = GameRules.SceneManager.GetMidwayScene(GameRules.Blue.GetPlayerID())
+            const redmidway = GameRules.SceneManager.GetGoUpScene(GameRules.Red.GetPlayerID())
+            const bluemidway = GameRules.SceneManager.GetGoUpScene(GameRules.Blue.GetPlayerID())
             const start = redmidway.quantityOfChessPieces > bluemidway.quantityOfChessPieces ? redmidway : bluemidway
             let index = 0
             start.foreach((card:Unit)=>{

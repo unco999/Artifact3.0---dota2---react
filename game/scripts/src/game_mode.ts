@@ -44,6 +44,7 @@ export class GameMode {
     }
 
     public static Activate(this: void) {
+        print("OKKKKKKKKKKKKKKKKKKKKKKKKKKKK")
         GameRules.Addon = new GameMode();
         GameRules.KV = new KV();
         GameRules.select_the_prompt = new select_the_prompt()

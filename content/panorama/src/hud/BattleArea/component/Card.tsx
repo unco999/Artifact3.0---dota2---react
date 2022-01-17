@@ -10,6 +10,7 @@ import { Summon } from "./summon";
 import { EquipmentManager } from "./equipment";
 import { GLOABAL_EVENT } from "./global";
 import { useGlobalEvent } from "../../useUUID.tsx/useglobalevent";
+import { StateCompoent } from "./Unit_state";
 
 export enum state{
     牌堆,
@@ -99,8 +100,10 @@ const Machine = createMachine({
  
 export const Card = (props:{index:number,uuid:string,owner:number,view_stage:number}) => {
     const prefix = useMemo(()=> props.owner == Players.GetLocalPlayer() ? "my_" : "you_",[props])
+    const [modifilers,setmodifiler] = useState<Array<{name:string,duration:string,texture:string,id:string}>>([])
     const graveTipFunction = useRef(()=>{})
     const id = useRef(Math.floor(Math.random() * 20) + 1)
+    const preHighSelectType = useRef("") // 当前选中的类型css样式
     const ref = useRef<Panel|null>()
     const dummy = useRef<Panel|null>()
     const effect = useRef<Panel|null>()
@@ -214,6 +217,11 @@ export const Card = (props:{index:number,uuid:string,owner:number,view_stage:num
         GameEvents.SendCustomGameEventToServer("C2S_GET_ATTRIBUTE",{uuid:props.uuid})
     },[props.uuid])
 
+    /**获取单位modifiler信息 */
+    useEffect(()=>{
+        
+    },[])
+
     /**每次本体动 马甲跟着动 */
     const dummyoperate  = (action:"remove"|"add",classname:string) => {
         if(action == 'add'){
@@ -227,6 +235,15 @@ export const Card = (props:{index:number,uuid:string,owner:number,view_stage:num
         }
     }
 
+    useGameEvent("S2C_SEND_MODIFILER",(event)=>{
+        if(props.uuid != event.uuid) return
+        setmodifiler(JsonString2Array(event.data))
+    },[])
+
+    useEffect(()=>{
+        GameEvents.SendCustomGameEventToServer("C2S_GET_MODIFILER",{uuid:props.uuid})
+    },[props.uuid])
+
     /**卡牌改变场景 */
     useGameEvent("S2C_CARD_CHANGE_SCENES",(event)=>{
         if(props.uuid != event.uuid) return
@@ -239,7 +256,7 @@ export const Card = (props:{index:number,uuid:string,owner:number,view_stage:num
         if(props.uuid != event.uuid) return
         const _random = (Math.floor(Math.random() * 3)+1)
         ref.current?.AddClass(prefix + "death_animation"+ _random)
-        ref.current?.RemoveClass("select_target")
+        ref.current?.RemoveClass("select_target" + preHighSelectType.current)
         $.Schedule(1.5,()=>{
             // ref.current?.AddClass(prefix + "death")
             ref.current?.RemoveClass(prefix + "death_animation"+ _random)
@@ -263,7 +280,8 @@ export const Card = (props:{index:number,uuid:string,owner:number,view_stage:num
     /**该面板被作为可选目标被高亮 */
     useGameEvent("S2C_SEATCH_TARGET_OPEN",(event)=>{
         if(props.uuid != event.uuid) return
-        ref.current?.AddClass("select_target")
+        ref.current?.AddClass("select_target" + event.type)
+        preHighSelectType.current = event.type
         // set_current_effect("particles/killstreak/killstreak_ti10_hud_lv1.vpcf")
     },[props.uuid])
 
@@ -272,6 +290,7 @@ export const Card = (props:{index:number,uuid:string,owner:number,view_stage:num
     const OnDragDrop = (_:any,dragCallbacks:any) => {
         const id = dragCallbacks.Data().id
         const cardid = dragCallbacks.Data().cardid
+        $.Msg("对目标开始释放技能")
         GameEvents.SendCustomGameEventToServer("C2S_SPELL_SKILL",{SKILL_ID:id,target_uuid:props.uuid,spell_ability_card_uuid:cardid})
         C2S_SEATCH_TARGET(false,dragCallbacks.Data().id) // 关闭技能提示器
     }
@@ -312,12 +331,12 @@ export const Card = (props:{index:number,uuid:string,owner:number,view_stage:num
         $.Schedule(1.5,()=>{
             set_current_effect("")
         })
-    },[props.uuid]) 
+    },[props.uuid]) //
 
     //技能目标关闭高亮
     useGameEvent("S2C_SEATCH_TARGET_OFF",(event)=>{
         if(props.uuid != event.uuid) return
-        ref.current?.RemoveClass("select_target")
+        ref.current?.RemoveClass("select_target" + preHighSelectType.current)
     },[props.uuid])
     
     //技能释放主体提示
@@ -568,6 +587,31 @@ export const Card = (props:{index:number,uuid:string,owner:number,view_stage:num
         </>
     }
 
+    const Summoning = () => {
+        return <>
+        <Panel hittest={true}
+         onmouseactivate={()=>{GameEvents.SendCustomGameEventToServer("TEST_C2S_DEATH",{uuid:props.uuid})}}   className={prefix+'Card'} ref={Panel => ref.current = Panel}>
+                <Label text={"召唤物"} style={{fontSize:'30px',color:'white',textShadow:'0px 0px 0px 5.0 black',align:'center center'}}/>
+                <Label text={props.uuid} className={"uuid"}/>
+                <Panel className={"threeDimensional"}>
+                <Panel className={"attack"}>
+                    <Label text={attribute?.attack}/>
+                 </Panel>
+                    <Panel className={"arrmor"}>
+                <Label text={attribute?.arrmor}/>
+                    </Panel>
+                <Panel className={"heal"}>
+                <Label text={attribute?.heal}/>
+                </Panel>
+            </Panel>
+            </Panel>
+            {current_effect != "" &&<GenericPanel hittest={false} key={shortid.generate()} ref={panel=>{effect.current = panel;effect.current?.AddClass(effect_select_scenes())}} className={prefix + "effect"}  type={"DOTAParticleScenePanel"} particleName={current_effect} particleonly="true"  startActive="true" cameraOrigin={effect_parameter.current?.cameraOrigin} lookAt={effect_parameter.current?.lookAt} fov="50" />}
+            <Panel hittest={true} draggable={true} ref={Panel => dummy.current = Panel} onmouseover={()=>ref.current?.AddClass(prefix+"hover")} onmouseout={()=>ref.current?.RemoveClass(prefix+"hover")} className={prefix+"Carddummy"}/>
+        </>
+    }
+
+
+
     const You_hand = () => {
         return <Panel className={prefix+'Card'} ref={Panel => ref.current = Panel}/>
     }
@@ -598,7 +642,7 @@ export const Card = (props:{index:number,uuid:string,owner:number,view_stage:num
         </>
     }
 
-
+//
     const card_type = useMemo(() =>{
         if(GLOABAL_EVENT.instance.GetDATA("isdrag") == false ){
             state.Scene != "HAND" && dummy.current?.AddClass("hide")
@@ -619,6 +663,7 @@ export const Card = (props:{index:number,uuid:string,owner:number,view_stage:num
             <Panel hittest={true} draggable={true} ref={Panel => ref.current = Panel} onmouseactivate={()=>{$.Msg("ggg");/**GameEvents.SendCustomGameEventToServer("TEST_C2S_DEATH",{uuid:props.uuid})**/}}  className={prefix+'Card'} 
             onmouseover={()=>{state.Scene == "GRAVE" && graveTipFunction.current()}} onmouseout={()=>$.DispatchEvent('DOTAHideTextTooltip')}
             >
+                  {modifilers.map(value=><StateCompoent key={value.id + value.name + value.duration} name={value.name} duration={value.duration}/>)}
                   <EquipmentManager uuid={props.uuid}/>
                   <Label hittest={false} text={"id:"+state.Id + "|" + props.uuid} className={"uuid"}/>
                   <DOTAHeroImage hittest={false}  className={"heroimage"} heroimagestyle={'portrait'} heroname={(GameUI.CustomUIConfig() as any).CardHero.CardGame[state.Id].name} />
@@ -655,6 +700,9 @@ export const Card = (props:{index:number,uuid:string,owner:number,view_stage:num
             </Panel>
              </Panel>
             </>
+        }
+        if(state.type = "Summoned"){
+            return Summoning()
         }
     },[props.index,props.owner,props.uuid,xstate,state,attribute,current_effect,update])
 

@@ -84,6 +84,101 @@
     animation-iteration-count: infinite;
 }
 
+
+// export enum select_type{
+//     任意单体 == 0,
+//     敌方单体 == 1,
+//     敌方近邻 == 2,
+//     敌方全体 == 3,
+//     全体 == 4,
+//     友方单体 == 5,
+//     友方全体 == 6,
+//     自己 == 7 ,
+//     敌方对格 == 8,
+// }
+
+.select_target0{
+    animation-name: select_target0;
+    animation-duration: 1.5s;
+    animation-iteration-count: infinite;
+    &:hover{
+        
+    }
+}
+
+.select_target1{
+    animation-name: select_target1;
+    animation-duration: 1.5s;
+    animation-iteration-count: infinite;
+}
+
+.select_target2{
+    animation-name: select_target2;
+    animation-duration: 1.5s;
+    animation-iteration-count: infinite;
+}
+
+.select_target3{
+    animation-name: select_target3;
+    animation-duration: 1.5s;
+    animation-iteration-count: infinite;
+}
+
+.select_target4{
+    animation-name: select_target4;
+    animation-duration: 1.5s;
+    animation-iteration-count: infinite;
+}
+
+.select_target5{
+    animation-name: select_target5;
+    animation-duration: 1.5s;
+    animation-iteration-count: infinite;
+}
+
+.select_target6{
+    animation-name: select_target6;
+    animation-duration: 1.5s;
+    animation-iteration-count: infinite;
+}
+
+.select_target7{
+    animation-name: select_target7;
+    animation-duration: 1.5s;
+    animation-iteration-count: infinite;
+}
+
+.select_target8{
+    animation-name: select_target8;
+    animation-duration: 1.5s;
+    animation-iteration-count: infinite;
+}
+
+.select_target9{
+    animation-name: select_target9;
+    animation-duration: 1.5s;
+    animation-iteration-count: infinite;
+}
+
+.select_target10{
+    animation-name: select_target10;
+    animation-duration: 1.5s;
+    animation-iteration-count: infinite;
+}
+
+.select_target11{
+    animation-name: select_target11;
+    animation-duration: 1.5s;
+    animation-iteration-count: infinite;
+}
+
+.select_target12{
+    animation-name: select_target12;
+    animation-duration: 1.5s;
+    animation-iteration-count: infinite;
+}
+//
+
 .my_effect{
     width: 300px;
     height: 300px;
@@ -307,6 +402,11 @@
             text-shadow: 0px 0px 10px 4.0 black;
             align:center center;    
         }
+        &.high{
+            width: 120px;
+            height: 120px;
+            border: 3px solid chartreuse;
+        }
     }
 }
 
@@ -325,6 +425,11 @@
             font-size: 40px;
             text-shadow: 0px 0px 10px 4.0 black;
             align:center center;    
+        }
+        &.high{
+            width: 120px;
+            height: 120px;
+            border: 3px solid chartreuse;
         }
     }
 }
@@ -941,4 +1046,13 @@
     margin: 10px;
     flow-children:down;
     @extend .defualt;
+}
+
+.StateCompoentMain{
+    @extend .defualt;
+    width: 22px;
+    height: 22px;
+    x:3px;
+    y:100px;
+    z-index: 50;
 }

@@ -8,7 +8,7 @@ import { Timers } from "../lib/timers";
 @ca_register_modifiler()
 export class item_bfury_modifiler extends CAModifiler{
     name: string = "item_bfury_modifiler";
-    modifilertype: modifilertype = modifilertype.无;
+    modifilertype: modifilertype = modifilertype.原始;
     duration: number = -1;
     debuff: boolean = false;
 
@@ -35,15 +35,15 @@ export class item_bfury_modifiler extends CAModifiler{
             print("狂战斧生效了")
             const {left,center,right} =  GameRules.SceneManager.enemyneighbor(this.thisHero)
             if(typeof(center) != "number"){
-                center.hurt(this.thisHero.attack,this.thisHero)
+                center.hurt(this.thisHero.attack,this.thisHero,"defualt")
                 CustomGameEventManager.Send_ServerToAllClients("SC2_PLAY_EFFECT",{uuid:center.UUID,lookAt:"0 0 0",paticle:"particles/econ/items/ursa/ursa_swift_claw/ursa_swift_claw_right.vpcf",cameraOrigin:"0 500 0"})
             }
             if(typeof(left) != "number"){
-                center.hurt(3,this.thisHero)
+                center.hurt(3,this.thisHero,"defualt")
                 CustomGameEventManager.Send_ServerToAllClients("SC2_PLAY_EFFECT",{uuid:left.UUID,lookAt:"0 0 0",paticle:"particles/econ/items/ursa/ursa_swift_claw/ursa_swift_claw_right.vpcf",cameraOrigin:"0 500 0"})
             }
             if(typeof(right) != "number"){
-                center.hurt(3,this.thisHero)
+                center.hurt(3,this.thisHero,"defualt")
                 CustomGameEventManager.Send_ServerToAllClients("SC2_PLAY_EFFECT",{uuid:right.UUID,lookAt:"0 0 0",paticle:"particles/econ/items/ursa/ursa_swift_claw/ursa_swift_claw_right.vpcf",cameraOrigin:"0 500 0"})
             }
             return true
@@ -75,7 +75,7 @@ export class item_bfury_modifiler extends CAModifiler{
 @ca_register_modifiler()
 export class item_aegis_modifiler extends CAModifiler{
     name: string = "item_aegis_modifiler";
-    modifilertype: modifilertype = modifilertype.无;
+    modifilertype: modifilertype = modifilertype.原始;
     duration: number = -1;
     debuff: boolean = false;
 
@@ -124,7 +124,7 @@ export class item_aegis_modifiler extends CAModifiler{
 @ca_register_modifiler()
 export class item_force_field_modifiler extends CAModifiler{
     name: string = "item_force_field_modifiler";
-    modifilertype: modifilertype = modifilertype.无;
+    modifilertype: modifilertype = modifilertype.原始;
     duration: number = -1;
     debuff: boolean = false;
     preDeathIndex:number //死亡前的序号
@@ -188,7 +188,7 @@ export class item_force_field_modifiler extends CAModifiler{
  @ca_register_modifiler()
  export class abyssal_underlord_pit_of_malice_modifiler extends CAModifiler{
      name: string = "abyssal_underlord_pit_of_malice_modifiler";
-     modifilertype: modifilertype = modifilertype.无;
+     modifilertype: modifilertype = modifilertype.原始;
      duration: number = -1;
      debuff: boolean = false;
      preDeathIndex:number //死亡前的序号
@@ -230,3 +230,227 @@ export class item_force_field_modifiler extends CAModifiler{
      }
  
  }
+
+
+ /**
+ * 通用眩晕1回合modifiler
+ */
+  @ca_register_modifiler()
+  export class stund1round_modifiler extends CAModifiler{
+      name: string = "stund1round_modifiler";
+      modifilertype: modifilertype = modifilertype.晕眩;
+      duration: number = 1;
+      debuff: boolean = true;
+  
+      constructor(){
+          super("stund1round_modifiler")
+      }
+  
+      constructorinstance = stund1round_modifiler
+  
+      register_hook_event() {
+          this.setHookEvent(HOOK.攻击前,(thishero:Unit)=>{
+              return true
+          })
+      }
+  
+  
+      get influenceMaxheal(): any {
+          return 0
+      }
+  
+      get influenceAttack(): any {
+          return 0
+      }
+  
+      get influenceArrmor(): any {
+          return 0
+      }
+      
+      get influenceheal(): any {
+          return 0
+      }
+  
+  }
+
+  
+ /**
+ * 通用1回合伤害免疫modifiler
+ */
+  @ca_register_modifiler()
+  export class shanghaimianyi_modifiler extends CAModifiler{
+      name: string = "shanghaimianyi_modifiler";
+      modifilertype: modifilertype = modifilertype.原始;
+      duration: number = 1;
+      debuff: boolean = true;
+  
+      constructor(){
+          super("shanghaimianyi_modifiler")
+      }
+  
+      constructorinstance = shanghaimianyi_modifiler
+  
+      register_hook_event() {
+          this.setHookEvent(HOOK.被攻击前,(attack_type:"defualt"|"ability"|"purely",Source:Unit)=>{
+              print("触发了攻击前特效=====守护天使")
+              if(attack_type == 'purely'){
+                  print("当前攻击为纯粹伤害,无法免伤")
+                  return false
+              }
+              print("当前为普通伤害 正常结算")
+              return true
+          })
+      }
+  
+  
+      get influenceMaxheal(): any {
+          return 0
+      }
+  
+      get influenceAttack(): any {
+          return 0
+      }
+  
+      get influenceArrmor(): any {
+          return 0
+      }
+      
+      get influenceheal(): any {
+          return 0
+      }
+  
+  }
+
+
+   /**
+ * 强攻modifiler
+ */
+    @ca_register_modifiler()
+    export class qianggong_modifiler extends CAModifiler{
+        name: string = "qianggong_modifiler";
+        modifilertype: modifilertype = modifilertype.原始;
+        duration: number = 1;
+        debuff: boolean = false;
+    
+        constructor(){
+            super("qianggong_modifiler")
+        }
+    
+        constructorinstance = qianggong_modifiler
+    
+        register_hook_event() {
+            let _modifiler:string
+            this.setHookEvent(HOOK.创造时,(thishero:Unit)=>{
+                const bool = thishero.isunableToAttack()
+                for(const modifiler of thishero.Modifilers){
+                   if(modifiler.modifilertype != modifilertype.原始){
+                       _modifiler = modifiler.name
+                   }
+                }
+                thishero.removeModifiler(_modifiler)
+                return false
+            })
+        }
+    
+    
+        get influenceMaxheal(): any {
+            return 0
+        }
+    
+        get influenceAttack(): any {
+            return 4
+        }
+    
+        get influenceArrmor(): any {
+            return 0
+        }
+        
+        get influenceheal(): any {
+            return 0
+        }
+    
+}
+
+
+   /**
+ * 强攻modifiler
+ */
+    @ca_register_modifiler()
+    export class julang_modifiler extends CAModifiler{
+        name: string = "qianggong_modifiler";
+        modifilertype: modifilertype = modifilertype.原始;
+        duration: number = 1;
+        debuff: boolean = false;
+    
+        constructor(){
+            super("julang_modifiler")
+        }
+    
+        constructorinstance = julang_modifiler
+    
+        register_hook_event() {
+            let _modifiler:string
+            this.setHookEvent(HOOK.创造时,(thishero:Unit)=>{
+                thishero.arrmor = 0
+                return false
+            })
+        }
+    
+    
+        get influenceMaxheal(): any {
+            return 0
+        }
+    
+        get influenceAttack(): any {
+            return 4
+        }
+    
+        get influenceArrmor(): any {
+            return 0
+        }
+        
+        get influenceheal(): any {
+            return 0
+        }
+    
+}
+
+
+   /**
+ * 幽灵船modifiler
+ */
+    @ca_register_modifiler()
+    export class youlingchuan_modifiler extends CAModifiler{
+        name: string = "youlingchuan_modifiler";
+        modifilertype: modifilertype = modifilertype.原始;
+        duration: number = 1;
+        debuff: boolean = false;
+    
+        constructor(){
+            super("youlingchuan_modifiler")
+        }
+    
+        constructorinstance = youlingchuan_modifiler
+    
+        register_hook_event() {
+
+        }
+    
+    
+        get influenceMaxheal(): any {
+            return 0
+        }
+    
+        get influenceAttack(): any {
+            return 0
+        }
+    
+        get influenceArrmor(): any {
+            return 2
+        }
+        
+        get influenceheal(): any {
+            return 0
+        }
+    
+}

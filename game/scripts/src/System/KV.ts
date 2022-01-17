@@ -2,13 +2,16 @@ export class KV{
 
     CardData:{[keys:string]:{id:number,name:string,attack:number,arrmor:number,health:number,ability1:string,ability2:string,remark:string}}
     AbilityData:{[keys:string]:{id:number,isbig:number,class_name:string,cost:number,heroid:number,type:string,remark:string}}
+    Summoned:{[keys:string]:{attack:number,arrmor:number,heal:number,icon:string,name:string}}
 
     constructor(){
       this.CardData = LoadKeyValues('scripts/npc/CardHero.txt') as any
       this.AbilityData = LoadKeyValues('scripts/npc/Ability.txt') as any
-       print("打印键值对")
-       DeepPrintTable(this.CardData)
-       DeepPrintTable(this.AbilityData)
+      this.Summoned = LoadKeyValues('scripts/npc/summoned.txt') as any
+    }
+
+    GetSummoned(id:string){
+       return this.Summoned[id]
     }
 
     GetCardDataKV(CardOriginID:number){

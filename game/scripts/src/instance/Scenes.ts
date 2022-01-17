@@ -11,7 +11,6 @@ import { AbilityCard, SmallSkill, TrickSkill } from "./Ability";
 import { Stack } from "../structure/Stack";
 import { Solider, Unit } from "./Unit";
 import "./Ability";
-import { brash_solidier } from "../feature/brush_solidier";
 import { BATTLE_BRACH_STATE } from "../Manager/nettablefuc";
 
 type PlayerScene = Record<number, Scenes | BattleArea>;
@@ -286,6 +285,13 @@ export abstract class BattleArea extends Scenes {
     /**返回当前场景序号 */
     abstract GetSceneIndex()
 
+    /**随机获得一个本路的友方英雄 */
+    randomGet(){
+        for(const key in this.CardPool){
+           return this.CardPool[key]
+        }
+    }
+
     /**找最近空格 */
     GetrecentSpace(index:number) {
         for(let i = 0 ; i < 3 ; i++){
@@ -298,7 +304,19 @@ export abstract class BattleArea extends Scenes {
         }
         return -1
     }
-    
+
+    /**获得场景当前空位个数 */ 
+    GetSpaceCount(){
+        let count = 0
+        for(let key = 0 ; key < this.CardList.length ; key ++){
+            if(typeof(this.CardList[key]) == 'number'){
+                count++
+            }
+        }
+        return count
+    }
+
+
     GetAllSpace(){
         const list = []
         for(let key = 0 ; key < this.CardList.length ; key ++){

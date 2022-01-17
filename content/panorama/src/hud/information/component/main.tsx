@@ -1,12 +1,13 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useGameEvent, useNetTableKey } from "react-panorama";
+import short from 'shortid'
 
 export const Main = () =>{
     const team = useNetTableKey("Card_group_construction_phase","team")
 
     return <>
-    <Information owned={Players.GetLocalPlayer() == team.red ? team.blue : team.red}/>
-    <Information owned={Players.GetLocalPlayer()}/>
+    <Information key={short.generate()} owned={Players.GetLocalPlayer() == team.red ? team.blue : team.red}/>
+    <Information key={short.generate()} owned={Players.GetLocalPlayer()}/>
     </>
 }
 

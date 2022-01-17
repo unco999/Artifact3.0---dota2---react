@@ -4,9 +4,11 @@ import { Tower } from "./Tower";
 import { Unit } from "./Unit";
 
 export enum modifilertype {
-    "沉默" = 1,
-    "冻结" = 3,
-    "无" = 0,
+    原始 = 4194304,
+    冻结 = 0x00000001,
+    晕眩 = 0x00000002,
+    沉默 = 0x00000004,
+    待定 = 0x00000008,
 }
 
 export function ca_register_modifiler() {
@@ -84,6 +86,7 @@ export abstract class CAModifiler{
     id:string;
     hook:number = HOOK.原始
     hookEvent:Record<number,hookfuc[]> = {}
+    texture:string
     abstract constructorinstance
 
     constructor(id:string){

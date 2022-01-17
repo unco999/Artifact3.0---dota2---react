@@ -3,6 +3,7 @@ import { GoUp, LaidDown, Midway } from "./Scenes";
 
 export class TowerGeneralControl{
     TowerDate = new Map()
+    
 
     constructor(){
         this.TowerDate.set(GameRules.Blue.GetPlayerID() + "1",new Tower(GameRules.Blue,1))
@@ -13,24 +14,30 @@ export class TowerGeneralControl{
         this.TowerDate.set(GameRules.Red.GetPlayerID() + "3",new Tower(GameRules.Red,3))
     }
 
+    foeatch(cb:Function){
+        this.TowerDate.forEach((value,key)=>{
+            cb(value)
+        })
+    }
 
     getPlayerTower(player:CDOTAPlayer,index:number){
-      return this.TowerDate.get(player.GetPlayerID() + index)
+        print("找到的塔位置",player.GetPlayerID(),index)
+        return this.TowerDate.get(player.GetPlayerID().toString() + index.toString())
     }
 
     /**通过卡的场景找到对方塔的位置 */
-    getCardScenceTower(player:CDOTAPlayer,Card:Card){
+    getCardScenceTower(player:CDOTAPlayer,Card:Card):Tower{
         if(Card.Scene instanceof Midway){
             print("找到中路的塔")
             return this.TowerDate.get(player.GetPlayerID() == GameRules.Blue.GetPlayerID() ? GameRules.Red.GetPlayerID() + "2": GameRules.Blue.GetPlayerID() + "2")
         }
         if(Card.Scene instanceof GoUp){
             print("找到上路的塔")
-            return this.TowerDate.get(player.GetPlayerID() == GameRules.Blue.GetPlayerID() ? GameRules.Red.GetPlayerID() + "2": GameRules.Blue.GetPlayerID() + "1")
+            return this.TowerDate.get(player.GetPlayerID() == GameRules.Blue.GetPlayerID() ? GameRules.Red.GetPlayerID() + "1": GameRules.Blue.GetPlayerID() + "1")
         }
         if(Card.Scene instanceof LaidDown){
             print("找到下路的塔")
-            return this.TowerDate.get(player.GetPlayerID() == GameRules.Blue.GetPlayerID() ? GameRules.Red.GetPlayerID() + "2": GameRules.Blue.GetPlayerID() + "3")
+            return this.TowerDate.get(player.GetPlayerID() == GameRules.Blue.GetPlayerID() ? GameRules.Red.GetPlayerID() + "3": GameRules.Blue.GetPlayerID() + "3")
         }
     }
 
@@ -62,6 +69,14 @@ export class Tower{
                 this.hurt(event.damage)
             }
         })
+    }
+
+    high(player:PlayerID){
+        CustomGameEventManager.Send_ServerToPlayer(PlayerResource.GetPlayer(player),"S2C_HIGH_TOWER",{uuid:this.uuid}) 
+    }
+
+    off_high(player:PlayerID){
+        CustomGameEventManager.Send_ServerToPlayer(PlayerResource.GetPlayer(player),"S2C_OFF_HIGH_TOWER",{uuid:this.uuid}) 
     }
 
     hurt(damage:number){

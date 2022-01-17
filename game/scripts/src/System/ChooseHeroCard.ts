@@ -255,7 +255,7 @@ export class showtime extends ChooseHerostate{
             DeepPrintTable(this.host.BlueheroSelected)
             print("红队选的英雄")
             DeepPrintTable(this.host.RedheroSelected)
-            Timers.CreateTimer(3,()=>{
+            Timers.CreateTimer(10,()=>{
                 CustomNetTables.SetTableValue('GameMianLoop','currentLoopName',{current:"isbattle"})
                 GameRules.gamemainloop = new BattleGameLoop()
                 GameRules.gamemainloop.StartcuurentsettingState = new faultCard(GameRules.gamemainloop,STRATEGY_BRACH_STATE.上路)
@@ -305,11 +305,6 @@ export class ChooseHeroCardLoop{
                 109,
                 29,
                 90,
-                45,
-                71,
-                51,
-                38,
-                34
                 ]
             this.selectOrder = [1,2,2,2,2,1]
             this.herobrach[GameRules.Red.GetPlayerID() as number] = {0:[],1:[],2:[]}

@@ -271,7 +271,6 @@ export class Solider extends Unit{
 
     constructor(CardParameter:CardParameter,Scene:ICAScene){
         super(CardParameter,Scene,'Solider');
-        (this.Scene as GoUp).AutoAddCard(this,this.Index)
         this.attack = 3
         this.arrmor = 0
         this.heal = 6

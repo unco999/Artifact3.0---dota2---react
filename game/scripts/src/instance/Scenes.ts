@@ -48,9 +48,7 @@ export class Scenes implements ICAScene {
     }
 
     /**获得棋子数量 */
-    get quantityOfChessPieces() {
-        return table.maxn(this.CardPool);
-    }
+
 
     getIndex(Card: Card) {
         return;
@@ -285,6 +283,17 @@ export abstract class BattleArea extends Scenes {
     /**返回当前场景序号 */
     abstract GetSceneIndex()
 
+
+    get quantityOfChessPieces() {
+        let count = 0
+        for(const card of this.CardList){
+            if(typeof(card) != 'number'){
+                count++
+            }
+        }
+        return count
+    }
+
     /**随机获得一个本路的友方英雄 */
     randomGet(){
         for(const key in this.CardPool){
@@ -509,6 +518,37 @@ export class Midway extends BattleArea {
         ICASceneManager.SetMidwayScene(this);
     }
 
+    AutoAddCard(card: Card, index?: number) {
+        super.addCard(card);
+        if (index && index != -1) {
+            print("中路手動兼職", index);
+            card.Index = index;
+            this.CardList[index - 1] = card;
+            return;
+        }
+        let mark;
+        for (let index = 0; index < 4; index++) {
+            if (this.CardList[3 - index - 1] === -1) {
+                mark = 3 - index;
+                break;
+            }
+            if (this.CardList[3 + index - 1] === -1) {
+                mark = 3 + index;
+                break;
+            }
+        }
+        if (!mark) {
+            print("自动加入路线出错了");
+            return
+        }
+        print("中路mark情況", mark);
+        card.Index = mark;
+        card.Scene = this;
+        this.CardList[mark] = card;
+        this.CardPool[card.UUID] = card;
+        return card;
+    }
+
     GetSceneIndex(){
         return 1
     }
@@ -529,6 +569,37 @@ export class GoUp extends BattleArea {
     }
 
     
+    AutoAddCard(card: Card, index?: number) {
+        super.addCard(card);
+        if (index && index != -1) {
+            print("中路手動兼職", index);
+            card.Index = index;
+            this.CardList[index - 1] = card;
+            return;
+        }
+        let mark;
+        for (let index = 0; index < 4; index++) {
+            if (this.CardList[3 - index - 1] === -1) {
+                mark = 3 - index;
+                break;
+            }
+            if (this.CardList[3 + index - 1] === -1) {
+                mark = 3 + index;
+                break;
+            }
+        }
+        if (!mark) {
+            print("自动加入路线出错了");
+            return
+        }
+        print("中路mark情況", mark);
+        card.Index = mark;
+        card.Scene = this;
+        this.CardList[mark] = card;
+        this.CardPool[card.UUID] = card;
+        return card;
+    }
+
     GetSceneIndex(){
         return 0
     }
@@ -547,6 +618,37 @@ export class LaidDown extends BattleArea {
         ICASceneManager.SetLaidDownScene(this);
     }
 
+    
+    AutoAddCard(card: Card, index?: number) {
+        super.addCard(card);
+        if (index && index != -1) {
+            print("中路手動兼職", index);
+            card.Index = index;
+            this.CardList[index - 1] = card;
+            return;
+        }
+        let mark;
+        for (let index = 0; index < 4; index++) {
+            if (this.CardList[3 - index - 1] === -1) {
+                mark = 3 - index;
+                break;
+            }
+            if (this.CardList[3 + index - 1] === -1) {
+                mark = 3 + index;
+                break;
+            }
+        }
+        if (!mark) {
+            print("自动加入路线出错了");
+            return
+        }
+        print("中路mark情況", mark);
+        card.Index = mark;
+        card.Scene = this;
+        this.CardList[mark] = card;
+        this.CardPool[card.UUID] = card;
+        return card;
+    }
     
     GetSceneIndex(){
         return 2
@@ -703,17 +805,14 @@ export class ScenesManager {
         /**上英雄卡牌时候   附带小兵刷新  如本路线为满  就不上小兵 */
         CustomGameEventManager.RegisterListener("C2S_CARD_CHANGE_SCENES", (_, event) => {
             if (!GameRules.gamemainloop.filter) return;
+            print("当前上场的指令为..................")
+            DeepPrintTable(event)
             const card = this.change_secens(event.uuid, event.to_scene, event.index);
-            const newScenes = GameRules.SceneManager.GetScenes(event.to_scene, event.PlayerID) as BattleArea;
             GameRules.gamemainloop.small_solider_tag[event.PlayerID] = true;
             /** 本路线满了 不刷小兵*/
-            if (newScenes.isFull()) return;
-            const solider = GameRules.brash_solidier.AutoSolider(event.PlayerID, newScenes as BattleArea);
+            const solider = GameRules.brash_solidier.AutoSolider(event.PlayerID, event.to_scene);
             if (RollPercentage(50)) {
-                let card_index = card.Index;
-                let solider_index = solider.Index;
-                GameRules.SceneManager.change_secens(card.UUID, card.Scene.SceneName, solider_index);
-                GameRules.SceneManager.change_secens(solider.UUID, solider.Scene.SceneName, card_index);
+                GameRules.SceneManager.ExchangeLocation(card,solider)
             }
         });
         CustomGameEventManager.RegisterListener("C2S_GET_SCENES", (_, event) => {
@@ -930,6 +1029,19 @@ export class ScenesManager {
         CustomNetTables.SetTableValue("Scenes", "equip" + GameRules.Red.GetPlayerID(), this.get_All_equip(GameRules.Blue.GetPlayerID()));
     }
 
+    /**两张卡牌交换位置 */
+    ExchangeLocation(Acard:Card,Bcard:Card){
+        const AScene = Acard.Scene as BattleArea
+        const BScene = Bcard.Scene as BattleArea
+        const Aindex = Acard.Index
+        const Bindex = Bcard.Index
+        AScene.Remove(Acard.UUID)
+        BScene.Remove(Bcard.UUID)
+        AScene.AutoAddCard(Bcard,Aindex)
+        BScene.AutoAddCard(Acard,Bindex)
+        Acard.update(Acard.Scene.SceneName)
+        Bcard.update(Acard.Scene.SceneName)
+    }
 
     /**牌改变场景*/
     change_secens(uuid: string, to: string, index?: number, update?: boolean) {

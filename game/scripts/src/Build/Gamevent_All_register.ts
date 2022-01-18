@@ -2,7 +2,7 @@ import { brash_solidier } from "../feature/brush_solidier";
 import { damage } from "../feature/damage";
 import { EquipCard, EquipContainer } from "../instance/Equip";
 import { HOOK } from "../instance/Modifiler";
-import { Hand, Scenes } from "../instance/Scenes";
+import { BattleArea, Hand, Scenes } from "../instance/Scenes";
 import { Unit } from "../instance/Unit";
 import { Timers } from "../lib/timers";
 import { reloadable } from "../lib/tstl-utils";
@@ -23,8 +23,8 @@ export class GamaEvent_All_register{
             CustomGameEventManager.Send_ServerToAllClients("S2C_BRUSH_ITEM",{})
         })
         CustomGameEventManager.RegisterListener("TEST_C2S_CALL_ATTACK",()=>{
-            const redmidway = GameRules.SceneManager.GetGoUpScene(GameRules.Red.GetPlayerID())
-            const bluemidway = GameRules.SceneManager.GetGoUpScene(GameRules.Blue.GetPlayerID())
+            const redmidway = GameRules.SceneManager.GetGoUpScene(GameRules.Red.GetPlayerID()) as BattleArea
+            const bluemidway = GameRules.SceneManager.GetGoUpScene(GameRules.Blue.GetPlayerID())as BattleArea
             const start = redmidway.quantityOfChessPieces > bluemidway.quantityOfChessPieces ? redmidway : bluemidway
             let index = 0
             start.foreach((card:Unit)=>{

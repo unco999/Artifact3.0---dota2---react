@@ -54,11 +54,12 @@ export class brash_solidier{
 
     /**自定分路上兵 */
 
-    AutoSolider(PlayerID:PlayerID,scene_name:BattleArea){
-        const soldier = new Solider({Id:math.random().toString(),Index:0,PlayerID:PlayerID},scene_name)
-        scene_name.AutoAddCard(soldier)
+    AutoSolider(PlayerID:PlayerID,scene_name:string){
+        const soldier = new Solider({Id:math.random().toString(),Index:-1,PlayerID:PlayerID},GameRules.SceneManager.GetCardheapsScene(PlayerID))
         GameRules.SceneManager.global_add(soldier.UUID,soldier)
+        const _Scenes = GameRules.SceneManager.GetScenes(scene_name,PlayerID) as BattleArea
         GameRules.SceneManager.update()
+        _Scenes.AutoAddCard(soldier)
         CustomGameEventManager.Send_ServerToAllClients("S2C_BRUSH_SOLIDER",{})
         return soldier
     }

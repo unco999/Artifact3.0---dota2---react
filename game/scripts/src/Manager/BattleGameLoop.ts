@@ -16,9 +16,9 @@ export enum 游戏循环 {
 }
 
 const 商店购买时间 = 10
-const 英雄部署时间 = 5
-const 战斗结算时间 = 7
-const 策略时间 = 7
+const 英雄部署时间 = 11
+const 战斗结算时间 = 5
+const 策略时间 = 2
 
 //第一回合六張牌  5小1大  第一回合結束  商店功能花錢買牌(2元买大技能 1元买小技能)  然後英雄分錄  分完路發兩張   
 
@@ -322,10 +322,12 @@ export class faultCard extends GameLoopState {
     exit(){
         super.exit()
         if(!this.host.small_solider_tag[GameRules.Red.GetPlayerID()]){
-            const red_solider = GameRules.brash_solidier.AutoSolider(GameRules.Red.GetPlayerID(),ScenesBuildbehavior.fitler(get_current_battle_brach() == "4" ? "0" : get_current_battle_brach(),GameRules.Red.GetPlayerID()) as BattleArea )
+            GameRules.gamemainloop.small_solider_tag[GameRules.Red.GetPlayerID()] = false;
+            const red_solider = GameRules.brash_solidier.AutoSolider(GameRules.Red.GetPlayerID(),ScenesBuildbehavior.fitler(get_current_battle_brach() == "4" ? "0" : get_current_battle_brach(),GameRules.Red.GetPlayerID()).SceneName )
         }
         if(!this.host.small_solider_tag[GameRules.Blue.GetPlayerID()]){
-            const blue_solider = GameRules.brash_solidier.AutoSolider(GameRules.Blue.GetPlayerID(),ScenesBuildbehavior.fitler(get_current_battle_brach() == "4" ? "0" : get_current_battle_brach(),GameRules.Blue.GetPlayerID()) as BattleArea )
+            GameRules.gamemainloop.small_solider_tag[GameRules.Blue.GetPlayerID()] = false;
+            const blue_solider = GameRules.brash_solidier.AutoSolider(GameRules.Blue.GetPlayerID(),ScenesBuildbehavior.fitler(get_current_battle_brach() == "4" ? "0" : get_current_battle_brach(),GameRules.Blue.GetPlayerID()).SceneName )
         }
         
     }
@@ -353,24 +355,22 @@ export class injurySettlementStage extends GameLoopState {
 
     /**战斗结算算法 */
     settlementModule(){
-            const redrouter = GameRules.SceneManager.fitler(this.settlementRoute,GameRules.Red.GetPlayerID())
-            const bluerouter = GameRules.SceneManager.fitler(this.settlementRoute,GameRules.Blue.GetPlayerID())
-            const start = redrouter.quantityOfChessPieces >= bluerouter.quantityOfChessPieces ? redrouter : bluerouter
-            if(IsInToolsMode()){
-                redrouter.quantityOfChessPieces > bluerouter.quantityOfChessPieces ? print("当前红色比蓝色多,红色先攻击") : print("当前蓝色比红色多,蓝色先攻击")
-            }
+        const redrouter = GameRules.SceneManager.fitler(this.settlementRoute,GameRules.Red.GetPlayerID()) as BattleArea
+        const bluerouter = GameRules.SceneManager.fitler(this.settlementRoute,GameRules.Blue.GetPlayerID()) as BattleArea
             let index = 0
             let defualtindex = 0
-            start.foreach((card:Unit)=>{
-                if(card.isAttackPreHook()){
-                   index += RandomFloat(1,2)
+            for(let i = 1 ; i < 6 ; i++){
+                const redcard = redrouter.IndexGet(i) as Unit
+                const bluecard = bluerouter.IndexGet(i) as Unit
+                if(!redcard && !bluecard) continue
+                const start = redcard ? redcard as Unit : bluecard as Unit
+                if(redcard.isAttackPreHook() || bluecard.isAttackPreHook()){
+                    index++
                 }
-                Timers.CreateTimer(card.isAttackPreHook() ? index : defualtindex,()=>{
-                    const target = card.Scene.find_oppose().IndexGet(card.Index) as Unit
-                    const _damage = new damage(card as Unit,target)
-                    _damage.attacklement()     
-                })
-            })
+                const _damage = new damage(start,start == redcard ? bluecard as Unit: redcard as Unit,undefined,(redcard.isAttackPreHook() || bluecard.isAttackPreHook()) ? index : defualtindex   )
+                _damage.attacklement()
+            }
+
     }
 
     exit(){

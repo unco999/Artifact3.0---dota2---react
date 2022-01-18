@@ -67,6 +67,7 @@ export abstract class Card{
     /**卡牌向右边移动 */
     right(){
         const _scenes = this.Scene as BattleArea
+        if(!_scenes?.CardList) return;
         while(this.Index > 0 && _scenes.CardList[this.Index + 1 - 1] == -1 && this.Index < 3){
                 _scenes.CardList[this.Index -1] = -1
                 this.Index++

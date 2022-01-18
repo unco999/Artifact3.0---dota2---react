@@ -407,6 +407,12 @@
             height: 120px;
             border: 3px solid chartreuse;
         }
+        &.isbase{
+            width: 120px;
+            height: 120px;
+            border: 3px solid rgb(255, 136, 0);
+            @extend .backdefualt;
+        }
     }
 }
 
@@ -431,6 +437,12 @@
             height: 120px;
             border: 3px solid chartreuse;
         }
+        &.isbase{
+            width: 120px;
+            height: 120px;
+            border: 3px solid rgb(255, 136, 0);
+            @extend .backdefualt;
+        }
     }
 }
 
@@ -451,6 +463,11 @@
         x:500px;
         y:0px;
         transform: rotateZ(90deg);
+    }
+    @for $i from 1 to 30{
+        &.you_hidden_area#{$i}{
+           visibility: collapse;
+        }
     }
     &.you_attack_animation{
         animation-name: youhit;

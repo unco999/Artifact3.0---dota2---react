@@ -4,6 +4,7 @@ import { useGameEvent } from "react-panorama";
 export const Tower = (props:{owner:number,index:number}) =>{
     const prefix = useMemo(()=> props.owner == Players.GetLocalPlayer() ? "my_" : "you_",[props])
     const uuid = useRef("")
+    const [isbase,setbase] = useState<boolean>()
     const [state,setstate] = useState<{
         heal: number;
         state: "death" | "defualt";
@@ -40,6 +41,10 @@ export const Tower = (props:{owner:number,index:number}) =>{
         $.RegisterEventHandler( 'DragDrop', ref.current!, ()=>{} );
     },[state?.uuid])
 
+    useGameEvent("S2C_CHANGE_BASE",(event)=>{
+        if(event.uuid != uuid.current) return;
+        ref.current?.AddClass("isbase")
+    },[])
 
 
     useEffect(()=>{
@@ -47,6 +52,9 @@ export const Tower = (props:{owner:number,index:number}) =>{
             if(event.brach != props.index) return
             if(event.playerid != props.owner) return;
             setstate({...event,state:"defualt"})
+            if(event.isbase){
+                ref.current?.AddClass("isbase")
+            }
             uuid.current = event.uuid
             return () => GameEvents.Unsubscribe(id)
         })

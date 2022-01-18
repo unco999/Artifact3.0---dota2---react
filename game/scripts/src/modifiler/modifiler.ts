@@ -25,24 +25,22 @@ export class item_bfury_modifiler extends CAModifiler{
             this.thisHero.heal = this.thisHero.max_heal
             return false})
         this.setHookEvent(HOOK.销毁时,()=>{
-            this.thisHero.max_heal -= this.influenceMaxheal
-            if(this.thisHero.heal > this.thisHero.max_heal){
-                this.thisHero.heal = this.thisHero.max_heal
-            }
-            return false
+            this.thisHero.removeModifiler(this.name)
+            this.logoutHook()
+            return true
         })
         this.setHookEvent(HOOK.攻击前,()=>{
             print("狂战斧生效了")
             const {left,center,right} =  GameRules.SceneManager.enemyneighbor(this.thisHero)
-            if(typeof(center) != "number"){
+            if(center && typeof(center) != "number"){
                 center.hurt(this.thisHero.attack,this.thisHero,"defualt")
                 CustomGameEventManager.Send_ServerToAllClients("SC2_PLAY_EFFECT",{uuid:center.UUID,lookAt:"0 0 0",paticle:"particles/econ/items/ursa/ursa_swift_claw/ursa_swift_claw_right.vpcf",cameraOrigin:"0 500 0"})
             }
-            if(typeof(left) != "number"){
+            if(left && typeof(left) != "number"){
                 center.hurt(3,this.thisHero,"defualt")
                 CustomGameEventManager.Send_ServerToAllClients("SC2_PLAY_EFFECT",{uuid:left.UUID,lookAt:"0 0 0",paticle:"particles/econ/items/ursa/ursa_swift_claw/ursa_swift_claw_right.vpcf",cameraOrigin:"0 500 0"})
             }
-            if(typeof(right) != "number"){
+            if(right && typeof(right) != "number"){
                 center.hurt(3,this.thisHero,"defualt")
                 CustomGameEventManager.Send_ServerToAllClients("SC2_PLAY_EFFECT",{uuid:right.UUID,lookAt:"0 0 0",paticle:"particles/econ/items/ursa/ursa_swift_claw/ursa_swift_claw_right.vpcf",cameraOrigin:"0 500 0"})
             }
@@ -73,29 +71,29 @@ export class item_bfury_modifiler extends CAModifiler{
  * 免死甲
  */
 @ca_register_modifiler()
-export class item_aegis_modifiler extends CAModifiler{
-    name: string = "item_aegis_modifiler";
+export class item_force_field_modifiler extends CAModifiler{
+    name: string = "item_force_field_modifiler";
     modifilertype: modifilertype = modifilertype.原始;
     duration: number = -1;
     debuff: boolean = false;
 
     constructor(){
-        super("item_aegis_modifiler")
+        super("item_force_field_modifiler")
         print("创造了装备的modifiler")
     }
 
-    constructorinstance = item_aegis_modifiler
+    constructorinstance = item_force_field_modifiler
 
     register_hook_event() {
         this.setHookEvent(HOOK.死亡前,(thishero:Hero,source:Unit)=>{
             print("触动了免死金牌")
             if(thishero){
                 thishero.heal = 1
+                thishero.updateAttribute()
             }
             CustomGameEventManager.Send_ServerToAllClients("SC2_PLAY_EFFECT",{uuid:thishero.UUID,paticle:"particles/units/heroes/hero_fairy/fairy_revive.vpcf",cameraOrigin:'0 300 0',lookAt:'0 0 0'})
-            thishero.removeModifiler(this.name)
-            print("返回了false")
-            return false
+            this.logoutHook()
+            return true
         })
     }
 
@@ -122,8 +120,8 @@ export class item_aegis_modifiler extends CAModifiler{
  * 复活甲
  */
 @ca_register_modifiler()
-export class item_force_field_modifiler extends CAModifiler{
-    name: string = "item_force_field_modifiler";
+export class item_aegis_modifiler extends CAModifiler{
+    name: string = "item_aegis_modifiler";
     modifilertype: modifilertype = modifilertype.原始;
     duration: number = -1;
     debuff: boolean = false;
@@ -131,11 +129,11 @@ export class item_force_field_modifiler extends CAModifiler{
     preDeathBrach:string //死亡前的场景名字
 
     constructor(){
-        super("item_force_field_modifiler")
+        super("item_aegis_modifiler")
         print("创造了装备的modifiler")
     }
 
-    constructorinstance = item_force_field_modifiler
+    constructorinstance = item_aegis_modifiler
 
     register_hook_event() {
         this.setHookEvent(HOOK.死亡前,(thishero:Hero,source:Unit)=>{
@@ -153,10 +151,9 @@ export class item_force_field_modifiler extends CAModifiler{
                 CustomGameEventManager.Send_ServerToAllClients("S2C_SEND_ATTRIBUTE",thishero.attribute)
                 GameRules.SceneManager.change_secens(thishero.UUID,this.preDeathBrach,this.preDeathIndex,false)
                 CustomGameEventManager.Send_ServerToAllClients("SC2_PLAY_EFFECT",{uuid:thishero.UUID,paticle:"particles/econ/items/wraith_king/wraith_king_arcana/wk_arc_reincarn_tombstone_ring_flames.vpcf",cameraOrigin:"0 400 0",lookAt:"0 0 0"})
-           
+                this.logoutHook()
             })
-            this.logoutHook(HOOK.死亡后)
-            return true
+            return false
         })
     }
 
@@ -208,7 +205,7 @@ export class item_force_field_modifiler extends CAModifiler{
          })
          this.setHookEvent(HOOK.死亡后,()=>{
              this.thisHero.removeModifiler(this.name)
-             return false
+             return true
          })
      }
  
@@ -295,9 +292,10 @@ export class item_force_field_modifiler extends CAModifiler{
               print("触发了攻击前特效=====守护天使")
               if(attack_type == 'purely'){
                   print("当前攻击为纯粹伤害,无法免伤")
+                  this.thisHero.removeModifiler(this.name)
                   return false
               }
-              print("当前为普通伤害 正常结算")
+              this.thisHero.removeModifiler(this.name)
               return true
           })
       }
@@ -389,11 +387,6 @@ export class qianggong_modifiler extends CAModifiler{
         constructorinstance = julang_modifiler
     
         register_hook_event() {
-            let _modifiler:string
-            this.setHookEvent(HOOK.创造时,(thishero:Unit)=>{
-                thishero.arrmor = 0
-                return false
-            })
         }
     
     
@@ -406,7 +399,7 @@ export class qianggong_modifiler extends CAModifiler{
         }
     
         get influenceArrmor(): any {
-            return 0
+            return -2
         }
         
         get influenceheal(): any {

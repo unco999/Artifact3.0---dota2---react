@@ -47,7 +47,7 @@ declare interface CustomGameEventDeclarations {
     "S2C_SKILL_OFF":{uuid:string},
     "C2S_SPELL_SKILL":{SKILL_ID:string,target_uuid:string,spell_ability_card_uuid:string},
     "S2C_HURT_DAMAGE":{particle:string,uuid:string}
-    "S2C_TOWER_INIT":{playerid:PlayerID,uuid:string,brach:number,heal:number},
+    "S2C_TOWER_INIT":{playerid:PlayerID,uuid:string,brach:number,heal:number,isbase:boolean},
     "C2S_TOWER_INIT":{owner:PlayerID,brach:number}
     "C2S_GET_ENRGY":{uuid:string}
     "S2C_SEND_ENRGY":{uuid:string,max_enrgy:number,current_enrgy:number,cuurent_max:number},
@@ -79,4 +79,5 @@ declare interface CustomGameEventDeclarations {
     "S2C_OFF_HIGH_TOWER":{uuid:string}
     "C2S_SPELL_TOWER":{uuid:string,abilityname:string,towerPlayer:string,towerindex:number}
     "S2C_OPEN_EQUIP_SHOP":{}
+    "S2C_CHANGE_BASE":{uuid:string} //变换为基地
 }

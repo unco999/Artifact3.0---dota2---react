@@ -31,11 +31,10 @@ export class Hero extends Unit{
             if(this.find_Equip(event.item)) { CustomGameEventManager.Send_ServerToPlayer(PlayerResource.GetPlayer(this.PlayerID),"S2C_INFORMATION",{information:"你不能装备唯一的物品!"});return}
             if(!(GameRules.SceneManager.GetHandsScene(this.PlayerID) as Hand).find_id_and_remove(event.item)) return;
             if(this.Equips[event.index]){
-                const EquipModifilerName = this.Equips[event.index].id + "_modifiler"
-                this.removeModifiler(EquipModifilerName)
+                this.Equips[event.index].unload(this)
             }
             const equip = EquipContainer.instance.GetEquit(event.item)
-            equip.upper(this)
+            equip.upper(this,event.index)
             CustomGameEventManager.Send_ServerToAllClients("S2C_SEND_UP_EQUIMENT_SHOW",{uuid:this.UUID,index:event.index,item:event.item})
             print("新物品已装备成功")
         })

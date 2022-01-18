@@ -735,7 +735,6 @@ export const Card = (props:{index:number,uuid:string,owner:number,view_stage:num
 
 export const CardContext = (props:{owner:number}) => {
     const [allheaps,setallheaps] = useState<string[]>([])
-    const options = useNetTableKey("GameMianLoop",'option_mask_state')
     const view_stage = useNetTableKey('GameMianLoop','effect_view_stage')
 
     useGameEvent('S2C_BRUSH_SOLIDER',()=>{

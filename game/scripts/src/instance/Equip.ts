@@ -43,8 +43,9 @@ export abstract class Equip{
     modifiler:CAModifiler
     abstract containerInstance:any
 
-    upper(hero:Hero){
+    upper(hero:Hero,index:number){
         this.hero = hero;
+        hero.Equips[index] = this
         this.modifiler = ModifilerContainer.instance.Get_prototype_modifiler(this.id + "_modifiler")
         this.hero.addmodifiler(this.modifiler)
         print("装备英雄为",this.hero,"创造modifiler为",this.modifiler.name)

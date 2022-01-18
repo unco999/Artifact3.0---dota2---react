@@ -17,8 +17,8 @@ export enum 游戏循环 {
 
 const 商店购买时间 = 10
 const 英雄部署时间 = 11
-const 战斗结算时间 = 5
-const 策略时间 = 2
+const 战斗结算时间 = 6
+const 策略时间 = 5
 
 //第一回合六張牌  5小1大  第一回合結束  商店功能花錢買牌(2元买大技能 1元买小技能)  然後英雄分錄  分完路發兩張   
 
@@ -364,10 +364,10 @@ export class injurySettlementStage extends GameLoopState {
                 const bluecard = bluerouter.IndexGet(i) as Unit
                 if(!redcard && !bluecard) continue
                 const start = redcard ? redcard as Unit : bluecard as Unit
-                if(redcard.isAttackPreHook() || bluecard.isAttackPreHook()){
+                if(redcard?.isAttackPreHook() || bluecard?.isAttackPreHook()){
                     index++
                 }
-                const _damage = new damage(start,start == redcard ? bluecard as Unit: redcard as Unit,undefined,(redcard.isAttackPreHook() || bluecard.isAttackPreHook()) ? index : defualtindex   )
+                const _damage = new damage(start,start == redcard ? bluecard as Unit: redcard as Unit,undefined,(redcard?.isAttackPreHook() || bluecard?.isAttackPreHook()) ? index : defualtindex   )
                 _damage.attacklement()
             }
 

@@ -3,7 +3,7 @@ import { GoUp, LaidDown, Midway } from "./Scenes";
 
 export class TowerGeneralControl{
     TowerDate = new Map()
-    
+    whetherTheFirstTowerDie:Record<number,boolean> = {[GameRules.Red.GetPlayerID()]:false,[GameRules.Blue.GetPlayerID()]:false} //记录是否第一个塔死亡了
 
     constructor(){
         this.TowerDate.set(GameRules.Blue.GetPlayerID() + "1",new Tower(GameRules.Blue,1))
@@ -51,6 +51,7 @@ export class Tower{
     cuurentheal:number = 30
     state:"death"|"defualt"
     uuid = DoUniqueString(GetSystemTime())
+    isbase:boolean = false
 
     constructor(player:CDOTAPlayer,branch:number){
         this.Player = player
@@ -61,7 +62,7 @@ export class Tower{
     reigster_gamevent(){
         CustomGameEventManager.RegisterListener("C2S_TOWER_INIT",(_,event)=>{
             if(this.branch == event.brach && this.Player.GetPlayerID() == event.owner){
-                CustomGameEventManager.Send_ServerToAllClients("S2C_TOWER_INIT",{heal:this.cuurentheal,playerid:this.Player.GetPlayerID(),brach:this.branch,uuid:this.uuid})
+                CustomGameEventManager.Send_ServerToAllClients("S2C_TOWER_INIT",{heal:this.cuurentheal,playerid:this.Player.GetPlayerID(),brach:this.branch,uuid:this.uuid,isbase:this.isbase})
             }
         })
         CustomGameEventManager.RegisterListener("C2S_ATTACK_TOWER",(_,event)=>{
@@ -82,8 +83,19 @@ export class Tower{
     hurt(damage:number){
         print("执行了塔受伤程序")
         if(this.cuurentheal - damage <= 0){
+            if(!GameRules.TowerGeneralControl.whetherTheFirstTowerDie[this.Player.GetPlayerID()]){
+                this.cuurentheal = 60
+                this.isbase = true;
+                GameRules.TowerGeneralControl.whetherTheFirstTowerDie[this.Player.GetPlayerID()] = true
+                CustomGameEventManager.Send_ServerToAllClients("S2C_CHANGE_BASE",{uuid:this.uuid})
+                CustomGameEventManager.Send_ServerToAllClients("S2C_SEND_TOWER",{heal:this.cuurentheal,state:this.state,playerid:this.Player.GetPlayerID(),brach:this.branch,uuid:this.uuid})
+                return 
+            }
             this.cuurentheal = 0
             this.state = 'death'
+            if(this.isbase){
+                GameRules.SetGameWinner(this.Player == GameRules.Red ? GameRules.Blue.GetTeam() : GameRules.Red.GetTeam() )
+            }
             CustomGameEventManager.Send_ServerToAllClients("S2C_SEND_TOWER",{heal:this.cuurentheal,state:this.state,playerid:this.Player.GetPlayerID(),brach:this.branch,uuid:this.uuid})
             return
         }

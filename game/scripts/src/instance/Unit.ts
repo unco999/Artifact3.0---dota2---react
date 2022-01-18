@@ -114,16 +114,23 @@ export class Unit extends Card{
     }
 
     removeModifiler(name:string){
+        const modiflers = []
         for(const modifiler of this.Modifilers){
             if(modifiler.name == name){
-                modifiler.call_hook(HOOK.销毁时)
+                const fuc = modifiler.call_hook(HOOK.销毁时)
+                fuc.forEach(_fuc=>{
+                    _fuc()
+                })
                 if(this.Modifilers.length == 1){
                     this.Modifilers = new LinkedList()
                 }else{
-                    this.Modifilers.remove(modifiler)
+                    modiflers.push(modifiler)
                 }
             }
         }
+        modiflers.forEach(modifiler=>{
+            this.Modifilers.remove(modifiler)
+        })
         this.update_modifiler_to_client()
         CustomGameEventManager.Send_ServerToAllClients("S2C_SEND_ATTRIBUTE",this.attribute)
     }
@@ -183,13 +190,13 @@ export class Unit extends Card{
                     add_cuurent_glod(2,Source.PlayerID) 
                 }
                 const PreDeath = this.hook(HOOK.死亡前)
-                let deathbool:boolean = true
+                let deathbool:boolean = false
                 PreDeath.forEach(hook=>{
                    deathbool = hook(this,Source)
                    print(this.UUID,"成功去了墓地")
                 })
-                deathbool && GameRules.SceneManager.change_secens(this.UUID,"Grave",-1)
-                this.deleteLimitedModifier()
+                !deathbool && GameRules.SceneManager.change_secens(this.UUID,"Grave",-1)
+                !deathbool && this.deleteLimitedModifier()
                 this.cure(this.max_heal,this)
                 const PostDeath = this.hook(HOOK.死亡后)
                 PostDeath.forEach(hook=>{
@@ -246,8 +253,12 @@ export class Unit extends Card{
                 this.call_death(damageSourece)
             }
             print(this.UUID,"收到了伤害,当前剩余生命值为",this.GETheal)
-            CustomGameEventManager.Send_ServerToAllClients("S2C_SEND_ATTRIBUTE",this.attribute)
+            this.updateAttribute()
             return count
+        }
+
+        updateAttribute(){
+            CustomGameEventManager.Send_ServerToAllClients("S2C_SEND_ATTRIBUTE",this.attribute)
         }
 
         cure(count:number,Source:Card){

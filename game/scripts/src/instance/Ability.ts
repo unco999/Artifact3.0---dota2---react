@@ -683,7 +683,7 @@ export class SmallSkill_juedou extends ability_templater{
      Magic_team = Magic_team.敌方
      Magic_range = Magic_range.单体
      heroid = "35"
-     ability_select_type: select_type = select_type.敌方单体;
+     ability_select_type: select_type = select_type.全场任意敌方单体;
  
      constructor(){
          super("TrickSkill_ansha")
@@ -1061,11 +1061,13 @@ export class TrickSkill_hunduan extends ability_templater{
     }
 
     spell_skill(table:(Unit|number)[],target?:string,hero?:Unit){
-        if(!target || !hero) return
-        const _target = GameRules.SceneManager.get_card(target) as Unit
-        const temp = _target.heal
-        hero.heal = _target.heal > hero.max_heal ? hero.max_heal : _target.heal
-        _target.heal = hero.heal > _target.max_heal ? _target.max_heal : hero.heal 
+        if(table){
+            table.forEach(card=>{
+                if(typeof(card) != 'number'){
+                    
+                }
+            })
+        }
 
     }
 
@@ -1077,9 +1079,9 @@ export class TrickSkill_hunduan extends ability_templater{
  */
 @ca_register_ability()
 export class TrickSkill_huimie extends ability_templater{
-    Magic_brach = Magic_brach.对格
+    Magic_brach = Magic_brach.本路
     Magic_team = Magic_team.敌方
-    Magic_range = Magic_range.单体
+    Magic_range = Magic_range.全体
     heroid= "29"
     ability_select_type: select_type = select_type.敌方全体;
 
@@ -1088,22 +1090,31 @@ export class TrickSkill_huimie extends ability_templater{
     }
 
     spell_skill(table:(Unit|number)[],target?:string){
-        // const hero = GameRules.SceneManager.get_hero(this.heorheroid) as Unit
-        const hero = GameRules.SceneManager.GetMidwayScene(GameRules.Blue.GetPlayerID()).IndexGet(3) as Unit
+        const hero = GameRules.SceneManager.get_hero(this.heroid) as Unit
         super.spell_skill(table)
         table.forEach(target=>{
             if(typeof(target) != 'number'){
                 if(target.Index){
+                    target.addmodifiler(ModifilerContainer.instance.Get_prototype_modifiler("qianggong_modifiler"))
                     const _damage = new damage(hero,target)
-                    _damage.spell_skill_settlement(this.damage_calculate(math.abs(hero.Index - target.Index)),hero)
+                    _damage.spell_skill_settlement(this.damage_calculate(hero),hero)
                 }   
             }
         })
     }
 
-    /**伤害结算方法 */
-    damage_calculate(distance:number){
-        return 3 - distance
+    damage_calculate(hero:Unit){
+        let damage = 0
+        if(hero.Getfaulty == 1){
+            damage = 2
+        }
+        if(hero.Getfaulty == 2){
+            damage = 3
+        }
+        if(hero.Getfaulty == 3){
+            damage = 4
+        }
+        return damage
     }
 }   
 
@@ -1113,9 +1124,9 @@ export class TrickSkill_huimie extends ability_templater{
  */
 @ca_register_ability()
 export class TrickSkill_chongjibo extends ability_templater{
-    Magic_brach = Magic_brach.对格
+    Magic_brach = Magic_brach.本路
     Magic_team = Magic_team.敌方
-    Magic_range = Magic_range.单体
+    Magic_range = Magic_range.全体
     heroid = "90"
     ability_select_type: select_type = select_type.敌方本路;
 
@@ -1125,21 +1136,31 @@ export class TrickSkill_chongjibo extends ability_templater{
 
     spell_skill(table:(Unit|number)[],target?:string){
         // const hero = GameRules.SceneManager.get_hero(this.heorheroid) as Unit
-        const hero = GameRules.SceneManager.GetMidwayScene(GameRules.Blue.GetPlayerID()).IndexGet(3) as Unit
+        const hero = GameRules.SceneManager.get_hero(this.heroid) as Unit
         super.spell_skill(table)
         table.forEach(target=>{
             if(typeof(target) != 'number'){
                 if(target.Index){
                     const _damage = new damage(hero,target)
-                    _damage.spell_skill_settlement(this.damage_calculate(math.abs(hero.Index - target.Index)),hero)
+                    _damage.spell_skill_settlement(this.damage_calculate(hero),hero)
                 }   
             }
         })
     }
 
     /**伤害结算方法 */
-    damage_calculate(distance:number){
-        return 3 - distance
+    damage_calculate(hero:Unit){
+        let damage = 0
+        if(hero.Getfaulty == 1){
+            damage = 5
+        }
+        if(hero.Getfaulty == 2){
+            damage = 7
+        }
+        if(hero.Getfaulty == 3){
+            damage = 10
+        }
+        return damage
     }
 }   
 

@@ -35,6 +35,13 @@ declare global {
         bot:number
     }
 }
+enum optionMask {
+    蓝队有操作 = 0x000001,
+    红队有操作 = 0x000002,
+    蓝队点击跳过 = 0x000004,
+    红队点击跳过 = 0x000008,
+    默认状态 = 10
+}
 
 @reloadable
 export class GameMode {
@@ -44,7 +51,8 @@ export class GameMode {
     }
 
     public static Activate(this: void) {
-        print("OKKKKKKKKKKKKKKKKKKKKKKKKKKKK")
+        print("option defualt  000010010为正确",(optionMask.默认状态 | optionMask.红队有操作) | optionMask.红队点击跳过)
+        print("option defualt  1000为正确",optionMask.红队有操作 | optionMask.红队点击跳过 ^ optionMask.红队点击跳过)
         GameRules.Addon = new GameMode();
         GameRules.KV = new KV();
         GameRules.select_the_prompt = new select_the_prompt()

@@ -161,6 +161,20 @@ export class Unit extends Card{
         return this.heal
     }
 
+    /**删除不是永久的modifiler */
+    deleteLimitedModifier(){
+        const list:Array<string> = []
+        for(const modifiler of this.Modifilers){
+            if(modifiler.duration != -1){
+                list.push(modifiler.name)
+            }
+        }
+        list.forEach(name=>{
+            print("名为:",name,"的modifiler被删除")
+            this.removeModifiler(name)
+        })
+    }
+
     call_death(Source:Card){
             const scene = this.Scene
             if(scene instanceof BattleArea){
@@ -175,6 +189,8 @@ export class Unit extends Card{
                    print(this.UUID,"成功去了墓地")
                 })
                 deathbool && GameRules.SceneManager.change_secens(this.UUID,"Grave",-1)
+                this.deleteLimitedModifier()
+                this.cure(this.max_heal,this)
                 const PostDeath = this.hook(HOOK.死亡后)
                 PostDeath.forEach(hook=>{
                     hook(this,Source)
@@ -241,6 +257,7 @@ export class Unit extends Card{
             }
             this.heal+=count
             print(this.UUID,"收到了回复,当前剩余生命值为",this.GETheal)
+            CustomGameEventManager.Send_ServerToAllClients("S2C_SEND_ATTRIBUTE",this.attribute)
         }
 
         ToData() {

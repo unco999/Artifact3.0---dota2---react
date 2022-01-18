@@ -325,8 +325,8 @@ export class item_force_field_modifiler extends CAModifiler{
    /**
  * 强攻modifiler
  */
-    @ca_register_modifiler()
-    export class qianggong_modifiler extends CAModifiler{
+@ca_register_modifiler()
+export class qianggong_modifiler extends CAModifiler{
         name: string = "qianggong_modifiler";
         modifilertype: modifilertype = modifilertype.原始;
         duration: number = 1;
@@ -454,3 +454,88 @@ export class item_force_field_modifiler extends CAModifiler{
         }
     
 }
+
+
+
+
+   /**
+ * 魔晶的modifiler
+ */
+    @ca_register_modifiler()
+    export class item_aghanims_shard_modifiler extends CAModifiler{
+        name: string = "item_aghanims_shard_modifiler";
+        modifilertype: modifilertype = modifilertype.原始;
+        duration: number = 1;
+        debuff: boolean = false;
+    
+        constructor(){
+            super("item_aghanims_shard_modifiler")
+        }
+    
+        constructorinstance = item_aghanims_shard_modifiler
+    
+        register_hook_event() {
+        }
+    
+        get influenceMaxheal(): any {
+            return 0
+        }
+    
+        get influenceAttack(): any {
+            return 0
+        }
+    
+        get influenceArrmor(): any {
+            return 0
+        }
+        
+        get influenceheal(): any {
+            return 0
+        }
+    
+        get faulty(){
+            return 1
+        }
+}
+
+
+   /**
+ * 魔晶的modifiler
+ */
+    @ca_register_modifiler()
+    export class item_ultimate_scepter_modifiler extends CAModifiler{
+        name: string = "item_ultimate_scepter_modifiler";
+        modifilertype: modifilertype = modifilertype.原始;
+        duration: number = 1;
+        debuff: boolean = false;
+    
+        constructor(){
+            super("item_ultimate_scepter_modifiler")
+        }
+    
+        constructorinstance = item_ultimate_scepter_modifiler
+    
+        register_hook_event() {
+        }
+    
+        get influenceMaxheal(): any {
+            return 0
+        }
+    
+        get influenceAttack(): any {
+            return 0
+        }
+    
+        get influenceArrmor(): any {
+            return 0
+        }
+        
+        get influenceheal(): any {
+            return 0
+        }
+    
+        get faulty(){
+            return 1
+        }
+}
+

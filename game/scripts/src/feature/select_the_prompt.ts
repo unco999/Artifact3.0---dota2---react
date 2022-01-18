@@ -255,9 +255,9 @@ export class select_the_prompt{
             }
 
             case select_type.全场任意敌方单体:{
-                const yougoup = GameRules.SceneManager.GetGoUpScene(hero.PlayerID == GameRules.Red.GetPlayerID() ? GameRules.Blue.GetPlayerID() : hero.PlayerID)
-                const youmidway = GameRules.SceneManager.GetMidwayScene(hero.PlayerID == GameRules.Red.GetPlayerID() ? GameRules.Blue.GetPlayerID() : hero.PlayerID)
-                const youlaiddon = GameRules.SceneManager.GetLaidDownScene(hero.PlayerID == GameRules.Red.GetPlayerID() ? GameRules.Blue.GetPlayerID() : hero.PlayerID)
+                const yougoup = GameRules.SceneManager.GetGoUpScene(hero.PlayerID).find_oppose()
+                const youmidway = GameRules.SceneManager.GetMidwayScene(hero.PlayerID).find_oppose()
+                const youlaiddon = GameRules.SceneManager.GetLaidDownScene(hero.PlayerID).find_oppose()
                 return {_self:hero,table:[
                     ...yougoup.getAll() as Unit[],
                     ...youmidway.getAll() as Unit[],

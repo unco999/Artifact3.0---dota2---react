@@ -78,4 +78,5 @@ declare interface CustomGameEventDeclarations {
     "S2C_HIGH_TOWER":{uuid:string}
     "S2C_OFF_HIGH_TOWER":{uuid:string}
     "C2S_SPELL_TOWER":{uuid:string,abilityname:string,towerPlayer:string,towerindex:number}
+    "S2C_OPEN_EQUIP_SHOP":{}
 }

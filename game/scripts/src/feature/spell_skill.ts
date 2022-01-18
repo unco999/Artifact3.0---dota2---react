@@ -1,6 +1,6 @@
 import { ability_templater, AbiliyContainer } from "../instance/Ability";
 import { Unit } from "../instance/Unit";
-import { optionMask } from "../Manager/statusSwitcher";
+import { isCanOperate, optionMask, SetGameLoopMasK } from "../Manager/statusSwitcher";
 import { get_current_operate_brach, Set_option_mask_state, toggle_effect_view_stage } from "../Manager/nettablefuc";
 import { Card, uuid } from "../instance/Card";
 import { Timers } from "../lib/timers";
@@ -16,11 +16,16 @@ export class spell_skill{
 
     register_gamevent(){
         CustomGameEventManager.RegisterListener("C2S_SPELL_SKILL",(_,event)=>{
+            if(!isCanOperate(event.PlayerID)) return;
+            SetGameLoopMasK(event.PlayerID.toString() == GameRules.Red.GetPlayerID().toString() ? optionMask.红队有操作 : optionMask.蓝队有操作)
+            print(event.PlayerID.toString() == GameRules.Red.GetPlayerID().toString() ? "当前红色玩家释放了魔法" : "当前蓝色玩家释放了魔法")
             this.call_spell_skill(event.SKILL_ID,event.PlayerID,event.target_uuid,event.spell_ability_card_uuid)
             CustomGameEventManager.Send_ServerToAllClients("S2C_OFF_ALL_SPACE",{})   
-            print("释放了技能")
         })
         CustomGameEventManager.RegisterListener("C2S_SPELL_TOWER",(_,event)=>{
+            if(!isCanOperate(event.PlayerID)) return;
+            print(event.PlayerID.toString() == GameRules.Red.GetPlayerID().toString() ? "当前红色玩家释放了魔法" : "当前蓝色玩家释放了魔法")
+            SetGameLoopMasK(event.PlayerID.toString() == GameRules.Red.GetPlayerID().toString() ? optionMask.红队有操作 : optionMask.蓝队有操作)
             const abilityInstance = AbiliyContainer.instance.GetAbility(event.abilityname)
             const spell_ability_card_uuid = event.uuid
             GameRules.SceneManager.change_secens(spell_ability_card_uuid,"ABILITY",+get_current_operate_brach())
@@ -38,11 +43,6 @@ export class spell_skill{
     }
 
     call_spell_skill(id:string,player:PlayerID,target:uuid,spell_ability_card_uuid:uuid){
-        if(player == GameRules.Blue.GetPlayerID()){
-            Set_option_mask_state(optionMask.蓝队有操作)
-        }else{
-            Set_option_mask_state(optionMask.红队有操作)
-        }
         print("服务端执行了释放技能管理器")
         const abilityInstance = AbiliyContainer.instance.GetAbility(id)
         if(abilityInstance.wounded){

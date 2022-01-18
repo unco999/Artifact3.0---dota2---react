@@ -446,6 +446,7 @@ export abstract class BattleArea extends Scenes {
         }
         if (!mark) {
             print("自动加入路线出错了");
+            return
         }
         print("中路mark情況", mark);
         card.Index = mark;

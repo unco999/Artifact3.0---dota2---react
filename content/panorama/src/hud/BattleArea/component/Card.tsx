@@ -21,6 +21,15 @@ export enum state{
     装备,
 }
 
+export enum optionMask {
+    蓝队有操作 = 0x000001,
+    红队有操作 = 0x000002,
+    蓝队点击跳过 = 0x000004,
+    红队点击跳过 = 0x000008,
+    默认状态 = 0x000010
+}
+
+
 enum Magic_brach{
     "本路",
     "跨线",
@@ -414,6 +423,16 @@ export const Card = (props:{index:number,uuid:string,owner:number,view_stage:num
         }
     },[xstate])
 
+
+    const IsCurrenOparetorPlayerLocal = () =>{
+        return CustomNetTables.GetTableValue("GameMianLoop","current_operate_playerid")?.cuurent == Players.GetLocalPlayer().toString()
+    }
+
+    /**英雄部署回合检测 */
+    const IsheroDeploymentRound = () => {
+        return CustomNetTables.GetTableValue("GameMianLoop","smallCycle")?.current == "0"
+    }
+
     const OnDragStart = (panelId:any, dragCallbacks:any) =>{
         if(props.view_stage == 1){
             return
@@ -421,6 +440,7 @@ export const Card = (props:{index:number,uuid:string,owner:number,view_stage:num
         const displayPanel = $.CreatePanel( "Panel", $.GetContextPanel(), "cache" ) as HeroImage
         //**加入拖动的是装备卡片 */
         if(state.type == "EQUIP" && ref.current){
+            if(!IsheroDeploymentRound()) return;
             parent.current = ref.current?.GetParent()
             ref.current.Data().data = state.data
             dragCallbacks.displayPanel = ref.current;
@@ -430,6 +450,7 @@ export const Card = (props:{index:number,uuid:string,owner:number,view_stage:num
             return
         }
         if(state.type == 'Hero' && ref.current){
+            if(!IsheroDeploymentRound()) return;
             parent.current = ref.current?.GetParent()
             ref.current.Data().uuid = state.uuid
             dragCallbacks.displayPanel = ref.current;
@@ -440,6 +461,7 @@ export const Card = (props:{index:number,uuid:string,owner:number,view_stage:num
             return 
         }
         if(state.type == 'SmallSkill' || state.type == "TrickSkill"  && ref.current){
+            if(!IsCurrenOparetorPlayerLocal()) return;
             displayPanel.Data().id = state.Id
             displayPanel.Data().cardid = state.uuid
             displayPanel.Data().data = state.data
@@ -713,10 +735,7 @@ export const Card = (props:{index:number,uuid:string,owner:number,view_stage:num
 
 export const CardContext = (props:{owner:number}) => {
     const [allheaps,setallheaps] = useState<string[]>([])
-    const [allsummon,setallsummon] = useState<string[]>([])
-    const [allitem,setallitem] = useState<string[]>([])
-    const [allhero,setallhero] = useState<string[]>([])
-    const [allability,setallability] = useState<string[]>([])
+    const options = useNetTableKey("GameMianLoop",'option_mask_state')
     const view_stage = useNetTableKey('GameMianLoop','effect_view_stage')
 
     useGameEvent('S2C_BRUSH_SOLIDER',()=>{
@@ -730,15 +749,6 @@ export const CardContext = (props:{owner:number}) => {
         setallheaps(all_array)
     },[])
 
-    useGameEvent("S2C_BRUSH_ABILITY",()=>{
-        const table = CustomNetTables.GetTableValue("Scenes","Ability"+props.owner)
-        setallability(JsonString2Array(table))
-    },[])
-
-    useGameEvent("C2S_BUY_HERO",()=>{
-        const table = CustomNetTables.GetTableValue("Scenes","hero"+props.owner)
-        setallhero(JsonString2Array(table))
-    },[])
 
     useEffect(()=>{                                                             
             $.Schedule(0.5,()=>{
@@ -750,6 +760,6 @@ export const CardContext = (props:{owner:number}) => {
 
 
     return <Panel hittest={false} className={"CardContext"}>
-        {allheaps.map((uuid,index)=><Card owner={props.owner} view_stage={view_stage?.cuurent ?? 0}  key={uuid} index={index} uuid={uuid}/>)}
+        {allheaps.map((uuid,index)=><Card  owner={props.owner} view_stage={view_stage?.cuurent ?? 0}  key={uuid} index={index} uuid={uuid}/>)}
     </Panel>
 }

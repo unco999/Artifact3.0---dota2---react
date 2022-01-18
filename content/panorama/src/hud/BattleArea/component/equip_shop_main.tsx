@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useNetTableValues } from "react-panorama";
+import { useGameEvent, useNetTableValues } from "react-panorama";
 import shortid from "shortid";
 import { useInstance } from "../../useUUID.tsx/useInstance";
 import useUuid from "../../useUUID.tsx/useUuid";
@@ -20,6 +20,10 @@ export const Equipd_shop_Main = (props:{onwenr:number}) =>{
             xref.current?.AddClass("hide")
         }
     },[conponent?.switch,up])
+
+    useGameEvent("S2C_OPEN_EQUIP_SHOP",()=>{
+        conponent?.open()
+    },[conponent])
 
     return<> 
         <Panel ref={panel=>ref.current = panel} className={"Euquip_Main"}>

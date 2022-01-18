@@ -6,7 +6,7 @@ import { Unit } from "../instance/Unit";
 import { Timers } from "../lib/timers";
 import { LinkedList } from "../structure/Linkedlist";
 import { BATTLE_BRACH_STATE, clear_option_mask_state, get_current_battle_brach, loop_end_clear, set_current_battle_brach, set_current_operate_brach, Set_option_mask_state, STRATEGY_BRACH_STATE } from "./nettablefuc";
-import { Battle_Select_Brach, operate, optionMask, statusSwitcher, strategy_Select_Brach } from "./statusSwitcher";
+import { Battle_Select_Brach, GameLoopMaskClearBlue, GameLoopMaskClearBlueSkip, GameLoopMaskClearRed, GameLoopMaskClearRedSkip, GameLoopMaskSkipBlue, GameLoopMaskSkipRed, isBattleSettlement, IsblueOperater, IsRedOperater, operate, optionMask, SetGameLoopMasK, strategy_Select_Brach } from "./statusSwitcher";
 
 export enum 游戏循环 {
     "英雄部署阶段",
@@ -15,10 +15,10 @@ export enum 游戏循环 {
     "商店购买阶段"
 }
 
-const 商店购买时间 = 5
+const 商店购买时间 = 10
 const 英雄部署时间 = 5
-const 战斗结算时间 = 10
-const 策略时间 = 9999
+const 战斗结算时间 = 7
+const 策略时间 = 7
 
 //第一回合六張牌  5小1大  第一回合結束  商店功能花錢買牌(2元买大技能 1元买小技能)  然後英雄分錄  分完路發兩張   
 
@@ -69,9 +69,11 @@ export class heroDeploymentPhase extends GameLoopState {
         super(context);
     }
 
+
     entry(){
         super.entry()
         print("进入了英雄部署阶段");
+
         const blue_hand = GameRules.SceneManager.GetHandsScene(GameRules.Blue.GetPlayerID()) as Hand
         const red_hand = GameRules.SceneManager.GetHandsScene(GameRules.Red.GetPlayerID()) as Hand
         const blue_ability_card = blue_hand.find_type(["TrickSkill","SmallSkill"]) as AbilityCard[]
@@ -141,8 +143,8 @@ export class heroDeploymentPhase extends GameLoopState {
 
     run() {
         super.run();
-        if(this.time == 0){
-            this.host.ChangeState(new faultCard(this.host,STRATEGY_BRACH_STATE.上路))
+        if(this.time == 1){
+            this.host.ChangeState(new faultCard(this.host,strategy_Select_Brach()))
         }
         return 1;
     }
@@ -152,13 +154,9 @@ export class faultCard extends GameLoopState {
     time = 策略时间;
     id = 游戏循环.出牌阶段;
     cuurent_fault_player: PlayerID; //当前出牌队伍
-    gameventtable:CustomGameEventListenerID[] = []
-    defualt_time:number = 策略时间 //默认每轮时间
-    defualt_countDown:number = 8 //默认倒计时时间
-    blue_countDown_mark:boolean = false //蓝色倒计时标记
-    red_countDown_mark:boolean = false //红色倒计时标记
-    frist_loop:boolean = true //双方都操作过后 该记载关闭
     loop_count:number = 0 //回合数记载
+    historyRecord:[number,number] = [-1,-1] //上回合的玩家是否有操作 -1未读取 1有操作 2无操作
+    rollingOperation:boolean = false // 为false 操作第一个数   为ture 操作第二个历史记录
 
     constructor(context: BattleGameLoop,brach:STRATEGY_BRACH_STATE) {
         super(context);
@@ -167,49 +165,47 @@ export class faultCard extends GameLoopState {
         this.register_gamevent()
     }
 
-    off_frist_loop(){
-        this.frist_loop = false
+    /**是否两个回合都无操作 */
+    is2RoundNullOparetor(){
+        let bool = true
+        this.historyRecord.forEach(card=>{
+            if(card == 1){
+                bool = false
+            }
+        })
+        return bool
     }
 
-    add_loop_count(){
-        this.loop_count++
-        print("当前回合数",this.loop_count)
-        if(this.loop_count > 2){
-            this.off_frist_loop()
+
+    set Set_cuurent_option_player(playerID:string){
+        CustomNetTables.SetTableValue("GameMianLoop","current_operate_playerid",{cuurent:playerID})
+        if(playerID == GameRules.Red.GetPlayerID().toString()){
+            const BlueOperator = IsblueOperater()
+            !this.rollingOperation ? (this.historyRecord[0] = BlueOperator ? 1 : 2) : (this.historyRecord[1] = BlueOperator ? 1 : 2)
+            this.rollingOperation = !this.rollingOperation
+        }else{
+            const RedOperator = IsRedOperater()
+            !this.rollingOperation ? (this.historyRecord[0] = RedOperator ? 1 : 2) : (this.historyRecord[1] = RedOperator ? 1 : 2)
+            this.rollingOperation = !this.rollingOperation
         }
     }
 
-    set set_blue_countDown_mark(boolean:boolean){
-        this.blue_countDown_mark = boolean
-    }
-
-    set set_red_countDown_mark(boolean:boolean){
-        this.red_countDown_mark = boolean
-    }
-
-    set change_cuurent_fault_player(player:PlayerID){
-        this.cuurent_fault_player = player
-        CustomNetTables.SetTableValue("GameMianLoop",'current_operate_playerid',{cuurent:this.cuurent_fault_player.toString()})
+    get Get_current_option_playuer(){
+        const str =  CustomNetTables.GetTableValue("GameMianLoop","current_operate_playerid").cuurent ?? "" 
+        return str
     }
 
     register_gamevent(){
-        this.gameventtable.push(CustomGameEventManager.RegisterListener("C2S_CLICK_SKIP",(_,event)=>{
-            if(this.cuurent_fault_player == event.PlayerID){
-                this.cuurent_fault_player == GameRules.Red.GetPlayerID() ? Set_option_mask_state(optionMask.红队点击跳过) : Set_option_mask_state(optionMask.蓝队点击跳过)
+        CustomGameEventManager.RegisterListener("C2S_CLICK_SKIP",(_,event)=>{
+            if(this.Get_current_option_playuer == event.PlayerID.toString()){
+                SetGameLoopMasK(event.PlayerID == GameRules.Red.GetPlayerID() ? optionMask.红队点击跳过 : optionMask.蓝队点击跳过)
             }
-        }))
-    }
-
-    garbageCollection(){
-        this.gameventtable.forEach(gamevent=>{
-            CustomGameEventManager.UnregisterListener(gamevent)
         })
     }
 
     entry() {
         super.entry();
-        print("进入了策略模式")
-        this.change_cuurent_fault_player = GameRules.Red.GetPlayerID()
+        this.Set_cuurent_option_player = GameRules.Red.GetPlayerID().toString()
         if (!this.host.init) {
             ScenesBuildbehavior.ScenesBuild()
             ScenesBuildbehavior.HeapsBuild(GameRules.Red.GetPlayerID())
@@ -280,103 +276,51 @@ export class faultCard extends GameLoopState {
     }
 
 
-    /**切换状态进行的一些清除工作 */
-    signclear(totoggle:"blue"|"red"){
-        totoggle == 'blue' ? Set_option_mask_state(optionMask.红队点击跳过,'remove') : Set_option_mask_state(optionMask.蓝队点击跳过,'remove')
-    }
-
     /**机器人操作 */
     bot_operate(){
         if(IsInToolsMode()){
            if(this.cuurent_fault_player == GameRules.bot){
-              Timers.CreateTimer(3,()=>{
-                print(this.cuurent_fault_player,"号机器人玩家点击了跳过")
-                this.cuurent_fault_player == GameRules.Red.GetPlayerID() ? this.switchToTheBlueTeamOperation() : this.switchToTheRedTeamOperation()
-              })
+
            }
         }
     }
 
-    /**计时器到期操作 */
-    timerExpires(){
-        if(this.cuurent_fault_player == GameRules.Red.GetPlayerID()){
-            this.switchToTheBlueTeamOperation()
-        }else{
-            this.switchToTheRedTeamOperation()
-        }
-    }
-
-    /**切换至红队的系列操作 */
-    switchToTheRedTeamOperation(){
-        print("切换至红队了")
-        this.change_cuurent_fault_player = GameRules.Red.GetPlayerID()
-        this.time = this.defualt_time
-        this.signclear("red")
-        this.add_loop_count()
-    }
-
-    /**切换至蓝队的系列操作 */
-    switchToTheBlueTeamOperation(){
-        print("切换至蓝队了")
-        this.change_cuurent_fault_player = GameRules.Blue.GetPlayerID()
-        this.time = this.defualt_time
-        this.signclear("blue")
-        this.add_loop_count()
+    ClearRoundData(){
+         GameLoopMaskClearBlue()
+         GameLoopMaskClearRed()
     }
 
 
     run() {
         super.run()
-        switch(statusSwitcher(this.frist_loop)){
-            case(operate.切换至红队):{
-                this.switchToTheRedTeamOperation()
-                return 1
-            }
-            case(operate.切换至蓝队):{
-                this.switchToTheBlueTeamOperation()
-                return 1
-            }
-            case(operate.无动作):{
-                if(this.time == 0){
-                    this.timerExpires()
-                }
-                return 1
-            }
-            case(operate.红队进入倒计时):{
-                if(!this.red_countDown_mark){
-                    this.set_red_countDown_mark = true
-                    this.time = this.defualt_countDown
-                }
-                return 1
-            }
-            case(operate.蓝队进入倒计时):{
-                if(!this.blue_countDown_mark){
-                    this.set_red_countDown_mark = true
-                    this.time = this.defualt_countDown
-                }
-                return 1
-            }
-            case(operate.进入战斗结算):{
-                const toBattale = Battle_Select_Brach()
-                //三路结算已经完毕
-                if(toBattale == BATTLE_BRACH_STATE.不在此状态){
-                    //切换至装备购买阶段
-                    const _shopPurchaseStage = new shopPurchaseStage(this.host)
-                    this.host.ChangeState(_shopPurchaseStage)
-                }
-                //根据上一场战斗路线 切换下一场战斗路线位置
-                const _battle_instance = new injurySettlementStage(this.host,toBattale)
-                this.host.ChangeState(_battle_instance)
-                clear_option_mask_state()
-                return 1
-            }
+        if(this.loop_count >= 2 && this.is2RoundNullOparetor() && isBattleSettlement()){
+            this.host.ChangeState(new injurySettlementStage(this.host,Battle_Select_Brach()))
+            clear_option_mask_state()
+            return 1
         }
+        if(this.Get_current_option_playuer == GameRules.Blue.GetPlayerID().toString() && GameLoopMaskSkipBlue()){
+            this.Set_cuurent_option_player = GameRules.Red.GetPlayerID().toString()
+            this.time = 策略时间
+            this.loop_count++
+            this.ClearRoundData()
+            return 1
+        }
+        if(this.Get_current_option_playuer == GameRules.Red.GetPlayerID().toString() && GameLoopMaskSkipRed()){
+            this.Set_cuurent_option_player = GameRules.Blue.GetPlayerID().toString()
+            this.time = 策略时间
+            this.loop_count++
+            this.ClearRoundData()
+            return 1
+        }
+        if(this.time == 1){
+            SetGameLoopMasK(this.Get_current_option_playuer == GameRules.Red.GetPlayerID().toString() ? optionMask.红队点击跳过 : optionMask.蓝队点击跳过)
+        }
+        return 1
     }
 
 
     exit(){
         super.exit()
-        print("当前结算阶段",get_current_battle_brach())
         if(!this.host.small_solider_tag[GameRules.Red.GetPlayerID()]){
             const red_solider = GameRules.brash_solidier.AutoSolider(GameRules.Red.GetPlayerID(),ScenesBuildbehavior.fitler(get_current_battle_brach() == "4" ? "0" : get_current_battle_brach(),GameRules.Red.GetPlayerID()) as BattleArea )
         }
@@ -458,6 +402,7 @@ export class shopPurchaseStage extends GameLoopState {
 
     entry(){
         super.entry()
+        CustomGameEventManager.Send_ServerToAllClients("S2C_OPEN_EQUIP_SHOP",{})
         print("进入商店购买阶段")
     }
 

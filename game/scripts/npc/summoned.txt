@@ -5,6 +5,7 @@
 		"arrmor" "0"
 		"heal" "3"
 		"remark" "小谜团"
+		"name" "mituan"
 
 	}
 	"2" {
@@ -12,6 +13,7 @@
 		"arrmor" "0"
 		"heal" "9"
 		"remark" "召唤一个等同于恐怖利刃基础数值的幻想"
+		"name" "kongbuliren"
 
 	}
 	"3" {
@@ -19,6 +21,7 @@
 		"arrmor" "0"
 		"heal" "7"
 		"remark" "召唤一只4攻7血的豪猪"
+		"name" "haozhu"
 
 	}
 	"4" {
@@ -26,6 +29,7 @@
 		"arrmor" "0"
 		"heal" "6"
 		"remark" "召唤3攻6血的小树人直到上限"
+		"name" "xiaoshuren"
 
 	}
 

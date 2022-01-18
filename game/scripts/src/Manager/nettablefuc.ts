@@ -17,7 +17,7 @@ export function Set_option_mask_state(optionMask:optionMask,operate:"add"|"remov
 }
 
 export function clear_option_mask_state(){
-    CustomNetTables.SetTableValue("GameMianLoop","option_mask_state",{cuurent:128})
+    CustomNetTables.SetTableValue("GameMianLoop","option_mask_state",{cuurent:256})
 }
 
 export enum BATTLE_BRACH_STATE{

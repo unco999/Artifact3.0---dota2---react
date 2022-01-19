@@ -5,7 +5,7 @@ import { BattleArea } from "../instance/Scenes";
 import { Tower } from "../instance/Tower";
 import { Unit } from "../instance/Unit";
 import { Timers } from "../lib/timers";
-import { get_current_battle_brach, get_current_operate_brach, toggle_effect_view_stage } from "../Manager/nettablefuc";
+import { get_current_battle_brach, get_current_operate_brach } from "../Manager/nettablefuc";
 
 
 export enum Magic_brach{
@@ -160,7 +160,6 @@ export class select_the_prompt{
                 }
             }
             GameRules.SceneManager.change_secens(event.uuid,"ABILITY",+get_current_operate_brach())
-            toggle_effect_view_stage()
             Timers.CreateTimer(2,()=>{
                 GameRules.SceneManager.change_secens(hero.UUID,scnese.SceneName,+index)
                 const find_data = this.validRangeLookup(hero.PlayerID,abilityinstance.Magic_brach,
@@ -170,7 +169,6 @@ export class select_the_prompt{
                     )
                 abilityinstance.post_move_spell_skill(find_data?.table as (Unit|number)[] ?? [],undefined,hero as Unit)
                 GameRules.SceneManager.change_secens(event.uuid,"REMOVE",+get_current_operate_brach())
-                toggle_effect_view_stage()
             })
         })
     }//

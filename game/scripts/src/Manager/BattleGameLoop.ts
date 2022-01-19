@@ -5,8 +5,8 @@ import { BattleArea, Cardheaps, Grave, Hand, Hide, Scenes } from "../instance/Sc
 import { Unit } from "../instance/Unit";
 import { Timers } from "../lib/timers";
 import { LinkedList } from "../structure/Linkedlist";
-import { BATTLE_BRACH_STATE, clear_option_mask_state, get_current_battle_brach, loop_end_clear, set_current_battle_brach, set_current_operate_brach, Set_option_mask_state, STRATEGY_BRACH_STATE } from "./nettablefuc";
-import { Battle_Select_Brach, GameLoopMaskClearBlue, GameLoopMaskClearBlueSkip, GameLoopMaskClearRed, GameLoopMaskClearRedSkip, GameLoopMaskSkipBlue, GameLoopMaskSkipRed, isBattleSettlement, IsblueOperater, IsRedOperater, operate, optionMask, SetGameLoopMasK, strategy_Select_Brach } from "./statusSwitcher";
+import { BATTLE_BRACH_STATE, clear_option_mask_state, get_current_battle_brach, get_current_operate_brach, loop_end_clear, set_current_battle_brach, set_current_operate_brach, Set_option_mask_state, STRATEGY_BRACH_STATE } from "./nettablefuc";
+import { Battle_Select_Brach, GameLoopMaskClearBlue, GameLoopMaskClearBlueSkip, GameLoopMaskClearRed, GameLoopMaskClearRedSkip, GameLoopMaskSkipBlue, GameLoopMaskSkipRed, get_settlement_current, isBattleSettlement, IsblueOperater, IsRedOperater, operate, optionMask, SetGameLoopMasK, set_oparator_false, strategy_Select_Brach } from "./statusSwitcher";
 
 export enum 游戏循环 {
     "英雄部署阶段",
@@ -135,6 +135,7 @@ export class heroDeploymentPhase extends GameLoopState {
         
     }
 
+
     exit(){
         super.exit()
         print("部署阶段退出了")
@@ -157,6 +158,7 @@ export class faultCard extends GameLoopState {
     loop_count:number = 0 //回合数记载
     historyRecord:[number,number] = [-1,-1] //上回合的玩家是否有操作 -1未读取 1有操作 2无操作
     rollingOperation:boolean = false // 为false 操作第一个数   为ture 操作第二个历史记录
+    initflag:boolean = false
 
     constructor(context: BattleGameLoop,brach:STRATEGY_BRACH_STATE) {
         super(context);
@@ -213,12 +215,22 @@ export class faultCard extends GameLoopState {
             this.init_give_cards();
             this.host.init = true;
             GameRules.SceneManager.update();
-            Timers.CreateTimer(5,()=>{
-                // this.init_shuffle()
-            })
         } else {
-            // this.give_cards();
+            this.give_cards();
         }
+    }
+
+
+    init_give_cards() {
+       const redScenesHand = GameRules.SceneManager.GetCardheapsScene(GameRules.Red.GetPlayerID()) as Cardheaps
+       const BlueScenesHand = GameRules.SceneManager.GetCardheapsScene(GameRules.Blue.GetPlayerID()) as Cardheaps
+       for(let i = 0 ; i < 4 ; i++){
+          const redCard = redScenesHand.takeAHand()
+          const blueCard = BlueScenesHand.takeAHand()
+          GameRules.SceneManager.change_secens(redCard.UUID,"HAND")
+          GameRules.SceneManager.change_secens(blueCard.UUID,"HAND")
+       }
+       this.initflag = true;
     }
 
     init_shuffle(){
@@ -232,58 +244,17 @@ export class faultCard extends GameLoopState {
 
     //** 重复循环 进入每回合发放手牌 */
     give_cards() {
-        for (let i = 0; i < 2; i++) {
-            for (let count = 0; count < 2; count++) {
-                if (i == 0) {
-                    if (RollPercentage(30)) {
-                        GameRules.SceneManager.change_secens(GameRules.SceneManager.GetCardheapsScene(GameRules.Red.GetPlayerID()).Trick_ability_dequeue().UUID, "HAND");
-                    } else {
-                        GameRules.SceneManager.change_secens(GameRules.SceneManager.GetCardheapsScene(GameRules.Red.GetPlayerID()).Small_ability_dequeue().UUID, "HAND");
-                    }
-                } else {
-                    if (RollPercentage(50)) {
-                        //50%几率抽大招
-                        GameRules.SceneManager.change_secens(GameRules.SceneManager.GetCardheapsScene(GameRules.Blue.GetPlayerID()).Trick_ability_dequeue().UUID, "HAND");
-                    } else {
-                        GameRules.SceneManager.change_secens(GameRules.SceneManager.GetCardheapsScene(GameRules.Blue.GetPlayerID()).Small_ability_dequeue().UUID, "HAND");
-                    }
-                }
-            }
+        const redScenesHand = GameRules.SceneManager.GetCardheapsScene(GameRules.Red.GetPlayerID()) as Cardheaps
+        const BlueScenesHand = GameRules.SceneManager.GetCardheapsScene(GameRules.Blue.GetPlayerID()) as Cardheaps
+        for(let i = 0 ; i < 2 ; i++){
+           const redCard = redScenesHand.takeAHand()
+           const blueCard = BlueScenesHand.takeAHand()
+           GameRules.SceneManager.change_secens(redCard.UUID,"HAND")
+           GameRules.SceneManager.change_secens(blueCard.UUID,"HAND")
         }
+        this.initflag = true;
     }
 
-    /**第一次进入手牌初始化 */
-    init_give_cards() {
-        for (let i = 0; i < 2; i++) {
-            for (let count = 0; count < 15; count++) {
-                if (i == 0) {
-                    if (RollPercentage(70)) {
-                        //50%几率抽大招
-                        GameRules.SceneManager.change_secens(GameRules.SceneManager.GetCardheapsScene(GameRules.Red.GetPlayerID()).Trick_ability_dequeue().UUID, "HAND");
-                    } else {
-                        GameRules.SceneManager.change_secens(GameRules.SceneManager.GetCardheapsScene(GameRules.Red.GetPlayerID()).Small_ability_dequeue().UUID, "HAND");
-                    }
-                } else {
-                    if (RollPercentage(30)) {
-                        //50%几率抽大招
-                        GameRules.SceneManager.change_secens(GameRules.SceneManager.GetCardheapsScene(GameRules.Blue.GetPlayerID()).Trick_ability_dequeue().UUID, "HAND");
-                    } else {
-                        GameRules.SceneManager.change_secens(GameRules.SceneManager.GetCardheapsScene(GameRules.Blue.GetPlayerID()).Small_ability_dequeue().UUID, "HAND");
-                    }
-                }
-            }
-        }
-    }
-
-
-    /**机器人操作 */
-    bot_operate(){
-        if(IsInToolsMode()){
-           if(this.cuurent_fault_player == GameRules.bot){
-
-           }
-        }
-    }
 
     ClearRoundData(){
          GameLoopMaskClearBlue()
@@ -292,24 +263,34 @@ export class faultCard extends GameLoopState {
 
 
     run() {
-        super.run()
+        const oparetor = get_settlement_current()
+        print("当前操作状态",get_current_operate_brach())
+        if(oparetor == 1){
+            return 1
+        }else{
+            super.run()
+        }
         if(this.loop_count >= 2 && this.is2RoundNullOparetor() && isBattleSettlement()){
             this.host.ChangeState(new injurySettlementStage(this.host,Battle_Select_Brach()))
             clear_option_mask_state()
             return 1
         }
-        if(this.Get_current_option_playuer == GameRules.Blue.GetPlayerID().toString() && GameLoopMaskSkipBlue()){
+        if(get_settlement_current() != 1 && this.Get_current_option_playuer == GameRules.Blue.GetPlayerID().toString() && GameLoopMaskSkipBlue()){
             this.Set_cuurent_option_player = GameRules.Red.GetPlayerID().toString()
+            set_oparator_false(GameRules.Red.GetPlayerID())
             this.time = 策略时间
             this.loop_count++
             this.ClearRoundData()
+            print("跳过回合")
             return 1
         }
-        if(this.Get_current_option_playuer == GameRules.Red.GetPlayerID().toString() && GameLoopMaskSkipRed()){
+        if(get_settlement_current() != 1 && this.Get_current_option_playuer == GameRules.Red.GetPlayerID().toString() && GameLoopMaskSkipRed()){
             this.Set_cuurent_option_player = GameRules.Blue.GetPlayerID().toString()
+            set_oparator_false(GameRules.Blue.GetPlayerID())
             this.time = 策略时间
             this.loop_count++
             this.ClearRoundData()
+            print("跳过回合")
             return 1
         }
         if(this.time == 1){
@@ -402,7 +383,17 @@ export class shopPurchaseStage extends GameLoopState {
 
     entry(){
         super.entry()
+        const red_all_uuid = GameRules.SceneManager.getAll(GameRules.Red.GetPlayerID())
+        const blue_all_uuid = GameRules.SceneManager.getAll(GameRules.Blue.GetPlayerID())
+        print("断点1 ")
+        red_all_uuid.concat(blue_all_uuid).forEach((uuid:string)=>{
+            const card = GameRules.SceneManager.UUIDGet(uuid)
+            if(card instanceof Unit){
+                card.roundCalculation()
+            }
+        })
         CustomGameEventManager.Send_ServerToAllClients("S2C_OPEN_EQUIP_SHOP",{})
+        GameRules.energyBarManager.roundIncreasesTheMaximumEnergy()
         print("进入商店购买阶段")
     }
 

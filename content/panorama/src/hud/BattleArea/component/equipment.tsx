@@ -2,15 +2,15 @@ import React, { useEffect, useRef, useState } from "react";
 import { useGameEvent } from "react-panorama";
 import useUuid from "../../useUUID.tsx/useUuid";
 
-export const EquipmentManager = (props:{uuid:string}) =>{
+export const EquipmentManager = (props:{uuid:string,owned:number}) =>{
     return <Panel className={"EquipmentManager"} hittest={false}>
-        <Equipment index={1} uuid={props.uuid}/>
-        <Equipment index={2} uuid={props.uuid}/>
-        <Equipment index={3} uuid={props.uuid}/>
+        <Equipment owned={props.owned} index={1} uuid={props.uuid}/>
+        <Equipment owned={props.owned}index={2} uuid={props.uuid}/>
+        <Equipment owned={props.owned} index={3} uuid={props.uuid}/>
     </Panel>
 }
 
-export const Equipment = (props:{index:number,uuid:string}) =>{
+export const Equipment = (props:{index:number,uuid:string,owned:number}) =>{
     const uuid = useUuid()
     const ref = useRef<Panel|null>()
     const [EQUIPshowName,setEQUIPshowName] = useState("")
@@ -45,6 +45,9 @@ export const Equipment = (props:{index:number,uuid:string}) =>{
     },[ref])
 
     const OnDragDrop = (dragCallbacks:Panel,callbacks:Panel) =>{
+       if(props.owned != Players.GetLocalPlayer()){
+           return
+       }
        const data = callbacks.Data().data
        GameEvents.SendCustomGameEventToServer("C2S_SEND_up_equiment",{index:props.index,uuid:props.uuid,item:data})
     }

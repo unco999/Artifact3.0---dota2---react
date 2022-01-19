@@ -8,7 +8,7 @@ export const EnergyBarManager = (props:{owner:number,brach:number}) =>{
     const prefix = useMemo(()=> props.owner == Players.GetLocalPlayer() ? "my_" + props.brach : "you_" + props.brach,[props])
 
     // consume消耗   notOwned未拥有  beUsable可使用
-    const list = useMemo(() => {
+    const list = () => {
         const _list = []
         let index = state?.current_enrgy ?? 0
         let current_max = state?.cuurent_max ?? 0
@@ -27,7 +27,7 @@ export const EnergyBarManager = (props:{owner:number,brach:number}) =>{
             _list.push(<EnergyBaratom prefix={prefix} state={_state_string} key={_state_string + count}  index={count}/>)
         }
         return _list
-    },[state])
+    }
 
 
     useGameEvent("S2C_SEND_INIT_ENRGY",(event)=>{
@@ -52,7 +52,7 @@ export const EnergyBarManager = (props:{owner:number,brach:number}) =>{
             <Panel className={prefix + "energyBlock"}>
             </Panel>
         </Panel>
-        {list}
+        {list()}
     </>
 }
 

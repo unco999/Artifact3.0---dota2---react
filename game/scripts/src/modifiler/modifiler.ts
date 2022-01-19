@@ -9,7 +9,7 @@ import { Timers } from "../lib/timers";
 export class item_bfury_modifiler extends CAModifiler{
     name: string = "item_bfury_modifiler";
     modifilertype: modifilertype = modifilertype.原始;
-    duration: number = -1;
+    duration: number = 9999;
     debuff: boolean = false;
 
     constructor(){
@@ -74,7 +74,7 @@ export class item_bfury_modifiler extends CAModifiler{
 export class item_force_field_modifiler extends CAModifiler{
     name: string = "item_force_field_modifiler";
     modifilertype: modifilertype = modifilertype.原始;
-    duration: number = -1;
+    duration: number = 9999;
     debuff: boolean = false;
 
     constructor(){
@@ -123,7 +123,7 @@ export class item_force_field_modifiler extends CAModifiler{
 export class item_aegis_modifiler extends CAModifiler{
     name: string = "item_aegis_modifiler";
     modifilertype: modifilertype = modifilertype.原始;
-    duration: number = -1;
+    duration: number =9999;
     debuff: boolean = false;
     preDeathIndex:number //死亡前的序号
     preDeathBrach:string //死亡前的场景名字
@@ -186,7 +186,7 @@ export class item_aegis_modifiler extends CAModifiler{
  export class abyssal_underlord_pit_of_malice_modifiler extends CAModifiler{
      name: string = "abyssal_underlord_pit_of_malice_modifiler";
      modifilertype: modifilertype = modifilertype.原始;
-     duration: number = -1;
+     duration: number = 1;
      debuff: boolean = false;
      preDeathIndex:number //死亡前的序号
      preDeathBrach:string //死亡前的场景名字
@@ -458,7 +458,7 @@ export class qianggong_modifiler extends CAModifiler{
     export class item_aghanims_shard_modifiler extends CAModifiler{
         name: string = "item_aghanims_shard_modifiler";
         modifilertype: modifilertype = modifilertype.原始;
-        duration: number = 1;
+        duration: number = 9999;
         debuff: boolean = false;
     
         constructor(){
@@ -499,7 +499,7 @@ export class qianggong_modifiler extends CAModifiler{
     export class item_ultimate_scepter_modifiler extends CAModifiler{
         name: string = "item_ultimate_scepter_modifiler";
         modifilertype: modifilertype = modifilertype.原始;
-        duration: number = 1;
+        duration: number = 9999;
         debuff: boolean = false;
     
         constructor(){

@@ -16,6 +16,11 @@ export function Set_option_mask_state(optionMask:optionMask,operate:"add"|"remov
     CustomNetTables.SetTableValue("GameMianLoop","option_mask_state",{cuurent:newMask})
 }
 
+
+export function Get_current_option_playuer(){
+    const str =  CustomNetTables.GetTableValue("GameMianLoop","current_operate_playerid").cuurent ?? "" 
+    return str
+}
 export function clear_option_mask_state(){
     CustomNetTables.SetTableValue("GameMianLoop","option_mask_state",{cuurent:256})
 }
@@ -42,7 +47,7 @@ export function add_cuurent_glod(count:number,playerid:PlayerID){
     CustomNetTables.SetTableValue("GameMianLoop",key,{cuurent:origin += count})
 }
 
-export function get_cuurent_glod(count:number,playerid:PlayerID){
+export function get_cuurent_glod(playerid:PlayerID){
     const key = playerid == GameRules.Red.GetPlayerID() ? "red_gold" : "blue_gold"
     return CustomNetTables.GetTableValue("GameMianLoop",key).cuurent
 }
@@ -60,10 +65,6 @@ export function set_current_operate_brach(STRATEGY_BRACH_STATE:STRATEGY_BRACH_ST
     CustomNetTables.SetTableValue("GameMianLoop",'current_operate_brach',{cuurent:STRATEGY_BRACH_STATE}) 
 }
 
-export function toggle_effect_view_stage(){
-    const bool = CustomNetTables.GetTableValue("GameMianLoop","effect_view_stage") ?? {cuurent:0}
-    CustomNetTables.SetTableValue("GameMianLoop","effect_view_stage",bool.cuurent ? {cuurent:0} : {cuurent:1})
-}
 
 /**获取全局策略路线 nettable */
 export function get_current_operate_brach(){

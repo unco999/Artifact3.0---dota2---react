@@ -1,3 +1,5 @@
+import { BATTLE_BRACH_STATE } from "../Manager/nettablefuc";
+
 export class energyBarManager{
     //采用玩家ID+指定路线数字ID为KEY
     enrgyBarData:Record<string,energyBar> = {}
@@ -10,6 +12,24 @@ export class energyBarManager{
         this.enrgyBarData[GameRules.Red.GetPlayerID() + "2"] = new energyBar(2,GameRules.Red)  //中路能量条
         this.enrgyBarData[GameRules.Red.GetPlayerID() + "3"] = new energyBar(3,GameRules.Red)  //下路能量条
         this.register_gamevent()
+    }
+
+    GetBrachEnrgyBar(index:string,playerID:PlayerID){
+       return this.enrgyBarData[playerID + index]
+    }
+
+    /**每回合增加最大能量 */
+    roundIncreasesTheMaximumEnergy(){
+        for(const key in this.enrgyBarData){
+            const enrgybar = this.enrgyBarData[key]
+            enrgybar.current_max_enrygy_add(1)
+            enrgybar.add_cuurent_energy(10)
+        }
+    }
+
+    /**获得某路的水晶数量 */
+    getPlayerBrachEnrgBar(BATTLE_BRACH_STATE:string,PlayerID:PlayerID){
+        return this.enrgyBarData[PlayerID + BATTLE_BRACH_STATE].current_energy
     }
 
     register_gamevent(){
@@ -33,9 +53,9 @@ export class energyBar{
 
     constructor(brach:number,player:CDOTAPlayer){
         this.brach = brach;
-        this.init_energy = 5;
+        this.init_energy = 4;
         this.current_max = this.init_energy
-        this.max_energy = 10
+        this.max_energy = 4
         this.current_energy = this.init_energy;
         this.player = player
         this.register_gamevent()
@@ -51,13 +71,29 @@ export class energyBar{
 
     /** 增加最大能量值 */
     add_cuurent_max_reply(count:number){
+        if(this.current_energy >= 10){
+            CustomGameEventManager.Send_ServerToAllClients("S2C_SEND_ENRGY",{cuurent_max:this.current_max,uuid:this.uuid,current_enrgy:this.current_energy,max_enrgy:this.max_energy})
+            return 
+        }
         this.max_energy += count
         CustomGameEventManager.Send_ServerToAllClients("S2C_SEND_ENRGY",{cuurent_max:this.current_max,uuid:this.uuid,current_enrgy:this.current_energy,max_enrgy:this.max_energy})
     }
 
     /***操作当前能量 */
     add_cuurent_energy(count:number){
-        this.current_energy += count
+        const num = this.current_energy + count
+        if(num >= this.current_max){
+            this.current_energy = this.current_max
+            CustomGameEventManager.Send_ServerToAllClients("S2C_SEND_ENRGY",{cuurent_max:this.current_max,uuid:this.uuid,current_enrgy:this.current_energy,max_enrgy:this.max_energy})
+            return
+        }
+        if(num <= 0){
+            this.current_energy = 0
+            CustomGameEventManager.Send_ServerToAllClients("S2C_SEND_ENRGY",{cuurent_max:this.current_max,uuid:this.uuid,current_enrgy:this.current_energy,max_enrgy:this.max_energy})
+            return
+        }
+        this.current_energy = num
+        print("当前能量被操作,目前值是",this.current_energy)
         CustomGameEventManager.Send_ServerToAllClients("S2C_SEND_ENRGY",{cuurent_max:this.current_max,uuid:this.uuid,current_enrgy:this.current_energy,max_enrgy:this.max_energy})
     }
 

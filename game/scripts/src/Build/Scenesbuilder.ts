@@ -60,15 +60,9 @@ export class ScenesBuildbehavior {
         const red_hide = new Hide(GameRules.Red.GetPlayerID(),GameRules.SceneManager)
         GameRules.SceneManager.SetHideScene(blue_hide)
         GameRules.SceneManager.SetHideScene(red_hide)
-        print("初始化場景完毕")
     }
 
     static HeapsBuild(PlayerID:PlayerID){
-        for(let i = 0 ; i < 3 ; i++){
-            const _equit = new EquipCard({Id:"item_bfury",Index:1,PlayerID:PlayerID},GameRules.SceneManager.GetCardheapsScene(PlayerID))
-            GameRules.SceneManager.global_add(_equit.UUID,_equit)
-            GameRules.SceneManager.change_secens(_equit.UUID,"HAND");
-        }
         const _table = CustomNetTables.GetTableValue("Card_group_construction_phase",'herobrach')[PlayerID.toString()]
         const hero_index_list:Record<number,string[]> = {[GameRules.Blue.GetPlayerID()]:[],[GameRules.Red.GetPlayerID()]:[]}
         for(const brach in _table){

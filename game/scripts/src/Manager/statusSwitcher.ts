@@ -127,6 +127,35 @@ export function SetGameLoopMasK(option:optionMask){
     print("当前设置后 全局变量为",current)
 }
 
+/**打开某方已操作标记 */
+export function set_oparator_true(PlayerID:number){
+    CustomNetTables.SetTableValue("GameMianLoop",PlayerID == GameRules.Red.GetPlayerID() ? "red_is_oparator" : "blue_is_oparator",{current:true})
+}
+
+/**关闭某方已操作标记 */
+export function set_oparator_false(PlayerID:number){
+    CustomNetTables.SetTableValue("GameMianLoop",PlayerID == GameRules.Red.GetPlayerID() ? "red_is_oparator" : "blue_is_oparator",{current:false})
+}
+
+/**获取玩家是否操作标记 */
+export function get_oparaotr_current(PlayerID:number){
+    return CustomNetTables.GetTableValue("GameMianLoop",PlayerID == GameRules.Red.GetPlayerID() ? "red_is_oparator" : "blue_is_oparator").current ?? false
+}
+
+export function get_settlement_current(){
+    return CustomNetTables.GetTableValue("GameMianLoop","is_settlement")?.current ?? 0
+}
+
+/**打开特效播放标记 */
+export function set_settlement_true(){
+    CustomNetTables.SetTableValue("GameMianLoop","is_settlement",{current:true})
+}
+
+/**关闭特效播放标记 */
+export function set_settlement_false(){
+    CustomNetTables.SetTableValue("GameMianLoop","is_settlement",{current:false})
+}
+
 
 /**
  * 当前战斗路线选择器

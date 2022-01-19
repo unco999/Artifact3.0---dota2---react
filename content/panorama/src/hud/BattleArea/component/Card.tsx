@@ -107,7 +107,7 @@ const Machine = createMachine({
 })
 
  
-export const Card = (props:{index:number,uuid:string,owner:number,view_stage:number}) => {
+export const Card = (props:{index:number,uuid:string,owner:number,team:{red:number,blue:number}}) => {
     const prefix = useMemo(()=> props.owner == Players.GetLocalPlayer() ? "my_" : "you_",[props])
     const [modifilers,setmodifiler] = useState<Array<{name:string,duration:string,texture:string,id:string}>>([])
     const graveTipFunction = useRef(()=>{})
@@ -291,6 +291,9 @@ export const Card = (props:{index:number,uuid:string,owner:number,view_stage:num
         if(props.uuid != event.uuid) return
         ref.current?.AddClass("select_target" + event.type)
         preHighSelectType.current = event.type
+        $.RegisterEventHandler( 'DragDrop', dummy.current!, OnDragDrop ) 
+        $.RegisterEventHandler( 'DragEnter', dummy.current!, OnDragEnter )
+        $.RegisterEventHandler( 'DragLeave',dummy.current!,OnDragLeave) 
         // set_current_effect("particles/killstreak/killstreak_ti10_hud_lv1.vpcf")
     },[props.uuid])
 
@@ -310,19 +313,19 @@ export const Card = (props:{index:number,uuid:string,owner:number,view_stage:num
     const OnDragEnter = () =>{
     }
 
-    useEffect(()=>{
-        if(!state.Scene) return;
-        if(!dummy.current) return; 
-        if(state.Scene == "MIDWAY" || state.Scene == "GOUP" || state.Scene == "LAIDDOWN"){
-            $.RegisterEventHandler( 'DragDrop', dummy.current!, OnDragDrop ) 
-            $.RegisterEventHandler( 'DragEnter', dummy.current!, OnDragEnter )
-            $.RegisterEventHandler( 'DragLeave',dummy.current!,OnDragLeave) 
-        }else{
-            $.RegisterEventHandler( 'DragDrop', dummy.current!, ()=>{} ) 
-            $.RegisterEventHandler( 'DragEnter', dummy.current!, ()=>{} )
-            $.RegisterEventHandler( 'DragLeave',dummy.current!,()=>{}) 
-        }
-    },[state])
+    // useEffect(()=>{
+    //     if(!state.Scene) return;
+    //     if(!dummy.current) return; 
+    //     if(state.Scene == "MIDWAY" || state.Scene == "GOUP" || state.Scene == "LAIDDOWN"){
+    //         $.RegisterEventHandler( 'DragDrop', dummy.current!, OnDragDrop ) 
+    //         $.RegisterEventHandler( 'DragEnter', dummy.current!, OnDragEnter )
+    //         $.RegisterEventHandler( 'DragLeave',dummy.current!,OnDragLeave) 
+    //     }else{
+    //         $.RegisterEventHandler( 'DragDrop', dummy.current!, ()=>{} ) 
+    //         $.RegisterEventHandler( 'DragEnter', dummy.current!, ()=>{} )
+    //         $.RegisterEventHandler( 'DragLeave',dummy.current!,()=>{}) 
+    //     }
+    // },[state])
 
 
     useGameEvent("S2C_SEND_UP_EQUIMENT_SHOW",(event)=>{
@@ -346,6 +349,9 @@ export const Card = (props:{index:number,uuid:string,owner:number,view_stage:num
     useGameEvent("S2C_SEATCH_TARGET_OFF",(event)=>{
         if(props.uuid != event.uuid) return
         ref.current?.RemoveClass("select_target" + preHighSelectType.current)
+        $.RegisterEventHandler( 'DragDrop', dummy.current!, ()=>{} ) 
+        $.RegisterEventHandler( 'DragEnter', dummy.current!, ()=>{} )
+        $.RegisterEventHandler( 'DragLeave',dummy.current!,()=>{}) 
     },[props.uuid])
     
     //技能释放主体提示
@@ -434,10 +440,12 @@ export const Card = (props:{index:number,uuid:string,owner:number,view_stage:num
     }
 
     const OnDragStart = (panelId:any, dragCallbacks:any) =>{
-        if(props.view_stage == 1){
-            return
-        }
         const displayPanel = $.CreatePanel( "Panel", $.GetContextPanel(), "cache" ) as HeroImage
+        const {red,blue} = props.team
+        const local_isoparetor = CustomNetTables.GetTableValue("GameMianLoop",Players.GetLocalPlayer() == red ? "red_is_oparator" : "blue_is_oparator")
+        if(local_isoparetor?.current){
+            return  //如果玩家进行了本轮的操作 禁止拖拽
+        }
         //**加入拖动的是装备卡片 */
         if(state.type == "EQUIP" && ref.current){
             if(!IsheroDeploymentRound()) return;
@@ -686,7 +694,7 @@ export const Card = (props:{index:number,uuid:string,owner:number,view_stage:num
             onmouseover={()=>{state.Scene == "GRAVE" && graveTipFunction.current()}} onmouseout={()=>$.DispatchEvent('DOTAHideTextTooltip')}
             >
                   {modifilers.map(value=><StateCompoent key={value.id + value.name + value.duration} name={value.name} duration={value.duration}/>)}
-                  <EquipmentManager uuid={props.uuid}/>
+                  <EquipmentManager owned={props.owner} uuid={props.uuid}/>
                   <Label hittest={false} text={"id:"+state.Id + "|" + props.uuid} className={"uuid"}/>
                   <DOTAHeroImage hittest={false}  className={"heroimage"} heroimagestyle={'portrait'} heroname={(GameUI.CustomUIConfig() as any).CardHero.CardGame[state.Id].name} />
                   <Panel hittest={false}  className={"threeDimensional"}>
@@ -735,7 +743,7 @@ export const Card = (props:{index:number,uuid:string,owner:number,view_stage:num
 
 export const CardContext = (props:{owner:number}) => {
     const [allheaps,setallheaps] = useState<string[]>([])
-    const view_stage = useNetTableKey('GameMianLoop','effect_view_stage')
+    const team = useNetTableKey("Card_group_construction_phase","team")
 
     useGameEvent('S2C_BRUSH_SOLIDER',()=>{
         const all = CustomNetTables.GetTableValue('Scenes','ALL' + props.owner)
@@ -759,6 +767,6 @@ export const CardContext = (props:{owner:number}) => {
 
 
     return <Panel hittest={false} className={"CardContext"}>
-        {allheaps.map((uuid,index)=><Card  owner={props.owner} view_stage={view_stage?.cuurent ?? 0}  key={uuid} index={index} uuid={uuid}/>)}
+        {allheaps.map((uuid,index)=><Card  owner={props.owner} team={team} key={uuid} index={index} uuid={uuid}/>)}
     </Panel>
 }

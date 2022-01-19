@@ -6,6 +6,8 @@ import { BattleArea, Hand, Scenes } from "../instance/Scenes";
 import { Unit } from "../instance/Unit";
 import { Timers } from "../lib/timers";
 import { reloadable } from "../lib/tstl-utils";
+import { 游戏循环 } from "../Manager/BattleGameLoop";
+import { get_cuurent_glod } from "../Manager/nettablefuc";
 
 @reloadable
 export class GamaEvent_All_register{
@@ -15,6 +17,16 @@ export class GamaEvent_All_register{
             GameRules.brash_solidier.brushTwoSoldiers() 
         })
         CustomGameEventManager.RegisterListener("C2S_BUY_ITEM",(_,event)=>{
+            const loop = CustomNetTables.GetTableValue("GameMianLoop","smallCycle").current
+            print("当前阶段是",loop != 游戏循环.商店购买阶段.toString())
+            if(loop != 游戏循环.商店购买阶段.toString()){
+                CustomGameEventManager.Send_ServerToPlayer(PlayerResource.GetPlayer(event.PlayerID),"S2C_INFORMATION",{information:"目前阶段无法购买装备"})
+                return
+            }
+            if(get_cuurent_glod(event.PlayerID) < 2){
+                CustomGameEventManager.Send_ServerToPlayer(PlayerResource.GetPlayer(event.PlayerID),"S2C_INFORMATION",{information:"您连2个金币都没有..."})
+                return 
+            }
             const item = event.itemname
             const card = new EquipCard({Id:item,Index:-1,PlayerID:event.PlayerID},GameRules.SceneManager.GetCardheapsScene(event.PlayerID))
             GameRules.SceneManager.global_add(card.UUID,card)

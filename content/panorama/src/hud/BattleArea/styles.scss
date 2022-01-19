@@ -282,7 +282,7 @@
     }
     @for $i from 1 to 30 {
         &.my_Hand#{$i}{
-            x:300px + $i * 50px;
+            x:500px + $i * 40px;
             y:900px;
             z-index:$i;
             &.my_hover{
@@ -510,7 +510,7 @@
     }
     @for $i from 1 to 30 {
         &.you_Hand#{$i}{
-            x:700px + $i * 50px;
+            x:700px + $i * 40px;
             y:-50px;
             z-index:$i;
             &.you_hover{
@@ -574,7 +574,7 @@
     }
     @for $i from 1 to 30 {
         &.you_Hand#{$i}{
-            x:700px + $i * 50px;
+            x:700px + $i * 40px;
             y:-50px;
             z-index:$i;
         }
@@ -614,7 +614,7 @@
     }
     @for $i from 1 to 30 {
         &.my_Hand#{$i}{
-            x:300px + $i * 50px;
+            x:500px + $i * 40px;
             y:900px;
             z-index: $i+1;
         }

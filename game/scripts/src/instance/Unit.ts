@@ -47,10 +47,28 @@ export class Unit extends Card{
         return false
     }
 
+
     roundCalculation(){
+        const modiflers = []
         for(const modifiler of this.Modifilers){
-            modifiler.roundCalculation()
-        }
+            modifiler.duration--
+            if(modifiler.duration <= 0){
+                    const fuc = modifiler.call_hook(HOOK.销毁时)
+                    fuc.forEach(_fuc=>{
+                        _fuc()
+                    })
+                    if(this.Modifilers.length == 1){
+                        this.Modifilers = new LinkedList()
+                    }else{
+                        modiflers.push(modifiler)
+                    }
+                } 
+                modiflers.forEach(modifiler=>{
+                this.Modifilers.remove(modifiler)
+                 })
+              this.update_modifiler_to_client()
+              CustomGameEventManager.Send_ServerToAllClients("S2C_SEND_ATTRIBUTE",this.attribute)
+            }
     }
 
     /**是否受伤 */
@@ -126,7 +144,7 @@ export class Unit extends Card{
                 }else{
                     modiflers.push(modifiler)
                 }
-            }
+            } 
         }
         modiflers.forEach(modifiler=>{
             this.Modifilers.remove(modifiler)

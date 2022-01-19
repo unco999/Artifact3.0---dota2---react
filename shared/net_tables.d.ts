@@ -23,8 +23,10 @@ declare interface CustomNetTableDeclarations {
         option_mask_state:{cuurent:number} //当前全局状态操作掩码
         red_gold:{cuurent:number} //红色的金币
         blue_gold:{cuurent:number} // 蓝色的金币
-        effect_view_stage:{cuurent:number} // 1是正在播放特效 0是没有播放
-    }
+        red_is_oparator:{current:boolean} // 红色是否已经操作
+        blue_is_oparator:{current:boolean} //蓝色是否已经操作
+        is_settlement:{current:boolean} //是否正在结算
+    } 
     Scenes:{
         [string:string]:Record<number,string>
     }

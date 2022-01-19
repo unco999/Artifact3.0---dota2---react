@@ -147,34 +147,13 @@ export class Cardheaps extends Scenes {
         super.Remove(uuid);
     }
 
-
-    /**随机抽取一张小技能 */
-    Trick_ability_dequeue(): Card {
-        const uuids = Object.keys(this.CardPool);
-        let card: Card;
-        while (!card) {
-            const extract = this.CardPool[uuids[RandomInt(0, uuids.length)]];
-            if (extract instanceof SmallSkill) {
-                card = extract;
-            }
+    takeAHand(){
+        let card:Card;
+        for(const key in this.CardPool){
+            card = this.CardPool[key]
         }
-        print("抽取了技能卡牌", card.UUID);
-        return card;
-    }
-
-    /**随机抽取一张大技能 */
-    Small_ability_dequeue(): Card {
-        const uuids = Object.keys(this.CardPool);
-        let card: Card;
-        while (!card) {
-            const extract = this.CardPool[uuids[RandomInt(0, uuids.length)]];
-            if (extract instanceof TrickSkill) {
-                card = extract;
-            }
-        }
-        print("抽取了技能卡牌", card.UUID);
-        return card;
-    }
+        return card
+     }
 
 
 }
@@ -299,6 +278,17 @@ export abstract class BattleArea extends Scenes {
         for(const key in this.CardPool){
            return this.CardPool[key]
         }
+    }
+
+    /**获得一个随机空位 */
+    randomGetSpace(){
+       const list = this.CardList.sort((a,b)=> {return math.random()}  )
+       for(let key = 0 ; key < list.length ; key++){
+           if(typeof(list[key]) == "number"){
+                return key + 1
+           }
+       }
+       return null
     }
 
     /**找最近空格 */
@@ -805,8 +795,6 @@ export class ScenesManager {
         /**上英雄卡牌时候   附带小兵刷新  如本路线为满  就不上小兵 */
         CustomGameEventManager.RegisterListener("C2S_CARD_CHANGE_SCENES", (_, event) => {
             if (!GameRules.gamemainloop.filter) return;
-            print("当前上场的指令为..................")
-            DeepPrintTable(event)
             const card = this.change_secens(event.uuid, event.to_scene, event.index);
             GameRules.gamemainloop.small_solider_tag[event.PlayerID] = true;
             /** 本路线满了 不刷小兵*/
@@ -859,6 +847,11 @@ export class ScenesManager {
     /**对格查找 */
     gather(card: Card) {
         return card.Scene.find_oppose().IndexGet(card.Index);
+    }
+
+    /**通过UUID找到英雄 */
+    UUIDGet(uuid:string){
+       return this.All[uuid]
     }
 
     /**敌人近邻查找 */
@@ -1045,6 +1038,7 @@ export class ScenesManager {
 
     /**牌改变场景*/
     change_secens(uuid: string, to: string, index?: number, update?: boolean) {
+        if(!this.All[uuid]) return;
         const card = this.All[uuid];
         const playerid = card.PlayerID;
 

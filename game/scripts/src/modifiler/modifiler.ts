@@ -25,7 +25,6 @@ export class item_bfury_modifiler extends CAModifiler{
             this.thisHero.heal = this.thisHero.max_heal
             return false})
         this.setHookEvent(HOOK.销毁时,()=>{
-            this.thisHero.removeModifiler(this.name)
             this.logoutHook()
             return true
         })
@@ -43,6 +42,10 @@ export class item_bfury_modifiler extends CAModifiler{
             if(right && typeof(right) != "number"){
                 center.hurt(3,this.thisHero,"defualt")
                 CustomGameEventManager.Send_ServerToAllClients("SC2_PLAY_EFFECT",{uuid:right.UUID,lookAt:"0 0 0",paticle:"particles/econ/items/ursa/ursa_swift_claw/ursa_swift_claw_right.vpcf",cameraOrigin:"0 500 0"})
+            }
+            if(!center){
+               const tower = GameRules.TowerGeneralControl.getCardScenceTower(PlayerResource.GetPlayer(this.thisHero.PlayerID),this.thisHero)
+               tower.hurt(this.thisHero.Getattack)
             }
             return true
         })

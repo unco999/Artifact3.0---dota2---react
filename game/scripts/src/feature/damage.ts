@@ -70,7 +70,7 @@ export class damage{
             !this.damageA?.isunableToAttack() && CustomGameEventManager.Send_ServerToAllClients("S2C_SEND_ATTACK",{uuid:this.damageA.UUID})
             !this.damageB?.isunableToAttack() && CustomGameEventManager.Send_ServerToAllClients("S2C_SEND_ATTACK",{uuid:this.damageB.UUID})
             Timers.CreateTimer(1.5,()=>{
-                this.beforeTheAttackhookHero({my:this.damageB,target:this.damageA}) && this.Set_B_A_D_damage(this.damageA.hurt(this.damageB.isunableToAttack() ?  0 : this.damageB.Getattack,this.damageA,"defualt"))
+                this.beforeTheAttackhookHero({my:this.damageB,target:this.damageA}) && this.Set_B_A_D_damage(this.damageA.hurt(this.damageB.isunableToAttack() ?  0 : this.damageB.Getattack,this.damageB,"defualt"))
                 this.beforeTheAttackhookHero({my:this.damageA,target:this.damageB}) && this.Set_A_B_D_damage(this.damageB.hurt(this.damageA.isunableToAttack() ?  0 : this.damageA.Getattack,this.damageA,"defualt"))
             })
         })

@@ -41,7 +41,7 @@
 
 	}
 	"25" {
-		"name" "npc_dota_hero_luna"
+		"name" "npc_dota_hero_lina"
 		"attack" "7"
 		"arrmor" "0"
 		"health" "10"

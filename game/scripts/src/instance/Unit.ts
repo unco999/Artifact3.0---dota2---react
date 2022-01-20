@@ -1,5 +1,5 @@
 import { Timers } from "../lib/timers";
-import { add_cuurent_glod } from "../Manager/nettablefuc";
+import { add_cuurent_glod, get_cuurent_glod } from "../Manager/nettablefuc";
 import { LinkedList } from "../structure/Linkedlist";
 import { Card, CardParameter, CARD_TYPE, professionalMagicCard } from "./Card";
 import { CAModifiler, HOOK, modifilertype } from "./Modifiler";
@@ -205,7 +205,9 @@ export class Unit extends Card{
             if(scene instanceof BattleArea){
                 if(Source instanceof Unit){
                     Source.hook(HOOK.杀死目标时)
-                    add_cuurent_glod(2,Source.PlayerID) 
+                    add_cuurent_glod(2,Source.PlayerID)
+                    print("增加了两枚金币,当前金币数")
+                    print(get_cuurent_glod(Source.PlayerID)) 
                 }
                 const PreDeath = this.hook(HOOK.死亡前)
                 let deathbool:boolean = false
@@ -266,7 +268,7 @@ export class Unit extends Card{
             if(this.Prehurt(damageSourece,attack_type)){
                 return
             }
-            this.heal -= count
+            this.heal -= count - this.Getarrmor
             if(this.GETheal < 1){
                 this.call_death(damageSourece)
             }

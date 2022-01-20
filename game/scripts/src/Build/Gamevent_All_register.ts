@@ -7,7 +7,7 @@ import { Unit } from "../instance/Unit";
 import { Timers } from "../lib/timers";
 import { reloadable } from "../lib/tstl-utils";
 import { 游戏循环 } from "../Manager/BattleGameLoop";
-import { get_cuurent_glod } from "../Manager/nettablefuc";
+import { add_cuurent_glod, get_cuurent_glod } from "../Manager/nettablefuc";
 
 @reloadable
 export class GamaEvent_All_register{
@@ -27,6 +27,7 @@ export class GamaEvent_All_register{
                 CustomGameEventManager.Send_ServerToPlayer(PlayerResource.GetPlayer(event.PlayerID),"S2C_INFORMATION",{information:"您连2个金币都没有..."})
                 return 
             }
+            add_cuurent_glod(-2,event.PlayerID)
             const item = event.itemname
             const card = new EquipCard({Id:item,Index:-1,PlayerID:event.PlayerID},GameRules.SceneManager.GetCardheapsScene(event.PlayerID))
             GameRules.SceneManager.global_add(card.UUID,card)

@@ -140,7 +140,20 @@ export class heroDeploymentPhase extends GameLoopState {
         super.exit()
         print("部署阶段退出了")
         this.hide_reload()
+        this.give_cards()
     }
+
+    give_cards() {
+        const redScenesHand = GameRules.SceneManager.GetCardheapsScene(GameRules.Red.GetPlayerID()) as Cardheaps
+        const BlueScenesHand = GameRules.SceneManager.GetCardheapsScene(GameRules.Blue.GetPlayerID()) as Cardheaps
+        for(let i = 0 ; i < 2 ; i++){
+           const redCard = redScenesHand.takeAHand()
+           const blueCard = BlueScenesHand.takeAHand()
+           GameRules.SceneManager.change_secens(redCard.UUID,"HAND")
+           GameRules.SceneManager.change_secens(blueCard.UUID,"HAND")
+        }
+    }
+
 
     run() {
         super.run();
@@ -216,7 +229,6 @@ export class faultCard extends GameLoopState {
             this.host.init = true;
             GameRules.SceneManager.update();
         } else {
-            this.give_cards();
         }
     }
 
@@ -243,18 +255,6 @@ export class faultCard extends GameLoopState {
     }
 
     //** 重复循环 进入每回合发放手牌 */
-    give_cards() {
-        const redScenesHand = GameRules.SceneManager.GetCardheapsScene(GameRules.Red.GetPlayerID()) as Cardheaps
-        const BlueScenesHand = GameRules.SceneManager.GetCardheapsScene(GameRules.Blue.GetPlayerID()) as Cardheaps
-        for(let i = 0 ; i < 2 ; i++){
-           const redCard = redScenesHand.takeAHand()
-           const blueCard = BlueScenesHand.takeAHand()
-           GameRules.SceneManager.change_secens(redCard.UUID,"HAND")
-           GameRules.SceneManager.change_secens(blueCard.UUID,"HAND")
-        }
-        this.initflag = true;
-    }
-
 
     ClearRoundData(){
          GameLoopMaskClearBlue()
@@ -302,13 +302,19 @@ export class faultCard extends GameLoopState {
 
     exit(){
         super.exit()
-        if(!this.host.small_solider_tag[GameRules.Red.GetPlayerID()]){
-            GameRules.gamemainloop.small_solider_tag[GameRules.Red.GetPlayerID()] = false;
-            const red_solider = GameRules.brash_solidier.AutoSolider(GameRules.Red.GetPlayerID(),ScenesBuildbehavior.fitler(get_current_battle_brach() == "4" ? "0" : get_current_battle_brach(),GameRules.Red.GetPlayerID()).SceneName )
+        const redplayer = PlayerResource.GetPlayer(GameRules.Red.GetPlayerID())
+        const blueplayer = PlayerResource.GetPlayer(GameRules.Blue.GetPlayerID())
+        if(GameRules.TowerGeneralControl.getPlayerTower(redplayer,+get_current_operate_brach()).state != 'death'){
+            if(!this.host.small_solider_tag[GameRules.Red.GetPlayerID() + get_current_battle_brach()]){
+                GameRules.gamemainloop.small_solider_tag[GameRules.Red.GetPlayerID()+ get_current_battle_brach()] = false;
+                GameRules.brash_solidier.AutoSolider(GameRules.Red.GetPlayerID(),ScenesBuildbehavior.fitler(get_current_battle_brach() == "4" ? "0" : get_current_battle_brach(),GameRules.Red.GetPlayerID()).SceneName )
+            }
         }
-        if(!this.host.small_solider_tag[GameRules.Blue.GetPlayerID()]){
-            GameRules.gamemainloop.small_solider_tag[GameRules.Blue.GetPlayerID()] = false;
-            const blue_solider = GameRules.brash_solidier.AutoSolider(GameRules.Blue.GetPlayerID(),ScenesBuildbehavior.fitler(get_current_battle_brach() == "4" ? "0" : get_current_battle_brach(),GameRules.Blue.GetPlayerID()).SceneName )
+        if(GameRules.TowerGeneralControl.getPlayerTower(blueplayer,+get_current_operate_brach()).state != 'death'){
+            if(!this.host.small_solider_tag[GameRules.Blue.GetPlayerID()+ get_current_battle_brach()]){
+                GameRules.gamemainloop.small_solider_tag[GameRules.Blue.GetPlayerID()+ get_current_battle_brach()] = false;
+                GameRules.brash_solidier.AutoSolider(GameRules.Blue.GetPlayerID(),ScenesBuildbehavior.fitler(get_current_battle_brach() == "4" ? "0" : get_current_battle_brach(),GameRules.Blue.GetPlayerID()).SceneName )
+            }
         }
         
     }

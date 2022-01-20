@@ -8,6 +8,7 @@ import { Effect } from "./effect";
 import { MyConpoment } from "./my";
 import { YouConpoment } from "./you";
 import {Curtain} from "./curtain"
+import { Fog } from "./fog";
 
 export const Main = () =>{
     const team = useNetTableKey("Card_group_construction_phase","team")
@@ -16,6 +17,7 @@ export const Main = () =>{
     return <>
     { gameloopname.current == 'isbattle' &&
     <>
+        <Fog/>
         <MyConpoment red={team.red} blue={team.blue} />
         <YouConpoment red={team.red} blue={team.blue} />
         <CardContext owner={Players.GetLocalPlayer()}/>

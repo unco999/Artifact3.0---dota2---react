@@ -20,7 +20,7 @@ export class TowerGeneralControl{
         })
     }
 
-    getPlayerTower(player:CDOTAPlayer,index:number){
+    getPlayerTower(player:CDOTAPlayer,index:number):Tower{
         print("找到的塔位置",player.GetPlayerID(),index)
         return this.TowerDate.get(player.GetPlayerID().toString() + index.toString())
     }

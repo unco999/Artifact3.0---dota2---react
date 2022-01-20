@@ -52,6 +52,7 @@ export function get_cuurent_glod(playerid:PlayerID){
     return CustomNetTables.GetTableValue("GameMianLoop",key).cuurent
 }
 
+
 export enum STRATEGY_BRACH_STATE{
     上路 = "1",
     中路 = "2",

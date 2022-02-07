@@ -6,7 +6,7 @@ import { Unit } from "../instance/Unit";
 import { Timers } from "../lib/timers";
 import { LinkedList } from "../structure/Linkedlist";
 import { BATTLE_BRACH_STATE, clear_option_mask_state, get_current_battle_brach, get_current_operate_brach, loop_end_clear, set_current_battle_brach, set_current_operate_brach, Set_option_mask_state, STRATEGY_BRACH_STATE } from "./nettablefuc";
-import { Battle_Select_Brach, GameLoopMaskClearBlue, GameLoopMaskClearBlueSkip, GameLoopMaskClearRed, GameLoopMaskClearRedSkip, GameLoopMaskSkipBlue, GameLoopMaskSkipRed, get_settlement_current, isBattleSettlement, IsblueOperater, IsRedOperater, operate, optionMask, SetGameLoopMasK, set_oparator_false, strategy_Select_Brach } from "./statusSwitcher";
+import { Battle_Select_Brach, GameLoopMaskClearBlue, GameLoopMaskClearBlueSkip, GameLoopMaskClearRed, GameLoopMaskClearRedSkip, GameLoopMaskSkipBlue, GameLoopMaskSkipRed, get_oparaotr_current, get_settlement_current, isBattleSettlement, IsblueOperater, IsRedOperater, operate, optionMask, SetGameLoopMasK, set_oparator_false, strategy_Select_Brach } from "./statusSwitcher";
 
 export enum 游戏循环 {
     "英雄部署阶段",
@@ -21,6 +21,26 @@ const 战斗结算时间 = 7
 const 策略时间 = 35
 
 //第一回合六張牌  5小1大  第一回合結束  商店功能花錢買牌(2元买大技能 1元买小技能)  然後英雄分錄  分完路發兩張   
+
+/**通过字符串找到当前场景实例 */
+export function brachFilfer(str:string,playerID:PlayerID){
+    print("传入的解析路线是",str)
+    switch(str){
+        case "1":{
+            print("解析为上路")
+            return GameRules.SceneManager.GetGoUpScene(playerID)
+        }
+        case "2":{
+            print("解析为中路")
+            return GameRules.SceneManager.GetMidwayScene(playerID)
+        }
+        case "3":{
+            print("解析为下路")
+            return GameRules.SceneManager.GetLaidDownScene(playerID)
+        }
+    }
+    return null
+}
 
 
 export class GameLoopState {
@@ -218,9 +238,22 @@ export class faultCard extends GameLoopState {
         })
     }
 
+    create_solider(){
+        const red = GameRules.Red.GetPlayerID()
+        const blue = GameRules.Blue.GetPlayerID()
+        const redScnese = brachFilfer(get_current_operate_brach(),red).SceneName
+        const blueScnese = brachFilfer(get_current_operate_brach(),blue).SceneName
+        print(redScnese,blueScnese)
+        GameRules.brash_solidier.AutoSolider(red,redScnese);
+        GameRules.brash_solidier.AutoSolider(blue,blueScnese);
+    }
+
     entry() {
         super.entry();
         this.Set_cuurent_option_player = GameRules.Red.GetPlayerID().toString()
+        Timers.CreateTimer(0.33,()=>{
+            this.create_solider() //每回合刷小兵
+        })
         if (!this.host.init) {
             ScenesBuildbehavior.ScenesBuild()
             ScenesBuildbehavior.HeapsBuild(GameRules.Red.GetPlayerID())
@@ -302,21 +335,6 @@ export class faultCard extends GameLoopState {
 
     exit(){
         super.exit()
-        const redplayer = PlayerResource.GetPlayer(GameRules.Red.GetPlayerID())
-        const blueplayer = PlayerResource.GetPlayer(GameRules.Blue.GetPlayerID())
-        if(GameRules.TowerGeneralControl.getPlayerTower(redplayer,+get_current_operate_brach()).state != 'death'){
-            if(!this.host.small_solider_tag[GameRules.Red.GetPlayerID() + get_current_battle_brach()]){
-                GameRules.gamemainloop.small_solider_tag[GameRules.Red.GetPlayerID()+ get_current_battle_brach()] = false;
-                GameRules.brash_solidier.AutoSolider(GameRules.Red.GetPlayerID(),ScenesBuildbehavior.fitler(get_current_battle_brach() == "4" ? "0" : get_current_battle_brach(),GameRules.Red.GetPlayerID()).SceneName )
-            }
-        }
-        if(GameRules.TowerGeneralControl.getPlayerTower(blueplayer,+get_current_operate_brach()).state != 'death'){
-            if(!this.host.small_solider_tag[GameRules.Blue.GetPlayerID()+ get_current_battle_brach()]){
-                GameRules.gamemainloop.small_solider_tag[GameRules.Blue.GetPlayerID()+ get_current_battle_brach()] = false;
-                GameRules.brash_solidier.AutoSolider(GameRules.Blue.GetPlayerID(),ScenesBuildbehavior.fitler(get_current_battle_brach() == "4" ? "0" : get_current_battle_brach(),GameRules.Blue.GetPlayerID()).SceneName )
-            }
-        }
-        
     }
 
 }

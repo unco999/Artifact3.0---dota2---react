@@ -26,7 +26,6 @@ export class ScenesBuildbehavior {
     }
 
     static ScenesBuild(){
-        GameRules.SceneManager = new ScenesManager()
         GameRules.TowerGeneralControl = new TowerGeneralControl()
         const blue_Cardheaps = new Cardheaps(GameRules.Blue.GetPlayerID(),GameRules.SceneManager)
         const red_Cardheaps = new Cardheaps(GameRules.Red.GetPlayerID(),GameRules.SceneManager)

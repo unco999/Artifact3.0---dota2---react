@@ -796,12 +796,7 @@ export class ScenesManager {
         CustomGameEventManager.RegisterListener("C2S_CARD_CHANGE_SCENES", (_, event) => {
             if (!GameRules.gamemainloop.filter) return;
             const card = this.change_secens(event.uuid, event.to_scene, event.index);
-            GameRules.gamemainloop.small_solider_tag[event.PlayerID] = true;
             /** 本路线满了 不刷小兵*/
-            const solider = GameRules.brash_solidier.AutoSolider(event.PlayerID, event.to_scene);
-            if (RollPercentage(50)) {
-                GameRules.SceneManager.ExchangeLocation(card,solider)
-            }
         });
         CustomGameEventManager.RegisterListener("C2S_GET_SCENES", (_, event) => {
             switch (event.get) {

@@ -58,6 +58,7 @@ export class GameMode {
         GameRules.select_the_prompt = new select_the_prompt()
         GameRules.spell_skill = new spell_skill()
         GameRules.brash_solidier = new brash_solidier()
+        GameRules.SceneManager = new ScenesManager()
     }
 
     constructor() {

@@ -374,7 +374,7 @@ export class qianggong_modifiler extends CAModifiler{
 
 
    /**
- * 强攻modifiler
+ * 巨浪modifiler
  */
     @ca_register_modifiler()
     export class julang_modifiler extends CAModifiler{

@@ -291,6 +291,11 @@ export abstract class BattleArea extends Scenes {
        return null
     }
 
+    /**获得当前空格序列表 */
+    getCurrentNapSequenceList(){
+        return this.CardList.map(value=> {return value != -1})
+    }
+
     /**找最近空格 */
     GetrecentSpace(index:number) {
         for(let i = 0 ; i < 3 ; i++){
@@ -841,6 +846,7 @@ export class ScenesManager {
 
     /**对格查找 */
     gather(card: Card) {
+        if(card == null) return;
         return card.Scene.find_oppose().IndexGet(card.Index);
     }
 

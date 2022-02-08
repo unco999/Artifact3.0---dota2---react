@@ -45,7 +45,10 @@ export const Card_container = (props:{className:string,index:number,brach:number
     const OnDragDrop = (panelId:any, dragCallbacks:any) => {
         $.Msg("传入的事件")
         $.Msg(dragCallbacks.Data())
-
+        if(dragCallbacks.Data().data?.vacancyRelease){
+            GameEvents.SendCustomGameEventToServer("C2S_SPACE_CALL_SPELL",{SKILL_ID:dragCallbacks.Data().id,target_index:props.index.toString(),spell_ability_card_uuid:dragCallbacks.Data().cardid})
+            return
+        }
         if(dragCallbacks.Data().data?.replacementCard){
              GameEvents.SendCustomGameEventToServer("C2S_REP_SKILL",{abilityname:dragCallbacks.Data().id,to:props.brach.toString(),index:props.index.toString(),uuid:dragCallbacks.Data().cardid})
              return;

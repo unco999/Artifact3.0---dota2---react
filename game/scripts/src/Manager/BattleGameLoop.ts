@@ -15,10 +15,10 @@ export enum 游戏循环 {
     "商店购买阶段"
 }
 
-const 商店购买时间 = 30
-const 英雄部署时间 = 50
+const 商店购买时间 = 15
+const 英雄部署时间 = 20
 const 战斗结算时间 = 7
-const 策略时间 = 35
+const 策略时间 = 30
 
 //第一回合六張牌  5小1大  第一回合結束  商店功能花錢買牌(2元买大技能 1元买小技能)  然後英雄分錄  分完路發兩張   
 
@@ -269,7 +269,7 @@ export class faultCard extends GameLoopState {
     init_give_cards() {
        const redScenesHand = GameRules.SceneManager.GetCardheapsScene(GameRules.Red.GetPlayerID()) as Cardheaps
        const BlueScenesHand = GameRules.SceneManager.GetCardheapsScene(GameRules.Blue.GetPlayerID()) as Cardheaps
-       for(let i = 0 ; i < 4 ; i++){
+       for(let i = 0 ; i < (IsInToolsMode() ? 16 : 4); i++){
           const redCard = redScenesHand.takeAHand()
           const blueCard = BlueScenesHand.takeAHand()
           GameRules.SceneManager.change_secens(redCard.UUID,"HAND")
@@ -379,10 +379,19 @@ export class injurySettlementStage extends GameLoopState {
     }
 
     exit(){
-        const redrouter = GameRules.SceneManager.fitler(this.settlementRoute,GameRules.Red.GetPlayerID()) as BattleArea
-        const bluerouter = GameRules.SceneManager.fitler(this.settlementRoute,GameRules.Blue.GetPlayerID()) as BattleArea
-        redrouter.call_cetner()
-        bluerouter.call_cetner()
+        const redid = GameRules.Red.GetPlayerID()
+        const blueid = GameRules.Blue.GetPlayerID()
+        const router = GameRules.SceneManager.fitler(this.settlementRoute,redid) as BattleArea
+        const oppositerouter = GameRules.SceneManager.fitler(this.settlementRoute,blueid) as BattleArea
+        const redlist = router.getCurrentNapSequenceList()
+        const bluelist = oppositerouter.getCurrentNapSequenceList()
+        for(let key = 0 ; key <  redlist.length ; key++){
+            if( redlist[key] == false && bluelist[key] == false){
+                router.call_cetner()
+                oppositerouter.call_cetner()
+                return
+            }
+        }
     }
 
     run(){

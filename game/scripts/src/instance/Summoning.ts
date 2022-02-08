@@ -1,3 +1,4 @@
+import { Timers } from "../lib/timers";
 import { CardParameter } from "./Card";
 import { ICAScene } from "./Scenes";
 import { Unit } from "./Unit";
@@ -15,9 +16,17 @@ export class Summoning extends Unit{
         this.heal = data.heal
         this.arrmor = data.arrmor
         this.icon = data.icon
+        this.max_heal = this.heal
     }
 
     ToData() {
         return {icon:this.icon}
+    }
+
+    override call_death(){  
+        CustomGameEventManager.Send_ServerToAllClients("S2C_SEND_DEATH_ANIMATION",{uuid:this.UUID})
+        Timers.CreateTimer(2,()=>{
+            this.Scene.CaSceneManager.change_secens(this.UUID,"REMOVE",-1)
+        })
     }
 }

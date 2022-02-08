@@ -1,5 +1,6 @@
 import { Timers } from "../lib/timers";
-import { add_cuurent_glod, get_cuurent_glod } from "../Manager/nettablefuc";
+import { add_cuurent_glod, get_current_operate_brach, get_cuurent_glod } from "../Manager/nettablefuc";
+import { get_oparaotr_current } from "../Manager/statusSwitcher";
 import { LinkedList } from "../structure/Linkedlist";
 import { Card, CardParameter, CARD_TYPE, professionalMagicCard } from "./Card";
 import { CAModifiler, HOOK, modifilertype } from "./Modifiler";
@@ -199,6 +200,7 @@ export class Unit extends Card{
             this.removeModifiler(name)
         })
     }
+    
 
     call_death(Source:Card){
             const scene = this.Scene
@@ -305,6 +307,7 @@ export class Solider extends Unit{
         this.attack = 3
         this.arrmor = 0
         this.heal = 6
+        this.max_heal = 6
     }
 
     override call_death(){  

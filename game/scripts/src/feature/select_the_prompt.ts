@@ -1,4 +1,4 @@
-import { AbiliyContainer, select_type, TrickSkill_shouhutianshi } from "../instance/Ability";
+import { AbiliyContainer, Magic_attack_tart_type, select_type, TrickSkill_shouhutianshi } from "../instance/Ability";
 import { Card } from "../instance/Card";
 import { Hero } from "../instance/Hero";
 import { BattleArea } from "../instance/Scenes";
@@ -25,6 +25,26 @@ export enum Magic_team{
     "敌方",
     "双方",
     "自己"
+}
+
+export function Magic_attack_Filer(mask:number,card:Unit){
+    let bool = true
+    if( (mask | Magic_attack_tart_type.召唤物) != mask){
+        if(card.type == 'Summoned'){
+            bool = false
+        }
+    }
+    if( (mask | Magic_attack_tart_type.小兵) != mask){
+        if(card.type == 'Solider'){
+            bool = false
+        }
+    }
+    if( (mask | Magic_attack_tart_type.英雄) != mask){
+        if(card.type == 'Hero'){
+            bool = false
+        }
+    }
+    return bool
 }
 
 export class select_the_prompt{
@@ -74,6 +94,7 @@ export class select_the_prompt{
                     }
                 })
            }
+           
            if(abilityinstance.displacement != -1){
                const hero = GameRules.SceneManager.get_hero(abilityinstance.heroid)
                const scene = hero.Scene as BattleArea
@@ -165,7 +186,8 @@ export class select_the_prompt{
                 const find_data = this.validRangeLookup(hero.PlayerID,abilityinstance.Magic_brach,
                     abilityinstance.Magic_range,
                     abilityinstance.Magic_team,
-                    hero.Id
+                    abilityinstance.Magic_attack_tart_type,
+                    hero.Id,
                     )
                 abilityinstance.post_move_spell_skill(find_data?.table as (Unit|number)[] ?? [],undefined,hero as Unit)
                 GameRules.SceneManager.change_secens(event.uuid,"REMOVE",+get_current_operate_brach())
@@ -177,6 +199,7 @@ export class select_the_prompt{
     ability_select_show(abilityName:string,hero:Hero):{_self:Hero,table:(Card|number)[],type:select_type}{
         const ability_select_type = AbiliyContainer.instance.GetAbility(abilityName)
         const _select_type = ability_select_type.ability_select_type
+        const Magic_attack_tart_type = ability_select_type.Magic_attack_tart_type
         switch(_select_type){
             case select_type.任意单体:{
                 const mygoup = GameRules.SceneManager.GetGoUpScene(hero.PlayerID)
@@ -213,23 +236,23 @@ export class select_the_prompt{
             }
 
             case select_type.友方本路:{
-                return {_self:hero,table:[...GameRules.SceneManager.friendbrach(hero)],type:select_type.友方本路}
+                return {_self:hero,table:[...GameRules.SceneManager.friendbrach(hero).filter(card=> Magic_attack_Filer(Magic_attack_tart_type,card as Unit))],type:select_type.友方本路}
             }
 
             case select_type.友方单体:{
-                return {_self:hero,table:[...GameRules.SceneManager.friendbrach(hero)],type:select_type.友方单体}
+                return {_self:hero,table:[...GameRules.SceneManager.friendbrach(hero).filter(card=> Magic_attack_Filer(Magic_attack_tart_type,card as Unit))],type:select_type.友方单体}
             }
 
             case select_type.敌方本路:{
-                return {_self:hero,table:[...GameRules.SceneManager.enemybrach(hero)],type:select_type.敌方本路}
+                return {_self:hero,table:[...GameRules.SceneManager.enemybrach(hero).filter(card=> Magic_attack_Filer(Magic_attack_tart_type,card as Unit))],type:select_type.敌方本路}
             }
 
             case select_type.敌方单体:{
-                return {_self:hero,table:[...GameRules.SceneManager.enemybrach(hero)],type:select_type.敌方单体}
+                return {_self:hero,table:[...GameRules.SceneManager.enemybrach(hero).filter(card=> Magic_attack_Filer(Magic_attack_tart_type,card as Unit))],type:select_type.敌方单体}
             }
 
             case select_type.敌方对格:{
-                return {_self:hero,table:[GameRules.SceneManager.gather(hero)],type:select_type.敌方对格}
+                return {_self:hero,table:[GameRules.SceneManager.gather(Magic_attack_Filer(Magic_attack_tart_type,hero) && hero)],type:select_type.敌方对格}
             }
 
             case select_type.敌方近邻:{
@@ -249,7 +272,7 @@ export class select_the_prompt{
                     ...mygoup.getAll() as Unit[],
                     ...mymidway.getAll() as Unit[],
                     ...mylaiddon.getAll() as Unit[],
-                ],type:select_type.友方全体}
+                ].filter(card=> Magic_attack_Filer(Magic_attack_tart_type,card as Unit)),type:select_type.友方全体}
             }
 
             case select_type.全场任意敌方单体:{
@@ -261,7 +284,7 @@ export class select_the_prompt{
                     ...youmidway.getAll() as Unit[],
                     ...youlaiddon.getAll() as Unit[],
                     ,
-                ],type:select_type.全场任意敌方单体} 
+                ].filter(card=> Magic_attack_Filer(Magic_attack_tart_type,card as Unit)),type:select_type.全场任意敌方单体} 
             }
 
             case select_type.敌方全体:{
@@ -273,7 +296,7 @@ export class select_the_prompt{
                     ...youmidway.getAll() as Unit[],
                     ...youlaiddon.getAll() as Unit[],
                     ,
-                ],type:select_type.敌方全体} 
+                ].filter(card=> Magic_attack_Filer(Magic_attack_tart_type,card as Unit)),type:select_type.敌方全体} 
             }
 
             case select_type.本路:{
@@ -284,7 +307,7 @@ export class select_the_prompt{
                    table:[
                        ...enemyScnese.getAll(),
                        ...myScnese.getAll()
-                   ],
+                   ].filter(card=> Magic_attack_Filer(Magic_attack_tart_type,card as Unit)),
                    type:select_type.本路
                }
             }
@@ -292,14 +315,13 @@ export class select_the_prompt{
     }
 
     /**实际技能有效范围查找器 */
-    validRangeLookup(PlayerID:PlayerID,magic_brach:Magic_brach,magic_range:Magic_range,magic_team:Magic_team,has_hero_ability_id:string){
+    validRangeLookup(PlayerID:PlayerID,magic_brach:Magic_brach,magic_range:Magic_range,magic_team:Magic_team,Magic_attack_tart_type:Magic_attack_tart_type,has_hero_ability_id:string){
         let hero = GameRules.SceneManager.get_hero(has_hero_ability_id) as Unit
         /**测试 始终以中间单位为主 */
         // hero = GameRules.SceneManager.GetMidwayScene(GameRules.Blue.GetPlayerID() == PlayerID ? PlayerID : GameRules.Red.GetPlayerID()).IndexGet(3) as Unit
         /**结束后删除 */
         if(hero == undefined) return;
         if(!(hero.isBattle())) return;
-        print("成功开始搜索目标")
         if(magic_team == Magic_team.自己){
             return {_self:hero,table:[]}
         }
@@ -325,57 +347,61 @@ export class select_the_prompt{
                 ...yougoup.getAll() as Unit[],
                 ...youmidway.getAll() as Unit[],
                 ...youlaiddon.getAll() as Unit[],
-            ]} 
+            ].filter(card=> Magic_attack_Filer(Magic_attack_tart_type,card as Unit))} 
         }
         //本路友方单体
         if(magic_brach == Magic_brach.本路 && magic_range == Magic_range.全体 && magic_team == Magic_team.友方){
-            return {_self:hero,table:[...GameRules.SceneManager.friendbrach(hero)]}
+            return {_self:hero,table:[...GameRules.SceneManager.friendbrach(hero)].filter(card=> Magic_attack_Filer(Magic_attack_tart_type,card as Unit))}
         }
         if(magic_brach == Magic_brach.本路 && magic_range == Magic_range.单体 && magic_team == Magic_team.友方){
-            return {_self:hero,table:[...GameRules.SceneManager.friendbrach(hero)]}
+            return {_self:hero,table:[...GameRules.SceneManager.friendbrach(hero)].filter(card=> Magic_attack_Filer(Magic_attack_tart_type,card as Unit))}
         }
         //本路敌方单体
         if(magic_brach == Magic_brach.本路 && magic_range == Magic_range.单体 && magic_team == Magic_team.敌方){
-            return {_self:hero,table:[...GameRules.SceneManager.enemybrach(hero)]}
+            return {_self:hero,table:[...GameRules.SceneManager.enemybrach(hero)].filter(card=> Magic_attack_Filer(Magic_attack_tart_type,card as Unit))}
+        }
+        //本路敌方全体
+        if(magic_brach == Magic_brach.本路 && magic_range == Magic_range.全体 && magic_team == Magic_team.敌方){
+            return {_self:hero,table:[...GameRules.SceneManager.enemybrach(hero)].filter(card=> Magic_attack_Filer(Magic_attack_tart_type,card as Unit))}
         }
         //本路单体双方
         if(magic_brach == Magic_brach.本路 && magic_range == Magic_range.单体 && magic_team == Magic_team.双方){
-            return {_self:hero,table:[...GameRules.SceneManager.enemybrach(hero).concat(...GameRules.SceneManager.friendbrach(hero))]}
+            return {_self:hero,table:[...GameRules.SceneManager.enemybrach(hero).concat(...GameRules.SceneManager.friendbrach(hero))].filter(card=> Magic_attack_Filer(Magic_attack_tart_type,card as Unit))}
         }
         //本路近邻友方
         if(magic_brach == Magic_brach.本路 && magic_range == Magic_range.近邻 && magic_team == Magic_team.友方){
             const data = GameRules.SceneManager.friendlyNeighbor(hero)
-            return {_self:hero,table:[data.left,data.right]}
+            return {_self:hero,table:[data.left,data.right].filter(card=> Magic_attack_Filer(Magic_attack_tart_type,card as Unit))}
         }
         //本路近邻敌方
         if(magic_brach == Magic_brach.本路 && magic_range == Magic_range.近邻 && magic_team == Magic_team.敌方){
             const data = GameRules.SceneManager.enemyneighbor(hero)
-            return {_self:hero,table:[data.center,data.left,data.right]}
+            return {_self:hero,table:[data.center,data.left,data.right].filter(card=> Magic_attack_Filer(Magic_attack_tart_type,card as Unit))}
         }
         //本路全体友方
         if(magic_range == Magic_range.全体 && magic_team == Magic_team.友方){
             print("使用的是友方全体的结局")
-            return {_self:hero,table:[...GameRules.SceneManager.friendfindAll(hero)]}
+            return {_self:hero,table:[...GameRules.SceneManager.friendfindAll(hero)].filter(card=> Magic_attack_Filer(Magic_attack_tart_type,card as Unit))}
         }
         //本路全体敌方
         if(magic_range == Magic_range.全体 && magic_team == Magic_team.敌方){
-            return {_self:hero,table:[...GameRules.SceneManager.enemyfindAll(hero)]}
+            return {_self:hero,table:[...GameRules.SceneManager.enemyfindAll(hero)].filter(card=> Magic_attack_Filer(Magic_attack_tart_type,card as Unit))}
         }
         //跨线友方单体
         if(magic_brach == Magic_brach.跨线 && magic_team == Magic_team.友方 && magic_range == Magic_range.单体){
-            return {_self:hero,table:[...GameRules.SceneManager.friendbrach(hero)]}
+            return {_self:hero,table:[...GameRules.SceneManager.friendbrach(hero)].filter(card=> Magic_attack_Filer(Magic_attack_tart_type,card as Unit))}
         }
         //跨线敌方单体
         if(magic_brach == Magic_brach.跨线 && magic_team == Magic_team.敌方 && magic_range == Magic_range.单体){
-            return {_self:hero,table:[...GameRules.SceneManager.enemyfindAll(hero)]}
+            return {_self:hero,table:[...GameRules.SceneManager.enemyfindAll(hero)].filter(card=> Magic_attack_Filer(Magic_attack_tart_type,card as Unit))}
         }
         //跨线友方群体 -- 单挑路线群体
         if(magic_brach == Magic_brach.跨线 && magic_team == Magic_team.友方 && magic_range == Magic_range.全体){
-            return {_self:hero,table:[...GameRules.SceneManager.enemyfindAll(hero)]}
+            return {_self:hero,table:[...GameRules.SceneManager.enemyfindAll(hero)].filter(card=> Magic_attack_Filer(Magic_attack_tart_type,card as Unit))}
         }
         //跨线敌方群体 -- 单条路线群体
         if(magic_brach == Magic_brach.跨线 && magic_team == Magic_team.敌方 && magic_range == Magic_range.全体){
-            return {_self:hero,table:[...GameRules.SceneManager.friendfindAll(hero)]}
+            return {_self:hero,table:[...GameRules.SceneManager.friendfindAll(hero)].filter(card=> Magic_attack_Filer(Magic_attack_tart_type,card as Unit))}
         }
     }
 }

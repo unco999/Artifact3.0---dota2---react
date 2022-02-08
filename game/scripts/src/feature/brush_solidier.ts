@@ -42,7 +42,7 @@ export class brash_solidier{
      */
     playerSummoning(id:string,count:number,playerid:PlayerID,scene_name:BattleArea,index?:number){
         for(let key = 0 ; key < count ; key ++) {
-            Timers.CreateTimer(key+1,()=>{
+            scene_name.isFull() || Timers.CreateTimer(key+1,()=>{
                 const summoning = new Summoning({Id:id,Index:index??-1,PlayerID:playerid},scene_name)
                 GameRules.SceneManager.global_add(summoning.UUID,summoning)
                 GameRules.SceneManager.update()

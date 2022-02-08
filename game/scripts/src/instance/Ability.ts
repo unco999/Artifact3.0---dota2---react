@@ -1,6 +1,7 @@
 import {  damage } from "../feature/damage";
 import { Timers } from "../lib/timers";
 import { reloadable } from "../lib/tstl-utils";
+import { get_current_operate_brach } from "../Manager/nettablefuc";
 import { set_settlement_false, set_settlement_true } from "../Manager/statusSwitcher";
 import { Card, CardParameter, CARD_TYPE, professionalMagicCard } from "./Card";
 import { ModifilerContainer } from "./Modifiler";
@@ -42,6 +43,13 @@ export enum Magic_team{
     "敌方",
     "双方",
     "自己"
+}
+
+export enum Magic_attack_tart_type{
+    "小兵" = 1,
+    "召唤物" = 2,
+    "英雄" = 4,
+    "所有" = 1 + 2 + 4
 }
 
 export function ca_register_ability() {
@@ -95,7 +103,7 @@ export class AbilityCard extends Card {
     }
 
     ToData() {
-        return {skillSubject:this.hasHero,name:this.abilityInstance.heroid,replacementCard:this.abilityInstance.displacement}
+        return {skillSubject:this.hasHero,name:this.abilityInstance.heroid,replacementCard:this.abilityInstance.displacement,vacancyRelease:this.abilityInstance.vacancyRelease}
     }
 
 }
@@ -123,6 +131,25 @@ export class SmallSkill extends AbilityCard{
     }
 } 
 
+export function brachFilfer(str:string,playerID:PlayerID){
+    print("传入的解析路线是",str)
+    switch(str){
+        case "1":{
+            print("解析为上路")
+            return GameRules.SceneManager.GetGoUpScene(playerID)
+        }
+        case "2":{
+            print("解析为中路")
+            return GameRules.SceneManager.GetMidwayScene(playerID)
+        }
+        case "3":{
+            print("解析为下路")
+            return GameRules.SceneManager.GetLaidDownScene(playerID)
+        }
+    }
+    return null
+}
+
 
 
 export class ability_templater{
@@ -133,21 +160,32 @@ export class ability_templater{
     Magic_brach:Magic_brach
     Magic_team:Magic_team
     Magic_range:Magic_range
+    Magic_attack_tart_type:Magic_attack_tart_type = Magic_attack_tart_type.所有
     wounded:boolean = false
-    /** 全场空格位技能 -1为否  1为本路  2为全场 */
+    /** 全场空格位技能 -1为否  1为本路  2为全场*/
     displacement:number = -1
     /**-1为不可作用域防御塔   1为本路防御塔   2为全局防御塔 */ 
     istypeTower:number = -1 
     skillAnimation:number = 3.5;
+    vacancyRelease:boolean = false
 
     spell_tower(table:(Card|number)[],target?:string,hero?:Unit,tower?:Tower){
 
     }
 
 
-    spell_skill(table:(Unit|number)[],target?:string,hero?:Unit){
+    spell_skill(table:(Unit|number)[],target?:string,hero?:Unit,target_index?:number /**空格释放技能 所选择的空格索引 */){
         set_settlement_true()
         Timers.CreateTimer(this.skillAnimation,()=>{
+            const mylist = (brachFilfer(get_current_operate_brach(),GameRules.Red.GetPlayerID()) as BattleArea).getCurrentNapSequenceList()
+            const youlist = (brachFilfer(get_current_operate_brach(),GameRules.Blue.GetPlayerID()) as BattleArea).getCurrentNapSequenceList()
+            for(let key = 1 ; key < mylist.length - 1 ; key++){
+                if(mylist[key] == false && youlist[key] == false){
+                    (brachFilfer(get_current_operate_brach(),GameRules.Red.GetPlayerID()) as BattleArea).call_cetner();
+                    (brachFilfer(get_current_operate_brach(),GameRules.Blue.GetPlayerID()) as BattleArea).call_cetner();
+                    break;
+                }
+            }
             set_settlement_false()
         })
     }
@@ -510,9 +548,11 @@ export class SmallSkill_juedou extends ability_templater{
      Magic_team = Magic_team.友方
      Magic_range = Magic_range.单体
      heroid="33"
-     wounded = true
+     wounded = false
      ability_select_type: select_type = select_type.友方单体;
+     Magic_attack_tart_type = Magic_attack_tart_type.小兵 | Magic_attack_tart_type.召唤物
      consumption: number = 3
+     skillAnimation = 5
 
      constructor(){
          super("SmallSkill_emozhuanhua")
@@ -521,12 +561,12 @@ export class SmallSkill_juedou extends ability_templater{
      spell_skill(table:(Unit|number)[],target?:string,hero?:Unit){
         if(!target || !hero) return
         const _target = GameRules.SceneManager.get_card(target) as Unit
-        if(_target.isinjuried()){
-            super.spell_skill(table,target,hero)
-            const _damage = new damage(_target,hero)
-            _damage.spell_skill_settlement(_target.max_heal,hero)
+        super.spell_skill(table,target,hero)
+        const _damage = new damage(hero,_target as Unit,true)
+        _damage.spell_skill_settlement((_target as Unit).max_heal,hero,'purely')
+        Timers.CreateTimer(1.5,()=>{
             GameRules.brash_solidier.playerSummoning("1",3,hero.PlayerID,hero.Scene as BattleArea)
-        }
+        }) 
       }
  
      /**伤害结算方法 */
@@ -637,6 +677,7 @@ export class SmallSkill_juedou extends ability_templater{
      Magic_brach = Magic_brach.跨线
      Magic_team = Magic_team.敌方
      Magic_range = Magic_range.全体
+     Magic_attack_tart_type = Magic_attack_tart_type.英雄
      heroid = "22"
      ability_select_type: select_type = select_type.敌方全体;
      consumption: number = 6
@@ -651,8 +692,10 @@ export class SmallSkill_juedou extends ability_templater{
          table.forEach(target=>{
              if(typeof(target) != 'number'){
                  if(target.Index){
-                     const _damage = new damage(hero,target)
-                     _damage.spell_skill_settlement(this.damage_calculate(hero),hero)
+                     if(target.type == 'Solider'){
+                        const _damage = new damage(hero,target)
+                        _damage.spell_skill_settlement(this.damage_calculate(hero),hero)
+                     }
                  }   
              }
          })
@@ -743,7 +786,7 @@ export class SmallSkill_juedou extends ability_templater{
      Magic_range = Magic_range.单体
      heroid = "44"
      ability_select_type: select_type = select_type.敌方单体;
-     wounded: boolean = true;
+     wounded: boolean = false;
      consumption: number = 5
  
      constructor(){
@@ -759,10 +802,6 @@ export class SmallSkill_juedou extends ability_templater{
             _target.hurt(_target.max_heal,hero,'purely')       
         }
     }
-     /**伤害结算方法 */
-     damage_calculate(distance:number){
-         return 3 - distance
-     }
 }
 
 
@@ -1033,12 +1072,13 @@ export class TrickSkill_jizhonghuoli  extends ability_templater{
 @ca_register_ability()
 export class TrickSkill_zirandezhaohuan extends ability_templater{
     Magic_brach = Magic_brach.本路
-    Magic_team = Magic_team.自己
+    Magic_team = Magic_team.友方
     Magic_range = Magic_range.单体
     heroid = "53"
+    displacement = 1
     ability_select_type: select_type = select_type.自己;
     consumption: number = 5
-
+    vacancyRelease = true // 空位释放
 
     constructor(){
         super("TrickSkill_zirandezhaohuan")
@@ -1048,15 +1088,12 @@ export class TrickSkill_zirandezhaohuan extends ability_templater{
 
     spell_skill(table:(Unit|number)[],target?:string,hero?:Unit){
         // const hero = GameRules.SceneManager.get_hero(this.heorheroid) as Unit
-        if(!target || !hero) return
         super.spell_skill(table,target,hero)
         const _target = GameRules.SceneManager.get_card(target) as Unit
-        if(_target.PlayerID == hero.PlayerID){
-            const scene = hero.Scene as BattleArea
-            const count = scene.GetSpaceCount()
-            GameRules.brash_solidier.playerSummoning("4",count,hero.PlayerID,hero.Scene as BattleArea)
-            
-        }
+        const scene = hero.Scene as BattleArea
+        const count = scene.GetSpaceCount()
+        GameRules.brash_solidier.playerSummoning("4",count,hero.PlayerID,hero.Scene as BattleArea)
+        print("触发了自然的召唤",hero.UUID)      
     }
 }   
 
@@ -1081,9 +1118,8 @@ export class TrickSkill_youlingchuan extends ability_templater{
     spell_skill(table:(Unit|number)[],target?:string,hero?:Unit){
         if(!target || !hero) return
         super.spell_skill(table,target,hero)
-        super.spell_skill(table,target,hero)
         const _target = GameRules.SceneManager.get_card(target) as Unit
-        const _damage = new damage(hero,_target)
+        const _damage = new damage(hero,_target,true)
         _damage.spell_skill_settlement(this.damage_calculate(),hero)
         const units = _target.Scene.find_oppose().getAll() as Unit[]
         units.forEach(card=>{

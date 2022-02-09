@@ -7,11 +7,11 @@ import Queue from "../structure/Queue";
 import { LinkedList } from "../structure/Linkedlist";
 import { Card, uuid } from "./Card";
 import { Timers } from "../lib/timers";
-import { AbilityCard, SmallSkill, TrickSkill } from "./Ability";
+import { AbilityCard, brachFilfer, SmallSkill, TrickSkill } from "./Ability";
 import { Stack } from "../structure/Stack";
 import { Solider, Unit } from "./Unit";
 import "./Ability";
-import { BATTLE_BRACH_STATE } from "../Manager/nettablefuc";
+import { BATTLE_BRACH_STATE, get_current_battle_brach, get_current_operate_brach } from "../Manager/nettablefuc";
 
 type PlayerScene = Record<number, Scenes | BattleArea>;
 
@@ -1044,6 +1044,7 @@ export class ScenesManager {
         const playerid = card.PlayerID;
 
         print(card.UUID, "要去", to);
+        print("当前的index类型是",typeof(index))
         switch (to) {
             case 'HAND': {
                 const currentscnese = this.GetHandsScene(playerid);
@@ -1056,7 +1057,7 @@ export class ScenesManager {
             case 'MIDWAY': {
                 const currentscnese = this.GetMidwayScene(playerid);
                 this.All[uuid].Scene.Remove(uuid);
-                (this.GetMidwayScene(playerid) as Midway).AutoAddCard(card, index);
+                (this.GetMidwayScene(playerid) as Midway).AutoAddCard(card, index && Number(index));
                 card.Scene = currentscnese;
                 !update && this.All[uuid].update('MIDWAY');
                 break;
@@ -1064,7 +1065,7 @@ export class ScenesManager {
             case 'LAIDDOWN': {
                 const currentscnese = this.GetLaidDownScene(playerid);
                 this.All[uuid].Scene.Remove(uuid);
-                (this.GetLaidDownScene(playerid) as LaidDown).AutoAddCard(card, index);
+                (this.GetLaidDownScene(playerid) as LaidDown).AutoAddCard(card, index && Number(index));
                 card.Scene = currentscnese;
                 !update && this.All[uuid].update('LAIDDOWN');
                 break;
@@ -1072,7 +1073,7 @@ export class ScenesManager {
             case 'GOUP': {
                 const currentscnese = this.GetGoUpScene(playerid);
                 this.All[uuid].Scene.Remove(uuid);
-                (this.GetGoUpScene(playerid) as GoUp).AutoAddCard(card, index);
+                (this.GetGoUpScene(playerid) as GoUp).AutoAddCard(card, index && Number(index));
                 card.Scene = currentscnese;
                 !update && this.All[uuid].update('GOUP');
                 break;
@@ -1109,6 +1110,29 @@ export class ScenesManager {
             }
         }
         return card;
+    }
+
+    /**场景居中 */
+    Current_Scnese_Card_Center(Switch_Oparetpr:boolean){
+        const redid = GameRules.Red.GetPlayerID()
+        const blueid = GameRules.Blue.GetPlayerID()
+        const router = brachFilfer(Switch_Oparetpr ? get_current_operate_brach() : get_current_battle_brach() ,redid) as BattleArea
+        const oppositerouter =brachFilfer(Switch_Oparetpr ? get_current_operate_brach() : get_current_battle_brach() ,blueid) as BattleArea
+        const redlist = router.getCurrentNapSequenceList()
+        const bluelist = oppositerouter.getCurrentNapSequenceList()
+        for(let key = 0 ; key <  redlist.length ; key++){
+            if( redlist[key] == false && bluelist[key] == false){
+                if(key <= 3){ 
+                    router.foreach(card=>card.right())
+                    oppositerouter.foreach(card=>card.right())
+                }
+                if(key >= 3){
+                    router.foreach(card=>card.left())
+                    oppositerouter.foreach(card=>card.left())
+                }
+                return
+            }
+        }
     }
 
     /**获取字符串对应的场景 */

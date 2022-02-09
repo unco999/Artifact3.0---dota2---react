@@ -5,7 +5,8 @@ import { BattleArea } from "../instance/Scenes";
 import { Tower } from "../instance/Tower";
 import { Unit } from "../instance/Unit";
 import { Timers } from "../lib/timers";
-import { get_current_battle_brach, get_current_operate_brach } from "../Manager/nettablefuc";
+import { get_current_battle_brach, get_current_operate_brach, Get_current_option_playuer } from "../Manager/nettablefuc";
+import { get_settlement_current, isCanOperate, optionMask, SetGameLoopMasK, set_oparator_true, set_settlement_false, set_settlement_true } from "../Manager/statusSwitcher";
 
 
 export enum Magic_brach{
@@ -158,13 +159,15 @@ export class select_the_prompt{
             })
         })
         CustomGameEventManager.RegisterListener("C2S_REP_SKILL",(_,event)=>{
-            print("收到了拖入时间")
-            DeepPrintTable(event)
+            if(!isCanOperate(event.PlayerID) || get_settlement_current() == 1 || Get_current_option_playuer() != event.PlayerID.toString()) return;
             const abilityinstance = AbiliyContainer.instance.GetAbility(event.abilityname)
             const hero = GameRules.SceneManager.get_hero(abilityinstance.heroid)
             const brachkey = event.to
             let index = event.index
             let scnese:BattleArea
+            set_oparator_true(event.PlayerID)
+            SetGameLoopMasK(event.PlayerID == GameRules.Red.GetPlayerID() ? optionMask.红队有操作 : optionMask.蓝队有操作)
+            set_settlement_true()
             print("当前传入的index",index)
             switch(brachkey){
                 case "0":{
@@ -180,17 +183,18 @@ export class select_the_prompt{
                     break
                 }
             }
-            GameRules.SceneManager.change_secens(event.uuid,"ABILITY",+get_current_operate_brach())
-            Timers.CreateTimer(2,()=>{
-                GameRules.SceneManager.change_secens(hero.UUID,scnese.SceneName,+index)
+            GameRules.SceneManager.change_secens(event.uuid,"ABILITY")     
+            Timers.CreateTimer(1.5,()=>{
+                GameRules.SceneManager.change_secens(hero.UUID,scnese.SceneName,Number(index))
                 const find_data = this.validRangeLookup(hero.PlayerID,abilityinstance.Magic_brach,
                     abilityinstance.Magic_range,
                     abilityinstance.Magic_team,
                     abilityinstance.Magic_attack_tart_type,
                     hero.Id,
-                    )
+                )
                 abilityinstance.post_move_spell_skill(find_data?.table as (Unit|number)[] ?? [],undefined,hero as Unit)
-                GameRules.SceneManager.change_secens(event.uuid,"REMOVE",+get_current_operate_brach())
+                print("特效全部执行完毕")
+                GameRules.SceneManager.change_secens(event.uuid,"REMOVE")
             })
         })
     }//

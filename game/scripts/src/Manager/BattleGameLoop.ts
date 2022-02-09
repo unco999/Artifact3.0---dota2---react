@@ -1,6 +1,7 @@
 import { ScenesBuildbehavior } from "../Build/Scenesbuilder";
 import { damage } from "../feature/damage";
 import { AbilityCard } from "../instance/Ability";
+import { Card } from "../instance/Card";
 import { BattleArea, Cardheaps, Grave, Hand, Hide, Scenes } from "../instance/Scenes";
 import { Unit } from "../instance/Unit";
 import { Timers } from "../lib/timers";
@@ -15,10 +16,10 @@ export enum 游戏循环 {
     "商店购买阶段"
 }
 
-const 商店购买时间 = 15
-const 英雄部署时间 = 20
+const 商店购买时间 = 5
+const 英雄部署时间 = 5
 const 战斗结算时间 = 7
-const 策略时间 = 30
+const 策略时间 = 12
 
 //第一回合六張牌  5小1大  第一回合結束  商店功能花錢買牌(2元买大技能 1元买小技能)  然後英雄分錄  分完路發兩張   
 
@@ -379,19 +380,7 @@ export class injurySettlementStage extends GameLoopState {
     }
 
     exit(){
-        const redid = GameRules.Red.GetPlayerID()
-        const blueid = GameRules.Blue.GetPlayerID()
-        const router = GameRules.SceneManager.fitler(this.settlementRoute,redid) as BattleArea
-        const oppositerouter = GameRules.SceneManager.fitler(this.settlementRoute,blueid) as BattleArea
-        const redlist = router.getCurrentNapSequenceList()
-        const bluelist = oppositerouter.getCurrentNapSequenceList()
-        for(let key = 0 ; key <  redlist.length ; key++){
-            if( redlist[key] == false && bluelist[key] == false){
-                router.call_cetner()
-                oppositerouter.call_cetner()
-                return
-            }
-        }
+        GameRules.SceneManager.Current_Scnese_Card_Center(false)
     }
 
     run(){

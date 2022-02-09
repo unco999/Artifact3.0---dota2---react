@@ -177,15 +177,7 @@ export class ability_templater{
     spell_skill(table:(Unit|number)[],target?:string,hero?:Unit,target_index?:number /**空格释放技能 所选择的空格索引 */){
         set_settlement_true()
         Timers.CreateTimer(this.skillAnimation,()=>{
-            const mylist = (brachFilfer(get_current_operate_brach(),GameRules.Red.GetPlayerID()) as BattleArea).getCurrentNapSequenceList()
-            const youlist = (brachFilfer(get_current_operate_brach(),GameRules.Blue.GetPlayerID()) as BattleArea).getCurrentNapSequenceList()
-            for(let key = 1 ; key < mylist.length - 1 ; key++){
-                if(mylist[key] == false && youlist[key] == false){
-                    (brachFilfer(get_current_operate_brach(),GameRules.Red.GetPlayerID()) as BattleArea).call_cetner();
-                    (brachFilfer(get_current_operate_brach(),GameRules.Blue.GetPlayerID()) as BattleArea).call_cetner();
-                    break;
-                }
-            }
+            GameRules.SceneManager.Current_Scnese_Card_Center(true)
             set_settlement_false()
         })
     }
@@ -195,10 +187,8 @@ export class ability_templater{
      * 位移后效果
      */
     post_move_spell_skill(table:(Unit|number)[],target?:string,hero?:Unit){
-        set_settlement_true()
-        Timers.CreateTimer(this.skillAnimation,()=>{
-            set_settlement_false()
-        })
+        print("关闭了特效显示")
+        set_settlement_false()        
     }
 
     constructor(id:string){
@@ -596,7 +586,7 @@ export class SmallSkill_juedou extends ability_templater{
      }
 
      post_move_spell_skill(table: (number | Unit)[], target?: string, hero?: Unit): void {
-         
+         super.post_move_spell_skill(table,target,hero)
      }
 }   
 
@@ -605,9 +595,9 @@ export class SmallSkill_juedou extends ability_templater{
  */
  @ca_register_ability()
  export class SmallSkill_hongliu extends ability_templater{
-    Magic_brach = Magic_brach.跨线
-    Magic_team = Magic_team.双方
-    Magic_range = Magic_range.全体
+    Magic_brach = Magic_brach.本路
+    Magic_team = Magic_team.敌方
+    Magic_range = Magic_range.近邻
     heroid="23"
     ability_select_type: select_type = select_type.敌方近邻;
     consumption: number = 4
@@ -635,7 +625,7 @@ export class SmallSkill_juedou extends ability_templater{
     damage_calculate(){
         return 3
     }
-}   
+}
 
 /**
  * 惑幻：召唤一个等同于恐怖利刃基础数值的幻想
@@ -1452,7 +1442,7 @@ export class SmallSkill_julang extends ability_templater{
     consumption: number = 3;
     constructor(){
         super("SmallSkill_julang")
-    }
+    }   
 
     spell_skill(table:(Unit|number)[],target?:string,hero?:Unit){
         if(!target || !hero) return

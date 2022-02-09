@@ -30,7 +30,7 @@ export abstract class Card{
     
     constructor(CardParameter:CardParameter,Scene:ICAScene,type:CARD_TYPE){
         this.type = type
-        this.UUID = DoUniqueString(GetSystemTime())
+        this.UUID = DoUniqueString("Card")
         this.Id = CardParameter.Id
         this.Index = CardParameter.Index
         this.PlayerID = CardParameter.PlayerID

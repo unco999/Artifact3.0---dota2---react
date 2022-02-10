@@ -147,9 +147,15 @@ export class Cardheaps extends Scenes {
         super.Remove(uuid);
     }
 
-    takeAHand(){
+    /**取出一张heaps牌 */
+    takeAHand(isSmall?:boolean){
         let card:Card;
         for(const key in this.CardPool){
+            if(isSmall){
+                if(card.type == 'SmallSkill'){
+                    return this.CardPool[key]
+                }
+            }
             card = this.CardPool[key]
         }
         return card
@@ -304,7 +310,7 @@ export abstract class BattleArea extends Scenes {
             }
             if(this.CardList[index - 1 - i] == -1){
                 return i
-            }
+            }   
         }
         return -1
     }

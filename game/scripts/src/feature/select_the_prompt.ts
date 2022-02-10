@@ -85,6 +85,10 @@ export class select_the_prompt{
            print("找到的魔法实例",abilityinstance,"他的魔法卡名称为",abilityinstance.id)
            if(!this.splitLimiter(abilityinstance.heroid,event.PlayerID)) return;
            const hero = GameRules.SceneManager.get_hero(abilityinstance.heroid) as Hero
+           if(hero.isunableToReleaseSkills()){
+                CustomGameEventManager.Send_ServerToPlayer(PlayerResource.GetPlayer(event.PlayerID),"S2C_INFORMATION",{information:"当前英雄无法释放技能!"})
+                return false
+           }
            let find_data = this.ability_select_show(event.abilityname,hero)
            if(abilityinstance.wounded){
                find_data.table = find_data.table.filter(card=>{

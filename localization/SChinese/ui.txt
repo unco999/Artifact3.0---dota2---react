@@ -2,9 +2,9 @@
 
 "RedSelectstage" "红队"
 "BlueSelectstage" "蓝队"
-"branch_1" "我方上路"
-"branch_2" "我方中路"
-"branch_3" "我方下路"
+"branch_0" "我方上路"
+"branch_1" "我方中路"
+"branch_2" "我方下路"
 
 loop_state0 "英雄部署阶段"
 loop_state1 "策略阶段"

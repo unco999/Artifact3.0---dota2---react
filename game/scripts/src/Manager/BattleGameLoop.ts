@@ -16,10 +16,10 @@ export enum 游戏循环 {
     "商店购买阶段"
 }
 
-const 商店购买时间 = 5
-const 英雄部署时间 = 5
+const 商店购买时间 = 15
+const 英雄部署时间 = 20
 const 战斗结算时间 = 7
-const 策略时间 = 12
+const 策略时间 = 20
 
 //第一回合六張牌  5小1大  第一回合結束  商店功能花錢買牌(2元买大技能 1元买小技能)  然後英雄分錄  分完路發兩張   
 
@@ -170,8 +170,8 @@ export class heroDeploymentPhase extends GameLoopState {
         for(let i = 0 ; i < 2 ; i++){
            const redCard = redScenesHand.takeAHand()
            const blueCard = BlueScenesHand.takeAHand()
-           GameRules.SceneManager.change_secens(redCard.UUID,"HAND")
-           GameRules.SceneManager.change_secens(blueCard.UUID,"HAND")
+           redCard && GameRules.SceneManager.change_secens(redCard.UUID,"HAND")
+           blueCard && GameRules.SceneManager.change_secens(blueCard.UUID,"HAND")
         }
     }
 
@@ -270,9 +270,9 @@ export class faultCard extends GameLoopState {
     init_give_cards() {
        const redScenesHand = GameRules.SceneManager.GetCardheapsScene(GameRules.Red.GetPlayerID()) as Cardheaps
        const BlueScenesHand = GameRules.SceneManager.GetCardheapsScene(GameRules.Blue.GetPlayerID()) as Cardheaps
-       for(let i = 0 ; i < (IsInToolsMode() ? 16 : 4); i++){
-          const redCard = redScenesHand.takeAHand()
-          const blueCard = BlueScenesHand.takeAHand()
+       for(let i = 0 ; i < (IsInToolsMode() ? 16 : 5); i++){
+          const redCard = redScenesHand.takeAHand(!IsInToolsMode() && true)
+          const blueCard = BlueScenesHand.takeAHand(!IsInToolsMode() && true)
           GameRules.SceneManager.change_secens(redCard.UUID,"HAND")
           GameRules.SceneManager.change_secens(blueCard.UUID,"HAND")
        }

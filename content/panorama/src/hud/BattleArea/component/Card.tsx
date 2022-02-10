@@ -247,6 +247,7 @@ export const Card = (props:{index:number,uuid:string,owner:number,team:{red:numb
     useGameEvent("S2C_SEND_MODIFILER",(event)=>{
         if(props.uuid != event.uuid) return
         setmodifiler(JsonString2Array(event.data))
+        $.Msg("收到了buffer数据包",event)
     },[])
 
     useEffect(()=>{
@@ -621,6 +622,9 @@ export const Card = (props:{index:number,uuid:string,owner:number,team:{red:numb
         return <>
         <Panel hittest={true}
          onmouseactivate={()=>{GameEvents.SendCustomGameEventToServer("TEST_C2S_DEATH",{uuid:props.uuid})}}   className={prefix+'Card'} ref={Panel => ref.current = Panel}>
+                <Panel className={"Modifiler_Main"}>
+                {modifilers.map(value=><StateCompoent key={shortid.generate()} name={value.name} duration={value.duration}/>)}
+                </Panel>
                 <Label text={"召唤物"} style={{fontSize:'30px',color:'white',textShadow:'0px 0px 0px 5.0 black',align:'center center'}}/>
                 <Label text={props.uuid} className={"uuid"}/>
                 <Panel className={"threeDimensional"}>
@@ -653,6 +657,9 @@ export const Card = (props:{index:number,uuid:string,owner:number,team:{red:numb
         return <>
          <Panel hittest={true}
          onmouseactivate={()=>{GameEvents.SendCustomGameEventToServer("TEST_C2S_DEATH",{uuid:props.uuid})}}   className={prefix+'Card'} ref={Panel => ref.current = Panel}>
+                 <Panel className={"Modifiler_Main"}>
+                  {modifilers.map(value=><StateCompoent key={shortid.generate()} name={value.name} duration={value.duration}/>)}
+                  </Panel>
                 <Label text={"小兵"} style={{fontSize:'30px',color:'white',textShadow:'0px 0px 0px 5.0 black',align:'center center'}}/>
                 <Label text={props.uuid} className={"uuid"}/>
                 <Panel className={"threeDimensional"}>
@@ -693,7 +700,9 @@ export const Card = (props:{index:number,uuid:string,owner:number,team:{red:numb
             <Panel hittest={true} draggable={true} ref={Panel => ref.current = Panel} onmouseactivate={()=>{$.Msg("ggg");/**GameEvents.SendCustomGameEventToServer("TEST_C2S_DEATH",{uuid:props.uuid})**/}}  className={prefix+'Card'} 
             onmouseover={()=>{state.Scene == "GRAVE" && graveTipFunction.current()}} onmouseout={()=>$.DispatchEvent('DOTAHideTextTooltip')}
             >
-                  {modifilers.map(value=><StateCompoent key={value.id + value.name + value.duration} name={value.name} duration={value.duration}/>)}
+                  <Panel className={"Modifiler_Main"}>
+                  {modifilers.map(value=><StateCompoent key={shortid.generate()} name={value.name} duration={value.duration}/>)}
+                  </Panel>
                   <EquipmentManager owned={props.owner} uuid={props.uuid}/>
                   <Label hittest={false} text={"id:"+state.Id + "|" + props.uuid} className={"uuid"}/>
                   <DOTAHeroImage hittest={false}  className={"heroimage"} heroimagestyle={'portrait'} heroname={(GameUI.CustomUIConfig() as any).CardHero.CardGame[state.Id].name} />
@@ -734,7 +743,7 @@ export const Card = (props:{index:number,uuid:string,owner:number,team:{red:numb
         if(state.type = "Summoned"){
             return Summoning()
         }
-    },[props.index,props.owner,props.uuid,xstate,state,attribute,current_effect,update])
+    },[props.index,props.owner,props.uuid,xstate,state,attribute,current_effect,update,modifilers])
 
     return <>
             {card_type}

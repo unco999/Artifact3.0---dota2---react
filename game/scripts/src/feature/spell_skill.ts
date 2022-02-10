@@ -24,7 +24,8 @@ export class spell_skill{
                 print("当前能量水晶不足")
                 return;
             }
-            this.call_spell_skill(event.SKILL_ID,event.PlayerID,null,event.spell_ability_card_uuid,+event.target_index)
+            print("当前拖入的空格是",event.target_index)
+            this.call_spell_skill(event.SKILL_ID,event.PlayerID,null,event.spell_ability_card_uuid,Number(event.target_index))
             CustomGameEventManager.Send_ServerToAllClients("S2C_OFF_ALL_SPACE",{})   
             set_oparator_true(event.PlayerID)
             set_settlement_true()
@@ -62,6 +63,7 @@ export class spell_skill{
                 abilityInstance.spell_tower(data.table,undefined,hero,tower)
             })
             set_oparator_true(event.PlayerID)
+            SetGameLoopMasK(event.PlayerID == GameRules.Red.GetPlayerID() ? optionMask.红队有操作 : optionMask.蓝队有操作)
             set_settlement_true()
         })
     }
@@ -84,7 +86,7 @@ export class spell_skill{
                 const hero = GameRules.SceneManager.get_hero(abilityInstance.heroid) as Unit
                 const data = GameRules.select_the_prompt.validRangeLookup(player,abilityInstance.Magic_brach,abilityInstance.Magic_range,abilityInstance.Magic_team,abilityInstance.Magic_attack_tart_type,abilityInstance.heroid)
                 const ability = AbiliyContainer.instance.GetAbility(id)
-                ability.spell_skill(data.table as (Unit|number)[],target,hero)
+                ability.spell_skill(data.table as (Unit|number)[],target,hero,target_index)
             })
         }else{
             print("非法操作")

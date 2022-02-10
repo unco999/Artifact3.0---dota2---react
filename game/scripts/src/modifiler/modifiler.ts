@@ -193,19 +193,15 @@ export class item_aegis_modifiler extends CAModifiler{
      debuff: boolean = false;
      preDeathIndex:number //死亡前的序号
      preDeathBrach:string //死亡前的场景名字
- 
+
      constructor(){
          super("abyssal_underlord_pit_of_malice_modifiler")
          print("创造了装备的modifiler")
      }
  
-     constructorinstance = item_force_field_modifiler
+     constructorinstance = abyssal_underlord_pit_of_malice_modifiler
  
      register_hook_event() {
-         this.setHookEvent(HOOK.创造时,()=>{
-            this.duration = 1
-            return false
-         })
          this.setHookEvent(HOOK.死亡后,()=>{
              this.thisHero.removeModifiler(this.name)
              return true
@@ -252,6 +248,10 @@ export class item_aegis_modifiler extends CAModifiler{
           this.setHookEvent(HOOK.攻击前,(thishero:Unit)=>{
               return true
           })
+          this.setHookEvent(HOOK.死亡后,()=>{
+            this.thisHero.removeModifiler(this.name)
+            return true
+        })
       }
   
   
@@ -282,7 +282,7 @@ export class item_aegis_modifiler extends CAModifiler{
       name: string = "shanghaimianyi_modifiler";
       modifilertype: modifilertype = modifilertype.原始;
       duration: number = 1;
-      debuff: boolean = true;
+      debuff: boolean = false;
   
       constructor(){
           super("shanghaimianyi_modifiler")
@@ -295,12 +295,14 @@ export class item_aegis_modifiler extends CAModifiler{
               print("触发了攻击前特效=====守护天使")
               if(attack_type == 'purely'){
                   print("当前攻击为纯粹伤害,无法免伤")
-                  this.thisHero.removeModifiler(this.name)
                   return false
               }
-              this.thisHero.removeModifiler(this.name)
               return true
           })
+          this.setHookEvent(HOOK.死亡后,()=>{
+            this.thisHero.removeModifiler(this.name)
+            return true
+        })
       }
   
   
@@ -343,6 +345,7 @@ export class qianggong_modifiler extends CAModifiler{
             let _modifiler:string
             this.setHookEvent(HOOK.创造时,(thishero:Unit)=>{
                 const bool = thishero.isunableToAttack()
+                if(!bool) return false 
                 for(const modifiler of thishero.Modifilers){
                    if(modifiler.modifilertype != modifilertype.原始){
                        _modifiler = modifiler.name
@@ -350,6 +353,10 @@ export class qianggong_modifiler extends CAModifiler{
                 }
                 thishero.removeModifiler(_modifiler)
                 return false
+            })
+            this.setHookEvent(HOOK.死亡后,()=>{
+                this.thisHero.removeModifiler(this.name)
+                return true
             })
         }
     
@@ -390,6 +397,10 @@ export class qianggong_modifiler extends CAModifiler{
         constructorinstance = julang_modifiler
     
         register_hook_event() {
+            this.setHookEvent(HOOK.死亡后,()=>{
+                this.thisHero.removeModifiler(this.name)
+                return true
+            })
         }
     
     
@@ -398,7 +409,7 @@ export class qianggong_modifiler extends CAModifiler{
         }
     
         get influenceAttack(): any {
-            return 4
+            return 0
         }
     
         get influenceArrmor(): any {
@@ -429,7 +440,10 @@ export class qianggong_modifiler extends CAModifiler{
         constructorinstance = youlingchuan_modifiler
     
         register_hook_event() {
-
+            this.setHookEvent(HOOK.死亡后,()=>{
+                this.thisHero.removeModifiler(this.name)
+                return true
+            })
         }
     
     

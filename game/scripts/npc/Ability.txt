@@ -69,7 +69,7 @@
 		"heroid" "25"
 		"remark" "龙破斩：选择一个敌方单位，对其和其近邻造成3/5/7点伤害"
 		"id" "8"
-		"originname" "luna_lucent_beam"
+		"originname" "lina_dragon_slave"
 
 	}
 	"SmallSkill_emozhuanhua" {
@@ -134,7 +134,7 @@
 
 "
 		"id" "15"
-		"originname" "keeper_of_the_light_illuminate"
+		"originname" "keeper_of_the_light_blinding_light"
 
 	}
 	"SmallSkill_shengmingjiqu" {
@@ -185,7 +185,7 @@
 		"heroid" "22"
 		"remark" "雷神之怒：对所有兵线上的每名敌方英雄造成3/5/7点纯粹伤害"
 		"id" "21"
-		"originname" "sandking_epicenter"
+		"originname" "zuus_thundergods_wrath"
 
 	}
 	"TrickSkill_qianggong" {
@@ -248,7 +248,7 @@
 		"heroid" "25"
 		"remark" "神灭斩：对一个敌方单位造11/14/17点魔法伤害"
 		"id" "28"
-		"originname" "luna_eclipse"
+		"originname" "lina_laguna_blade"
 
 	}
 	"TrickSkill_heidong" {

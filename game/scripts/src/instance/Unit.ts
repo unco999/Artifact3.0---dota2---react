@@ -35,9 +35,7 @@ export class Unit extends Card{
         const table = {}
         table["uuid"] = this.UUID
         table["data"] = list
-        if(list.length > 0){
-            CustomGameEventManager.Send_ServerToAllClients("S2C_SEND_MODIFILER",table)
-        }
+        CustomGameEventManager.Send_ServerToAllClients("S2C_SEND_MODIFILER",table)
     }
 
     /**是否处于无法攻击状态 */
@@ -48,8 +46,19 @@ export class Unit extends Card{
         return false
     }
 
+    /**是否处于无法释放技能状态 */
+    isunableToReleaseSkills(){
+        for(const modifiler of this.Modifilers){
+            return bit.bor(modifiler.modifilertype,modifilertype.晕眩) == modifiler.modifilertype
+            || bit.bor(modifiler.modifilertype,modifilertype.沉默) == modifiler.modifilertype
+            || bit.bor(modifiler.modifilertype,modifilertype.冻结) == modifiler.modifilertype
+         }
+         return false
+    }
+
 
     roundCalculation(){
+        print("该单位的modifiler减少了",this.UUID)
         const modiflers = []
         for(const modifiler of this.Modifilers){
             modifiler.duration--
@@ -58,18 +67,18 @@ export class Unit extends Card{
                     fuc.forEach(_fuc=>{
                         _fuc()
                     })
-                    if(this.Modifilers.length == 1){
-                        this.Modifilers = new LinkedList()
-                    }else{
-                        modiflers.push(modifiler)
-                    }
+                    modiflers.push(modifiler)
                 } 
-                modiflers.forEach(modifiler=>{
-                this.Modifilers.remove(modifiler)
-                 })
-              this.update_modifiler_to_client()
-              CustomGameEventManager.Send_ServerToAllClients("S2C_SEND_ATTRIBUTE",this.attribute)
             }
+            modiflers.forEach(modifiler=>{
+                if(this.Modifilers.length == 1){
+                    this.Modifilers = new LinkedList()
+                    return
+                }
+                this.Modifilers.remove(modifiler)
+            })
+            this.update_modifiler_to_client()
+            CustomGameEventManager.Send_ServerToAllClients("S2C_SEND_ATTRIBUTE",this.attribute)
     }
 
     /**是否受伤 */
@@ -219,7 +228,7 @@ export class Unit extends Card{
                 })
                 !deathbool && GameRules.SceneManager.change_secens(this.UUID,"Grave",-1)
                 !deathbool && this.deleteLimitedModifier()
-                this.cure(this.max_heal,this)
+                this.cure(99999,this)
                 const PostDeath = this.hook(HOOK.死亡后)
                 PostDeath.forEach(hook=>{
                     hook(this,Source)

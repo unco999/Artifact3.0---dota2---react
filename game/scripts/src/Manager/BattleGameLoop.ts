@@ -1,11 +1,9 @@
 import { ScenesBuildbehavior } from "../Build/Scenesbuilder";
 import { damage } from "../feature/damage";
 import { AbilityCard } from "../instance/Ability";
-import { Card } from "../instance/Card";
-import { BattleArea, Cardheaps, Grave, Hand, Hide, Scenes } from "../instance/Scenes";
+import { BattleArea, Cardheaps, Grave, Hand, Hide } from "../instance/Scenes";
 import { Unit } from "../instance/Unit";
 import { Timers } from "../lib/timers";
-import { LinkedList } from "../structure/Linkedlist";
 import { BATTLE_BRACH_STATE, clear_option_mask_state, get_current_battle_brach, get_current_operate_brach, loop_end_clear, set_current_battle_brach, set_current_operate_brach, Set_option_mask_state, STRATEGY_BRACH_STATE } from "./nettablefuc";
 import { Battle_Select_Brach, GameLoopMaskClearBlue, GameLoopMaskClearBlueSkip, GameLoopMaskClearRed, GameLoopMaskClearRedSkip, GameLoopMaskSkipBlue, GameLoopMaskSkipRed, get_oparaotr_current, get_settlement_current, isBattleSettlement, IsblueOperater, IsRedOperater, operate, optionMask, SetGameLoopMasK, set_oparator_false, strategy_Select_Brach } from "./statusSwitcher";
 
@@ -252,7 +250,7 @@ export class faultCard extends GameLoopState {
     entry() {
         super.entry();
         this.Set_cuurent_option_player = GameRules.Red.GetPlayerID().toString()
-        Timers.CreateTimer(0.33,()=>{
+        Timers.CreateTimer(0.5,()=>{
             this.create_solider() //每回合刷小兵
         })
         if (!this.host.init) {
@@ -263,6 +261,7 @@ export class faultCard extends GameLoopState {
             this.host.init = true;
             GameRules.SceneManager.update();
         } else {
+
         }
     }
 
@@ -270,11 +269,11 @@ export class faultCard extends GameLoopState {
     init_give_cards() {
        const redScenesHand = GameRules.SceneManager.GetCardheapsScene(GameRules.Red.GetPlayerID()) as Cardheaps
        const BlueScenesHand = GameRules.SceneManager.GetCardheapsScene(GameRules.Blue.GetPlayerID()) as Cardheaps
-       for(let i = 0 ; i < (IsInToolsMode() ? 16 : 5); i++){
-          const redCard = redScenesHand.takeAHand(!IsInToolsMode() && true)
-          const blueCard = BlueScenesHand.takeAHand(!IsInToolsMode() && true)
-          GameRules.SceneManager.change_secens(redCard.UUID,"HAND")
-          GameRules.SceneManager.change_secens(blueCard.UUID,"HAND")
+       for(let i = 0 ; i < 5; i++){
+          const redCard = redScenesHand.takeAHand(true)
+          const blueCard = BlueScenesHand.takeAHand(true)
+          redCard && GameRules.SceneManager.change_secens(redCard.UUID,"HAND")
+          blueCard && GameRules.SceneManager.change_secens(blueCard.UUID,"HAND")
        }
        this.initflag = true;
     }

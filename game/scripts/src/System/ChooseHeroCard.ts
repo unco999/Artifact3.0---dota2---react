@@ -260,6 +260,7 @@ export class showtime extends ChooseHerostate{
                 GameRules.gamemainloop = new BattleGameLoop()
                 GameRules.gamemainloop.StartcuurentsettingState = new faultCard(GameRules.gamemainloop,STRATEGY_BRACH_STATE.上路)
             })
+            return 1
         }
         return 1
     }

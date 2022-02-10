@@ -152,13 +152,15 @@ export class Cardheaps extends Scenes {
         let card:Card;
         for(const key in this.CardPool){
             if(isSmall){
-                if(card.type == 'SmallSkill'){
+                if(this.CardPool[key].type == 'SmallSkill'){
+                    print("找到一张小技能卡")
                     return this.CardPool[key]
                 }
+                continue
             }
             card = this.CardPool[key]
+            return card
         }
-        return card
      }
 
 

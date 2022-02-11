@@ -26,6 +26,7 @@ declare interface CustomNetTableDeclarations {
         red_is_oparator:{current:boolean} // 红色是否已经操作
         blue_is_oparator:{current:boolean} //蓝色是否已经操作
         is_settlement:{current:boolean} //是否正在结算
+        last_former:{current:PlayerID} // 上次先手
     } 
     Scenes:{
         [string:string]:Record<number,string>

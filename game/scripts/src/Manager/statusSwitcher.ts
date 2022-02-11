@@ -151,6 +151,16 @@ export function set_settlement_true(){
     CustomNetTables.SetTableValue("GameMianLoop","is_settlement",{current:true})
 }
 
+/**上次先手 */
+export function set_last_team_oparetor(team:PlayerID){
+    CustomNetTables.SetTableValue("GameMianLoop",'last_former',{current:team})
+}
+
+/**获取上次先手 */
+export function get_last_team_oparetor(){
+    return CustomNetTables.GetTableValue("GameMianLoop","last_former")
+}
+
 /**关闭特效播放标记 */
 export function set_settlement_false(){
     CustomNetTables.SetTableValue("GameMianLoop","is_settlement",{current:false})

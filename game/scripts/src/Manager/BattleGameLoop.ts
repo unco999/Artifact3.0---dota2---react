@@ -269,12 +269,14 @@ export class faultCard extends GameLoopState {
     init_give_cards() {
        const redScenesHand = GameRules.SceneManager.GetCardheapsScene(GameRules.Red.GetPlayerID()) as Cardheaps
        const BlueScenesHand = GameRules.SceneManager.GetCardheapsScene(GameRules.Blue.GetPlayerID()) as Cardheaps
-       for(let i = 0 ; i < 5; i++){
-          const redCard = redScenesHand.takeAHand(true)
-          const blueCard = BlueScenesHand.takeAHand(true)
-          redCard && GameRules.SceneManager.change_secens(redCard.UUID,"HAND")
-          blueCard && GameRules.SceneManager.change_secens(blueCard.UUID,"HAND")
-       }
+       const redCard = redScenesHand.takeAhand5Small()
+       const blueCard = BlueScenesHand.takeAhand5Small()
+          redCard.forEach(card=>{
+             GameRules.SceneManager.change_secens(card.UUID,"HAND")
+          })
+          blueCard.forEach(card=>{
+            GameRules.SceneManager.change_secens(card.UUID,"HAND")
+         })
        this.initflag = true;
     }
 

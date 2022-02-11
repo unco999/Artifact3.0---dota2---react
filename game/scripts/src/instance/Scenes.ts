@@ -163,7 +163,23 @@ export class Cardheaps extends Scenes {
         }
      }
 
-
+     takeAhand5Small(){
+         let cardlist:Card[] = []
+         let selected = []
+         for(const key in this.CardPool){
+         if(this.CardPool[key].type == 'SmallSkill'){
+            const card = this.CardPool[key] 
+            if(selected.includes( (card as SmallSkill).abilityInstance.id)){
+                continue
+            }
+            cardlist.push(card)
+            selected.push((card as SmallSkill).abilityInstance.id)
+            if(cardlist.length == 5){
+                return cardlist
+            }
+         }
+        }
+    }
 }
 
 /**手牌区 */
@@ -280,6 +296,17 @@ export abstract class BattleArea extends Scenes {
         }
         return count
     }
+    
+    doubleAirSpace(){
+       const target_scnese = this.find_oppose() as BattleArea
+       for(let k = 1 ; k < this.CardList.length - 1; k++){
+           if(this.CardList[k] == -1 && target_scnese.CardList[k] == -1){
+               print("找到空格")
+               return true
+           }
+       }
+       return false
+    }
 
     /**随机获得一个本路的友方英雄 */
     randomGet(){
@@ -308,10 +335,10 @@ export abstract class BattleArea extends Scenes {
     GetrecentSpace(index:number) {
         for(let i = 0 ; i < 3 ; i++){
             if(this.CardList[index - 1 + i] == -1){
-                return i
+                return index - i
             }
             if(this.CardList[index - 1 - i] == -1){
-                return i
+                return index - i
             }   
         }
         return -1
@@ -493,15 +520,16 @@ export abstract class BattleArea extends Scenes {
     }
 
     call_cetner() {
-        const center = this.CardList[3];
         for (let index = 1; index < 3; index++) {
             if (this.CardList[3 - index - 1] != -1) {
                 const leftcard = this.CardList[3 - index - 1] as Card;
-                leftcard.right();
+                this.find_oppose().IndexGet(leftcard.Index)?.right()
+                leftcard?.right();
             }
             if (this.CardList[3 + index - 1] != -1) {
                 const rightcard = this.CardList[3 + index - 1] as Card;
-                rightcard.left();
+                this.find_oppose().IndexGet(rightcard.Index)?.left()
+                rightcard?.left();
             }
         }
         print("打印当前状况", this.SceneName);
@@ -1126,21 +1154,36 @@ export class ScenesManager {
         const blueid = GameRules.Blue.GetPlayerID()
         const router = brachFilfer(Switch_Oparetpr ? get_current_operate_brach() : get_current_battle_brach() ,redid) as BattleArea
         const oppositerouter =brachFilfer(Switch_Oparetpr ? get_current_operate_brach() : get_current_battle_brach() ,blueid) as BattleArea
-        const redlist = router.getCurrentNapSequenceList()
-        const bluelist = oppositerouter.getCurrentNapSequenceList()
-        for(let key = 0 ; key <  redlist.length ; key++){
-            if( redlist[key] == false && bluelist[key] == false){
-                if(key <= 3){ 
-                    router.foreach(card=>card.right())
-                    oppositerouter.foreach(card=>card.right())
-                }
-                if(key >= 3){
-                    router.foreach(card=>card.left())
-                    oppositerouter.foreach(card=>card.left())
-                }
-                return
+        
+        for(let i = 1 ; i < 3 ; i++){
+            if(router.CardList[3 - i - 1] != -1){
+                (router.CardList[3 - i - 1] as Card).right()
+            } 
+            if(router.CardList[3 + i - 1] != -1){
+                (router.CardList[3 + i - 1] as Card).left()
+            }
+            if(oppositerouter.CardList[3 - i - 1] != -1){
+                (oppositerouter.CardList[3 - i - 1] as Card).right()
+            }
+            if(oppositerouter.CardList[3 + i - 1] != -1){
+                (oppositerouter.CardList[3 + i - 1] as Card).left()
             }
         }
+
+
+        let index = 0
+        router.foreach((card)=>{
+            index++
+            Timers.CreateTimer(index / 10,()=>{
+                card.update(card.Scene.SceneName)
+            })
+        })
+        oppositerouter.foreach((card)=>{ 
+            index++
+            Timers.CreateTimer(index / 10,()=>{
+                card.update(card.Scene.SceneName)
+            })
+        })
     }
 
     /**获取字符串对应的场景 */

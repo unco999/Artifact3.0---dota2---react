@@ -64,27 +64,42 @@ export abstract class Card{
         return scene.CardList[this.Index - 1 + 1] == -1
     }
 
-    /**卡牌向右边移动 */
+    /**卡牌向右边移动 带动对面的向左移动*/
     right(){
         const _scenes = this.Scene as BattleArea
+        const _targetScnese = this.Scene.find_oppose() as BattleArea
         if(!_scenes?.CardList) return;
-        while(this.Index > 0 && _scenes.CardList[this.Index + 1 - 1] == -1 && this.Index < 3){
+        while(_scenes.CardList[this.Index + 1 - 1] == -1 && this.Index < 3
+            && _targetScnese.CardList[this.Index + 1 - 1] == -1
+            ){
+                const oppositecard = _targetScnese.IndexGet(this.Index)
+                if(oppositecard){
+                    _targetScnese.CardList[oppositecard.Index - 1] = -1
+                    oppositecard.Index++
+                    _targetScnese.CardList[oppositecard.Index - 1] = oppositecard
+                }
                 _scenes.CardList[this.Index -1] = -1
                 this.Index++
                 _scenes.CardList[this.Index -1] = this 
         }
-        this.update(this.Scene.SceneName)
     }
 
-    /**卡牌向左边移动 */
+    /**卡牌向左边移动 带动对面的向左移动*/
     left(){
         const _scenes = this.Scene as BattleArea
-        while(this.Index > 3 && _scenes.CardList[this.Index - 1 - 1] == -1 && this.Index <= 5){
+        const _targetScnese = this.Scene.find_oppose() as BattleArea
+        while(this.Index > 3 && _scenes.CardList[this.Index - 1 - 1] == -1 
+            && _targetScnese.CardList[this.Index - 1 - 1] == -1){
             _scenes.CardList[this.Index - 1] = -1
+            const oppositecard = _targetScnese.IndexGet(this.Index)
+            if(oppositecard){
+                _targetScnese.CardList[oppositecard.Index - 1] = -1
+                oppositecard.Index--
+                _targetScnese.CardList[oppositecard.Index - 1] = oppositecard
+            }
             this.Index--
             _scenes.CardList[this.Index - 1] = this
         }
-        this.update(this.Scene.SceneName)
     }
 
     /**是否在手牌 */

@@ -335,9 +335,11 @@ export class SmallSkill_juedou extends ability_templater{
             // const hero = GameRules.SceneManager.get_hero(this.heorheroid) as Unit
             const _target = GameRules.SceneManager.get_card(target) as Unit
             
-            const index = (_target.Scene.find_oppose() as BattleArea).GetrecentSpace(_target.Index)
+            let index = (_target.Scene.find_oppose() as BattleArea).GetrecentSpace(_target.Index)
             if(index != -1 && _target.Index != hero.Index){
-                GameRules.SceneManager.change_secens(hero.UUID,hero.Scene.SceneName,index)
+                if(index > 5 ) index = 5
+                if(index < 0 ) index = 1
+                GameRules.SceneManager.change_secens(hero.UUID,hero.Scene.SceneName,index )
             }
             const _damage = new damage(hero,_target)
             _damage.spell_skill_settlement(this.damage_calculate(hero),hero)
@@ -1144,6 +1146,7 @@ export class TrickSkill_hunduan extends ability_templater{
     }
 
     spell_skill(table:(Unit|number)[],target?:string,hero?:Unit){
+        super.spell_skill(table,target,hero)
         if(!target || !hero) return;
         const _target = GameRules.SceneManager.get_card(target) as Unit
         const myheal =  hero.GETheal 

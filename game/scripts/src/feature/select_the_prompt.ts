@@ -65,6 +65,7 @@ export class select_the_prompt{
         const CardScenes = GameRules.SceneManager.GetScenes(GameRules.SceneManager.get_hero(hashero).Scene.SceneName,hero.PlayerID)
         const brach = get_current_operate_brach()
         print("当前场景为",brach)
+        if(!CardScenes) return;
         if(CardScenes.SceneName == "GOUP" && brach == "1"){
             return true
         }
@@ -169,6 +170,12 @@ export class select_the_prompt{
             const brachkey = event.to
             let index = event.index
             let scnese:BattleArea
+            if(abilityinstance.consumption > GameRules.energyBarManager.getPlayerBrachEnrgBar(get_current_operate_brach(),event.PlayerID)){
+                print("当前能量水晶不足")
+                CustomGameEventManager.Send_ServerToPlayer(PlayerResource.GetPlayer(event.PlayerID),"S2C_INFORMATION",{information:`当前卡牌消耗需要${abilityinstance.consumption},${"barch" + get_current_operate_brach()}的水晶不够!`})
+                return;
+            }
+            GameRules.energyBarManager.GetBrachEnrgyBar(get_current_operate_brach(),event.PlayerID).add_cuurent_energy(-abilityinstance.consumption)
             set_oparator_true(event.PlayerID)
             SetGameLoopMasK(event.PlayerID == GameRules.Red.GetPlayerID() ? optionMask.红队有操作 : optionMask.蓝队有操作)
             set_settlement_true()

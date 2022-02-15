@@ -60,6 +60,7 @@ export class damage{
 
     unilateralAttack(){
         CustomGameEventManager.Send_ServerToAllClients("S2C_SEND_ATTACK",{uuid:this.damageA.UUID})
+        if(!this.damageA || !this.damageB) return 
         Timers.CreateTimer(1.5,()=>{
             this.beforeTheAttackhookHero({my:this.damageA,target:this.damageB}) && this.Set_A_B_D_damage(this.damageB.hurt(this.damageA.attack,this.damageA,"defualt"))
         })
@@ -67,11 +68,11 @@ export class damage{
  
     settlement(){
         Timers.CreateTimer(this.delay ?? 0 ,()=>{
-            !this.damageA?.isunableToAttack() && CustomGameEventManager.Send_ServerToAllClients("S2C_SEND_ATTACK",{uuid:this.damageA.UUID})
-            !this.damageB?.isunableToAttack() && CustomGameEventManager.Send_ServerToAllClients("S2C_SEND_ATTACK",{uuid:this.damageB.UUID})
+            this.damageA && !this.damageA?.isunableToAttack() && CustomGameEventManager.Send_ServerToAllClients("S2C_SEND_ATTACK",{uuid:this.damageA.UUID})
+            this.damageB && !this.damageB?.isunableToAttack() && CustomGameEventManager.Send_ServerToAllClients("S2C_SEND_ATTACK",{uuid:this.damageB.UUID})
             Timers.CreateTimer(1.5,()=>{
-                this.beforeTheAttackhookHero({my:this.damageB,target:this.damageA}) && this.Set_B_A_D_damage(this.damageA.hurt(this.damageB.isunableToAttack() ?  0 : this.damageB.Getattack,this.damageB,"defualt"))
-                this.beforeTheAttackhookHero({my:this.damageA,target:this.damageB}) && this.Set_A_B_D_damage(this.damageB.hurt(this.damageA.isunableToAttack() ?  0 : this.damageA.Getattack,this.damageA,"defualt"))
+                this.damageA && this.beforeTheAttackhookHero({my:this.damageB,target:this.damageA}) && this.Set_B_A_D_damage(this.damageA.hurt(this.damageB.isunableToAttack() ?  0 : this.damageB.Getattack,this.damageB,"defualt"))
+                this.damageB && this.beforeTheAttackhookHero({my:this.damageA,target:this.damageB}) && this.Set_A_B_D_damage(this.damageB.hurt(this.damageA.isunableToAttack() ?  0 : this.damageA.Getattack,this.damageA,"defualt"))
             })
         })
     }
@@ -79,9 +80,9 @@ export class damage{
     /** 当damageB target为空时将以塔为目标  */
     attacklement(){
         if(!this.damageA  && !this.damageB) return;
-        if(!(this.damageB instanceof Card) && this.unidirectional != true){
-            CustomGameEventManager.Send_ServerToAllClients("S2C_SEND_ATTACK",{uuid:this.damageA.UUID})
+        if( !(this.damageB instanceof Card) && this.unidirectional != true && !this.damageA?.isunableToAttack()){
             const iscover = this.beforeTheAttackhookHero({my:this.damageA,target:GameRules.TowerGeneralControl.getCardScenceTower(PlayerResource.GetPlayer(this.damageA.PlayerID),this.damageA)})
+            iscover && CustomGameEventManager.Send_ServerToAllClients("S2C_SEND_ATTACK",{uuid:this.damageA.UUID})
             iscover && Timers.CreateTimer(1.3,()=>{
                const tower = GameRules.TowerGeneralControl.getCardScenceTower(PlayerResource.GetPlayer(this.damageA.PlayerID),this.damageA) as Tower
                tower.hurt(this.damageA.Getattack)

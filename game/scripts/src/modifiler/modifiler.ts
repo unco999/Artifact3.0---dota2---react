@@ -22,7 +22,7 @@ export class item_bfury_modifiler extends CAModifiler{
     register_hook_event() {
         this.setHookEvent(HOOK.创造时,()=>{
             this.thisHero.max_heal += this.influenceMaxheal
-            this.thisHero.heal = this.thisHero.max_heal
+            this.thisHero.heal += this.influenceMaxheal
             return false})
         this.setHookEvent(HOOK.销毁时,()=>{
             this.logoutHook()
@@ -30,22 +30,24 @@ export class item_bfury_modifiler extends CAModifiler{
         })
         this.setHookEvent(HOOK.攻击前,()=>{
             print("狂战斧生效了")
+            if(this.thisHero.isunableToAttack()) return true;
             const {left,center,right} =  GameRules.SceneManager.enemyneighbor(this.thisHero)
+            if(!center){
+                const tower = GameRules.TowerGeneralControl.getCardScenceTower(PlayerResource.GetPlayer(this.thisHero.PlayerID),this.thisHero)
+                tower.hurt(this.thisHero.Getattack)
+                return true
+             }
             if(center && typeof(center) != "number"){
-                center.hurt(this.thisHero.attack,this.thisHero,"defualt")
+              center.hurt(this.thisHero.attack,this.thisHero,"defualt")  
                 CustomGameEventManager.Send_ServerToAllClients("SC2_PLAY_EFFECT",{uuid:center.UUID,lookAt:"0 0 0",paticle:"particles/econ/items/ursa/ursa_swift_claw/ursa_swift_claw_right.vpcf",cameraOrigin:"0 500 0"})
             }
             if(left && typeof(left) != "number"){
-                center.hurt(3,this.thisHero,"defualt")
+                left.hurt(3,this.thisHero,"defualt")
                 CustomGameEventManager.Send_ServerToAllClients("SC2_PLAY_EFFECT",{uuid:left.UUID,lookAt:"0 0 0",paticle:"particles/econ/items/ursa/ursa_swift_claw/ursa_swift_claw_right.vpcf",cameraOrigin:"0 500 0"})
             }
             if(right && typeof(right) != "number"){
-                center.hurt(3,this.thisHero,"defualt")
+                right.hurt(3,this.thisHero,"defualt")
                 CustomGameEventManager.Send_ServerToAllClients("SC2_PLAY_EFFECT",{uuid:right.UUID,lookAt:"0 0 0",paticle:"particles/econ/items/ursa/ursa_swift_claw/ursa_swift_claw_right.vpcf",cameraOrigin:"0 500 0"})
-            }
-            if(!center){
-               const tower = GameRules.TowerGeneralControl.getCardScenceTower(PlayerResource.GetPlayer(this.thisHero.PlayerID),this.thisHero)
-               tower.hurt(this.thisHero.Getattack)
             }
             return true
         })

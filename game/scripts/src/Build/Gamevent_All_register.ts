@@ -1,7 +1,8 @@
 import { brash_solidier } from "../feature/brush_solidier";
 import { damage } from "../feature/damage";
 import { EquipCard, EquipContainer } from "../instance/Equip";
-import { HOOK } from "../instance/Modifiler";
+import { Hero } from "../instance/Hero";
+import { HOOK, ModifilerContainer } from "../instance/Modifiler";
 import { BattleArea, Hand, Scenes } from "../instance/Scenes";
 import { Unit } from "../instance/Unit";
 import { Timers } from "../lib/timers";
@@ -23,11 +24,11 @@ export class GamaEvent_All_register{
                 CustomGameEventManager.Send_ServerToPlayer(PlayerResource.GetPlayer(event.PlayerID),"S2C_INFORMATION",{information:"目前阶段无法购买装备"})
                 return
             }
-            if(get_cuurent_glod(event.PlayerID) < 2){
-                CustomGameEventManager.Send_ServerToPlayer(PlayerResource.GetPlayer(event.PlayerID),"S2C_INFORMATION",{information:"您连2个金币都没有..."})
+            if(get_cuurent_glod(event.PlayerID) < 3){
+                CustomGameEventManager.Send_ServerToPlayer(PlayerResource.GetPlayer(event.PlayerID),"S2C_INFORMATION",{information:"您连3个金币都没有..."})
                 return 
             }
-            add_cuurent_glod(-2,event.PlayerID)
+            add_cuurent_glod(-3,event.PlayerID)
             const item = event.itemname
             const card = new EquipCard({Id:item,Index:-1,PlayerID:event.PlayerID},GameRules.SceneManager.GetCardheapsScene(event.PlayerID))
             GameRules.SceneManager.global_add(card.UUID,card)
@@ -85,6 +86,12 @@ export class GamaEvent_All_register{
         CustomGameEventManager.RegisterListener("C2S_TEST_SCENE_LINK",(_,event)=>{
             GameRules.SceneManager.GetHandsScene(event.PlayerID).Print()
             print("打印结束")
+        })
+        CustomGameEventManager.RegisterListener("C2S_ALL_Stun",(_,event)=>{
+            (GameRules.SceneManager.GetGoUpScene(event.PlayerID)).foreach((card:Hero)=>{
+                print("当前遍取到的英雄",card.UUID)
+                card.addmodifiler(ModifilerContainer.instance.Get_prototype_modifiler("stund1round_modifiler"))
+            })
         })
     }
 }

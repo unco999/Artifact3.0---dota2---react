@@ -267,7 +267,7 @@ export const Card = (props:{index:number,uuid:string,owner:number,team:{red:numb
         const _random = (Math.floor(Math.random() * 3)+1)
         ref.current?.AddClass(prefix + "death_animation"+ _random)
         ref.current?.RemoveClass("select_target" + preHighSelectType.current)
-        $.Schedule(1.5,()=>{
+        $.Schedule(1,()=>{
             // ref.current?.AddClass(prefix + "death")
             ref.current?.RemoveClass(prefix + "death_animation"+ _random)
         })
@@ -301,6 +301,10 @@ export const Card = (props:{index:number,uuid:string,owner:number,team:{red:numb
 
     
     const OnDragDrop = (_:any,dragCallbacks:any) => {
+        const switchNumber = CustomNetTables.GetTableValue("GameMianLoop","smallCycle")
+        if(switchNumber.current != "1"){
+            return 
+        }
         const id = dragCallbacks.Data().id
         const cardid = dragCallbacks.Data().cardid
         $.Msg("对目标开始释放技能")
@@ -619,6 +623,10 @@ export const Card = (props:{index:number,uuid:string,owner:number,team:{red:numb
     }
 
     const Summoning = () => {
+        if(state.Scene == "REMOVE"){
+            return <></>
+        }
+
         return <>
         <Panel hittest={true}
          onmouseactivate={()=>{GameEvents.SendCustomGameEventToServer("TEST_C2S_DEATH",{uuid:props.uuid})}}   className={prefix+'Card'} ref={Panel => ref.current = Panel}>
@@ -654,6 +662,9 @@ export const Card = (props:{index:number,uuid:string,owner:number,team:{red:numb
         if(state.Scene == 'GRAVE'){
             return <></>
         }
+        if(state.Scene == "REMOVE"){
+            return <></>
+        }
         return <>
          <Panel hittest={true}
          onmouseactivate={()=>{GameEvents.SendCustomGameEventToServer("TEST_C2S_DEATH",{uuid:props.uuid})}}   className={prefix+'Card'} ref={Panel => ref.current = Panel}>
@@ -680,7 +691,7 @@ export const Card = (props:{index:number,uuid:string,owner:number,team:{red:numb
     }
 
 //
-    const card_type = useMemo(() =>{
+    const card_type = () =>{
         if(GLOABAL_EVENT.instance.GetDATA("isdrag") == false ){
             state.Scene != "HAND" && dummy.current?.AddClass("hide")
         }else{
@@ -743,10 +754,10 @@ export const Card = (props:{index:number,uuid:string,owner:number,team:{red:numb
         if(state.type = "Summoned"){
             return Summoning()
         }
-    },[props.index,props.owner,props.uuid,xstate,state,attribute,current_effect,update,modifilers])
+    }
 
     return <>
-            {card_type}
+            {card_type()}
            </>
 }
 

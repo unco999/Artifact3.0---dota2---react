@@ -4,7 +4,7 @@ import { AbilityCard } from "../instance/Ability";
 import { BattleArea, Cardheaps, Grave, Hand, Hide } from "../instance/Scenes";
 import { Unit } from "../instance/Unit";
 import { Timers } from "../lib/timers";
-import { BATTLE_BRACH_STATE, clear_option_mask_state, get_current_battle_brach, get_current_operate_brach, loop_end_clear, set_current_battle_brach, set_current_operate_brach, Set_option_mask_state, STRATEGY_BRACH_STATE } from "./nettablefuc";
+import { add_cuurent_glod, BATTLE_BRACH_STATE, clear_option_mask_state, get_current_battle_brach, get_current_operate_brach, loop_end_clear, set_current_battle_brach, set_current_operate_brach, Set_option_mask_state, STRATEGY_BRACH_STATE } from "./nettablefuc";
 import { Battle_Select_Brach, GameLoopMaskClearBlue, GameLoopMaskClearBlueSkip, GameLoopMaskClearRed, GameLoopMaskClearRedSkip, GameLoopMaskSkipBlue, GameLoopMaskSkipRed, get_oparaotr_current, get_settlement_current, isBattleSettlement, IsblueOperater, IsRedOperater, operate, optionMask, SetGameLoopMasK, set_oparator_false, strategy_Select_Brach } from "./statusSwitcher";
 
 export enum 游戏循环 {
@@ -14,10 +14,10 @@ export enum 游戏循环 {
     "商店购买阶段"
 }
 
-const 商店购买时间 = 15
+const 商店购买时间 = 10
 const 英雄部署时间 = 20
 const 战斗结算时间 = 7
-const 策略时间 = 20
+const 策略时间 = 30
 
 //第一回合六張牌  5小1大  第一回合結束  商店功能花錢買牌(2元买大技能 1元买小技能)  然後英雄分錄  分完路發兩張   
 
@@ -92,7 +92,7 @@ export class heroDeploymentPhase extends GameLoopState {
     entry(){
         super.entry()
         print("进入了英雄部署阶段");
-
+        
         const blue_hand = GameRules.SceneManager.GetHandsScene(GameRules.Blue.GetPlayerID()) as Hand
         const red_hand = GameRules.SceneManager.GetHandsScene(GameRules.Red.GetPlayerID()) as Hand
         const blue_ability_card = blue_hand.find_type(["TrickSkill","SmallSkill"]) as AbilityCard[]
@@ -165,12 +165,14 @@ export class heroDeploymentPhase extends GameLoopState {
     give_cards() {
         const redScenesHand = GameRules.SceneManager.GetCardheapsScene(GameRules.Red.GetPlayerID()) as Cardheaps
         const BlueScenesHand = GameRules.SceneManager.GetCardheapsScene(GameRules.Blue.GetPlayerID()) as Cardheaps
-        for(let i = 0 ; i < 2 ; i++){
-           const redCard = redScenesHand.takeAHand()
-           const blueCard = BlueScenesHand.takeAHand()
-           redCard && GameRules.SceneManager.change_secens(redCard.UUID,"HAND")
-           blueCard && GameRules.SceneManager.change_secens(blueCard.UUID,"HAND")
-        }
+        const redCard = redScenesHand.takeAhand3any()
+        const blueCard = BlueScenesHand.takeAhand3any()
+        redCard && redCard.forEach(card=>{
+            GameRules.SceneManager.change_secens(card.UUID,"HAND")
+        })
+        blueCard && blueCard.forEach(card=>{
+            GameRules.SceneManager.change_secens(card.UUID,"HAND")
+        })
     }
 
 
@@ -242,7 +244,7 @@ export class faultCard extends GameLoopState {
         const blue = GameRules.Blue.GetPlayerID()
         const redScnese = brachFilfer(get_current_operate_brach(),red).SceneName
         const blueScnese = brachFilfer(get_current_operate_brach(),blue).SceneName
-        print(redScnese,blueScnese)
+        print(redScnese,blueScnese) 
         GameRules.brash_solidier.AutoSolider(red,redScnese);
         GameRules.brash_solidier.AutoSolider(blue,blueScnese);
     }
@@ -250,10 +252,9 @@ export class faultCard extends GameLoopState {
     entry() {
         super.entry();
         this.Set_cuurent_option_player = GameRules.Red.GetPlayerID().toString()
-        Timers.CreateTimer(0.5,()=>{
-            this.create_solider() //每回合刷小兵
-        })
         if (!this.host.init) {
+            IsInToolsMode() && add_cuurent_glod(100,GameRules.Red.GetPlayerID())
+            IsInToolsMode() && add_cuurent_glod(100,GameRules.Blue.GetPlayerID())
             ScenesBuildbehavior.ScenesBuild()
             ScenesBuildbehavior.HeapsBuild(GameRules.Red.GetPlayerID())
             ScenesBuildbehavior.HeapsBuild(GameRules.Blue.GetPlayerID())
@@ -263,6 +264,7 @@ export class faultCard extends GameLoopState {
         } else {
 
         }
+        this.create_solider() //每回合刷小兵
     }
 
 

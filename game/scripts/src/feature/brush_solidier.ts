@@ -58,12 +58,12 @@ export class brash_solidier{
     AutoSolider(PlayerID:PlayerID,scene_name:string){
         const scnese = GameRules.SceneManager.GetScenes(scene_name,PlayerID) as BattleArea
         if(scnese.isFull()) return;
-        const _Scenes = GameRules.SceneManager.GetScenes(scene_name,PlayerID) as BattleArea
-        const soldier = new Solider({Id:math.random().toString(),Index:-1,PlayerID:PlayerID},_Scenes)
+        const soldier = new Solider({Id:math.random().toString(),Index:-1,PlayerID:PlayerID},scnese)
         GameRules.SceneManager.global_add(soldier.UUID,soldier)
         GameRules.SceneManager.update()
-        _Scenes.AutoAddCard(soldier)
+        const card = scnese.AutoAddCard(soldier)
         CustomGameEventManager.Send_ServerToAllClients("S2C_BRUSH_SOLIDER",{})
+        card.update(scene_name)
         return soldier
     }
 

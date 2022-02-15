@@ -84,13 +84,17 @@ export class Tower{
         print("执行了塔受伤程序")
         if(this.cuurentheal - damage <= 0){
             if(!GameRules.TowerGeneralControl.whetherTheFirstTowerDie[this.Player.GetPlayerID()]){
-                this.cuurentheal = 60
+                this.cuurentheal = 50
                 this.isbase = true;
                 GameRules.TowerGeneralControl.whetherTheFirstTowerDie[this.Player.GetPlayerID()] = true
                 CustomGameEventManager.Send_ServerToAllClients("S2C_CHANGE_BASE",{uuid:this.uuid})
                 CustomGameEventManager.Send_ServerToAllClients("S2C_SEND_TOWER",{heal:this.cuurentheal,state:this.state,playerid:this.Player.GetPlayerID(),brach:this.branch,uuid:this.uuid})
                 return 
             }
+            if(GameRules.TowerGeneralControl.whetherTheFirstTowerDie[this.Player.GetPlayerID()]){
+                GameRules.SetGameWinner(this.Player == GameRules.Red ? GameRules.Blue.GetTeam() : GameRules.Red.GetTeam() )
+            }
+
             this.cuurentheal = 0
             this.state = 'death'
             if(this.isbase){

@@ -337,9 +337,7 @@ export class SmallSkill_juedou extends ability_templater{
             
             let index = (_target.Scene.find_oppose() as BattleArea).GetrecentSpace(_target.Index)
             if(index != -1 && _target.Index != hero.Index){
-                if(index > 5 ) index = 5
-                if(index < 0 ) index = 1
-                GameRules.SceneManager.change_secens(hero.UUID,hero.Scene.SceneName,index )
+                GameRules.SceneManager.change_secens(hero.UUID,hero.Scene.SceneName,index + 1 )
             }
             const _damage = new damage(hero,_target)
             _damage.spell_skill_settlement(this.damage_calculate(hero),hero)
@@ -386,7 +384,7 @@ export class SmallSkill_juedou extends ability_templater{
         const _target = GameRules.SceneManager.get_card(target) as Unit
         if(_target.max_heal != _target.heal){
             const _damage = new damage(hero,_target)
-            _damage.spell_skill_settlement(_target.max_heal,hero)
+            _damage.spell_skill_settlement(100,hero)
             CustomGameEventManager.Send_ServerToAllClients("SC2_PLAY_EFFECT",{uuid:_target.UUID,paticle:"particles/vr_env/killbanner/vr_killbanner_first_blood.vpcf",cameraOrigin:'0 400 0',lookAt:'0 0 0'})
         }
       }
@@ -491,7 +489,7 @@ export class SmallSkill_juedou extends ability_templater{
     Magic_team = Magic_team.敌方
     Magic_range = Magic_range.近邻
     heroid = "25"
-    ability_select_type: select_type = select_type.敌方单体;
+    ability_select_type: select_type = select_type.敌方近邻;
     consumption: number = 3
 
      constructor(){
@@ -872,11 +870,11 @@ export class SmallSkill_juedou extends ability_templater{
  */
     @ca_register_ability()
     export class TrickSkill_shouhutianshi  extends ability_templater{
-        Magic_brach = Magic_brach.跨线
+        Magic_brach = Magic_brach.本路
         Magic_team = Magic_team.友方
         Magic_range = Magic_range.全体
         heroid = "57"
-        ability_select_type: select_type = select_type.友方全体;
+        ability_select_type: select_type = select_type.友方本路;
         consumption: number = 5
 
         constructor(){
@@ -1116,6 +1114,7 @@ export class TrickSkill_youlingchuan extends ability_templater{
         const _damage = new damage(hero,_target,true)
         _damage.spell_skill_settlement(this.damage_calculate(),hero)
         const units = _target.Scene.find_oppose().getAll() as Unit[]
+        _target.addmodifiler(ModifilerContainer.instance.Get_prototype_modifiler("stund1round_modifiler"))
         units.forEach(card=>{
             if(typeof(card) != 'number'){
                 card.addmodifiler(ModifilerContainer.instance.Get_prototype_modifiler("youlingchuan_modifiler"))
@@ -1151,8 +1150,8 @@ export class TrickSkill_hunduan extends ability_templater{
         const _target = GameRules.SceneManager.get_card(target) as Unit
         const myheal =  hero.GETheal 
         const youheal = _target.GETheal
-        hero.heal = youheal
-        _target.heal = myheal
+        hero.cure(youheal - hero.heal,hero)
+        _target.cure(youheal - myheal,hero)
         hero.updateAttribute()
         _target.updateAttribute()
     }
@@ -1169,7 +1168,7 @@ export class TrickSkill_huimie extends ability_templater{
     Magic_team = Magic_team.敌方
     Magic_range = Magic_range.全体
     heroid= "29"
-    ability_select_type: select_type = select_type.敌方全体;
+    ability_select_type: select_type = select_type.敌方本路;
     consumption: number = 6
 
     constructor(){

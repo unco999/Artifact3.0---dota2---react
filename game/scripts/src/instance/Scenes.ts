@@ -180,6 +180,22 @@ export class Cardheaps extends Scenes {
          }
         }
     }
+
+    takeAhand3any(){
+        let cardlist:Card[] = []
+        let selected = []
+        for(const key in this.CardPool){
+           const card = this.CardPool[key] 
+           if(selected.includes( (card as SmallSkill).abilityInstance.id)){
+               continue
+           }
+           cardlist.push(card)
+           selected.push((card as SmallSkill).abilityInstance.id)
+           if(cardlist.length == 3){
+               return cardlist
+           }
+       }
+   }
 }
 
 /**手牌区 */
@@ -335,10 +351,10 @@ export abstract class BattleArea extends Scenes {
     GetrecentSpace(index:number) {
         for(let i = 0 ; i < 3 ; i++){
             if(this.CardList[index - 1 + i] == -1){
-                return index - i
+                return index - 1 + i
             }
             if(this.CardList[index - 1 - i] == -1){
-                return index - i
+                return index - 1 - i
             }   
         }
         return -1

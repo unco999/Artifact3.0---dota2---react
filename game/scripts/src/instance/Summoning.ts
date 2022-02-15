@@ -25,7 +25,7 @@ export class Summoning extends Unit{
 
     override call_death(){  
         CustomGameEventManager.Send_ServerToAllClients("S2C_SEND_DEATH_ANIMATION",{uuid:this.UUID})
-        Timers.CreateTimer(2,()=>{
+        Timers.CreateTimer(1.5,()=>{
             this.Scene.CaSceneManager.change_secens(this.UUID,"REMOVE",-1)
         })
     }

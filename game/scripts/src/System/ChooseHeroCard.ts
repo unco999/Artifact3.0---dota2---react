@@ -188,7 +188,10 @@ export class ChoosePreGame extends ChooseHerostate{
                     CustomNetTables.SetTableValue('Card_group_construction_phase','brachisok',{[GameRules.Blue.GetPlayerID()]:true})
                 }
                 if(this.host.bluebranchisok && this.host.redbranchisok){
+                    CustomNetTables.SetTableValue('Card_group_construction_phase','herobrach',this.host.herobrach)
                     this.host.SetcuurentsettingState = new showtime()
+                    CustomNetTables.SetTableValue('GameMianLoop','currentLoopName',{current:"isbattle"})
+                    GameRules.gamemainloop = new BattleGameLoop()
                 }
             }
         })

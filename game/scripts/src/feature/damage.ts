@@ -37,7 +37,7 @@ export class damage{
     /**返回值为真的时候不进行正常结算 */
     beforeTheAttackhookHero(props:hook_parameter[HOOK.攻击前]){
         let bool = true
-        if(props.my.type && props.my.type == 'Hero'){
+        if(props?.my?.type && props.my.type == 'Hero'){
            const callbacks =(props.my as Hero).hook(HOOK.攻击前)
            callbacks.forEach(callback=>{
                bool = callback(props)
@@ -80,7 +80,7 @@ export class damage{
     /** 当damageB target为空时将以塔为目标  */
     attacklement(){
         if(!this.damageA  && !this.damageB) return;
-        if( !(this.damageB instanceof Card) && this.unidirectional != true && !this.damageA?.isunableToAttack()){
+        if( !this.damageB  && !this.damageA?.isunableToAttack()){
             const iscover = this.beforeTheAttackhookHero({my:this.damageA,target:GameRules.TowerGeneralControl.getCardScenceTower(PlayerResource.GetPlayer(this.damageA.PlayerID),this.damageA)})
             iscover && CustomGameEventManager.Send_ServerToAllClients("S2C_SEND_ATTACK",{uuid:this.damageA.UUID})
             iscover && Timers.CreateTimer(1.3,()=>{

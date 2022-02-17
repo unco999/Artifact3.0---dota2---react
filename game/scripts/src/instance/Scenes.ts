@@ -163,7 +163,7 @@ export class Cardheaps extends Scenes {
         }
      }
 
-     takeAhand5Small(){
+     takeAhand4Small(){
          let cardlist:Card[] = []
          let selected = []
          for(const key in this.CardPool){
@@ -174,14 +174,14 @@ export class Cardheaps extends Scenes {
             }
             cardlist.push(card)
             selected.push((card as SmallSkill).abilityInstance.id)
-            if(cardlist.length == 5){
+            if(cardlist.length == 4){
                 return cardlist
             }
          }
         }
     }
 
-    takeAhand3any(){
+    takeAhand2any(){
         let cardlist:Card[] = []
         let selected = []
         for(const key in this.CardPool){
@@ -191,7 +191,7 @@ export class Cardheaps extends Scenes {
            }
            cardlist.push(card)
            selected.push((card as SmallSkill).abilityInstance.id)
-           if(cardlist.length == 3){
+           if(cardlist.length == 2){
                return cardlist
            }
        }

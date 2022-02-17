@@ -5,7 +5,7 @@ import { BattleArea, Cardheaps, Grave, Hand, Hide } from "../instance/Scenes";
 import { Unit } from "../instance/Unit";
 import { Timers } from "../lib/timers";
 import { add_cuurent_glod, BATTLE_BRACH_STATE, clear_option_mask_state, get_current_battle_brach, get_current_operate_brach, loop_end_clear, set_current_battle_brach, set_current_operate_brach, Set_option_mask_state, STRATEGY_BRACH_STATE } from "./nettablefuc";
-import { Battle_Select_Brach, GameLoopMaskClearBlue, GameLoopMaskClearBlueSkip, GameLoopMaskClearRed, GameLoopMaskClearRedSkip, GameLoopMaskSkipBlue, GameLoopMaskSkipRed, get_oparaotr_current, get_settlement_current, isBattleSettlement, IsblueOperater, IsRedOperater, operate, optionMask, SetGameLoopMasK, set_oparator_false, strategy_Select_Brach } from "./statusSwitcher";
+import { Battle_Select_Brach, GameLoopMaskClearBlue, GameLoopMaskClearBlueSkip, GameLoopMaskClearRed, GameLoopMaskClearRedSkip, GameLoopMaskSkipBlue, GameLoopMaskSkipRed, get_oparaotr_current, get_settlement_current, isBattleSettlement, IsblueOperater, IsRedOperater, operate, optionMask, SetGameLoopMasK, set_oparator_false, set_settlement_false, set_settlement_true, strategy_Select_Brach } from "./statusSwitcher";
 
 export enum 游戏循环 {
     "英雄部署阶段",
@@ -14,9 +14,9 @@ export enum 游戏循环 {
     "商店购买阶段"
 }
 
-const 商店购买时间 = 10
+const 商店购买时间 = 12
 const 英雄部署时间 = 20
-const 战斗结算时间 = 7
+const 战斗结算时间 = 2
 const 策略时间 = 30
 
 //第一回合六張牌  5小1大  第一回合結束  商店功能花錢買牌(2元买大技能 1元买小技能)  然後英雄分錄  分完路發兩張   
@@ -67,6 +67,9 @@ export class GameLoopState {
     }
 
     run() {
+        if(get_settlement_current() == 1){
+            return 1
+        }
         this.time--;
         CustomNetTables.SetTableValue("GameMianLoop","RemainingTime",{cuurent:this.time.toString()})
     }
@@ -165,8 +168,8 @@ export class heroDeploymentPhase extends GameLoopState {
     give_cards() {
         const redScenesHand = GameRules.SceneManager.GetCardheapsScene(GameRules.Red.GetPlayerID()) as Cardheaps
         const BlueScenesHand = GameRules.SceneManager.GetCardheapsScene(GameRules.Blue.GetPlayerID()) as Cardheaps
-        const redCard = redScenesHand.takeAhand3any()
-        const blueCard = BlueScenesHand.takeAhand3any()
+        const redCard = redScenesHand.takeAhand2any()
+        const blueCard = BlueScenesHand.takeAhand2any()
         redCard && redCard.forEach(card=>{
             GameRules.SceneManager.change_secens(card.UUID,"HAND")
         })
@@ -271,8 +274,8 @@ export class faultCard extends GameLoopState {
     init_give_cards() {
        const redScenesHand = GameRules.SceneManager.GetCardheapsScene(GameRules.Red.GetPlayerID()) as Cardheaps
        const BlueScenesHand = GameRules.SceneManager.GetCardheapsScene(GameRules.Blue.GetPlayerID()) as Cardheaps
-       const redCard = redScenesHand.takeAhand5Small()
-       const blueCard = BlueScenesHand.takeAhand5Small()
+       const redCard = redScenesHand.takeAhand4Small()
+       const blueCard = BlueScenesHand.takeAhand4Small()
           redCard.forEach(card=>{
              GameRules.SceneManager.change_secens(card.UUID,"HAND")
           })
@@ -379,6 +382,11 @@ export class injurySettlementStage extends GameLoopState {
                 const _damage = new damage(start,start == redcard ? bluecard as Unit: redcard as Unit,undefined,(redcard?.isAttackPreHook() || bluecard?.isAttackPreHook()) ? index : defualtindex   )
                 _damage.attacklement()
             }
+            set_settlement_true()
+            //mark1
+            Timers.CreateTimer(index + 战斗结算时间,()=>{
+                set_settlement_false()
+            })
 
     }
 

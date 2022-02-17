@@ -622,8 +622,9 @@
     }
     @for $i from 1 to 30 {
         &.my_Hand#{$i}{
+            height: 400px;
             x:500px + $i * 40px;
-            y:900px;
+            y:800px;
             z-index: $i+1;
         }
     }   

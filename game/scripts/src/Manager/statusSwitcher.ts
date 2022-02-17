@@ -142,6 +142,7 @@ export function get_oparaotr_current(PlayerID:number){
     return CustomNetTables.GetTableValue("GameMianLoop",PlayerID == GameRules.Red.GetPlayerID() ? "red_is_oparator" : "blue_is_oparator").current ?? false
 }
 
+/** 1是正在播放特效  0是无状态 */
 export function get_settlement_current(){
     return CustomNetTables.GetTableValue("GameMianLoop","is_settlement")?.current ?? 0
 }

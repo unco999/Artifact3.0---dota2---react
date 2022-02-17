@@ -188,7 +188,10 @@ export class ability_templater{
      */
     post_move_spell_skill(table:(Unit|number)[],target?:string,hero?:Unit){
         print("关闭了特效显示")
-        set_settlement_false()        
+        Timers.CreateTimer(this.skillAnimation,()=>{
+            GameRules.SceneManager.Current_Scnese_Card_Center(true)
+            set_settlement_false()
+        })
     }
 
     constructor(id:string){
@@ -1150,8 +1153,8 @@ export class TrickSkill_hunduan extends ability_templater{
         const _target = GameRules.SceneManager.get_card(target) as Unit
         const myheal =  hero.GETheal 
         const youheal = _target.GETheal
-        hero.cure(youheal - hero.heal,hero)
-        _target.cure(youheal - myheal,hero)
+        hero.cure(youheal - myheal,hero)
+        _target.cure(myheal - youheal,hero)
         hero.updateAttribute()
         _target.updateAttribute()
     }

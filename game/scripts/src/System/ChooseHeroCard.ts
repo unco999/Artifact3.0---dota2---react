@@ -3,6 +3,13 @@ import { reloadable } from "../lib/tstl-utils";
 import { BattleGameLoop, faultCard } from "../Manager/BattleGameLoop";
 import { STRATEGY_BRACH_STATE } from "../Manager/nettablefuc";
 
+
+const timer = {
+    红队选择时间:12,
+    蓝队选择时间:12,
+    分路选择时间:40,
+}
+
 export abstract class ChooseHerostate{
     host:ChooseHeroCardLoop
     id:string
@@ -34,7 +41,7 @@ export abstract class ChooseHerostate{
 
 export class RedSelectstage extends ChooseHerostate{
     id = "RedSelectstage"
-    time = 3 
+    time = timer.红队选择时间
 
     constructor(optionalQuantity:number){
         super()
@@ -78,7 +85,7 @@ export class RedSelectstage extends ChooseHerostate{
 
 export class BlueSelectstage extends ChooseHerostate{
     id = "BlueSelectstage"
-    time = 10
+    time = timer.蓝队选择时间
 
     constructor(optionalQuantity:number){
         super()
@@ -123,7 +130,7 @@ export class BlueSelectstage extends ChooseHerostate{
 /**分路选择 */
 export class ChoosePreGame extends ChooseHerostate{
     id = "ChoosePreGame"
-    time = 15
+    time = timer.分路选择时间
 
     constructor(){
         super()
@@ -190,8 +197,6 @@ export class ChoosePreGame extends ChooseHerostate{
                 if(this.host.bluebranchisok && this.host.redbranchisok){
                     CustomNetTables.SetTableValue('Card_group_construction_phase','herobrach',this.host.herobrach)
                     this.host.SetcuurentsettingState = new showtime()
-                    CustomNetTables.SetTableValue('GameMianLoop','currentLoopName',{current:"isbattle"})
-                    GameRules.gamemainloop = new BattleGameLoop()
                 }
             }
         })
@@ -329,7 +334,7 @@ export class ChooseHeroCardLoop{
                     }
                     this.addRedHeroCardinlist = event.array[key]
                     if(this.currentState.remainingOptionalQuantity === 0){
-                        this.blueisok = true
+                        this.redisok = true
                     }
                 }
             }

@@ -14,9 +14,9 @@ export enum 游戏循环 {
     "商店购买阶段"
 }
 
-const 商店购买时间 = 12
+const 商店购买时间 = 20
 const 英雄部署时间 = 20
-const 战斗结算时间 = 2
+const 战斗结算时间 = 4
 const 策略时间 = 30
 
 //第一回合六張牌  5小1大  第一回合結束  商店功能花錢買牌(2元买大技能 1元买小技能)  然後英雄分錄  分完路發兩張   
@@ -196,12 +196,18 @@ export class faultCard extends GameLoopState {
     historyRecord:[number,number] = [-1,-1] //上回合的玩家是否有操作 -1未读取 1有操作 2无操作
     rollingOperation:boolean = false // 为false 操作第一个数   为ture 操作第二个历史记录
     initflag:boolean = false
+    operationRecord:Array<boolean> = [] //存储历史操作记录
+    first_player:PlayerID
 
     constructor(context: BattleGameLoop,brach:STRATEGY_BRACH_STATE) {
         super(context);
         print("初始化operate",brach)
         set_current_operate_brach(brach)
         this.register_gamevent()
+    }
+
+    addOprration(operation:boolean){
+        this.operationRecord.push(operation)
     }
 
     /**是否两个回合都无操作 */
@@ -220,10 +226,12 @@ export class faultCard extends GameLoopState {
         CustomNetTables.SetTableValue("GameMianLoop","current_operate_playerid",{cuurent:playerID})
         if(playerID == GameRules.Red.GetPlayerID().toString()){
             const BlueOperator = IsblueOperater()
+            this.addOprration(BlueOperator)
             !this.rollingOperation ? (this.historyRecord[0] = BlueOperator ? 1 : 2) : (this.historyRecord[1] = BlueOperator ? 1 : 2)
             this.rollingOperation = !this.rollingOperation
         }else{
             const RedOperator = IsRedOperater()
+            this.addOprration(RedOperator)
             !this.rollingOperation ? (this.historyRecord[0] = RedOperator ? 1 : 2) : (this.historyRecord[1] = RedOperator ? 1 : 2)
             this.rollingOperation = !this.rollingOperation
         }
@@ -342,6 +350,12 @@ export class faultCard extends GameLoopState {
 
     exit(){
         super.exit()
+        const last = this.operationRecord.length
+        if(last == 2){
+             const Aoparetor =  this.operationRecord[0]
+             const Boparetor = this.operationRecord[1]
+             return;
+        }
     }
 
 }
@@ -376,22 +390,24 @@ export class injurySettlementStage extends GameLoopState {
                 const bluecard = bluerouter.IndexGet(i) as Unit
                 if(!redcard && !bluecard) continue
                 const start = redcard ? redcard as Unit : bluecard as Unit
-                if(redcard?.isAttackPreHook() || bluecard?.isAttackPreHook()){
+                if( (redcard?.isAttackPreHook() && !redcard.isunableToAttack()) || bluecard?.isAttackPreHook() && !bluecard.isunableToAttack()){
                     index++
                 }
-                const _damage = new damage(start,start == redcard ? bluecard as Unit: redcard as Unit,undefined,(redcard?.isAttackPreHook() || bluecard?.isAttackPreHook()) ? index : defualtindex   )
+                const targetb = start == redcard ? bluecard as Unit: redcard as Unit
+                const _damage = new damage(start,start == redcard ? bluecard as Unit: redcard as Unit,targetb ? false : true,(redcard?.isAttackPreHook() || bluecard?.isAttackPreHook()) ? index : defualtindex   )
                 _damage.attacklement()
             }
             set_settlement_true()
             //mark1
             Timers.CreateTimer(index + 战斗结算时间,()=>{
+                GameRules.SceneManager.Current_Scnese_Card_Center(false)
                 set_settlement_false()
             })
 
     }
 
     exit(){
-        GameRules.SceneManager.Current_Scnese_Card_Center(false)
+        
     }
 
     run(){
@@ -449,6 +465,7 @@ export class BattleGameLoop {
     history: history = {};
     init: boolean;
     small_solider_tag:Record<number,boolean> = {}
+    lastplayer:PlayerID //下回合先手的id
 
     constructor() {
         

@@ -333,10 +333,14 @@ export abstract class BattleArea extends Scenes {
 
     /**获得一个随机空位 */
     randomGetSpace(){
-       const list = this.CardList.sort((a,b)=> {return math.random()}  )
-       for(let key = 0 ; key < list.length ; key++){
-           if(typeof(list[key]) == "number"){
-                return key + 1
+       const newIndex = []
+       for(let index = 0 ; index < this.CardList.length ; index++){
+           typeof(this.CardList[index]) == 'number' && ( newIndex.push(index + 1))
+       }
+       const sort = newIndex.sort((a,b) => math.random())
+       for(let key = 0 ; key < sort.length ; key++){
+           if(typeof(sort[key]) == "number"){
+                return sort[key]
            }
        }
        return null

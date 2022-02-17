@@ -15,6 +15,7 @@ export class Unit extends Card{
     heal:number = 10
     max_heal:number = 10
     private faulty:number = 1  //技能伤害层数
+    death_state:boolean = false
  
     constructor(CardParameter:CardParameter,Scene:ICAScene,type:CARD_TYPE){
         super(CardParameter,Scene,type)
@@ -212,6 +213,7 @@ export class Unit extends Card{
     
 
     call_death(Source:Card){
+            if(this.death_state == true) return;
             const scene = this.Scene
             if(scene instanceof BattleArea){
                 if(Source instanceof Unit){
@@ -228,11 +230,15 @@ export class Unit extends Card{
                 })
                 !deathbool && GameRules.SceneManager.change_secens(this.UUID,"Grave",-1)
                 !deathbool && this.deleteLimitedModifier()
+                !deathbool && (this.death_state = true)
                 this.cure(99999,this)
                 const PostDeath = this.hook(HOOK.死亡后)
                 PostDeath.forEach(hook=>{
                     hook(this,Source)
                     print("当前this的指向场景",this.UUID,this.Scene.SceneName)
+                })
+                Timers.CreateTimer(2,()=>{
+                    this.death_state = false
                 })
             }else{
                 print("你当前不在战斗区域")
@@ -276,10 +282,12 @@ export class Unit extends Card{
     
 
         hurt(count:number,damageSourece:Card,attack_type:"defualt"|"ability"|"purely"){
+            
             if(this.Prehurt(damageSourece,attack_type)){
                 return
             }
-            this.heal -= count - this.Getarrmor
+            this.heal = this.GETheal - (count - this.Getarrmor)
+            print(damageSourece.UUID,"攻击了",this.UUID,"攻击值为",this.GETheal - (count - this.Getarrmor))
             if(this.GETheal < 1){
                 this.call_death(damageSourece)
             }

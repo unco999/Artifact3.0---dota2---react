@@ -38,15 +38,15 @@ export class item_bfury_modifiler extends CAModifiler{
                 return true
              }
             if(center && typeof(center) != "number"){
-              center.hurt(this.thisHero.attack,this.thisHero,"defualt")  
+              center.hurt(this.thisHero.attack,this.thisHero,"default")  
                 CustomGameEventManager.Send_ServerToAllClients("SC2_PLAY_EFFECT",{uuid:center.UUID,lookAt:"0 0 0",paticle:"particles/econ/items/ursa/ursa_swift_claw/ursa_swift_claw_right.vpcf",cameraOrigin:"0 500 0"})
             }
             if(left && typeof(left) != "number"){
-                left.hurt(3,this.thisHero,"defualt")
+                left.hurt(3,this.thisHero,"default")
                 CustomGameEventManager.Send_ServerToAllClients("SC2_PLAY_EFFECT",{uuid:left.UUID,lookAt:"0 0 0",paticle:"particles/econ/items/ursa/ursa_swift_claw/ursa_swift_claw_right.vpcf",cameraOrigin:"0 500 0"})
             }
             if(right && typeof(right) != "number"){
-                right.hurt(3,this.thisHero,"defualt")
+                right.hurt(3,this.thisHero,"default")
                 CustomGameEventManager.Send_ServerToAllClients("SC2_PLAY_EFFECT",{uuid:right.UUID,lookAt:"0 0 0",paticle:"particles/econ/items/ursa/ursa_swift_claw/ursa_swift_claw_right.vpcf",cameraOrigin:"0 500 0"})
             }
             return true
@@ -229,6 +229,99 @@ export class item_aegis_modifiler extends CAModifiler{
  
  }
 
+ 
+  /**
+ * 通用1回合沉默modifiler
+ */
+   @ca_register_modifiler()
+   export class silence_modifiler extends CAModifiler{
+       name: string = "silence_modifiler";
+       modifilertype: modifilertype = modifilertype.沉默;
+       duration: number = 1;
+       debuff: boolean = true;
+   
+       constructor(){
+           super("silence_modifiler")
+       }
+   
+       constructorinstance = silence_modifiler
+   
+       register_hook_event() {
+           this.setHookEvent(HOOK.死亡后,()=>{
+             this.thisHero.removeModifiler(this.name)
+             return true
+         })
+       }
+   
+   
+       get influenceMaxheal(): any {
+           return 0
+       }
+   
+       get influenceAttack(): any {
+           return 0
+       }
+   
+       get influenceArrmor(): any {
+           return 0
+       }
+       
+       get influenceheal(): any {
+           return 0
+       }
+   
+   }
+
+
+
+
+
+  /**
+ * 通用1回合缴械modifiler
+ */
+   @ca_register_modifiler()
+   export class contribute1Round_modifiler extends CAModifiler{
+       name: string = "contribute1Round_modifiler";
+       modifilertype: modifilertype = modifilertype.缴械;
+       duration: number = 1;
+       debuff: boolean = true;
+   
+       constructor(){
+           super("contribute1Round_modifiler")
+       }
+   
+       constructorinstance = contribute1Round_modifiler
+   
+       register_hook_event() {
+           this.setHookEvent(HOOK.攻击前,(thishero:Unit)=>{
+               return true
+           })
+           this.setHookEvent(HOOK.死亡后,()=>{
+             this.thisHero.removeModifiler(this.name)
+             return true
+         })
+       }
+   
+   
+       get influenceMaxheal(): any {
+           return 0
+       }
+   
+       get influenceAttack(): any {
+           return 0
+       }
+   
+       get influenceArrmor(): any {
+           return 0
+       }
+       
+       get influenceheal(): any {
+           return 0
+       }
+   
+   }
+
+
 
  /**
  * 通用眩晕1回合modifiler
@@ -275,6 +368,45 @@ export class item_aegis_modifiler extends CAModifiler{
   
   }
 
+
+/**
+ * 限制传送攻击增强
+ */
+ @ca_register_modifiler()
+ export class ProphetFlight_modifiler extends CAModifiler{
+     name: string = "ProphetFlight_modifiler";
+     modifilertype: modifilertype = modifilertype.原始;
+     duration: number = 1;
+     debuff: boolean = true;
+ 
+     constructor(){
+         super("ProphetFlight_modifiler")
+     }
+ 
+     constructorinstance = ProphetFlight_modifiler
+ 
+     register_hook_event() {
+     }
+ 
+ 
+     get influenceMaxheal(): any {
+         return 0
+     }
+ 
+     get influenceAttack(): any {
+         return 2
+     }
+ 
+     get influenceArrmor(): any {
+         return 0
+     }
+     
+     get influenceheal(): any {
+         return 0
+     }
+ 
+ }
+
   
  /**
  * 通用1回合伤害免疫modifiler
@@ -293,13 +425,21 @@ export class item_aegis_modifiler extends CAModifiler{
       constructorinstance = shanghaimianyi_modifiler
   
       register_hook_event() {
-          this.setHookEvent(HOOK.被攻击前,(attack_type:"defualt"|"ability"|"purely",Source:Unit)=>{
+          this.setHookEvent(HOOK.被攻击前,(attack_type:"default"|"ability"|"purely",Source:Unit)=>{
               print("触发了攻击前特效=====守护天使")
               if(attack_type == 'purely'){
                   print("当前攻击为纯粹伤害,无法免伤")
                   return false
               }
               return true
+          })
+          this.setHookEvent(HOOK.被技能击中前,(attack_type:"default"|"ability"|"purely",Source:Unit)=>{
+            print("触发了攻击前特效=====守护天使")
+            if(attack_type == 'purely'){
+                print("当前攻击为纯粹伤害,无法免伤")
+                return false
+            }
+            return true
           })
           this.setHookEvent(HOOK.死亡后,()=>{
             this.thisHero.removeModifiler(this.name)
@@ -416,6 +556,53 @@ export class qianggong_modifiler extends CAModifiler{
     
         get influenceArrmor(): any {
             return -2
+        }
+        
+        get influenceheal(): any {
+            return 0
+        }
+    
+}
+
+
+   /**
+ * 衰老
+ */
+@ca_register_modifiler()
+    export class senescence_modifiler extends CAModifiler{
+        name: string = "senescence_modifiler";
+        modifilertype: modifilertype = modifilertype.虚无;
+        duration: number = 1;
+        debuff: boolean = true;
+    
+        constructor(){
+            super("senescence_modifiler")
+        }
+    
+        constructorinstance = senescence_modifiler
+    
+        register_hook_event() {
+            this.setHookEvent(HOOK.被技能击中后,(damage:number,hero:Hero,target:Unit)=>{
+                print("触发了被技能击中后的hook")
+                this.thisHero.hurt(damage,target,'purely')
+                return true
+            })
+            this.setHookEvent(HOOK.被攻击前,()=>{
+                return true
+            })
+        }
+    
+    
+        get influenceMaxheal(): any {
+            return 0
+        }
+    
+        get influenceAttack(): any {
+            return 0
+        }
+    
+        get influenceArrmor(): any {
+            return 0
         }
         
         get influenceheal(): any {

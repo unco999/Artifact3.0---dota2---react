@@ -2,12 +2,13 @@ import { Timers } from "../lib/timers";
 import { reloadable } from "../lib/tstl-utils";
 import { BattleGameLoop, faultCard } from "../Manager/BattleGameLoop";
 import { STRATEGY_BRACH_STATE } from "../Manager/nettablefuc";
+import '../lib/table'
 
 
 const timer = {
-    红队选择时间:12,
-    蓝队选择时间:12,
-    分路选择时间:40,
+    红队选择时间:6,
+    蓝队选择时间:6,
+    分路选择时间:20,
 }
 
 export abstract class ChooseHerostate{
@@ -298,7 +299,7 @@ export class ChooseHeroCardLoop{
     constructor(){
             this.haveSelectedHero['BlueSelectstage'] = [-1,-1,-1,-1,-1] //初始化所有的英雄
             this.haveSelectedHero['RedSelectstage'] = [-1,-1,-1,-1,-1] //初始化所有的英雄
-            this.setheroThatCanChooseOnTheCurrentField = [
+            const originTable = table.shuffle([
                 22,
                 104,
                 35,
@@ -314,7 +315,43 @@ export class ChooseHeroCardLoop{
                 109,
                 29,
                 90,
-                ]
+                45,
+                71,
+                51,
+                38,
+                34,
+                6,
+                68,
+                66,
+                36,
+                72,
+                ])
+            const heroTable = []
+            for(let key = 0 ; key < 15 ; key ++){
+                heroTable[key] = originTable[key]
+            }
+            this.setheroThatCanChooseOnTheCurrentField = heroTable
+            IsInToolsMode() && (this.setheroThatCanChooseOnTheCurrentField = [
+                21,
+                53,
+                23,
+                109,
+                29,
+                90,
+                45,
+                71,
+                51,
+                38,
+                34,
+                6,
+                68,
+                66,
+                36,
+                72,
+            ])
+
+
+
             this.selectOrder = [1,2,2,2,2,1]
             this.herobrach[GameRules.Red.GetPlayerID() as number] = {0:[],1:[],2:[]}
             this.herobrach[GameRules.Blue.GetPlayerID() as number] = {0:[],1:[],2:[]}

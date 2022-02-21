@@ -15,6 +15,7 @@ import { brash_solidier } from "./feature/brush_solidier";
 import { add_cuurent_glod, BATTLE_BRACH_STATE } from "./Manager/nettablefuc";
 import "./modifiler/modifiler"
 import './equip/item'
+import { TurntableBase } from "./feature/turntable";
 
 const heroSelectionTime = 0;
 
@@ -33,6 +34,7 @@ declare global {
         energyBarManager:energyBarManager
         brash_solidier:brash_solidier
         bot:number
+        lastTruntable:TurntableBase
     }
 }
 enum optionMask {

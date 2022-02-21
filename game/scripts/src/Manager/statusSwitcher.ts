@@ -121,6 +121,18 @@ export function GameLoopMaskSkipRed(){
 }
 
 export function SetGameLoopMasK(option:optionMask){
+    if(option == optionMask.红队有操作){
+        GameRules.lastTruntable.Add(GameRules.Red.GetPlayerID(),true)
+    }
+    if(option == optionMask.蓝队有操作){
+        GameRules.lastTruntable.Add(GameRules.Blue.GetPlayerID(),true)
+    }
+    if(option == optionMask.红队点击跳过){
+        GameRules.lastTruntable.Add(GameRules.Red.GetPlayerID(),false)
+    }
+    if(option == optionMask.蓝队点击跳过){
+        GameRules.lastTruntable.Add(GameRules.Blue.GetPlayerID(),false)
+    }
     let current = GetBattleGameLoopMask().cuurent
     current |= option
     CustomNetTables.SetTableValue("GameMianLoop","option_mask_state",{cuurent:current})

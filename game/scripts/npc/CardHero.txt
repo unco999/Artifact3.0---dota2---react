@@ -2,7 +2,7 @@
 "CardGame" {
 	"2" {
 		"name" "npc_dota_hero_axe"
-		"attack" "6"
+		"attack" "5"
 		"arrmor" "2"
 		"health" "8"
 		"ability1" "SmallSkill_taotaizhiren"
@@ -10,10 +10,20 @@
 		"remark" "斧王"
 
 	}
+	"6" {
+		"name" "npc_dota_hero_drow_ranger"
+		"attack" "5"
+		"arrmor" "0"
+		"health" "9"
+		"ability1" "SmallSkill_kuangfeng"
+		"ability2" "TrickSkill_sheshoutianfu"
+		"remark" "卓尔游侠"
+
+	}
 	"21" {
 		"name" "npc_dota_hero_windrunner"
 		"attack" "6"
-		"arrmor" "1"
+		"arrmor" "0"
 		"health" "9"
 		"ability1" "SmallSkill_suboji"
 		"ability2" "TrickSkill_jizhonghuoli"
@@ -24,7 +34,7 @@
 		"name" "npc_dota_hero_zuus"
 		"attack" "6"
 		"arrmor" "0"
-		"health" "10"
+		"health" "9"
 		"ability1" "SmallSkill_leiji"
 		"ability2" "TrickSkill_leishenzhinu"
 		"remark" "宙斯"
@@ -34,20 +44,20 @@
 		"name" "npc_dota_hero_kunkka"
 		"attack" "6"
 		"arrmor" "1"
-		"health" "11"
-		"ability1" "SmallSkill_hongliu"
+		"health" "9"
+		"ability1" "SmallSkill_shuidao"
 		"ability2" "TrickSkill_youlingchuan"
 		"remark" "昆卡"
 
 	}
 	"25" {
 		"name" "npc_dota_hero_lina"
-		"attack" "7"
+		"attack" "6"
 		"arrmor" "0"
-		"health" "10"
-		"ability1" "SmallSkill_longpizhan"
+		"health" "9"
+		"ability1" "SmallSkill_guangjizhen"
 		"ability2" "TrickSkill_mieshenzhan"
-		"remark" "露娜"
+		"remark" "丽娜"
 
 	}
 	"29" {
@@ -63,8 +73,8 @@
 	"33" {
 		"name" "npc_dota_hero_enigma"
 		"attack" "5"
-		"arrmor" "1"
-		"health" "8"
+		"arrmor" "0"
+		"health" "10"
 		"ability1" "SmallSkill_emozhuanhua"
 		"ability2" "TrickSkill_heidong"
 		"remark" "谜团"
@@ -74,8 +84,8 @@
 		"name" "npc_dota_hero_tinker"
 		"attack" "6"
 		"arrmor" "0"
-		"health" "11"
-		"ability1" "SmallSkill_redaofeidan"
+		"health" "9"
+		"ability1" "SmallSkill_jiguang"
 		"ability2" "TrickSkill_jixiexingjun"
 		"remark" "修补匠"
 
@@ -90,11 +100,21 @@
 		"remark" "火枪"
 
 	}
+	"36" {
+		"name" "npc_dota_hero_necrolyte"
+		"attack" "5"
+		"arrmor" "0"
+		"health" "10"
+		"ability1" "SmallSkill_siwangmaichong"
+		"ability2" "TrickSkill_sishenliandao"
+		"remark" "死灵法师"
+
+	}
 	"38" {
 		"name" "npc_dota_hero_beastmaster"
 		"attack" "5"
 		"arrmor" "1"
-		"health" "10"
+		"health" "9"
 		"ability1" "SmallSkill_yexingzhaohuanyezhu"
 		"ability2" "TrickSkill_yexingzhaohuanzhanying"
 		"remark" "兽王"
@@ -102,9 +122,9 @@
 	}
 	"44" {
 		"name" "npc_dota_hero_phantom_assassin"
-		"attack" "7"
+		"attack" "6"
 		"arrmor" "1"
-		"health" "9"
+		"health" "8"
 		"ability1" "SmallSkill_huanyingtuxi"
 		"ability2" "TrickSkill_encijietuo"
 		"remark" "幻影刺客"
@@ -115,7 +135,7 @@
 		"attack" "6"
 		"arrmor" "0"
 		"health" "9"
-		"ability1" "SmallSkill_shengmingjiqu"
+		"ability1" "SmallSkill_shuailao"
 		"ability2" "TrickSkill_youminghongbao"
 		"remark" "帕格纳"
 
@@ -124,7 +144,7 @@
 		"name" "npc_dota_hero_rattletrap"
 		"attack" "5"
 		"arrmor" "1"
-		"health" "10"
+		"health" "9"
 		"ability1" "SmallSkill_zhaominghuojian"
 		"ability2" "TrickSkill_fashegouzhua"
 		"remark" "发条"
@@ -150,9 +170,29 @@
 		"remark" "全能骑士"
 
 	}
+	"66" {
+		"name" "npc_dota_hero_chen"
+		"attack" "5"
+		"arrmor" "0"
+		"health" "10"
+		"ability1" "SmallSkill_shenshengquanhua"
+		"ability2" "TrickSkill_shangdizhishou"
+		"remark" "陈"
+
+	}
+	"68" {
+		"name" "npc_dota_hero_ancient_apparition"
+		"attack" "5"
+		"arrmor" "0"
+		"health" "9"
+		"ability1" "SmallSkill_bingshuangxuanwo"
+		"ability2" "TrickSkill_bingjinghongbao"
+		"remark" "远古冰魂"
+
+	}
 	"71" {
 		"name" "npc_dota_hero_spirit_breaker"
-		"attack" "7"
+		"attack" "6"
 		"arrmor" "1"
 		"health" "9"
 		"ability1" "SmallSkill_julizhongji"
@@ -160,11 +200,21 @@
 		"remark" "裂魂人"
 
 	}
-	"90" {
-		"name" "npc_dota_hero_keeper_of_the_light"
+	"72" {
+		"name" "npc_dota_hero_gyrocopter"
 		"attack" "6"
 		"arrmor" "0"
-		"health" "11"
+		"health" "9"
+		"ability1" "SmallSkill_huojiandanmu"
+		"ability2" "TrickSkill_zhaohuanfeidan"
+		"remark" "矮人直升机"
+
+	}
+	"90" {
+		"name" "npc_dota_hero_keeper_of_the_light"
+		"attack" "5"
+		"arrmor" "0"
+		"health" "9"
 		"ability1" "SmallSkill_zhimangzhiguang"
 		"ability2" "TrickSkill_chongjibo"
 		"remark" "光法"
@@ -172,7 +222,7 @@
 	}
 	"104" {
 		"name" "npc_dota_hero_legion_commander"
-		"attack" "7"
+		"attack" "6"
 		"arrmor" "1"
 		"health" "9"
 		"ability1" "SmallSkill_juedou"
@@ -182,7 +232,7 @@
 	}
 	"109" {
 		"name" "npc_dota_hero_terrorblade"
-		"attack" "5"
+		"attack" "6"
 		"arrmor" "0"
 		"health" "9"
 		"ability1" "SmallSkill_huohuan"
@@ -192,7 +242,7 @@
 	}
 	"112" {
 		"name" "npc_dota_hero_winter_wyvern"
-		"attack" "6"
+		"attack" "5"
 		"arrmor" "0"
 		"health" "10"
 		"ability1" "SmallSkill_yanhanzhuoshao"

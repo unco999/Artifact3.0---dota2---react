@@ -537,7 +537,7 @@ export const Card = (props:{index:number,uuid:string,owner:number,team:{red:numb
 
     //**打开指引提示器 */
     const changeCoordinates = () => {
-        //
+        // 
        const container = ConpoentDataContainer.Instance.NameGetNode("arrow_tip").current
        cb()
        container.open()

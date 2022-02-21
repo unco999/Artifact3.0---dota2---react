@@ -9,6 +9,7 @@ import { MyConpoment } from "./my";
 import { YouConpoment } from "./you";
 import {Curtain} from "./curtain"
 import { Fog } from "./fog";
+import { Baffle } from "./baffle";
 
 export const Main = () =>{
     const team = useNetTableKey("Card_group_construction_phase","team")
@@ -22,6 +23,7 @@ export const Main = () =>{
         <YouConpoment red={team.red} blue={team.blue} />
         <CardContext owner={Players.GetLocalPlayer()}/>
         <CardContext owner={Players.GetLocalPlayer() == team.red ? team.blue : team.red}/>
+        {/* <Baffle/> */}
     </>
     }
     </>

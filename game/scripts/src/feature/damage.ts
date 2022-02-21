@@ -62,7 +62,7 @@ export class damage{
         CustomGameEventManager.Send_ServerToAllClients("S2C_SEND_ATTACK",{uuid:this.damageA.UUID})
         if(!this.damageA || !this.damageB) return 
         Timers.CreateTimer(1.5,()=>{
-            this.beforeTheAttackhookHero({my:this.damageA,target:this.damageB}) && this.Set_A_B_D_damage(this.damageB.hurt(this.damageA.attack,this.damageA,"defualt"))
+            this.beforeTheAttackhookHero({my:this.damageA,target:this.damageB}) && this.Set_A_B_D_damage(this.damageB.hurt(this.damageA.attack,this.damageA,"default"))
         })
     }
  
@@ -71,8 +71,8 @@ export class damage{
             this.damageA && !this.damageA?.isunableToAttack() && CustomGameEventManager.Send_ServerToAllClients("S2C_SEND_ATTACK",{uuid:this.damageA.UUID})
             this.damageB && !this.damageB?.isunableToAttack() && CustomGameEventManager.Send_ServerToAllClients("S2C_SEND_ATTACK",{uuid:this.damageB.UUID})
             Timers.CreateTimer(1.5,()=>{
-                this.damageA && this.damageB && !this.damageB.isunableToAttack() && this.beforeTheAttackhookHero({my:this.damageB,target:this.damageA}) && this.Set_B_A_D_damage(this.damageA.hurt(this.damageB.Getattack,this.damageB,"defualt"))
-                this.damageB && this.damageA && !this.damageA.isunableToAttack()&& this.beforeTheAttackhookHero({my:this.damageA,target:this.damageB}) && this.Set_A_B_D_damage(this.damageB.hurt(this.damageA.Getattack,this.damageA,"defualt"))
+                this.damageA && this.damageB && !this.damageB.isunableToAttack() && this.beforeTheAttackhookHero({my:this.damageB,target:this.damageA}) && this.Set_B_A_D_damage(this.damageA.hurt(this.damageB.Getattack,this.damageB,"default"))
+                this.damageB && this.damageA && !this.damageA.isunableToAttack()&& this.beforeTheAttackhookHero({my:this.damageA,target:this.damageB}) && this.Set_A_B_D_damage(this.damageB.hurt(this.damageA.Getattack,this.damageA,"default"))
             })
         })
     }
@@ -96,7 +96,9 @@ export class damage{
     spell_skill_settlement(damage_count:number,source:Card,attack_type:"ability"|"default"|"purely" = 'ability'){       
         CustomGameEventManager.Send_ServerToAllClients("S2C_HURT_DAMAGE",{particle:"particles/econ/items/shadow_fiend/sf_desolation/sf_rze_dso_scratch.vpcf",uuid:this.damageB.UUID})
         Timers.CreateTimer(1.5,()=>{
-            this.damageB.hurt(damage_count,source,"purely")
+            if(this.damageB){
+               this.damageB.hurt(damage_count,source,attack_type)
+            }
         })
     }
 }

@@ -82,4 +82,5 @@ declare interface CustomGameEventDeclarations {
     "S2C_CHANGE_BASE":{uuid:string} //变换为基地
     "C2S_SPACE_CALL_SPELL":{SKILL_ID:string,target_index:string,spell_ability_card_uuid:string}
     "C2S_ALL_Stun":{}
+    "C2S_GET_ABILITY_CARD":{} //从牌库抽一张技能牌
 }

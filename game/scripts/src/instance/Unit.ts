@@ -42,7 +42,9 @@ export class Unit extends Card{
     /**是否处于无法攻击状态 */
     isunableToAttack(){
         for(const modifiler of this.Modifilers){
-           return bit.bor(modifiler.modifilertype,modifilertype.晕眩) == modifiler.modifilertype
+           return bit.bor(modifiler.modifilertype,modifilertype.晕眩) == modifiler.modifilertype ||
+                  bit.bor(modifiler.modifilertype,modifilertype.虚无) == modifiler.modifilertype ||
+                  bit.bor(modifiler.modifilertype,modifilertype.缴械) == modifiler.modifilertype
         }
         return false
     }
@@ -210,6 +212,23 @@ export class Unit extends Card{
             this.removeModifiler(name)
         })
     }
+
+
+    Find_left_Card(){
+       const unit = (this.Scene as BattleArea).CardList[this.Index - 1 - 1]
+       if(unit && typeof(unit) != 'number' ){
+           return unit as Unit
+       }
+       return null
+    }
+
+    Find_right_Card(){
+        const unit = (this.Scene as BattleArea).CardList[this.Index - 1 + 1]
+        if(unit && typeof(unit) != 'number' ){
+            return unit as Unit
+        }
+        return null
+    }
     
 
     call_death(Source:Card){
@@ -271,7 +290,8 @@ export class Unit extends Card{
         }
 
 
-        Prehurt(damageSourece:Card,attack_type:"defualt"|"ability"|"purely"){
+        Prehurt(damageSourece:Card,attack_type:"ability"|"default"|"purely",damage_count:number){
+            if(attack_type != 'default') return false;
             let bool = false
                const callbacks = this.hook(HOOK.被攻击前)
                callbacks.forEach(callback=>{
@@ -280,13 +300,41 @@ export class Unit extends Card{
             return bool
         }
     
+        
+        abilityPrehurt(damageSourece:Card,attack_type:"ability"|"default"|"purely",damage_count:number){
+            if(attack_type != 'ability') return false;
+            let bool = false
+               const callbacks = this.hook(HOOK.被技能击中前)
+               callbacks.forEach(callback=>{
+                   bool = callback(damage_count,damageSourece,this)
+               })
+            return bool
+        }
 
-        hurt(count:number,damageSourece:Card,attack_type:"defualt"|"ability"|"purely"){
-            
-            if(this.Prehurt(damageSourece,attack_type)){
+        lastAbilityPrehurt(damageSourece:Card,attack_type:"ability"|"default"|"purely",damage_count:number){
+            if(attack_type != 'ability') return false;
+            let bool = false
+               const callbacks = this.hook(HOOK.被技能击中后)
+               callbacks.forEach(callback=>{
+                   bool = callback(damage_count,damageSourece,this)
+               })
+            return bool
+        }
+    
+
+        hurt(count:number,damageSourece:Card,attack_type:"ability"|"default"|"purely"){
+            if(this.Prehurt(damageSourece,attack_type,count)){
                 return
             }
-            this.heal = this.GETheal - (count - this.Getarrmor)
+            if(this.abilityPrehurt(damageSourece,attack_type,count)){
+                return
+            }
+            if(attack_type == 'purely'){
+                this.heal = this.GETheal - count
+            }else{
+                this.heal = this.GETheal - (count - this.Getarrmor)
+            }
+            this.lastAbilityPrehurt(damageSourece,attack_type,count)
             print(damageSourece.UUID,"攻击了",this.UUID,"攻击值为",this.GETheal - (count - this.Getarrmor))
             if(this.GETheal < 1){
                 this.call_death(damageSourece)

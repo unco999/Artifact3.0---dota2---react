@@ -35,8 +35,8 @@ export const Card = ({...args}) =>{
         const tip = ConpoentDataContainer.Instance.NameGetNode("")
     }
 
-    //@ts-ignore
-    return <DOTAHeroMovie heroname={GameUI.CustomUIConfig().CardHero?.CardGame[args.id]?.name ?? "" } onmouseover={(panel)=>tip(panel)} onmouseout={panel=>$.DispatchEvent("DOTAHideTextTooltip",panel)} ref={panel => ref.current = panel} {...args} onload={args.onload}  className={'Card'}>
+
+    return <DOTAHeroMovie heroid={args?.id} onmouseover={(panel)=>tip(panel)} onmouseout={panel=>$.DispatchEvent("DOTAHideTextTooltip",panel)} ref={panel => ref.current = panel} {...args} onload={args.onload}  className={'Card'}>
             <Panel className={"threeDimensional"}>
                 <Panel className={"attack"}>
                     <Label text={(GameUI?.CustomUIConfig() as any)?.CardHero?.CardGame[args.id]?.attack ?? ""}/>

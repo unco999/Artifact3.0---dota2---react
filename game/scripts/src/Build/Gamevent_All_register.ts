@@ -3,7 +3,7 @@ import { damage } from "../feature/damage";
 import { EquipCard, EquipContainer } from "../instance/Equip";
 import { Hero } from "../instance/Hero";
 import { HOOK, ModifilerContainer } from "../instance/Modifiler";
-import { BattleArea, Hand, Scenes } from "../instance/Scenes";
+import { BattleArea, Cardheaps, Hand, Scenes } from "../instance/Scenes";
 import { Unit } from "../instance/Unit";
 import { Timers } from "../lib/timers";
 import { reloadable } from "../lib/tstl-utils";
@@ -92,6 +92,14 @@ export class GamaEvent_All_register{
                 print("当前遍取到的英雄",card.UUID)
                 card.addmodifiler(ModifilerContainer.instance.Get_prototype_modifiler("stund1round_modifiler"))
             })
+        })
+        CustomGameEventManager.RegisterListener("C2S_GET_ABILITY_CARD",(_,event)=>{
+           const player = PlayerResource.GetPlayer(event.PlayerID);
+           const card = (GameRules.SceneManager.GetCardheapsScene(event.PlayerID) as Cardheaps).takeAhand4Small()
+           card.forEach((_card)=>{
+            const hand = GameRules.SceneManager.GetHandsScene(event.PlayerID) as Hand
+            GameRules.SceneManager.change_secens(_card.UUID,hand.SceneName,-1)
+           })
         })
     }
 }

@@ -4,6 +4,7 @@ import { reloadable } from "../lib/tstl-utils";
 import { get_current_operate_brach } from "../Manager/nettablefuc";
 import { set_settlement_false, set_settlement_true } from "../Manager/statusSwitcher";
 import { Card, CardParameter, CARD_TYPE, professionalMagicCard } from "./Card";
+import { Hero } from "./Hero";
 import { ModifilerContainer } from "./Modifiler";
 import { BattleArea, ICAScene, Scenes } from "./Scenes";
 import { Tower } from "./Tower";
@@ -337,8 +338,10 @@ export class SmallSkill_juedou extends ability_templater{
             super.spell_skill(table,target,hero)
             // const hero = GameRules.SceneManager.get_hero(this.heorheroid) as Unit
             const _target = GameRules.SceneManager.get_card(target) as Unit
-            
             let index = (_target.Scene.find_oppose() as BattleArea).GetrecentSpace(_target.Index)
+            while((_target.Scene.find_oppose() as BattleArea).GetSpaceCount() == 2 && _target.Index == hero.Index){
+                let index = (_target.Scene.find_oppose() as BattleArea).GetrecentSpace(_target.Index)
+            }
             if(index != -1 && _target.Index != hero.Index){
                 GameRules.SceneManager.change_secens(hero.UUID,hero.Scene.SceneName,index + 1 )
             }
@@ -483,56 +486,56 @@ export class SmallSkill_juedou extends ability_templater{
     }
 }
 
-/**
- * 龙破斩
- */
- @ca_register_ability()
- export class SmallSkill_longpizhan extends ability_templater{
-    Magic_brach = Magic_brach.对格
-    Magic_team = Magic_team.敌方
-    Magic_range = Magic_range.近邻
-    heroid = "25"
-    ability_select_type: select_type = select_type.敌方近邻;
-    consumption: number = 3
+// /**
+//  * 龙破斩
+//  */
+//  @ca_register_ability()
+//  export class SmallSkill_longpizhan extends ability_templater{
+//     Magic_brach = Magic_brach.对格
+//     Magic_team = Magic_team.敌方
+//     Magic_range = Magic_range.近邻
+//     heroid = "25"
+//     ability_select_type: select_type = select_type.敌方近邻;
+//     consumption: number = 3
 
-     constructor(){
-         super("SmallSkill_longpizhan")
-     }
+//      constructor(){
+//          super("SmallSkill_longpizhan")
+//      }
  
 
-     spell_skill(table:(Unit|number)[],target?:string,hero?:Unit){
-        if(!target || !hero) return
-        super.spell_skill(table,target,hero)
-        const _table =  GameRules.SceneManager.enemyneighbor(hero)
-        this.__damage(_table.center,hero)
-        this.__damage(_table.left,hero)
-        this.__damage(_table.right,hero)
+//      spell_skill(table:(Unit|number)[],target?:string,hero?:Unit){
+//         if(!target || !hero) return
+//         super.spell_skill(table,target,hero)
+//         const _table =  GameRules.SceneManager.enemyneighbor(hero)
+//         this.__damage(_table.center,hero)
+//         this.__damage(_table.left,hero)
+//         this.__damage(_table.right,hero)
         
-    }
+//     }
 
     
-    __damage(target:Unit|number,source:Unit){
-        if(typeof(target) == 'number') return;
-        const _damage = new damage(source,target)
-        _damage.spell_skill_settlement(this.calculate(source),source)
-        CustomGameEventManager.Send_ServerToAllClients("SC2_PLAY_EFFECT",{uuid:target.UUID,paticle:"particles/econ/items/legion/legion_weapon_voth_domosh/legion_commander_duel_arcana_fire.vpcf",cameraOrigin:"0 400 0",lookAt:"0 0 0"})
-    }
+//     __damage(target:Unit|number,source:Unit){
+//         if(typeof(target) == 'number') return;
+//         const _damage = new damage(source,target)
+//         _damage.spell_skill_settlement(this.calculate(source),source)
+//         CustomGameEventManager.Send_ServerToAllClients("SC2_PLAY_EFFECT",{uuid:target.UUID,paticle:"particles/econ/items/legion/legion_weapon_voth_domosh/legion_commander_duel_arcana_fire.vpcf",cameraOrigin:"0 400 0",lookAt:"0 0 0"})
+//     }
  
-     /**伤害结算方法 */
-     calculate(hero:Unit){
-        let cure = 0
-        if(hero.Getfaulty == 1){
-            cure = 3
-        }
-        if(hero.Getfaulty == 2){
-            cure = 5
-        }
-        if(hero.Getfaulty == 3){
-            cure = 7
-        }
-        return cure
-    }
-}
+//      /**伤害结算方法 */
+//      calculate(hero:Unit){
+//         let cure = 0
+//         if(hero.Getfaulty == 1){
+//             cure = 3
+//         }
+//         if(hero.Getfaulty == 2){
+//             cure = 5
+//         }
+//         if(hero.Getfaulty == 3){
+//             cure = 7
+//         }
+//         return cure
+//     }
+// }
 
 /**
  * 恶魔转化 
@@ -592,6 +595,7 @@ export class SmallSkill_juedou extends ability_templater{
 
      post_move_spell_skill(table: (number | Unit)[], target?: string, hero?: Unit): void {
          super.post_move_spell_skill(table,target,hero)
+         hero.addmodifiler(ModifilerContainer.instance.Get_prototype_modifiler("ProphetFlight_modifiler"))
      }
 }   
 
@@ -946,7 +950,7 @@ export class SmallSkill_juedou extends ability_templater{
  */
     @ca_register_ability()
     export class TrickSkill_heidong  extends ability_templater{
-        Magic_brach = Magic_brach.对格
+        Magic_brach = Magic_brach.本路
         Magic_team = Magic_team.敌方
         Magic_range = Magic_range.近邻
         heroid = "33"
@@ -961,17 +965,21 @@ export class SmallSkill_juedou extends ability_templater{
             // const hero = GameRules.SceneManager.get_hero(this.heorheroid) as Unit
             if(!target || !hero) return
             super.spell_skill(table,target,hero)
-            table.forEach(card=>{
-                if(typeof(card) != "number"){
-                    if(card.PlayerID != hero.PlayerID){
-                        card.addmodifiler(ModifilerContainer.instance.Get_prototype_modifiler("stund1round_modifiler"))
-                        const _damage = new damage(hero,card)
-                        _damage.spell_skill_settlement(this.damage_calculate(hero),hero)
-                    }
-                }
-            })
+            const _table =  GameRules.SceneManager.enemyneighbor(hero)
+            this.__damage(_table.center,hero)
+            this.__damage(_table.left,hero)
+            this.__damage(_table.right,hero)
+            _table.center && _table.center.addmodifiler(ModifilerContainer.instance.Get_prototype_modifiler("stund1round_modifiler"))
+            _table.left && (_table.left as Unit).addmodifiler(ModifilerContainer.instance.Get_prototype_modifiler("stund1round_modifiler"))
+            _table.right && (_table.right as Unit).addmodifiler(ModifilerContainer.instance.Get_prototype_modifiler("stund1round_modifiler"))
         }
 
+        __damage(target:Unit|number,source:Unit){
+            if(typeof(target) == 'number') return;
+            const _damage = new damage(source,target)
+            _damage.spell_skill_settlement(this.damage_calculate(source),source)
+        }
+     
      /**伤害结算方法 */
      damage_calculate(hero:Unit){
         let damage = 0
@@ -1372,33 +1380,26 @@ export class TrickSkill_fashegouzhua extends ability_templater{
  */
 @ca_register_ability()
 export class TrickSkill_yexingzhaohuanzhanying extends ability_templater{
-    Magic_brach = Magic_brach.对格
-    Magic_team = Magic_team.敌方
+    Magic_brach = Magic_brach.本路
+    Magic_team = Magic_team.友方
     Magic_range = Magic_range.单体
     heroid = "38"
     ability_select_type: select_type = select_type.自己;
+    consumption = 3
+    displacement = 1
+    vacancyRelease = true // 空位释放
+
     constructor(){
         super("TrickSkill_yexingzhaohuanzhanying")
     }
 
-    spell_skill(table:(Unit|number)[],target?:string){
+    spell_skill(table:(Unit|number)[],target?:string,hero?:Unit,target_index?:number){
         // const hero = GameRules.SceneManager.get_hero(this.heorheroid) as Unit
-        const hero = GameRules.SceneManager.GetMidwayScene(GameRules.Blue.GetPlayerID()).IndexGet(3) as Unit
         super.spell_skill(table)
-        table.forEach(target=>{
-            if(typeof(target) != 'number'){
-                if(target.Index){
-                    const _damage = new damage(hero,target)
-                    _damage.spell_skill_settlement(this.damage_calculate(math.abs(hero.Index - target.Index)),hero,"default")
-                }   
-            }
-        })
+        const scene = hero.Scene as BattleArea
+        GameRules.brash_solidier.playerSummoning("3",2,hero.PlayerID,hero.Scene as BattleArea)
     }
 
-    /**伤害结算方法 */
-    damage_calculate(distance:number){
-        return 3 - distance
-    }
 }   
 
 /**
@@ -1606,19 +1607,24 @@ export class SmallSkill_julizhongji extends ability_templater{
     Magic_range = Magic_range.单体
     heroid = "71"
     ability_select_type: select_type = select_type.敌方对格;
+    consumption = 2;
     constructor(){
         super("SmallSkill_julizhongji")
     }
 
     spell_skill(table:(Unit|number)[],target?:string){
         // const hero = GameRules.SceneManager.get_hero(this.heorheroid) as Unit
-        const hero = GameRules.SceneManager.GetMidwayScene(GameRules.Blue.GetPlayerID()).IndexGet(3) as Unit
         super.spell_skill(table)
         table.forEach(target=>{
             if(typeof(target) != 'number'){
                 if(target.Index){
-                    const _damage = new damage(hero,target)
-                    _damage.spell_skill_settlement(this.damage_calculate(math.abs(hero.Index - target.Index)),hero)
+                    const modifiler = ModifilerContainer.instance.Get_prototype_modifiler("stund1round_modifiler")
+                    target.addmodifiler(modifiler)
+                    const index = (target.Scene as BattleArea).randomGetSpace()
+                    if(index)
+                    Timers.CreateTimer(1,()=>{
+                        GameRules.SceneManager.change_secens(target.UUID,target.Scene.SceneName,+index)
+                    })
                 }   
             }
         })
@@ -1637,32 +1643,46 @@ export class SmallSkill_julizhongji extends ability_templater{
  */
 @ca_register_ability()
 export class SmallSkill_zhaominghuojian extends ability_templater{
-    Magic_brach = Magic_brach.对格
+    Magic_brach = Magic_brach.跨线
     Magic_team = Magic_team.敌方
     Magic_range = Magic_range.单体
     heroid = "51"
     ability_select_type: select_type = select_type.全场任意敌方单体;
+    consumption = 4
     constructor(){
         super("SmallSkill_zhaominghuojian")
     }
 
-    spell_skill(table:(Unit|number)[],target?:string){
+    spell_skill(table:(Unit|number)[],target?:string,hero?:Hero){
         // const hero = GameRules.SceneManager.get_hero(this.heorheroid) as Unit
-        const hero = GameRules.SceneManager.GetMidwayScene(GameRules.Blue.GetPlayerID()).IndexGet(3) as Unit
         super.spell_skill(table)
-        table.forEach(target=>{
-            if(typeof(target) != 'number'){
-                if(target.Index){
-                    const _damage = new damage(hero,target)
-                    _damage.spell_skill_settlement(this.damage_calculate(math.abs(hero.Index - target.Index)),hero)
-                }   
-            }
-        })
+        const _target = GameRules.SceneManager.get_card(target) as Unit
+        const left = _target.Find_left_Card()
+        const right = _target.Find_right_Card()
+        this.settlement(_target,hero)
+        left != null && this.settlement(left,hero)
+        right != null  && this.settlement(right,hero)
     }
 
-    /**伤害结算方法 */
-    damage_calculate(distance:number){
-        return 3 - distance
+    settlement(target:Unit,my:Hero){
+        print("找到了目标为",target.UUID)
+        const _damage = new damage(my,target)
+        _damage.spell_skill_settlement(this.damage_calculate(my),my)
+    }
+
+
+    damage_calculate(hero:Unit){
+        let damage = 0
+        if(hero.Getfaulty == 1){
+            damage = 3
+        }
+        if(hero.Getfaulty == 2){
+            damage = 5
+        }
+        if(hero.Getfaulty == 3){
+            damage = 7
+        }
+        return damage
     }
 }   
 
@@ -1709,13 +1729,569 @@ export class SmallSkill_redaofeidan extends ability_templater{
  */
 @ca_register_ability()
 export class SmallSkill_yexingzhaohuanyezhu extends ability_templater{
-    Magic_brach = Magic_brach.对格
-    Magic_team = Magic_team.敌方
+    Magic_brach = Magic_brach.本路
+    Magic_team = Magic_team.友方
     Magic_range = Magic_range.单体
     heroid = "38"
     ability_select_type: select_type = select_type.自己;
+    displacement = 1
+    vacancyRelease = true // 空位释放
+    consumption = 3;
     constructor(){
         super("SmallSkill_yexingzhaohuanyezhu")
+    }
+
+    spell_skill(table:(Unit|number)[],target?:string,hero?:Unit,target_index?:number){
+        // const hero = GameRules.SceneManager.get_hero(this.heorheroid) as Unit
+        super.spell_skill(table)
+        const scene = hero.Scene as BattleArea
+        GameRules.brash_solidier.playerSummoning("3",2,hero.PlayerID,hero.Scene as BattleArea)
+    }
+}   
+
+
+/**
+3水晶 丽娜小 光击阵：眩晕丽娜的敌方近邻，并造成2/4/6点伤害
+ */
+@ca_register_ability()
+export class SmallSkill_guangjizhen extends ability_templater{
+    Magic_brach = Magic_brach.本路
+    Magic_team = Magic_team.敌方
+    Magic_range = Magic_range.近邻
+    heroid = "25"
+    ability_select_type: select_type = select_type.敌方近邻;
+    consumption: number = 3
+    constructor(){
+        super("SmallSkill_guangjizhen")
+    }
+
+    spell_skill(table:(Unit|number)[],target?:string,hero?:Unit){
+        // const hero = GameRules.SceneManager.get_hero(this.heorheroid) as Unit
+        super.spell_skill(table,target,hero)
+        table.forEach(target=>{
+            if(typeof(target) != 'number'){
+                if(target.Index){
+                    const _damage = new damage(hero,target)
+                    _damage.spell_skill_settlement(this.damage_calculate(hero),hero)
+                    const modifiler = ModifilerContainer.instance.Get_prototype_modifiler("stund1round_modifiler")
+                    target.addmodifiler(modifiler)
+                }   
+            }
+        })
+    }
+
+     /**伤害结算方法 */
+     damage_calculate(hero:Unit){
+        let damage = 0
+        if(hero.Getfaulty == 1){
+            damage = 2
+        }
+        if(hero.Getfaulty == 2){
+            damage = 4
+        }
+        if(hero.Getfaulty == 3){
+            damage = 6
+        }
+        return damage
+    }
+}   
+
+
+/**
+4水晶 船长小 水刀：对船长的敌方近邻造成等同于（船长当前攻击力的一半）的伤害，向下取整
+ */
+@ca_register_ability()
+export class SmallSkill_shuidao extends ability_templater{
+    Magic_brach = Magic_brach.本路
+    Magic_team = Magic_team.敌方
+    Magic_range = Magic_range.近邻
+    heroid = "23"
+    ability_select_type: select_type = select_type.敌方近邻;
+    consumption: number = 4
+    constructor(){
+        super("SmallSkill_shuidao")
+    }
+
+    spell_skill(table:(Unit|number)[],target?:string){
+        const hero = GameRules.SceneManager.get_hero(this.heroid) as Unit
+        super.spell_skill(table)
+        table.forEach(target=>{
+            if(typeof(target) != 'number'){
+                if(target.Index){
+                    const _damage = new damage(hero,target)
+                    _damage.spell_skill_settlement(math.floor(hero.Getattack / 2),hero)
+                }   
+            }
+        })
+    }
+
+
+}   
+
+
+/**
+3水晶 骨法小 衰老：选择一个敌方单位使其不能攻击且不会受到攻击，并承受双倍技能伤害
+
+ */
+@ca_register_ability()
+export class SmallSkill_shuailao extends ability_templater{
+    Magic_brach = Magic_brach.本路
+    Magic_team = Magic_team.敌方
+    Magic_range = Magic_range.单体
+    heroid = "45"
+    ability_select_type: select_type = select_type.敌方单体;
+    consumption: number = 3
+    
+    constructor(){
+        super("SmallSkill_shuailao")
+    }
+
+    spell_skill(table:(Unit|number)[],target?:string){
+        // const hero = GameRules.SceneManager.get_hero(this.heorheroid) as Unit
+        super.spell_skill(table)
+        const _target = GameRules.SceneManager.get_card(target) as Unit
+        _target.addmodifiler(ModifilerContainer.instance.Get_prototype_modifiler("senescence_modifiler"))
+    }
+
+    /**伤害结算方法 */
+    damage_calculate(distance:number){
+        return 3 - distance
+    }
+}   
+
+
+
+/**
+3水晶 丁哥小 激光：选择一个敌方单位对其造成3/5/7点伤害，并使该敌方单位本回合无法攻击
+
+
+ */
+@ca_register_ability()
+export class SmallSkill_jiguang extends ability_templater{
+    Magic_brach = Magic_brach.本路
+    Magic_team = Magic_team.敌方
+    Magic_range = Magic_range.单体
+    heroid = "34"
+    ability_select_type: select_type = select_type.敌方本路;
+    consumption = 3
+    constructor(){
+        super("SmallSkill_jiguang")
+    }
+
+    spell_skill(table:(Unit|number)[],target?:string){
+        const hero = GameRules.SceneManager.get_hero(this.heroid) as Unit
+        const _target = GameRules.SceneManager.get_card(target) as Unit
+        super.spell_skill(table,target)
+        const modifiler = ModifilerContainer.instance.Get_prototype_modifiler("contribute1Round_modifiler")
+        _target.addmodifiler(modifiler)
+        const _damage = new damage(hero,_target)
+        _damage.spell_skill_settlement(this.damage_calculate(hero),hero)
+    
+    }
+
+     /**伤害结算方法 */
+     damage_calculate(hero:Unit){
+        let damage = 0
+        if(hero.Getfaulty == 1){
+            damage = 5
+        }
+        if(hero.Getfaulty == 2){
+            damage = 7
+        }
+        if(hero.Getfaulty == 3){
+            damage = 10
+        }
+        return damage
+    }
+}   
+
+
+
+
+/**
+3水晶 小黑小 狂风：沉默一个敌方英雄并使该英雄，移动到另一个敌方空格
+
+
+
+ */
+@ca_register_ability()
+export class SmallSkill_kuangfeng extends ability_templater{
+    Magic_brach = Magic_brach.本路
+    Magic_team = Magic_team.敌方
+    Magic_range = Magic_range.单体
+    heroid = "6"
+    ability_select_type: select_type = select_type.敌方单体;
+    consumption = 3
+
+    constructor(){
+        super("SmallSkill_kuangfeng")
+    }
+
+    spell_skill(table:(Unit|number)[],target?:string){
+        // const hero = GameRules.SceneManager.get_hero(this.heorheroid) as Unit
+        super.spell_skill(table)
+        const hero = GameRules.SceneManager.get_hero(this.heroid) as Unit
+        const _target = GameRules.SceneManager.get_card(target) as Unit
+        const modifiler = ModifilerContainer.instance.Get_prototype_modifiler("silence_modifiler")
+        _target.addmodifiler(modifiler)
+        const index = (_target.Scene as BattleArea).randomGetSpace()
+        if(index)
+        Timers.CreateTimer(1,()=>{
+            GameRules.SceneManager.change_secens(_target.UUID,_target.Scene.SceneName,+index)
+        })
+    }
+
+    /**伤害结算方法 */
+    damage_calculate(distance:number){
+        return 3 - distance
+    }
+}   
+
+
+/**
+3水晶 小黑小 狂风：沉默一个敌方英雄并使该英雄，移动到另一个敌方空格
+
+
+
+ */
+@ca_register_ability()
+export class SmallSkill_kuangfen  extends ability_templater{
+    Magic_brach = Magic_brach.对格
+    Magic_team = Magic_team.敌方
+    Magic_range = Magic_range.单体
+    heroid = "6"
+    ability_select_type: select_type = select_type.自己;
+    constructor(){
+        super("SmallSkill_kuangfen")
+    }
+
+    spell_skill(table:(Unit|number)[],target?:string){
+        // const hero = GameRules.SceneManager.get_hero(this.heorheroid) as Unit
+        const hero = GameRules.SceneManager.GetMidwayScene(GameRules.Blue.GetPlayerID()).IndexGet(3) as Unit
+        super.spell_skill(table)
+        table.forEach(target=>{
+            if(typeof(target) != 'number'){
+                if(target.Index){
+                    const _damage = new damage(hero,target)
+                    _damage.spell_skill_settlement(this.damage_calculate(math.abs(hero.Index - target.Index)),hero)
+                }   
+            }
+        })
+    }
+
+    /**伤害结算方法 */
+    damage_calculate(distance:number){
+        return 3 - distance
+    }
+}   
+
+
+
+/**
+4水晶 冰魂小 冰霜漩涡：使冰魂的敌方近邻降低2点抗性值
+
+ */
+@ca_register_ability()
+export class SmallSkill_bingshuangxuanwo extends ability_templater{
+    Magic_brach = Magic_brach.对格
+    Magic_team = Magic_team.敌方
+    Magic_range = Magic_range.单体
+    heroid = "68"
+    ability_select_type: select_type = select_type.自己;
+    constructor(){
+        super("SmallSkill_bingshuangxuanwo")
+    }
+
+    spell_skill(table:(Unit|number)[],target?:string){
+        // const hero = GameRules.SceneManager.get_hero(this.heorheroid) as Unit
+        const hero = GameRules.SceneManager.GetMidwayScene(GameRules.Blue.GetPlayerID()).IndexGet(3) as Unit
+        super.spell_skill(table)
+        table.forEach(target=>{
+            if(typeof(target) != 'number'){
+                if(target.Index){
+                    const _damage = new damage(hero,target)
+                    _damage.spell_skill_settlement(this.damage_calculate(math.abs(hero.Index - target.Index)),hero)
+                }   
+            }
+        })
+    }
+
+    /**伤害结算方法 */
+    damage_calculate(distance:number){
+        return 3 - distance
+    }
+}   
+
+
+/**
+4水晶 老陈小 神圣劝化：将敌方一个非英雄单位召唤为己方单位
+
+
+ */
+@ca_register_ability()
+export class SmallSkill_shenshengquanhua extends ability_templater{
+    Magic_brach = Magic_brach.对格
+    Magic_team = Magic_team.敌方
+    Magic_range = Magic_range.单体
+    heroid = "66"
+    ability_select_type: select_type = select_type.自己;
+    constructor(){
+        super("SmallSkill_shenshengquanhua")
+    }
+
+    spell_skill(table:(Unit|number)[],target?:string){
+        // const hero = GameRules.SceneManager.get_hero(this.heorheroid) as Unit
+        const hero = GameRules.SceneManager.GetMidwayScene(GameRules.Blue.GetPlayerID()).IndexGet(3) as Unit
+        super.spell_skill(table)
+        table.forEach(target=>{
+            if(typeof(target) != 'number'){
+                if(target.Index){
+                    const _damage = new damage(hero,target)
+                    _damage.spell_skill_settlement(this.damage_calculate(math.abs(hero.Index - target.Index)),hero)
+                }   
+            }
+        })
+    }
+
+    /**伤害结算方法 */
+    damage_calculate(distance:number){
+        return 3 - distance
+    }
+}   
+
+
+
+/**
+4水晶 NEC小 死亡脉冲：对敌方近邻造成3/5/7点伤害，并对友方近邻治疗3/5/7点生命值
+ */
+@ca_register_ability()
+export class SmallSkill_siwangmaichong extends ability_templater{
+    Magic_brach = Magic_brach.对格
+    Magic_team = Magic_team.敌方
+    Magic_range = Magic_range.单体
+    heroid = "36"
+    ability_select_type: select_type = select_type.自己;
+    constructor(){
+        super("SmallSkill_siwangmaichong")
+    }
+
+    spell_skill(table:(Unit|number)[],target?:string){
+        // const hero = GameRules.SceneManager.get_hero(this.heorheroid) as Unit
+        const hero = GameRules.SceneManager.GetMidwayScene(GameRules.Blue.GetPlayerID()).IndexGet(3) as Unit
+        super.spell_skill(table)
+        table.forEach(target=>{
+            if(typeof(target) != 'number'){
+                if(target.Index){
+                    const _damage = new damage(hero,target)
+                    _damage.spell_skill_settlement(this.damage_calculate(math.abs(hero.Index - target.Index)),hero)
+                }   
+            }
+        })
+    }
+
+    /**伤害结算方法 */
+    damage_calculate(distance:number){
+        return 3 - distance
+    }
+}   
+
+
+/**
+5水晶 飞机小 火箭弹幕：对本条兵线上的所有随机敌方单位施放10次1/2/3点伤害的火箭弹幕
+ */
+@ca_register_ability()
+export class SmallSkill_huojiandanmu extends ability_templater{
+    Magic_brach = Magic_brach.对格
+    Magic_team = Magic_team.敌方
+    Magic_range = Magic_range.单体
+    heroid = "72"
+    ability_select_type: select_type = select_type.自己;
+    constructor(){
+        super("SmallSkill_huojiandanmu")
+    }
+
+    spell_skill(table:(Unit|number)[],target?:string){
+        // const hero = GameRules.SceneManager.get_hero(this.heorheroid) as Unit
+        const hero = GameRules.SceneManager.GetMidwayScene(GameRules.Blue.GetPlayerID()).IndexGet(3) as Unit
+        super.spell_skill(table)
+        table.forEach(target=>{
+            if(typeof(target) != 'number'){
+                if(target.Index){
+                    const _damage = new damage(hero,target)
+                    _damage.spell_skill_settlement(this.damage_calculate(math.abs(hero.Index - target.Index)),hero)
+                }   
+            }
+        })
+    }
+
+    /**伤害结算方法 */
+    damage_calculate(distance:number){
+        return 3 - distance
+    }
+}   
+
+
+
+/**
+6水晶 小黑大 射手天赋：对一个敌方单位造成两倍于卓尔游侠当前攻击力的伤害
+
+ */
+@ca_register_ability()
+export class TrickSkill_sheshoutianfu extends ability_templater{
+    Magic_brach = Magic_brach.对格
+    Magic_team = Magic_team.敌方
+    Magic_range = Magic_range.单体
+    heroid = "6"
+    ability_select_type: select_type = select_type.自己;
+    constructor(){
+        super("TrickSkill_sheshoutianfu")
+    }
+
+    spell_skill(table:(Unit|number)[],target?:string){
+        // const hero = GameRules.SceneManager.get_hero(this.heorheroid) as Unit
+        const hero = GameRules.SceneManager.GetMidwayScene(GameRules.Blue.GetPlayerID()).IndexGet(3) as Unit
+        super.spell_skill(table)
+        table.forEach(target=>{
+            if(typeof(target) != 'number'){
+                if(target.Index){
+                    const _damage = new damage(hero,target)
+                    _damage.spell_skill_settlement(this.damage_calculate(math.abs(hero.Index - target.Index)),hero)
+                }   
+            }
+        })
+    }
+
+    /**伤害结算方法 */
+    damage_calculate(distance:number){
+        return 3 - distance
+    }
+}   
+
+
+
+/**
+7水晶 冰魂大 冰晶轰爆：惩处一名受伤的敌方英雄（跨线技能）
+
+
+ */
+@ca_register_ability()
+export class TrickSkill_bingjinghongbao extends ability_templater{
+    Magic_brach = Magic_brach.对格
+    Magic_team = Magic_team.敌方
+    Magic_range = Magic_range.单体
+    heroid = "68"
+    ability_select_type: select_type = select_type.自己;
+    constructor(){
+        super("TrickSkill_bingjinghongbao")
+    }
+
+    spell_skill(table:(Unit|number)[],target?:string){
+        // const hero = GameRules.SceneManager.get_hero(this.heorheroid) as Unit
+        const hero = GameRules.SceneManager.GetMidwayScene(GameRules.Blue.GetPlayerID()).IndexGet(3) as Unit
+        super.spell_skill(table)
+        table.forEach(target=>{
+            if(typeof(target) != 'number'){
+                if(target.Index){
+                    const _damage = new damage(hero,target)
+                    _damage.spell_skill_settlement(this.damage_calculate(math.abs(hero.Index - target.Index)),hero)
+                }   
+            }
+        })
+    }
+
+    /**伤害结算方法 */
+    damage_calculate(distance:number){
+        return 3 - distance
+    }
+}   
+
+
+
+/**
+7水晶 老陈大 上帝之手：为所有己方英雄治疗4/6/8点生命值
+
+
+ */
+@ca_register_ability()
+export class TrickSkill_shangdizhishou extends ability_templater{
+    Magic_brach = Magic_brach.对格
+    Magic_team = Magic_team.敌方
+    Magic_range = Magic_range.单体
+    heroid = "66"
+    ability_select_type: select_type = select_type.自己;
+    constructor(){
+        super("TrickSkill_shangdizhishou")
+    }
+
+    spell_skill(table:(Unit|number)[],target?:string){
+        // const hero = GameRules.SceneManager.get_hero(this.heorheroid) as Unit
+        const hero = GameRules.SceneManager.GetMidwayScene(GameRules.Blue.GetPlayerID()).IndexGet(3) as Unit
+        super.spell_skill(table)
+        table.forEach(target=>{
+            if(typeof(target) != 'number'){
+                if(target.Index){
+                    const _damage = new damage(hero,target)
+                    _damage.spell_skill_settlement(this.damage_calculate(math.abs(hero.Index - target.Index)),hero)
+                }   
+            }
+        })
+    }
+
+    /**伤害结算方法 */
+    damage_calculate(distance:number){
+        return 3 - distance
+    }
+}   
+
+
+/**
+6水晶 NEC大 死神镰刀：眩晕一名敌方英雄，并对改单位造成等同于（当前其以损失的生命值）的伤害
+ */
+@ca_register_ability()
+export class TrickSkill_sishenliandao extends ability_templater{
+    Magic_brach = Magic_brach.对格
+    Magic_team = Magic_team.敌方
+    Magic_range = Magic_range.单体
+    heroid = "36"
+    ability_select_type: select_type = select_type.自己;
+    constructor(){
+        super("TrickSkill_sishenliandao")
+    }
+
+    spell_skill(table:(Unit|number)[],target?:string){
+        // const hero = GameRules.SceneManager.get_hero(this.heorheroid) as Unit
+        const hero = GameRules.SceneManager.GetMidwayScene(GameRules.Blue.GetPlayerID()).IndexGet(3) as Unit
+        super.spell_skill(table)
+        table.forEach(target=>{
+            if(typeof(target) != 'number'){
+                if(target.Index){
+                    const _damage = new damage(hero,target)
+                    _damage.spell_skill_settlement(this.damage_calculate(math.abs(hero.Index - target.Index)),hero)
+                }   
+            }
+        })
+    }
+
+    /**伤害结算方法 */
+    damage_calculate(distance:number){
+        return 3 - distance
+    }
+}   
+
+
+
+/**
+6水晶 飞机大 召唤飞弹：对本条兵线上的所有敌方单位造成2次2/3/5点伤害
+ */
+@ca_register_ability()
+export class TrickSkill_zhaohuanfeidan extends ability_templater{
+    Magic_brach = Magic_brach.对格
+    Magic_team = Magic_team.敌方
+    Magic_range = Magic_range.单体
+    heroid = "36"
+    ability_select_type: select_type = select_type.自己;
+    constructor(){
+        super("TrickSkill_zhaohuanfeidan")
     }
 
     spell_skill(table:(Unit|number)[],target?:string){

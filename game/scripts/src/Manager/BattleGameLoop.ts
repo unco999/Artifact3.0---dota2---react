@@ -1,5 +1,6 @@
 import { ScenesBuildbehavior } from "../Build/Scenesbuilder";
 import { damage } from "../feature/damage";
+import { TurntableBase } from "../feature/turntable";
 import { AbilityCard } from "../instance/Ability";
 import { BattleArea, Cardheaps, Grave, Hand, Hide } from "../instance/Scenes";
 import { Unit } from "../instance/Unit";
@@ -14,10 +15,10 @@ export enum 游戏循环 {
     "商店购买阶段"
 }
 
-const 商店购买时间 = 20
-const 英雄部署时间 = 20
+const 商店购买时间 = 10
+const 英雄部署时间 = 10
 const 战斗结算时间 = 4
-const 策略时间 = 30
+const 策略时间 = 10
 
 //第一回合六張牌  5小1大  第一回合結束  商店功能花錢買牌(2元买大技能 1元买小技能)  然後英雄分錄  分完路發兩張   
 
@@ -196,7 +197,6 @@ export class faultCard extends GameLoopState {
     historyRecord:[number,number] = [-1,-1] //上回合的玩家是否有操作 -1未读取 1有操作 2无操作
     rollingOperation:boolean = false // 为false 操作第一个数   为ture 操作第二个历史记录
     initflag:boolean = false
-    operationRecord:Array<boolean> = [] //存储历史操作记录
     first_player:PlayerID
 
     constructor(context: BattleGameLoop,brach:STRATEGY_BRACH_STATE) {
@@ -206,9 +206,6 @@ export class faultCard extends GameLoopState {
         this.register_gamevent()
     }
 
-    addOprration(operation:boolean){
-        this.operationRecord.push(operation)
-    }
 
     /**是否两个回合都无操作 */
     is2RoundNullOparetor(){
@@ -226,12 +223,10 @@ export class faultCard extends GameLoopState {
         CustomNetTables.SetTableValue("GameMianLoop","current_operate_playerid",{cuurent:playerID})
         if(playerID == GameRules.Red.GetPlayerID().toString()){
             const BlueOperator = IsblueOperater()
-            this.addOprration(BlueOperator)
             !this.rollingOperation ? (this.historyRecord[0] = BlueOperator ? 1 : 2) : (this.historyRecord[1] = BlueOperator ? 1 : 2)
             this.rollingOperation = !this.rollingOperation
         }else{
             const RedOperator = IsRedOperater()
-            this.addOprration(RedOperator)
             !this.rollingOperation ? (this.historyRecord[0] = RedOperator ? 1 : 2) : (this.historyRecord[1] = RedOperator ? 1 : 2)
             this.rollingOperation = !this.rollingOperation
         }
@@ -246,6 +241,7 @@ export class faultCard extends GameLoopState {
         CustomGameEventManager.RegisterListener("C2S_CLICK_SKIP",(_,event)=>{
             if(this.Get_current_option_playuer == event.PlayerID.toString()){
                 SetGameLoopMasK(event.PlayerID == GameRules.Red.GetPlayerID() ? optionMask.红队点击跳过 : optionMask.蓝队点击跳过)
+                GameRules.lastTruntable.Add(event.PlayerID,false)
             }
         })
     }
@@ -262,7 +258,6 @@ export class faultCard extends GameLoopState {
 
     entry() {
         super.entry();
-        this.Set_cuurent_option_player = GameRules.Red.GetPlayerID().toString()
         if (!this.host.init) {
             IsInToolsMode() && add_cuurent_glod(100,GameRules.Red.GetPlayerID())
             IsInToolsMode() && add_cuurent_glod(100,GameRules.Blue.GetPlayerID())
@@ -270,11 +265,15 @@ export class faultCard extends GameLoopState {
             ScenesBuildbehavior.HeapsBuild(GameRules.Red.GetPlayerID())
             ScenesBuildbehavior.HeapsBuild(GameRules.Blue.GetPlayerID())
             this.init_give_cards();
-            this.host.init = true;
+            GameRules.lastTruntable = new TurntableBase(GameRules.Red.GetPlayerID())
+            this.Set_cuurent_option_player = GameRules.lastTruntable.nextRound.toString()
             GameRules.SceneManager.update();
-        } else {
-
+            this.host.init = true;
+            this.create_solider() //每回合刷小兵
+            return;
         }
+        this.Set_cuurent_option_player = GameRules.lastTruntable.nextRound.toString()
+        GameRules.lastTruntable = new TurntableBase(GameRules.lastTruntable.nextRound)
         this.create_solider() //每回合刷小兵
     }
 
@@ -290,7 +289,6 @@ export class faultCard extends GameLoopState {
           blueCard.forEach(card=>{
             GameRules.SceneManager.change_secens(card.UUID,"HAND")
          })
-       this.initflag = true;
     }
 
     init_shuffle(){
@@ -350,12 +348,6 @@ export class faultCard extends GameLoopState {
 
     exit(){
         super.exit()
-        const last = this.operationRecord.length
-        if(last == 2){
-             const Aoparetor =  this.operationRecord[0]
-             const Boparetor = this.operationRecord[1]
-             return;
-        }
     }
 
 }

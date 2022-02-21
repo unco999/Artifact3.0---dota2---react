@@ -4,7 +4,7 @@
 		"isbig" "1"
 		"cost" "3"
 		"heroid" "22"
-		"remark" "雷击：眩晕一名敌方英雄，并造成3/5/8点魔法伤害"
+		"remark" "3水晶 宙斯小 雷击：眩晕一名敌方英雄，并造成3/5/8点魔法伤害"
 		"id" "1"
 		"originname" "zuus_lightning_bolt"
 
@@ -13,7 +13,7 @@
 		"isbig" "1"
 		"cost" "2"
 		"heroid" "104"
-		"remark" "决斗:选择一个敌方英雄与其发生战斗"
+		"remark" "2水晶 军团小 决斗:选择一个敌方英雄与其发生战斗"
 		"id" "2"
 		"originname" "legion_commander_duel"
 
@@ -22,7 +22,7 @@
 		"isbig" "1"
 		"cost" "3"
 		"heroid" "35"
-		"remark" "爆头：选择火枪的一个敌方近邻造成5/7/10点物理伤害"
+		"remark" "3水晶 火枪小 爆头：选择火枪的一个敌方近邻造成5/7/10点物理伤害"
 		"id" "3"
 		"originname" "sniper_headshot"
 
@@ -31,7 +31,7 @@
 		"isbig" "1"
 		"cost" "4"
 		"heroid" "44"
-		"remark" "幻影突袭：选择一个敌方单位造成4/6/9点物理伤害，并移动到一个友方空格"
+		"remark" "4水晶 幻刺小 幻影突袭：选择一个敌方单位造成4/6/9点物理伤害，并移动到一个友方空格"
 		"id" "4"
 		"originname" "phantom_assassin_phantom_strike"
 
@@ -40,7 +40,7 @@
 		"isbig" "1"
 		"cost" "3"
 		"heroid" "2"
-		"remark" "淘汰之刃：惩处一个负伤的敌方近邻"
+		"remark" "3水晶 斧王小 淘汰之刃：惩处一个负伤的敌方近邻"
 		"id" "5"
 		"originname" "axe_culling_blade"
 
@@ -49,7 +49,7 @@
 		"isbig" "1"
 		"cost" "3"
 		"heroid" "112"
-		"remark" "严寒灼烧：冰龙移动到一个友方空格，并使其获得5点攻击力"
+		"remark" "3水晶 冰龙小 严寒灼烧：冰龙移动到一个友方空格，并使其获得5点攻击力"
 		"id" "6"
 		"originname" "abyssal_underlord_pit_of_malice"
 
@@ -58,25 +58,25 @@
 		"isbig" "1"
 		"cost" "4"
 		"heroid" "57"
-		"remark" "洗礼：为一个友方单位恢复3/5/7点生命值，并对该单位的敌方近邻造成3/5/7点纯粹伤害"
+		"remark" "4水晶 全能小 洗礼：为一个友方单位恢复3/5/7点生命值，并对该单位的敌方近邻造成3/5/7点纯粹伤害"
 		"id" "7"
 		"originname" "omniknight_purification"
 
 	}
-	"SmallSkill_longpizhan" {
+	"SmallSkill_guangjizhen" {
 		"isbig" "1"
 		"cost" "3"
 		"heroid" "25"
-		"remark" "龙破斩：选择一个敌方单位，对其和其近邻造成3/5/7点伤害"
+		"remark" "3水晶 丽娜小 光击阵：眩晕丽娜的敌方近邻，并造成2/4/6点伤害"
 		"id" "8"
-		"originname" "lina_dragon_slave"
+		"originname" "lina_light_strike_array"
 
 	}
 	"SmallSkill_emozhuanhua" {
 		"isbig" "1"
 		"cost" "3"
 		"heroid" "33"
-		"remark" "恶魔转化：惩处一个友方单位召唤3个3攻3血的小谜团"
+		"remark" "3水晶 谜团小 恶魔转化：惩处一个友方单位召唤3个3攻3血的小谜团"
 		"id" "9"
 		"originname" "enigma_demonic_conversion"
 
@@ -85,7 +85,7 @@
 		"isbig" "1"
 		"cost" "3"
 		"heroid" "21"
-		"remark" "束缚击：选择一个敌方单位，使其和其右边的一个敌方单位眩晕"
+		"remark" "3水晶 风行小 束缚击：选择一个敌方单位，使其和其右边的一个敌方单位眩晕"
 		"id" "10"
 		"originname" "windrunner_shackleshot"
 
@@ -94,25 +94,25 @@
 		"isbig" "1"
 		"cost" "2"
 		"heroid" "53"
-		"remark" "传送：将先知移动到地图的任意友方空格"
+		"remark" "2水晶 先知小 传送：将先知移动到地图的任意友方空格，并获得2点攻击力"
 		"id" "11"
 		"originname" "furion_teleportation"
 
 	}
-	"SmallSkill_hongliu" {
+	"SmallSkill_shuidao" {
 		"isbig" "1"
 		"cost" "4"
 		"heroid" "23"
-		"remark" "洪流：眩晕昆卡的敌方近邻，并造成3点伤害"
+		"remark" "4水晶 船长小 水刀：对船长的敌方近邻造成等同于（船长当前攻击力的一半）的伤害，向下取整"
 		"id" "12"
-		"originname" "kunkka_torrent"
+		"originname" "kunkka_tidebringer"
 
 	}
 	"SmallSkill_huohuan" {
 		"isbig" "1"
 		"cost" "3"
 		"heroid" "109"
-		"remark" "惑幻：召唤一个等同于恐怖利刃基础数值的幻想"
+		"remark" "3水晶 TB小    惑幻：召唤一个等同于恐怖利刃基础数值的幻像"
 		"id" "13"
 		"originname" "terrorblade_conjure_image"
 
@@ -121,7 +121,7 @@
 		"isbig" "1"
 		"cost" "3"
 		"heroid" "29"
-		"remark" "巨浪：选择一个敌方单位，移除其抗性值"
+		"remark" "3水晶 潮汐小  巨浪：选择一个敌方单位，移除其抗性值"
 		"id" "14"
 		"originname" "tidehunter_gush"
 
@@ -130,18 +130,16 @@
 		"isbig" "1"
 		"cost" "3"
 		"heroid" "90"
-		"remark" "致盲之光：将一个敌方单位移动到另一个敌方空格中，并对其造成3/5/8点魔法伤害
-
-"
+		"remark" "3水晶 光法小 致盲之光：将一个敌方单位移动到另一个敌方空格中，并对其造成3/5/8点魔法伤害"
 		"id" "15"
 		"originname" "keeper_of_the_light_blinding_light"
 
 	}
-	"SmallSkill_shengmingjiqu" {
+	"SmallSkill_shuailao" {
 		"isbig" "1"
-		"cost" "4"
+		"cost" "3"
 		"heroid" "45"
-		"remark" "生命汲取：选择一个单位造成3/5/8点伤害，并恢复帕格纳等量生命值"
+		"remark" "3水晶 骨法小 衰老：选择一个敌方单位使其不能攻击且不会受到攻击，并承受双倍技能伤害"
 		"id" "16"
 		"originname" "pugna_decrepify"
 
@@ -150,7 +148,7 @@
 		"isbig" "1"
 		"cost" "2"
 		"heroid" "71"
-		"remark" "巨力重击：眩晕对格敌方单位，并使其移动到一个敌方空格内"
+		"remark" "2水晶 白牛小 巨力重击：眩晕对格敌方单位，并使其移动到一个敌方空格内"
 		"id" "17"
 		"originname" "spirit_breaker_greater_bash"
 
@@ -159,199 +157,287 @@
 		"isbig" "1"
 		"cost" "4"
 		"heroid" "51"
-		"remark" "照明火箭：选择一个敌方单位对其近邻造成3/5/7点物理伤害（跨线技能）"
+		"remark" "4水晶 发条小 照明火箭：选择一个敌方单位对其近邻造成3/5/7点物理伤害（跨线技能）"
 		"id" "18"
+		"originname" "rattletrap_rocket_flare"
 
 	}
 	"SmallSkill_yexingzhaohuanyezhu" {
 		"isbig" "1"
-		"cost" "3"
+		"cost" "5"
 		"heroid" "38"
-		"remark" "野性呼唤豪猪：召唤一只4攻7血的豪猪"
+		"remark" "3水晶 兽王小 野性呼唤豪猪：野性呼唤豪猪：召唤两只4攻7血的豪猪"
 		"id" "19"
+		"originname" "beastmaster_call_of_the_wild_boar"
 
 	}
-	"SmallSkill_redaofeidan" {
+	"SmallSkill_jiguang" {
 		"isbig" "1"
 		"cost" "3"
 		"heroid" "34"
-		"remark" "热导飞弹：对敌方单位随机释放3枚导弹,每枚导弹造成3/5/7点伤害"
+		"remark" "3水晶 丁哥小 激光：选择一个敌方单位对其造成3/5/7点伤害，并使该敌方单位本回合无法攻击"
 		"id" "20"
+		"originname" "tinker_laser"
+
+	}
+	"SmallSkill_kuangfeng" {
+		"isbig" "1"
+		"cost" "3"
+		"heroid" "6"
+		"remark" "3水晶 小黑小 狂风：沉默一个敌方英雄并使该英雄，移动到另一个敌方空格"
+		"originname" "zuus_thundergods_wrath"
+
+	}
+	"SmallSkill_bingshuangxuanwo" {
+		"isbig" "1"
+		"cost" "4"
+		"heroid" "68"
+		"remark" "4水晶 冰魂小 冰霜漩涡：使冰魂的敌方近邻降低2点抗性值"
+		"originname" "legion_commander_press_the_attack"
+
+	}
+	"SmallSkill_shenshengquanhua" {
+		"isbig" "1"
+		"cost" "4"
+		"heroid" "66"
+		"remark" "4水晶 老陈小 神圣劝化：将敌方一个非英雄单位召唤为己方单位"
+		"originname" "sniper_assassinate"
+
+	}
+	"SmallSkill_siwangmaichong" {
+		"isbig" "1"
+		"cost" "4"
+		"heroid" "36"
+		"remark" "4水晶 NEC小 死亡脉冲：对敌方近邻造成3/5/7点伤害，并对友方近邻治疗3/5/7点生命值"
+		"originname" "phantom_assassin_coup_de_grace"
+
+	}
+	"SmallSkill_huojiandanmu" {
+		"isbig" "1"
+		"cost" "5"
+		"heroid" "72"
+		"remark" "5水晶 飞机小 火箭弹幕：对本条兵线上的所有随机敌方单位施放10次1/2/3点伤害的火箭弹幕"
+		"originname" "axe_berserkers_call"
 
 	}
 	"TrickSkill_leishenzhinu" {
 		"isbig" "2"
-		"cost" "6"
+		"cost" "7"
 		"heroid" "22"
-		"remark" "雷神之怒：对所有兵线上的每名敌方英雄造成3/5/7点纯粹伤害"
+		"remark" "7水晶 宙斯大 雷神之怒：对所有兵线上的每名敌方英雄造成4/6/8点纯粹伤害"
 		"id" "21"
-		"originname" "zuus_thundergods_wrath"
+		"originname" "winter_wyvern_winters_curse"
 
 	}
 	"TrickSkill_qianggong" {
 		"isbig" "2"
-		"cost" "5"
+		"cost" "4"
 		"heroid" "104"
-		"remark" "强攻：解除一个友方单位的控制效果，并获得4攻击力回复4生命值"
+		"remark" "4水晶 军团大 强攻：解除一个友方单位的控制效果，并获得3攻击力回复3生命值"
 		"id" "22"
-		"originname" "legion_commander_press_the_attack"
+		"originname" "omniknight_guardian_angel"
 
 	}
 	"TrickSkill_ansha" {
 		"isbig" "2"
 		"cost" "6"
 		"heroid" "35"
-		"remark" "暗杀：对一个敌方单位造成10点纯粹伤害并眩晕（跨线技能）"
+		"remark" "6水晶 火枪大 暗杀：对一个敌方单位造成10/12/15点纯粹伤害并眩晕（跨线技能）"
 		"id" "23"
-		"originname" "sniper_assassinate"
+		"originname" "lina_laguna_blade"
 
 	}
 	"TrickSkill_encijietuo" {
 		"isbig" "2"
-		"cost" "5"
+		"cost" "6"
 		"heroid" "44"
-		"remark" "恩赐解脱：惩处一名敌方英雄 本路所有"
+		"remark" "6水晶 幻刺大 恩赐解脱：惩处一名敌方英雄 本路所有"
 		"id" "24"
-		"originname" "phantom_assassin_coup_de_grace"
+		"originname" "enigma_black_hole"
 
 	}
 	"TrickSkill_kuangzhanshizhihou" {
 		"isbig" "2"
-		"cost" "5"
+		"cost" "6"
 		"heroid" "2"
-		"remark" "狂战士之吼：斧王与敌方近邻战斗 "
+		"remark" "6水晶 斧王大 狂战士之吼：斧王与敌方近邻战斗"
 		"id" "25"
-		"originname" "axe_berserkers_call"
+		"originname" "windrunner_focusfire"
 
 	}
 	"TrickSkill_handongzuzhou" {
 		"isbig" "2"
-		"cost" "5"
+		"cost" "6"
 		"heroid" "112"
-		"remark" "寒冬诅咒：选择一个敌方英雄，使其与另一个敌方英雄决斗"
+		"remark" "6水晶 冰龙大 寒冬诅咒：选择一个敌方英雄，使其与另一个敌方英雄决斗"
 		"id" "26"
-		"originname" "winter_wyvern_winters_curse"
+		"originname" "furion_force_of_nature"
 
 	}
 	"TrickSkill_shouhutianshi" {
 		"isbig" "2"
-		"cost" "5"
+		"cost" "6"
 		"heroid" "57"
-		"remark" "守护天使：使本回合所有的友方单位获得伤害免疫"
+		"remark" "6水晶 全能大 守护天使：使本回合所有的友方单位获得伤害免疫"
 		"id" "27"
-		"originname" "omniknight_guardian_angel"
+		"originname" "kunkka_ghostship"
 
 	}
 	"TrickSkill_mieshenzhan" {
 		"isbig" "2"
-		"cost" "5"
+		"cost" "7"
 		"heroid" "25"
-		"remark" "神灭斩：对一个敌方单位造11/14/17点魔法伤害"
+		"remark" "7水晶 丽娜大 神灭斩：对一个敌方单位造11/13/16点伤害"
 		"id" "28"
-		"originname" "lina_laguna_blade"
+		"originname" "terrorblade_sunder"
 
 	}
 	"TrickSkill_heidong" {
 		"isbig" "2"
-		"cost" "6"
+		"cost" "7"
 		"heroid" "33"
-		"remark" "黑洞：对正面3格单位造成眩晕，并造成5/7/10点魔法伤害"
+		"remark" "7水晶 谜团大 黑洞：对正面3格单位造成眩晕，并造成5/7/10点魔法伤害"
 		"id" "29"
-		"originname" "enigma_black_hole"
+		"originname" "tidehunter_ravage"
 
 	}
 	"TrickSkill_jizhonghuoli" {
 		"isbig" "2"
-		"cost" "7"
+		"cost" "8"
 		"heroid" "21"
-		"remark" "集中火力：选择一个敌方单位或者敌方防御塔造成3次5/6/8点纯粹伤害"
+		"remark" "8水晶 风行大 集中火力：选择一个敌方单位或者敌方防御塔造成3次5/6/8点纯粹伤害"
 		"id" "30"
-		"originname" "windrunner_focusfire"
+		"originname" "keeper_of_the_light_illuminate"
 
 	}
 	"TrickSkill_zirandezhaohuan" {
 		"isbig" "2"
 		"cost" "5"
 		"heroid" "53"
-		"remark" "自然的召唤：召唤3攻6血的小树人直到上限"
+		"remark" "5水晶 先知大 自然的召唤：召唤6攻6血的小树人直到上限"
 		"id" "31"
-		"originname" "furion_force_of_nature"
+		"originname" "pugna_nether_blast"
 
 	}
 	"TrickSkill_youlingchuan" {
 		"isbig" "2"
 		"cost" "6"
 		"heroid" "23"
-		"remark" "幽灵船：对一个敌方英雄施放一艘船使其眩晕并造成6点伤害，路径上的所有友方英雄获得2点抗性（跨线技能）"
+		"remark" "6水晶 船长大 幽灵船：对一个敌方英雄施放一艘船使其眩晕并造成6点伤害，路径上的所有友方英雄获得2点抗性（跨线技能）"
 		"id" "32"
-		"originname" "kunkka_ghostship"
+		"originname" "spirit_breaker_charge_of_darkness"
 
 	}
 	"TrickSkill_hunduan" {
 		"isbig" "2"
 		"cost" "4"
 		"heroid" "109"
-		"remark" "魂断：选择一个单位，使恐怖利刃和其交换当前生命值"
+		"remark" "4水晶 TB大   魂断：选择一个单位，使恐怖利刃和其交换当前生命值"
 		"id" "33"
-		"originname" "terrorblade_sunder"
+		"originname" "rattletrap_hookshot"
 
 	}
 	"TrickSkill_huimie" {
 		"isbig" "2"
-		"cost" "6"
+		"cost" "7"
 		"heroid" "29"
-		"remark" "毁灭：本回合眩晕本路所有敌方单位，并造成2/3/4点物理伤害"
+		"remark" "7水晶 潮汐大 毁灭：本回合眩晕本路所有敌方单位，并造成2/3/4点物理伤害"
 		"id" "34"
-		"originname" "tidehunter_ravage"
+		"originname" "beastmaster_wild_axes"
 
 	}
 	"TrickSkill_chongjibo" {
 		"isbig" "2"
 		"cost" "6"
 		"heroid" "90"
-		"remark" "冲击波：对本路全体敌方单位造成5/7/10点魔法伤害"
+		"remark" "6水晶 光法大 冲击波：对本路全体敌方单位造成5/7/10点魔法伤害"
 		"id" "35"
-		"originname" "keeper_of_the_light_illuminate"
+		"originname" "tinker_rearm"
 
 	}
 	"TrickSkill_youminghongbao" {
 		"isbig" "2"
 		"cost" "5"
 		"heroid" "45"
-		"remark" "幽冥轰爆：对敌方近邻和防御塔造成5/7/10点伤害"
+		"remark" "5水晶 骨法大 幽冥轰爆：对敌方近邻和防御塔造成5/7/10点伤害"
 		"id" "36"
+		"originname" "pugna_nether_blast"
 
 	}
 	"TrickSkill_anyingchongchi" {
 		"isbig" "2"
 		"cost" "4"
 		"heroid" "71"
-		"remark" "暗影冲刺：选择一个敌方英雄与之战斗,裂魂人进入与该英雄距离最近的友方空格（跨线技能）"
+		"remark" "4水晶 白牛大 暗影冲刺：选择一个敌方英雄与之战斗,裂魂人进入与该英雄距离最近的友方空格（跨线技能）"
 		"id" "37"
+		"originname" "spirit_breaker_charge_of_darkness"
 
 	}
 	"TrickSkill_fashegouzhua" {
 		"isbig" "2"
 		"cost" "5"
 		"heroid" "51"
-		"remark" "发射钩爪：发条移动到一个友方空格，对该空格的对格敌方目标造成眩晕和6点物理伤害（跨线技能）"
+		"remark" "5水晶 发条大 发射钩爪：发条移动到一个友方空格，对该空格的对格敌方目标造成眩晕和6点物理伤害（跨线技能）"
 		"id" "38"
+		"originname" "rattletrap_hookshot"
 
 	}
 	"TrickSkill_yexingzhaohuanzhanying" {
 		"isbig" "2"
 		"cost" "5"
 		"heroid" "38"
-		"remark" "野性呼唤战鹰：召唤一只6攻9血的战鹰（跨线技能）"
+		"remark" "5水晶兽王大 野性呼唤战鹰：召唤一只6攻9血的战鹰（跨线技能）"
 		"id" "39"
+		"originname" "beastmaster_wild_axes"
 
 	}
 	"TrickSkill_jixiexingjun" {
 		"isbig" "2"
-		"cost" "6"
+		"cost" "7"
 		"heroid" "34"
-		"remark" "机械行军：对所有兵线上的敌方单位造成3/4/6点魔法伤害"
+		"remark" "7水晶 丁哥大 机械行军：对一条兵线上的所有敌方单位造成4次1/2/3点伤害(跨线技能)"
 		"id" "40"
+		"originname" "tinker_rearm"
+
+	}
+	"TrickSkill_sheshoutianfu" {
+		"isbig" "2"
+		"cost" "6"
+		"heroid" "6"
+		"remark" "6水晶 小黑大 射手天赋：对一个敌方单位造成两倍于卓尔游侠当前攻击力的伤害"
+		"originname" "drow_ranger_marksmanship"
+
+	}
+	"TrickSkill_bingjinghongbao" {
+		"isbig" "2"
+		"cost" "7"
+		"heroid" "68"
+		"remark" "7水晶 冰魂大 冰晶轰爆：惩处一名受伤的敌方英雄（跨线技能）"
+		"originname" "ancient_apparition_ice_blast"
+
+	}
+	"TrickSkill_shangdizhishou" {
+		"isbig" "2"
+		"cost" "7"
+		"heroid" "66"
+		"remark" "7水晶 老陈大 上帝之手：为所有己方英雄治疗4/6/8点生命值"
+		"originname" "chen_hand_of_god"
+
+	}
+	"TrickSkill_sishenliandao" {
+		"isbig" "2"
+		"cost" "6"
+		"heroid" "36"
+		"remark" "6水晶 NEC大 死神镰刀：眩晕一名敌方英雄，并对改单位造成等同于（当前其以损失的生命值）的伤害"
+		"originname" "necrolyte_reapers_scythe"
+
+	}
+	"TrickSkill_zhaohuanfeidan" {
+		"isbig" "2"
+		"cost" "6"
+		"heroid" "72"
+		"remark" "6水晶 飞机大 召唤飞弹：对本条兵线上的所有敌方单位造成2次2/3/5点伤害"
+		"originname" "gyrocopter_call_down"
 
 	}
 

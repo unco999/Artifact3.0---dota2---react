@@ -47,8 +47,8 @@ export class TowerGeneralControl{
 export class Tower{
     Player:CDOTAPlayer
     branch:number
-    maxheal:number = 30
-    cuurentheal:number = 30
+    maxheal:number = 40
+    cuurentheal:number = 40
     state:"death"|"defualt"
     uuid = DoUniqueString(GetSystemTime())
     isbase:boolean = false
@@ -84,7 +84,7 @@ export class Tower{
         print("执行了塔受伤程序")
         if(this.cuurentheal - damage <= 0){
             if(!GameRules.TowerGeneralControl.whetherTheFirstTowerDie[this.Player.GetPlayerID()]){
-                this.cuurentheal = 50
+                this.cuurentheal = 60
                 this.isbase = true;
                 GameRules.TowerGeneralControl.whetherTheFirstTowerDie[this.Player.GetPlayerID()] = true
                 CustomGameEventManager.Send_ServerToAllClients("S2C_CHANGE_BASE",{uuid:this.uuid})

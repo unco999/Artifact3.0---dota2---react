@@ -8,7 +8,8 @@ export enum modifilertype {
     冻结 = 0x00000001,
     晕眩 = 0x00000002,
     沉默 = 0x00000004,
-    待定 = 0x00000008,
+    虚无 = 0x00000008,
+    缴械 = 0x00000010,
 }
 
 export function ca_register_modifiler() {

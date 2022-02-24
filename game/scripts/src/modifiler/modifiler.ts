@@ -273,6 +273,50 @@ export class item_aegis_modifiler extends CAModifiler{
    }
 
 
+    
+  /**
+ * 冰霜漩涡减少2点护甲
+ */
+   @ca_register_modifiler()
+   export class bingshuangxunwo_modifiler extends CAModifiler{
+       name: string = "bingshuangxunwo_modifiler";
+       duration: number = 1;
+       debuff: boolean = true;
+   
+       constructor(){
+           super("bingshuangxunwo_modifiler")
+       }
+   
+       constructorinstance = silence_modifiler
+   
+       register_hook_event() {
+           this.setHookEvent(HOOK.死亡后,()=>{
+             this.thisHero.removeModifiler(this.name)
+             return true
+         })
+       }
+   
+   
+       get influenceMaxheal(): any {
+           return 0
+       }
+   
+       get influenceAttack(): any {
+           return 0
+       }
+   
+       get influenceArrmor(): any {
+           return -2
+       }
+       
+       get influenceheal(): any {
+           return 0
+       }
+   
+   }
+
+
+
 
 
 

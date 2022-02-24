@@ -32,5 +32,13 @@
 		"name" "xiaoshuren"
 
 	}
+	"5" {
+		"attack" "6"
+		"arrmor" "0"
+		"heal" "9"
+		"remark" "召唤战鹰"
+		"name" "zhanying"
+
+	}
 
 }

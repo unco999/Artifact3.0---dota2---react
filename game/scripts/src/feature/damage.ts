@@ -93,8 +93,8 @@ export class damage{
         }
     }
 
-    spell_skill_settlement(damage_count:number,source:Card,attack_type:"ability"|"default"|"purely" = 'ability'){       
-        CustomGameEventManager.Send_ServerToAllClients("S2C_HURT_DAMAGE",{particle:"particles/econ/items/shadow_fiend/sf_desolation/sf_rze_dso_scratch.vpcf",uuid:this.damageB.UUID})
+    spell_skill_settlement(damage_count:number,source:Card,attack_type:"ability"|"default"|"purely" = 'ability',particle?:string){       
+        CustomGameEventManager.Send_ServerToAllClients("S2C_HURT_DAMAGE",{particle: particle ?? "particles/econ/items/shadow_fiend/sf_desolation/sf_rze_dso_scratch.vpcf",uuid:this.damageB.UUID})
         Timers.CreateTimer(1.5,()=>{
             if(this.damageB){
                this.damageB.hurt(damage_count,source,attack_type)

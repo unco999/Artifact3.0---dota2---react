@@ -156,8 +156,12 @@ export class Cardheaps extends Scenes {
                     print("找到一张小技能卡")
                     return this.CardPool[key]
                 }
-                continue
             }
+            if(this.CardPool[key].type == 'TrickSkill'){
+                print("找到一张小技能卡")
+                return this.CardPool[key]
+            }
+            continue
             card = this.CardPool[key]
             return card
         }
@@ -1027,6 +1031,21 @@ export class ScenesManager {
             }
         }
         return table;
+    }
+
+    /**通过index获得上中下路应用 */
+    indexGetScnese(index:number,playerID:PlayerID){
+        switch(index){
+            case 0:{
+                return this.GetGoUpScene(playerID)
+            }
+            case 1:{
+                return this.GetMidwayScene(playerID)
+            }
+            case 2:{
+                return this.GetLaidDownScene(playerID)
+            }
+        }
     }
 
     /** 更新网表至nettable */

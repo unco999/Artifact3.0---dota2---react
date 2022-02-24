@@ -80,7 +80,8 @@ declare interface CustomGameEventDeclarations {
     "C2S_SPELL_TOWER":{uuid:string,abilityname:string,towerPlayer:string,towerindex:number}
     "S2C_OPEN_EQUIP_SHOP":{}
     "S2C_CHANGE_BASE":{uuid:string} //变换为基地
-    "C2S_SPACE_CALL_SPELL":{SKILL_ID:string,target_index:string,spell_ability_card_uuid:string}
+    "C2S_SPACE_CALL_SPELL":{SKILL_ID:string,target_index:string,spell_ability_card_uuid:string,scnese:number}
     "C2S_ALL_Stun":{}
     "C2S_GET_ABILITY_CARD":{} //从牌库抽一张技能牌
+    "C2S_GET_ABILITY_T":{} //从牌库抽大招
 }

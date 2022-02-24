@@ -6,9 +6,9 @@ import '../lib/table'
 
 
 const timer = {
-    红队选择时间:6,
-    蓝队选择时间:6,
-    分路选择时间:20,
+    红队选择时间:12,
+    蓝队选择时间:12,
+    分路选择时间:25,
 }
 
 export abstract class ChooseHerostate{
@@ -19,7 +19,7 @@ export abstract class ChooseHerostate{
     remainingOptionalQuantity:number //剩余可选数量
 
     constructor(){
-
+        Entities.FindAllByName("sadsad")[0]
     }
 
     entry(){

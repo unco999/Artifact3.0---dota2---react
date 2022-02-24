@@ -101,5 +101,13 @@ export class GamaEvent_All_register{
             GameRules.SceneManager.change_secens(_card.UUID,hand.SceneName,-1)
            })
         })
+        CustomGameEventManager.RegisterListener("C2S_GET_ABILITY_T",(_,event)=>{
+            const player = PlayerResource.GetPlayer(event.PlayerID);
+            for(let key = 0 ; key < 5 ; key++){
+                const card = (GameRules.SceneManager.GetCardheapsScene(event.PlayerID) as Cardheaps).takeAHand(false)
+                const hand = GameRules.SceneManager.GetHandsScene(event.PlayerID) as Hand
+                GameRules.SceneManager.change_secens(card.UUID,hand.SceneName,-1)
+            }
+        })
     }
 }

@@ -46,7 +46,7 @@ export const Card_container = (props:{className:string,index:number,brach:number
         $.Msg("传入的事件")
         $.Msg(dragCallbacks.Data())
         if(dragCallbacks.Data().data?.vacancyRelease){
-            GameEvents.SendCustomGameEventToServer("C2S_SPACE_CALL_SPELL",{SKILL_ID:dragCallbacks.Data().id,target_index:props.index.toString(),spell_ability_card_uuid:dragCallbacks.Data().cardid})
+            GameEvents.SendCustomGameEventToServer("C2S_SPACE_CALL_SPELL",{SKILL_ID:dragCallbacks.Data().id,target_index:props.index.toString(),spell_ability_card_uuid:dragCallbacks.Data().cardid,scnese:props.brach})
             return
         }
         if(dragCallbacks.Data().data?.replacementCard){

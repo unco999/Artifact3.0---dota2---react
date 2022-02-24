@@ -198,6 +198,10 @@ export class Unit extends Card{
     get GETheal(){
         return this.heal
     }
+    
+    changeTeam(playerID){
+        this.PlayerID = playerID
+    }
 
     /**删除不是永久的modifiler */
     deleteLimitedModifier(){
@@ -323,6 +327,7 @@ export class Unit extends Card{
     
 
         hurt(count:number,damageSourece:Card,attack_type:"ability"|"default"|"purely"){
+            if(this.death_state == true) return
             if(this.Prehurt(damageSourece,attack_type,count)){
                 return
             }

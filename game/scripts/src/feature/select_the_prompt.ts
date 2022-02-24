@@ -100,7 +100,6 @@ export class select_the_prompt{
                     }
                 })
            }
-           
            if(abilityinstance.displacement != -1){
                const hero = GameRules.SceneManager.get_hero(abilityinstance.heroid)
                const scene = hero.Scene as BattleArea
@@ -248,6 +247,16 @@ export class select_the_prompt{
                     ...youlaiddon.getAll() as Unit[],
                     ,
                 ],type:select_type.全体} 
+            }
+
+            case select_type.双方近邻:{
+                const enenmy = GameRules.SceneManager.enemyneighbor(hero)
+                const my = GameRules.SceneManager.friendlyNeighbor(hero)
+                print("触发了双方近邻查找器")
+                return {_self:hero,table:[
+                    my.left,my.right,
+                    enenmy.center,enenmy.left,enenmy.right
+                ],type:select_type.双方近邻}
             }
 
             case select_type.友方本路:{

@@ -177,6 +177,12 @@
     animation-duration: 1.5s;
     animation-iteration-count: infinite;
 }
+
+.select_target13{
+    animation-name: select_target12;
+    animation-duration: 1.5s;
+    animation-iteration-count: infinite;
+}
 //
 
 .my_effect{
@@ -231,15 +237,20 @@
     @extend .defualt;
     width: 180px;
     height: 260px;
+    x:800px;
+    y:500px;
     border-radius: 10px;
-    opacity: 1;
     transition-duration: 0.5s;
     transition-property: width,height,transform,opacity,pre-transform-scale2d,position,saturation;
+    opacity: 0;
     pre-transform-scale2d:1;
     .abilityimage{
         width: 80%;
         height: 80%;
         align:center top;
+    }
+    &.my_hide{
+        opacity: 0;
     }
     &.my_Heaps{
         width: 120px;
@@ -248,6 +259,7 @@
         x:1300px;
         y:900px;
         transform: rotateZ(90deg);
+        opacity: 0;
     }
     &.dragHero{
         width: 100px;
@@ -260,6 +272,7 @@
             x:560px + $i * 120px;
             y:546px;
             box-shadow: 3px 3px 3px 1.5 black;
+            opacity: 1;
         }
     }
     @for $i from 1 to 6{
@@ -269,6 +282,7 @@
             x:-80px + $i * 120px;
             y:546px;
             box-shadow: 3px 3px 3px 1.5 black;
+            opacity: 1;
         }
     }
     @for $i from 1 to 6{
@@ -278,6 +292,7 @@
             x:1200px + $i * 120px;
             y:546px;
             box-shadow: 3px 3px 3px 1.5 black;
+            opacity: 1;
         }
     }
     @for $i from 1 to 30 {
@@ -285,6 +300,7 @@
             x:500px + $i * 40px;
             y:900px;
             z-index:$i;
+            opacity: 1;
             &.my_hover{
                 transform: translateY(-200px);
                 &.drag{
@@ -298,6 +314,7 @@
     }
     @for $i from 1 to 30{
         &.my_hidden_area#{$i}{
+            opacity: 1;
             width: 180px;
             height: 260px;
             x:300px + $i * 50px;
@@ -307,6 +324,7 @@
         }
     }
     &.my_ability{
+        opacity: 1;
         x:100px;
         y:800px;
         animation-name: ability;
@@ -314,11 +332,13 @@
         animation-iteration-count: infinite;
     }
     &.my_death{
+        opacity: 1;
         width: 0px;
         height: 0px;
         opacity: 0;
     }
     &.my_ingrave{
+        opacity: 1;
         x:180px;
         y:910px;
         width: 90px;
@@ -329,25 +349,30 @@
         animation-fill-mode:forwards;
     }
     &.my_attack_animation{
+        opacity: 1;
         animation-name: myhit;
         animation-duration: 1.5s;
     }
     &.my_death_animation1{
+        opacity: 1;
         animation-timing-function: cubic-bezier(0.455, 0.03, 0.515, 0.955);
         transform: rotateZ(-14deg) translateY(88px);
         saturation: 0;
     }
     &.my_death_animation2{
+        opacity: 1;
         animation-timing-function: cubic-bezier(0.455, 0.03, 0.515, 0.955);
         transform: rotateZ(-24deg) translateY(88px);
         saturation: 0;
     }
     &.my_death_animation3{
+        opacity: 1;
         animation-timing-function: cubic-bezier(0.455, 0.03, 0.515, 0.955);
         transform: rotateZ(-44deg) translateY(88px);
         saturation: 0;
     }
     &.dragEquip{
+        opacity: 1;
         animation-name: high-rotation;
         animation-duration: 1s;
         animation-iteration-count: infinite;
@@ -451,11 +476,16 @@
     @extend .defualt;
     width: 140px;
     height: 190px;
+    x:800px;
+    y:300px;
     border-radius: 10px;
-    opacity: 1;
+    opacity: 0;
     transition-duration: 0.5s;
     transition-property: transform,opacity,pre-transform-scale2d,position,saturation;
     pre-transform-scale2d:1;
+    &.you_hide{
+        opacity: 0;
+    }
     &.you_Heaps{
         width: 120px;
         height: 170px;
@@ -463,9 +493,11 @@
         x:500px;
         y:0px;
         transform: rotateZ(90deg);
+        opacity: 1;
     }
     @for $i from 1 to 30{
         &.you_hidden_area#{$i}{
+            opacity: 1;
            visibility: collapse;
         }
     }
@@ -475,6 +507,7 @@
         animation-iteration-count: 1;
     }
     &.you_ability{
+        opacity: 1;
         x:1500px;
         y:30px;
         animation-name: ability;
@@ -483,6 +516,7 @@
     }
     @for $i from 1 to 6{
         &.you_Midway#{$i}{
+            opacity: 1;
             width: 100px;
             height: 170px;
             x:560px + $i * 120px;
@@ -492,6 +526,7 @@
     }
     @for $i from 1 to 6{
         &.you_Goup#{$i}{
+            opacity: 1;
             width: 100px;
             height: 170px;
             x:-80px + $i * 120px;
@@ -501,6 +536,7 @@
     }
     @for $i from 1 to 6{
         &.you_Laiddown#{$i}{
+            opacity: 1;
             width: 100px;
             height: 170px;
             x:1200px + $i * 120px;
@@ -510,6 +546,7 @@
     }
     @for $i from 1 to 30 {
         &.you_Hand#{$i}{
+            opacity: 1;
             x:700px + $i * 40px;
             y:-50px;
             z-index:$i;
@@ -519,6 +556,7 @@
         }
     }
     &.you_ability{
+        opacity: 1;
         x:1200px;
         y:100px;
         animation-name: ability;
@@ -532,6 +570,7 @@
         animation-fill-mode:forwards;
     }
     &.you_ingrave{
+        opacity: 1;
         x:1720px;
         y:10px;
         width: 90px;

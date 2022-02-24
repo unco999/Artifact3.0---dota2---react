@@ -131,6 +131,7 @@ export const Card = (props:{index:number,uuid:string,owner:number,team:{red:numb
     const [xstate,send] = useMachine(Machine,{
         actions:{
             defualt_entry:()=>{
+                dummyoperate('add',prefix + "hide")
                 const id = GameEvents.Subscribe("S2C_GET_CARD",(event)=>{
                     if(event.uuid != props.uuid) return; 
                     setstate(event)
@@ -139,7 +140,9 @@ export const Card = (props:{index:number,uuid:string,owner:number,team:{red:numb
                 GameEvents.SendCustomGameEventToServer("C2S_GET_CARD",{uuid:props.uuid})
             },
             defualt_exit:()=>{
-                dummyoperate('remove',prefix + "Heaps")
+                $.Schedule(1,()=>{
+                    dummyoperate('remove',prefix + "hide")
+                })
             },
             midway_entry:()=>{
                 preindex.current = state.Index
@@ -775,6 +778,8 @@ export const CardContext = (props:{owner:number}) => {
         const all_array = JsonString2Array(all)
         setallheaps(all_array)
     },[])
+
+    $.Msg("刷新了主控制器")
 
 
     useEffect(()=>{                                                             

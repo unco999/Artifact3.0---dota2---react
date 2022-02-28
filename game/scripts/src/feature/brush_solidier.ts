@@ -62,8 +62,8 @@ export class brash_solidier{
         GameRules.SceneManager.global_add(soldier.UUID,soldier)
         GameRules.SceneManager.update()
         const card = scnese.AutoAddCard(soldier)
-        CustomGameEventManager.Send_ServerToAllClients("S2C_BRUSH_SOLIDER",{})
         card.update(scene_name)
+        CustomGameEventManager.Send_ServerToAllClients("S2C_BRUSH_SOLIDER",{})
         return soldier
     }
 

@@ -266,6 +266,36 @@
         height: 170px;
     }
     @for $i from 1 to 6{
+        &.you_Midway#{$i}{
+            opacity: 1;
+            width: 100px;
+            height: 170px;
+            x:560px + $i * 120px;
+            y:361px;
+            box-shadow: 3px 3px 3px 1.5 black;
+        }
+    }
+    @for $i from 1 to 6{
+        &.you_Goup#{$i}{
+            opacity: 1;
+            width: 100px;
+            height: 170px;
+            x:-80px + $i * 120px;
+            y:361px;
+            box-shadow: 3px 3px 3px 1.5 black;
+        }
+    }
+    @for $i from 1 to 6{
+        &.you_Laiddown#{$i}{
+            opacity: 1;
+            width: 100px;
+            height: 170px;
+            x:1200px + $i * 120px;
+            y:361px;
+            box-shadow: 3px 3px 3px 1.5 black;
+        }
+    }
+    @for $i from 1 to 6{
         &.my_Midway#{$i}{
             width: 100px;
             height: 170px;
@@ -494,6 +524,36 @@
         y:0px;
         transform: rotateZ(90deg);
         opacity: 1;
+    }
+    @for $i from 1 to 6{
+        &.my_Midway#{$i}{
+            width: 100px;
+            height: 170px;
+            x:560px + $i * 120px;
+            y:546px;
+            box-shadow: 3px 3px 3px 1.5 black;
+            opacity: 1;
+        }
+    }
+    @for $i from 1 to 6{
+        &.my_Goup#{$i}{
+            width: 100px;
+            height: 170px;
+            x:-80px + $i * 120px;
+            y:546px;
+            box-shadow: 3px 3px 3px 1.5 black;
+            opacity: 1;
+        }
+    }
+    @for $i from 1 to 6{
+        &.my_Laiddown#{$i}{
+            width: 100px;
+            height: 170px;
+            x:1200px + $i * 120px;
+            y:546px;
+            box-shadow: 3px 3px 3px 1.5 black;
+            opacity: 1;
+        }
     }
     @for $i from 1 to 30{
         &.you_hidden_area#{$i}{
@@ -965,6 +1025,15 @@
     animation-name: high;
     animation-duration: 1s;
     animation-iteration-count: infinite;
+}
+
+.Baffle{
+    transition-duration: 3s;
+    transition-property: opacity;
+    opacity: 1;
+    &.hide{
+        opacity: 0;
+    }
 }
 
 .my_Turnbased{

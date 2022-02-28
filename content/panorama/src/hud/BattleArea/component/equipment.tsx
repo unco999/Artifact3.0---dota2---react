@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useGameEvent } from "react-panorama";
+import shortid from "shortid";
 import useUuid from "../../useUUID.tsx/useUuid";
 
 export const EquipmentManager = (props:{uuid:string,owned:number}) =>{
@@ -28,11 +29,11 @@ export const Equipment = (props:{index:number,uuid:string,owned:number}) =>{
                 setEQUIPshowName(event.data[key])
             }
         })
-    },[])
+    },[props.uuid])
 
     useEffect(()=>{
         GameEvents.SendCustomGameEventToServer("C2S_GET_EQUIP",{uuid:props.uuid})
-    },[])
+    },[props.uuid])
 
     const registrationCanBeHitInTheEvent = (open:boolean) => {
         open ? $.RegisterEventHandler( 'DragDrop', ref.current!, OnDragDrop ) : $.RegisterEventHandler( 'DragDrop', ref.current!, ()=>{} );
@@ -62,6 +63,6 @@ export const Equipment = (props:{index:number,uuid:string,owned:number}) =>{
 
 
     return <Panel  ref={Panel => ref.current = Panel} draggable={true} className={"Equipment"}  hittest={true}>
-        <DOTAItemImage  key={uuid} id={uuid}  itemname={EQUIPshowName} className={'beEquipped'} showtooltip={true} />
+        <DOTAItemImage key={shortid.generate()} itemname={EQUIPshowName} className={'beEquipped'} showtooltip={false} />
     </Panel>
 }

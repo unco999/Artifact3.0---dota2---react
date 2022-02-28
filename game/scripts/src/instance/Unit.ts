@@ -21,10 +21,10 @@ export class Unit extends Card{
         super(CardParameter,Scene,type)
         if(type == "Hero"){
             const data = GameRules.KV.GetCardDataKV(Number(CardParameter.Id))
-            this.attack = data.attack
-            this.arrmor = data.arrmor
-            this.heal = data.health
-            this.max_heal = this.heal
+            this.attack = Number(data.attack)
+            this.arrmor = Number(data.arrmor)
+            this.heal = Number(data.health)
+            this.max_heal = Number(this.heal)
         }
     }
 
@@ -64,6 +64,9 @@ export class Unit extends Card{
         print("该单位的modifiler减少了",this.UUID)
         const modiflers = []
         for(const modifiler of this.Modifilers){
+            if(modifiler.duration == -1){
+                continue
+            }
             modifiler.duration--
             if(modifiler.duration <= 0){
                     const fuc = modifiler.call_hook(HOOK.销毁时)
@@ -139,9 +142,21 @@ export class Unit extends Card{
         }
         modifiler.thisHero = this
         this.Modifilers.prepend(modifiler)
-        modifiler.call_hook(HOOK.创造时)
+        const calls = modifiler.call_hook(HOOK.创造时)
+        calls.forEach(card=>{
+            card()
+        })
         CustomGameEventManager.Send_ServerToAllClients("S2C_SEND_ATTRIBUTE",this.attribute)
         this.update_modifiler_to_client()
+    }
+
+    hasMoidifler(modifierName:string){
+        for(const modifier of this.Modifilers){
+            if(modifier.name == modifierName){
+                return true
+            }
+        }
+        return false
     }
 
     removeModifiler(name:string){
@@ -219,7 +234,8 @@ export class Unit extends Card{
 
 
     Find_left_Card(){
-       const unit = (this.Scene as BattleArea).CardList[this.Index - 1 - 1]
+       if(!this.isBattle()) return null
+       const unit = (GameRules.SceneManager.GetScenes(this.Scene.SceneName,this.PlayerID) as BattleArea ).CardList[this.Index - 1 - 1]
        if(unit && typeof(unit) != 'number' ){
            return unit as Unit
        }
@@ -227,7 +243,8 @@ export class Unit extends Card{
     }
 
     Find_right_Card(){
-        const unit = (this.Scene as BattleArea).CardList[this.Index - 1 + 1]
+        if(!this.isBattle()) return null
+        const unit = (GameRules.SceneManager.GetScenes(this.Scene.SceneName,this.PlayerID) as BattleArea ).CardList[this.Index - 1 + 1]
         if(unit && typeof(unit) != 'number' ){
             return unit as Unit
         }
@@ -240,7 +257,10 @@ export class Unit extends Card{
             const scene = this.Scene
             if(scene instanceof BattleArea){
                 if(Source instanceof Unit){
-                    Source.hook(HOOK.杀死目标时)
+                    const call = Source.hook(HOOK.杀死目标时)
+                    call.forEach(_call=>{
+                        _call(this)
+                    })
                     add_cuurent_glod(2,Source.PlayerID)
                     print("增加了两枚金币,当前金币数")
                     print(get_cuurent_glod(Source.PlayerID)) 
@@ -254,15 +274,13 @@ export class Unit extends Card{
                 !deathbool && GameRules.SceneManager.change_secens(this.UUID,"Grave",-1)
                 !deathbool && this.deleteLimitedModifier()
                 !deathbool && (this.death_state = true)
-                this.cure(99999,this)
                 const PostDeath = this.hook(HOOK.死亡后)
                 PostDeath.forEach(hook=>{
                     hook(this,Source)
                     print("当前this的指向场景",this.UUID,this.Scene.SceneName)
                 })
-                Timers.CreateTimer(2,()=>{
-                    this.death_state = false
-                })
+                this.cure(99999,this)
+                this.death_state = false
             }else{
                 print("你当前不在战斗区域")
             }
@@ -326,7 +344,7 @@ export class Unit extends Card{
         }
     
 
-        hurt(count:number,damageSourece:Card,attack_type:"ability"|"default"|"purely"){
+        hurt(count:number,damageSourece:Card,attack_type:"ability"|"default"|"purely",cb?:Function){
             if(this.death_state == true) return
             if(this.Prehurt(damageSourece,attack_type,count)){
                 return
@@ -334,10 +352,14 @@ export class Unit extends Card{
             if(this.abilityPrehurt(damageSourece,attack_type,count)){
                 return
             }
-            if(attack_type == 'purely'){
-                this.heal = this.GETheal - count
+            if(cb){
+                cb()
             }else{
-                this.heal = this.GETheal - (count - this.Getarrmor)
+                if(attack_type == 'purely'){
+                    this.heal = this.GETheal - count
+                }else{
+                    this.heal = this.GETheal - (count - this.Getarrmor)
+                }
             }
             this.lastAbilityPrehurt(damageSourece,attack_type,count)
             print(damageSourece.UUID,"攻击了",this.UUID,"攻击值为",this.GETheal - (count - this.Getarrmor))
@@ -356,9 +378,11 @@ export class Unit extends Card{
         cure(count:number,Source:Card){
             if(this.GETheal + count > this.max_heal){
                 this.heal = this.max_heal
+                print(this.heal,"溢出治疗查询table")
+                print(this.max_heal,"溢出治疗查询table")
                 return count
             }
-            this.heal+=count
+            this.heal += count
             print(this.UUID,"收到了回复,当前剩余生命值为",this.GETheal)
             CustomGameEventManager.Send_ServerToAllClients("S2C_SEND_ATTRIBUTE",this.attribute)
         }

@@ -40,6 +40,14 @@ export class spell_skill{
                 print("当前能量水晶不足")
                 return;
             }
+            if(abilityInstance.full){
+                const my = GameRules.SceneManager.get_hero(abilityInstance.heroid)
+                if((my.Scene as BattleArea).isFull()){
+                    CustomGameEventManager.Send_ServerToPlayer(PlayerResource.GetPlayer(event.PlayerID),"S2C_INFORMATION",{information:`当前场上没有空位了`})
+                    print("当前场上没有空位了")
+                    return;
+                }
+            }
             const _target = GameRules.SceneManager.get_card(event.target_uuid)
             const gather = GameRules.SceneManager.gather(_target)
             if(abilityInstance.wounded){

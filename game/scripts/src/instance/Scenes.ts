@@ -12,6 +12,7 @@ import { Stack } from "../structure/Stack";
 import { Solider, Unit } from "./Unit";
 import "./Ability";
 import { BATTLE_BRACH_STATE, get_current_battle_brach, get_current_operate_brach } from "../Manager/nettablefuc";
+import { HOOK } from "./Modifiler";
 
 type PlayerScene = Record<number, Scenes | BattleArea>;
 
@@ -897,6 +898,7 @@ export class ScenesManager {
             }
         }
     }
+    
 
 
     //**获得一个当前单位能加入的索引 */
@@ -1117,6 +1119,17 @@ export class ScenesManager {
         if(!this.All[uuid]) return;
         const card = this.All[uuid];
         const playerid = card.PlayerID;
+        
+        if(card.type == 'Hero'
+           || card.type =='Solider'
+           || card.type == 'Summoned'
+           && card.isBattle()
+        ){
+           const call = (card as Unit).hook(HOOK.位移前触发)
+           call.forEach(hook=>{
+                hook(card)
+           })
+        }
 
         print(card.UUID, "要去", to);
         print("当前的index类型是",typeof(index))
@@ -1127,6 +1140,16 @@ export class ScenesManager {
                 card.Scene = currentscnese;
                 card.Scene.addCard(card);
                 !update && this.All[uuid].update("HAND");
+                if(card.type == 'Hero'
+                || card.type =='Solider'
+                || card.type == 'Summoned'
+                && card.isBattle()
+             ){
+                const call = (card as Unit).hook(HOOK.位移后触发)
+                call.forEach(hook=>{
+                     hook(card)
+                })
+             }
                 break;
             }
             case 'MIDWAY': {
@@ -1135,6 +1158,16 @@ export class ScenesManager {
                 (this.GetMidwayScene(playerid) as Midway).AutoAddCard(card, index && Number(index));
                 card.Scene = currentscnese;
                 !update && this.All[uuid].update('MIDWAY');
+                if(card.type == 'Hero'
+                || card.type =='Solider'
+                || card.type == 'Summoned'
+                && card.isBattle()
+             ){
+                const call = (card as Unit).hook(HOOK.位移后触发)
+                call.forEach(hook=>{
+                     hook(card)
+                })
+             }
                 break;
             }
             case 'LAIDDOWN': {
@@ -1143,6 +1176,16 @@ export class ScenesManager {
                 (this.GetLaidDownScene(playerid) as LaidDown).AutoAddCard(card, index && Number(index));
                 card.Scene = currentscnese;
                 !update && this.All[uuid].update('LAIDDOWN');
+                if(card.type == 'Hero'
+                || card.type =='Solider'
+                || card.type == 'Summoned'
+                && card.isBattle()
+             ){
+                const call = (card as Unit).hook(HOOK.位移后触发)
+                call.forEach(hook=>{
+                     hook(card)
+                })
+             }
                 break;
             }
             case 'GOUP': {
@@ -1151,6 +1194,16 @@ export class ScenesManager {
                 (this.GetGoUpScene(playerid) as GoUp).AutoAddCard(card, index && Number(index));
                 card.Scene = currentscnese;
                 !update && this.All[uuid].update('GOUP');
+                if(card.type == 'Hero'
+                || card.type =='Solider'
+                || card.type == 'Summoned'
+                && card.isBattle()
+             ){
+                const call = (card as Unit).hook(HOOK.位移后触发)
+                call.forEach(hook=>{
+                     hook(card)
+                })
+            }
                 break;
             }
             case 'ABILITY': {

@@ -44,7 +44,7 @@ export class TurntableBase implements Igetformer{
 
     /**取到双0的第一个数值 */
      takeTheFirstValueOf1():PlayerID{
-         for(let index = 0 ; index < this.oparetionData.length ; index++){
+         for(let index = 0 ; index <= this.oparetionData.length ; index++){
              print("遍历操作数",index)
              const table = this.oparetionData[this.oparetionData.length - index - 1]
              if(table.isoparetion == true){

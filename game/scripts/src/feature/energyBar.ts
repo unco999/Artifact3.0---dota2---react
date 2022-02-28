@@ -53,9 +53,9 @@ export class energyBar{
 
     constructor(brach:number,player:CDOTAPlayer){
         this.brach = brach;
-        this.init_energy = IsInToolsMode() ? 10 : 6
+        this.init_energy =  5
         this.current_max = this.init_energy
-        this.max_energy = IsInToolsMode() ? 10 : 6
+        this.max_energy =  5
         this.current_energy = this.init_energy;
         this.player = player
         this.register_gamevent()

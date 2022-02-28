@@ -23,7 +23,7 @@ export const Main = () =>{
         <YouConpoment red={team.red} blue={team.blue} />
         <CardContext owner={Players.GetLocalPlayer()}/>
         <CardContext owner={Players.GetLocalPlayer() == team.red ? team.blue : team.red}/>
-        {/* <Baffle/> */}
+        <Baffle/>
     </>
     }
     </>

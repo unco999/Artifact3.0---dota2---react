@@ -2,6 +2,7 @@ import { ScenesBuildbehavior } from "../Build/Scenesbuilder";
 import { damage } from "../feature/damage";
 import { TurntableBase } from "../feature/turntable";
 import { AbilityCard } from "../instance/Ability";
+import { HOOK } from "../instance/Modifiler";
 import { BattleArea, Cardheaps, Grave, Hand, Hide } from "../instance/Scenes";
 import { Unit } from "../instance/Unit";
 import { Timers } from "../lib/timers";
@@ -15,10 +16,10 @@ export enum 游戏循环 {
     "商店购买阶段"
 }
 
-const 商店购买时间 = 20
+const 商店购买时间 = 22
 const 英雄部署时间 = 25
 const 战斗结算时间 = 4
-const 策略时间 = 30
+const 策略时间 = 35
 
 //第一回合六張牌  5小1大  第一回合結束  商店功能花錢買牌(2元买大技能 1元买小技能)  然後英雄分錄  分完路發兩張   
 
@@ -275,6 +276,22 @@ export class faultCard extends GameLoopState {
         this.Set_cuurent_option_player = GameRules.lastTruntable.nextRound.toString()
         GameRules.lastTruntable = new TurntableBase(GameRules.lastTruntable.nextRound)
         this.create_solider() //每回合刷小兵
+        const blueScnese = GameRules.SceneManager.fitler(get_current_operate_brach() as BATTLE_BRACH_STATE,GameRules.Blue.GetPlayerID())
+        const redScnese = GameRules.SceneManager.fitler(get_current_operate_brach() as BATTLE_BRACH_STATE,GameRules.Red.GetPlayerID())
+        const bluecars = blueScnese.getAll() as Unit[]
+        const redcars = redScnese.getAll() as Unit[]
+        bluecars.forEach(card=>{
+           const hooks = card.hook(HOOK.光环)
+           hooks.forEach(hook=>{
+               hook(card)
+           })
+        })
+        redcars.forEach(card=>{
+            const hooks = card.hook(HOOK.光环)
+            hooks.forEach(hook=>{
+                hook(card)
+            })
+        })
     }
 
 
@@ -311,7 +328,7 @@ export class faultCard extends GameLoopState {
     run() {
         const oparetor = get_settlement_current()
         print("当前操作状态",get_current_operate_brach())
-        if(oparetor == 1){
+        if(oparetor == 1 ){
             return 1
         }else{
             super.run()
@@ -369,6 +386,22 @@ export class injurySettlementStage extends GameLoopState {
             set_current_battle_brach(this.settlementRoute)
             this.settlementModule()
         })
+        const redrouter = GameRules.SceneManager.fitler(this.settlementRoute,GameRules.Red.GetPlayerID()) as BattleArea
+        const bluerouter = GameRules.SceneManager.fitler(this.settlementRoute,GameRules.Blue.GetPlayerID()) as BattleArea
+        const redcards = redrouter.getAll() as Unit[]
+        const bluecards = bluerouter.getAll() as Unit[]
+        redcards.forEach(card=>{
+            const callbacks = card.hook(HOOK.回合开始时)
+            callbacks.forEach(callback=>{
+                 callback(card)
+            })
+        })
+        bluecards.forEach(card=>{
+            const callbacks = card.hook(HOOK.回合开始时)
+            callbacks.forEach(callback=>{
+                 callback(card)
+            })
+        })
     }
 
     /**战斗结算算法 */
@@ -399,7 +432,23 @@ export class injurySettlementStage extends GameLoopState {
     }
 
     exit(){
-        
+        super.exit()
+        const redrouter = GameRules.SceneManager.fitler(this.settlementRoute,GameRules.Red.GetPlayerID()) as BattleArea
+        const bluerouter = GameRules.SceneManager.fitler(this.settlementRoute,GameRules.Blue.GetPlayerID()) as BattleArea
+        const redcards = redrouter.getAll() as Unit[]
+        const bluecards = bluerouter.getAll() as Unit[]
+        redcards.forEach(card=>{
+            const callbacks = card.hook(HOOK.回合结束时)
+            callbacks.forEach(callback=>{
+                 callback(card)
+            })
+        })
+        bluecards.forEach(card=>{
+            const callbacks = card.hook(HOOK.回合结束时)
+            callbacks.forEach(callback=>{
+                 callback(card)
+            })
+        })
     }
 
     run(){

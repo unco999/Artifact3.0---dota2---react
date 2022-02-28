@@ -10,9 +10,9 @@ export const EnergyBarManager = (props:{owner:number,brach:number}) =>{
     // consume消耗   notOwned未拥有  beUsable可使用
     const list = () => {
         const _list = []
-        let index = state?.current_enrgy ?? 0
-        let current_max = state?.cuurent_max ?? 0
-        let max = state?.max_enrgy ?? 0
+        let index = state?.current_enrgy ? state?.current_enrgy - 1 : 0
+        let current_max = state?.cuurent_max ? state?.cuurent_max - 1 : 0
+        let max = state?.max_enrgy ? state?.max_enrgy - 1 : 0
         for(let count = 0 ; count < 10 ; count++){
             let _state_string:"consume"|"notOwned"|"beUsable" = 'notOwned';
             if(count < max && count > index && count <= current_max){

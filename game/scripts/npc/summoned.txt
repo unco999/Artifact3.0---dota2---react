@@ -9,7 +9,7 @@
 
 	}
 	"2" {
-		"attack" "5"
+		"attack" "6"
 		"arrmor" "0"
 		"heal" "9"
 		"remark" "召唤一个等同于恐怖利刃基础数值的幻想"
@@ -17,15 +17,15 @@
 
 	}
 	"3" {
-		"attack" "4"
+		"attack" "3"
 		"arrmor" "0"
-		"heal" "7"
+		"heal" "6"
 		"remark" "召唤一只4攻7血的豪猪"
 		"name" "haozhu"
 
 	}
 	"4" {
-		"attack" "3"
+		"attack" "6"
 		"arrmor" "0"
 		"heal" "6"
 		"remark" "召唤3攻6血的小树人直到上限"

@@ -5,7 +5,7 @@ import { get_current_operate_brach } from "../Manager/nettablefuc";
 import { set_settlement_false, set_settlement_true } from "../Manager/statusSwitcher";
 import { Card, CardParameter, CARD_TYPE, professionalMagicCard } from "./Card";
 import { Hero } from "./Hero";
-import { ModifilerContainer } from "./Modifiler";
+import { HOOK, ModifilerContainer } from "./Modifiler";
 import { BattleArea, ICAScene, Scenes } from "./Scenes";
 import { Tower } from "./Tower";
 import { Unit } from "./Unit";
@@ -171,6 +171,7 @@ export class ability_templater{
     skillAnimation:number = 3.5;
     vacancyRelease:boolean = false
     follow:boolean = false //是否是一个跟随技能
+    full:boolean = false
 
     spell_tower(table:(Card|number)[],target?:string,hero?:Unit,tower?:Tower){
 
@@ -178,10 +179,17 @@ export class ability_templater{
 
 
     spell_skill(table:(Unit|number)[],target?:string,hero?:Unit,scnese?:number,target_index?:number /**空格释放技能 所选择的空格索引 */){
+        hero.hook(HOOK.释放技能前).forEach(call=>{
+            call(hero)
+        })
         set_settlement_true()
         Timers.CreateTimer(this.skillAnimation,()=>{
             GameRules.SceneManager.Current_Scnese_Card_Center(true)
+            hero.hook(HOOK.释放技能后).forEach(call=>{
+                call(hero)
+            })
             set_settlement_false()
+            
         })
     }
 
@@ -191,9 +199,15 @@ export class ability_templater{
      */
     post_move_spell_skill(table:(Unit|number)[],target?:string,hero?:Unit){
         print("关闭了特效显示")
+        hero.hook(HOOK.释放技能前).forEach(call=>{
+            call(hero)
+        })
         Timers.CreateTimer(this.skillAnimation,()=>{
             GameRules.SceneManager.Current_Scnese_Card_Center(true)
             set_settlement_false()
+            hero.hook(HOOK.释放技能后).forEach(call=>{
+                call(hero)
+            })
         })
     }
 
@@ -262,7 +276,7 @@ export class SmallSkill_juedou extends ability_templater{
 
     spell_skill(table:(Unit|number)[],target?:string,hero?:Unit){
         // const hero = GameRules.SceneManager.get_hero(this.heorheroid) as Unit
-        super.spell_skill(table)
+        super.spell_skill(table,target,hero)
         if(!target || !hero) return
         const _target = GameRules.SceneManager.get_card(target) as Unit
         const _damage = new damage(hero,_target)
@@ -306,10 +320,10 @@ export class SmallSkill_juedou extends ability_templater{
      damage_calculate(hero:Unit){
         let damage = 0
         if(hero.Getfaulty == 1){
-            damage = 5
+            damage = 6
         }
         if(hero.Getfaulty == 2){
-            damage = 7
+            damage = 8
         }
         if(hero.Getfaulty == 3){
             damage = 10
@@ -455,15 +469,13 @@ export class SmallSkill_juedou extends ability_templater{
      spell_skill(_table:(Unit|number)[],target?:string,hero?:Unit){
         if(!target || !hero) return
         const _target = GameRules.SceneManager.get_card(target) as Unit
-        if(_target.PlayerID == hero.PlayerID){
-            super.spell_skill(_table,target,hero)
-            _target.cure(this.calculate(hero),hero)
-            CustomGameEventManager.Send_ServerToAllClients("SC2_PLAY_EFFECT",{uuid:_target.UUID,paticle:"particles/econ/items/omniknight/omni_2021_immortal/omni_2021_immortal_owner.vpcf",cameraOrigin:"0 400 0",lookAt:"0 0 0"})
-            const table = GameRules.SceneManager.enemyneighbor(_target)
-            this.__damage(table.center,hero)
-            this.__damage(table.left,hero)
-            this.__damage(table.right,hero)
-        }
+        super.spell_skill(_table,target,hero)
+        _target.cure(this.calculate(hero),hero)
+        CustomGameEventManager.Send_ServerToAllClients("SC2_PLAY_EFFECT",{uuid:_target.UUID,paticle:"particles/econ/items/omniknight/omni_2021_immortal/omni_2021_immortal_owner.vpcf",cameraOrigin:"0 400 0",lookAt:"0 0 0"})
+        const table = GameRules.SceneManager.enemyneighbor(_target)
+        this.__damage(table.center,hero)
+        this.__damage(table.left,hero)
+        this.__damage(table.right,hero)
     }
 
     __damage(target:Unit|number,source:Unit){
@@ -592,7 +604,7 @@ export class SmallSkill_juedou extends ability_templater{
          super("SmallSkill_chuansong")
      }
  
-     spell_skill(table:(Unit|number)[],target?:string){
+     spell_skill(table:(Unit|number)[],target?:string,hero?:Unit){
      }
 
      post_move_spell_skill(table: (number | Unit)[], target?: string, hero?: Unit): void {
@@ -687,7 +699,7 @@ export class SmallSkill_juedou extends ability_templater{
  
      spell_skill(table:(Unit|number)[],target?:string,hero?:Unit){
          // const hero = GameRules.SceneManager.get_hero(this.heorheroid) as Unit
-         super.spell_skill(table)
+         super.spell_skill(table,target,hero)
          table.forEach(target=>{
              if(typeof(target) != 'number'){
                  if(target.Index){
@@ -823,7 +835,6 @@ export class SmallSkill_juedou extends ability_templater{
  
      spell_skill(table:(Unit|number)[],target?:string,hero?:Unit){
         // const hero = GameRules.SceneManager.get_hero(this.heorheroid) as Unit
-        if(!target || !hero) return
         super.spell_skill(table,target,hero)
         table.forEach(card=>{
             if(typeof(card) != 'number'){
@@ -1038,7 +1049,7 @@ export class TrickSkill_jizhonghuoli  extends ability_templater{
     }
 
     towerDamage(tower:Tower,index:number,hero:Unit){
-        super.spell_skill([],null,null)
+        super.spell_skill([],null,hero)
         Timers.CreateTimer(index,()=>{
             tower.hurt(this.damage_calculate(hero))  
         })
@@ -1188,9 +1199,9 @@ export class TrickSkill_huimie extends ability_templater{
         super("TrickSkill_huimie")
     }
 
-    spell_skill(table:(Unit|number)[],target?:string){
-        const hero = GameRules.SceneManager.get_hero(this.heroid) as Unit
-        super.spell_skill(table)
+    spell_skill(table:(Unit|number)[],target?:string,hero?:Unit){
+        const _hero = GameRules.SceneManager.get_hero(this.heroid) as Unit
+        super.spell_skill(table,target,hero)
         table.forEach(target=>{
             if(typeof(target) != 'number'){
                 if(target.Index){
@@ -1234,16 +1245,13 @@ export class TrickSkill_chongjibo extends ability_templater{
         super("TrickSkill_chongjibo")
     }
 
-    spell_skill(table:(Unit|number)[],target?:string){
+    spell_skill(table:(Unit|number)[],target?:string,hero?:Unit){
         // const hero = GameRules.SceneManager.get_hero(this.heorheroid) as Unit
-        const hero = GameRules.SceneManager.get_hero(this.heroid) as Unit
-        super.spell_skill(table)
+        super.spell_skill(table,target,hero)
         table.forEach(target=>{
             if(typeof(target) != 'number'){
-                if(target.Index){
-                    const _damage = new damage(hero,target)
-                    _damage.spell_skill_settlement(this.damage_calculate(hero),hero)
-                }   
+                const _damage = new damage(hero,target)
+                _damage.spell_skill_settlement(this.damage_calculate(hero),hero)
             }
         })
     }
@@ -1286,7 +1294,7 @@ export class TrickSkill_chongjibo extends ability_templater{
  
      spell_skill(table:(Unit|number)[],target?:string,hero?:Unit){
          // const hero = GameRules.SceneManager.get_hero(this.heorheroid) as Unit
-         super.spell_skill(table)
+         super.spell_skill(table,target,hero)
          table.forEach(target=>{
              if(typeof(target) != 'number'){
                  if(target.Index){
@@ -1410,7 +1418,7 @@ export class TrickSkill_yexingzhaohuanzhanying extends ability_templater{
 
     spell_skill(table:(Unit|number)[],target?:string,hero?:Unit,scnese?:number,target_index?:number){
         // const hero = GameRules.SceneManager.get_hero(this.heorheroid) as Unit
-        super.spell_skill(table)
+        super.spell_skill(table,target,hero)
         const scene = hero.Scene as BattleArea
         const _scnese = GameRules.SceneManager.indexGetScnese(scnese,hero.PlayerID)
         GameRules.brash_solidier.playerSummoning("5",1,hero.PlayerID,_scnese as BattleArea,target_index)
@@ -1530,7 +1538,6 @@ export class SmallSkill_zhimangzhiguang extends ability_templater{
     }
 
     spell_skill(table:(Unit|number)[],target?:string,hero?:Unit){
-        if(!target || !hero) return
         super.spell_skill(table,target,hero)
         const _target = GameRules.SceneManager.get_card(target) as Unit
         const scnes = _target.Scene as BattleArea
@@ -1574,10 +1581,10 @@ export class SmallSkill_shengmingjiqu extends ability_templater{
         super("SmallSkill_shengmingjiqu")
     }
 
-    spell_skill(table:(Unit|number)[],target?:string){
+    spell_skill(table:(Unit|number)[],target?:string,hero?:Unit){
         // const hero = GameRules.SceneManager.get_hero(this.heorheroid) as Unit
-        const hero = GameRules.SceneManager.GetMidwayScene(GameRules.Blue.GetPlayerID()).IndexGet(3) as Unit
-        super.spell_skill(table)
+        const _hero = GameRules.SceneManager.GetMidwayScene(GameRules.Blue.GetPlayerID()).IndexGet(3) as Unit
+        super.spell_skill(table,target,hero)
         table.forEach(target=>{
             if(typeof(target) != 'number'){
                 if(target.Index){
@@ -1644,9 +1651,9 @@ export class SmallSkill_julizhongji extends ability_templater{
         super("SmallSkill_julizhongji")
     }
 
-    spell_skill(table:(Unit|number)[],target?:string){
+    spell_skill(table:(Unit|number)[],target?:string,hero?:Unit){
         // const hero = GameRules.SceneManager.get_hero(this.heorheroid) as Unit
-        super.spell_skill(table)
+        super.spell_skill(table,target,hero)
         table.forEach(target=>{
             if(typeof(target) != 'number'){
                 if(target.Index){
@@ -1687,7 +1694,7 @@ export class SmallSkill_zhaominghuojian extends ability_templater{
 
     spell_skill(table:(Unit|number)[],target?:string,hero?:Hero){
         // const hero = GameRules.SceneManager.get_hero(this.heorheroid) as Unit
-        super.spell_skill(table)
+        super.spell_skill(table,target,hero)
         const _target = GameRules.SceneManager.get_card(target) as Unit
         const left = _target.Find_left_Card()
         const right = _target.Find_right_Card()
@@ -1734,10 +1741,10 @@ export class SmallSkill_redaofeidan extends ability_templater{
         super("SmallSkill_redaofeidan")
     }
 
-    spell_skill(table:(Unit|number)[],target?:string){
+    spell_skill(table:(Unit|number)[],target?:string,hero?:Unit){
         // const hero = GameRules.SceneManager.get_hero(this.heorheroid) as Unit
-        const hero = GameRules.SceneManager.GetMidwayScene(GameRules.Blue.GetPlayerID()).IndexGet(3) as Unit
-        super.spell_skill(table)
+        const _hero = GameRules.SceneManager.GetMidwayScene(GameRules.Blue.GetPlayerID()).IndexGet(3) as Unit
+        super.spell_skill(table,target,hero)
         table.forEach(target=>{
             if(typeof(target) != 'number'){
                 if(target.Index){
@@ -1775,7 +1782,7 @@ export class SmallSkill_yexingzhaohuanyezhu extends ability_templater{
 
     spell_skill(table:(Unit|number)[],target?:string,hero?:Unit,scnese?:number,target_index?:number){
         // const hero = GameRules.SceneManager.get_hero(this.heorheroid) as Unit
-        super.spell_skill(table)
+        super.spell_skill(table,target,hero)
         const scene = hero.Scene as BattleArea
         GameRules.brash_solidier.playerSummoning("3",2,hero.PlayerID,hero.Scene as BattleArea)
     }
@@ -1844,9 +1851,9 @@ export class SmallSkill_shuidao extends ability_templater{
         super("SmallSkill_shuidao")
     }
 
-    spell_skill(table:(Unit|number)[],target?:string){
-        const hero = GameRules.SceneManager.get_hero(this.heroid) as Unit
-        super.spell_skill(table)
+    spell_skill(table:(Unit|number)[],target?:string,hero?:Unit){
+        const _hero = GameRules.SceneManager.get_hero(this.heroid) as Unit
+        super.spell_skill(table,target,hero)
         table.forEach(target=>{
             if(typeof(target) != 'number'){
                 if(target.Index){
@@ -1872,15 +1879,15 @@ export class SmallSkill_shuailao extends ability_templater{
     Magic_range = Magic_range.单体
     heroid = "45"
     ability_select_type: select_type = select_type.敌方单体;
-    consumption: number = 3
+    consumption: number = 2
     
     constructor(){
         super("SmallSkill_shuailao")
     }
 
-    spell_skill(table:(Unit|number)[],target?:string){
+    spell_skill(table:(Unit|number)[],target?:string,hero?:Unit){
         // const hero = GameRules.SceneManager.get_hero(this.heorheroid) as Unit
-        super.spell_skill(table)
+        super.spell_skill(table,target,hero)
         const _target = GameRules.SceneManager.get_card(target) as Unit
         _target.addmodifiler(ModifilerContainer.instance.Get_prototype_modifiler("senescence_modifiler"))
     }
@@ -1910,10 +1917,10 @@ export class SmallSkill_jiguang extends ability_templater{
         super("SmallSkill_jiguang")
     }
 
-    spell_skill(table:(Unit|number)[],target?:string){
-        const hero = GameRules.SceneManager.get_hero(this.heroid) as Unit
+    spell_skill(table:(Unit|number)[],target?:string,hero?:Unit){
+        const _hero = GameRules.SceneManager.get_hero(this.heroid) as Unit
         const _target = GameRules.SceneManager.get_card(target) as Unit
-        super.spell_skill(table,target)
+        super.spell_skill(table,target,hero)
         const modifiler = ModifilerContainer.instance.Get_prototype_modifiler("contribute1Round_modifiler")
         _target.addmodifiler(modifiler)
         const _damage = new damage(hero,_target)
@@ -1959,10 +1966,10 @@ export class SmallSkill_kuangfeng extends ability_templater{
         super("SmallSkill_kuangfeng")
     }
 
-    spell_skill(table:(Unit|number)[],target?:string){
+    spell_skill(table:(Unit|number)[],target?:string,hero?:Unit){
         // const hero = GameRules.SceneManager.get_hero(this.heorheroid) as Unit
-        super.spell_skill(table)
-        const hero = GameRules.SceneManager.get_hero(this.heroid) as Unit
+        super.spell_skill(table,target,hero)
+        const _hero = GameRules.SceneManager.get_hero(this.heroid) as Unit
         const _target = GameRules.SceneManager.get_card(target) as Unit
         const modifiler = ModifilerContainer.instance.Get_prototype_modifiler("silence_modifiler")
         _target.addmodifiler(modifiler)
@@ -1999,7 +2006,7 @@ export class SmallSkill_kuangfen  extends ability_templater{
 
     spell_skill(table:(Unit|number)[],target?:string,hero?:Unit){
         // const hero = GameRules.SceneManager.get_hero(this.heorheroid) as Unit
-        super.spell_skill(table)
+        super.spell_skill(table,target,hero)
         table.forEach(target=>{
             if(typeof(target) != 'number'){
                 if(target.Index){
@@ -2034,9 +2041,9 @@ export class SmallSkill_bingshuangxuanwo extends ability_templater{
         super("SmallSkill_bingshuangxuanwo")
     }
 
-    spell_skill(table:(Unit|number)[],target?:string){
+    spell_skill(table:(Unit|number)[],target?:string,hero?:Unit){
         // const hero = GameRules.SceneManager.get_hero(this.heorheroid) as Unit
-        super.spell_skill(table)
+        super.spell_skill(table,target,hero)
         table.forEach(target=>{
             if(typeof(target) != 'number'){
                 if(target.Index){
@@ -2062,19 +2069,20 @@ export class SmallSkill_shenshengquanhua extends ability_templater{
     ability_select_type: select_type = select_type.敌方本路;
     Magic_attack_tart_type = Magic_attack_tart_type.小兵 | Magic_attack_tart_type.召唤物
     consumption = 4
+    full = true
     constructor(){
         super("SmallSkill_shenshengquanhua")
     }
 
     spell_skill(table:(Unit|number)[],target?:string,hero?:Unit){
-        super.spell_skill(table)
+        super.spell_skill(table,target,hero)
         const _target = GameRules.SceneManager.get_card(target) as Unit
         if((hero.Scene as BattleArea).isFull()) return
         let index = _target.Index
         const myindex = (_target.Scene.find_oppose() as BattleArea).GetrecentSpace(index)
         _target.changeTeam(hero.PlayerID)
         GameRules.SceneManager.update()
-        CustomGameEventManager.Send_ServerToPlayer( PlayerResource.GetPlayer(hero.PlayerID),"S2C_BRUSH_SOLIDER",{})
+        CustomGameEventManager.Send_ServerToAllClients("S2C_BRUSH_SOLIDER",{})
         GameRules.SceneManager.change_secens(_target.UUID,hero.Scene.SceneName,myindex + 1)
     }
 
@@ -2103,7 +2111,7 @@ export class SmallSkill_siwangmaichong extends ability_templater{
 
     spell_skill(table:(Unit|number)[],target?:string,hero?:Unit){
         // const hero = GameRules.SceneManager.get_hero(this.heorheroid) as Unit
-        super.spell_skill(table)
+        super.spell_skill(table,target,hero)
         table.forEach(target=>{
             if(typeof(target) != 'number'){
                 if(target.Index){
@@ -2206,7 +2214,7 @@ export class TrickSkill_sheshoutianfu extends ability_templater{
 
     spell_skill(table:(Unit|number)[],target?:string,hero?:Unit){
         // const hero = GameRules.SceneManager.get_hero(this.heorheroid) as Unit
-        super.spell_skill(table)
+        super.spell_skill(table,target,hero)
         const _target = GameRules.SceneManager.get_card(target) as Unit
         const _damage = new damage(hero,_target)
         _damage.spell_skill_settlement(hero.Getattack * 2,hero,'ability')
@@ -2237,7 +2245,7 @@ export class TrickSkill_bingjinghongbao extends ability_templater{
 
     spell_skill(table:(Unit|number)[],target?:string,hero?:Unit){
         // const hero = GameRules.SceneManager.get_hero(this.heorheroid) as Unit
-        super.spell_skill(table)
+        super.spell_skill(table,target,hero)
         const _target = GameRules.SceneManager.get_card(target) as Unit
         const _damage = new damage(hero,_target)
         _damage.spell_skill_settlement(999,hero,'purely')
@@ -2271,12 +2279,11 @@ export class TrickSkill_shangdizhishou extends ability_templater{
 
     spell_skill(table:(Unit|number)[],target?:string,hero?:Unit){
         // const hero = GameRules.SceneManager.get_hero(this.heorheroid) as Unit
-        super.spell_skill(table)
+        super.spell_skill(table,target,hero)
         table.forEach(target=>{
             if(typeof(target) != 'number'){
-                if(target.Index){
-                    target.cure(this.cure_calculate(hero),hero)
-                }
+                print("上帝之手恢复血量",target.UUID)
+                target.cure(this.cure_calculate(hero),hero)
             }
         })
     }
@@ -2315,7 +2322,7 @@ export class TrickSkill_sishenliandao extends ability_templater{
 
     spell_skill(table:(Unit|number)[],target?:string,hero?:Unit){
         // const hero = GameRules.SceneManager.get_hero(this.heorheroid) as Unit
-        super.spell_skill(table)
+        super.spell_skill(table,target,hero)
         const _target = GameRules.SceneManager.get_card(target) as Unit
         const _damage = new damage(hero,_target)
         const modifiler = ModifilerContainer.instance.Get_prototype_modifiler("stund1round_modifiler")
@@ -2344,7 +2351,7 @@ export class TrickSkill_zhaohuanfeidan extends ability_templater{
 
     spell_skill(table:(Unit|number)[],target?:string,hero?:Unit){
         // const hero = GameRules.SceneManager.get_hero(this.heorheroid) as Unit
-        super.spell_skill(table)
+        super.spell_skill(table,target,hero)
         const _target = GameRules.SceneManager.get_card(target) as Unit
             Timers.CreateTimer(()=>{
                 table.forEach(target=>{

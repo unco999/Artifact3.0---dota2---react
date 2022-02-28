@@ -338,10 +338,6 @@ export const Card = (props:{index:number,uuid:string,owner:number,team:{red:numb
 
     useGameEvent("S2C_SEND_UP_EQUIMENT_SHOW",(event)=>{
         if(props.uuid != event.uuid) return;
-        set_current_effect("particles/units/heroes/hero_tusk/tusk_walruspunch_txt_ult.vpcf")
-        $.Schedule(1.5,()=>{
-            set_current_effect("")
-        })
     },[props.uuid]) 
 
 
@@ -456,7 +452,9 @@ export const Card = (props:{index:number,uuid:string,owner:number,team:{red:numb
         }
         //**加入拖动的是装备卡片 */
         if(state.type == "EQUIP" && ref.current){
-            if(!IsheroDeploymentRound()) return;
+            if(!Game.IsInToolsMode()) {
+                if(!IsheroDeploymentRound()) return;
+            }
             parent.current = ref.current?.GetParent()
             ref.current.Data().data = state.data
             dragCallbacks.displayPanel = ref.current;
@@ -719,7 +717,7 @@ export const Card = (props:{index:number,uuid:string,owner:number,team:{red:numb
                   </Panel>
                   <EquipmentManager owned={props.owner} uuid={props.uuid}/>
                   <Label hittest={false} text={"id:"+state.Id + "|" + props.uuid} className={"uuid"}/>
-                  <DOTAHeroImage hittest={false}  className={"heroimage"} heroimagestyle={'portrait'} heroname={(GameUI.CustomUIConfig() as any).CardHero.CardGame[state.Id].name} />
+                  <DOTAHeroMovie hittest={false}  className={"heroimage"} heroname={(GameUI.CustomUIConfig() as any).CardHero.CardGame[state.Id].name} />
                   <Panel hittest={false}  className={"threeDimensional"}>
                 <Panel hittest={false}  className={"attack"}>
                     <Label hittest={false}  text={attribute?.attack}/>

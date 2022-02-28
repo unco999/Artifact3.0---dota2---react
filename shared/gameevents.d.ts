@@ -68,7 +68,7 @@ declare interface CustomGameEventDeclarations {
     "C2S_TEST_SCENE_LINK":{SCENE:string}
     "C2S_GET_GRAVE_ARRAY":{}
     "S2C_SEND_GRAVE_ARRAY":string[]
-    "C2S_BUY_ITEM":{itemname:string}
+    "C2S_BUY_ITEM":{itemname:string,glod:number}
     "S2C_BRUSH_ITEM":{}
     "S2C_BRUSH_ABILITY":{}
     "C2S_REP_SKILL":{abilityname:string,to:string,index:string,uuid:string} //置换位移技能
@@ -84,4 +84,6 @@ declare interface CustomGameEventDeclarations {
     "C2S_ALL_Stun":{}
     "C2S_GET_ABILITY_CARD":{} //从牌库抽一张技能牌
     "C2S_GET_ABILITY_T":{} //从牌库抽大招
+    "C2S_GET_ONE_CARD":{} //2金币抽牌
+    "TEST_ALL_DEATCH":{}//我方全部死亡
 }

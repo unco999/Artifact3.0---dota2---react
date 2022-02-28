@@ -20,15 +20,17 @@ export class GamaEvent_All_register{
         CustomGameEventManager.RegisterListener("C2S_BUY_ITEM",(_,event)=>{
             const loop = CustomNetTables.GetTableValue("GameMianLoop","smallCycle").current
             print("当前阶段是",loop != 游戏循环.商店购买阶段.toString())
-            if(loop != 游戏循环.商店购买阶段.toString()){
-                CustomGameEventManager.Send_ServerToPlayer(PlayerResource.GetPlayer(event.PlayerID),"S2C_INFORMATION",{information:"目前阶段无法购买装备"})
-                return
+            if(!IsInToolsMode()){
+                if(loop != 游戏循环.商店购买阶段.toString()){
+                    CustomGameEventManager.Send_ServerToPlayer(PlayerResource.GetPlayer(event.PlayerID),"S2C_INFORMATION",{information:"目前阶段无法购买装备"})
+                    return
+                }
             }
-            if(get_cuurent_glod(event.PlayerID) < 3){
+            if(get_cuurent_glod(event.PlayerID) < event.glod){
                 CustomGameEventManager.Send_ServerToPlayer(PlayerResource.GetPlayer(event.PlayerID),"S2C_INFORMATION",{information:"您连3个金币都没有..."})
                 return 
             }
-            add_cuurent_glod(-3,event.PlayerID)
+            add_cuurent_glod(-Number(event.glod),event.PlayerID)
             const item = event.itemname
             const card = new EquipCard({Id:item,Index:-1,PlayerID:event.PlayerID},GameRules.SceneManager.GetCardheapsScene(event.PlayerID))
             GameRules.SceneManager.global_add(card.UUID,card)
@@ -108,6 +110,28 @@ export class GamaEvent_All_register{
                 const hand = GameRules.SceneManager.GetHandsScene(event.PlayerID) as Hand
                 GameRules.SceneManager.change_secens(card.UUID,hand.SceneName,-1)
             }
+        })
+        CustomGameEventManager.RegisterListener("C2S_GET_ONE_CARD",(_,event)=>{
+            if(get_cuurent_glod(event.PlayerID) < 2){
+                CustomGameEventManager.Send_ServerToPlayer(PlayerResource.GetPlayer(event.PlayerID),"S2C_INFORMATION",{information:"您连2个金币都没有..."})
+                return 
+            }           
+            const hand = GameRules.SceneManager.GetHandsScene(event.PlayerID) as Hand
+            if(Object.keys(hand.CardPool).length == 0){
+                CustomGameEventManager.Send_ServerToPlayer(PlayerResource.GetPlayer(event.PlayerID),"S2C_INFORMATION",{information:"牌库没牌了兄弟..."})
+                return
+            }
+            add_cuurent_glod(-2,event.PlayerID)
+            const player = PlayerResource.GetPlayer(event.PlayerID);
+            const card = (GameRules.SceneManager.GetCardheapsScene(event.PlayerID) as Cardheaps).takeAHand()
+            GameRules.SceneManager.change_secens(card.UUID,hand.SceneName,-1)
+         })
+        CustomGameEventManager.RegisterListener("TEST_ALL_DEATCH",(_,event)=>{
+           const casrs = GameRules.SceneManager.GetGoUpScene(event.PlayerID) as BattleArea
+            casrs.foreach(card=>{
+                const _damage = new damage(card as Unit,card as Unit)
+                _damage.spell_skill_settlement(999,card)
+            })
         })
     }
 }

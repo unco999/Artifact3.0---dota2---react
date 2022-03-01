@@ -6,8 +6,8 @@ import '../lib/table'
 
 
 const timer = {
-    红队选择时间:10,
-    蓝队选择时间:10,
+    红队选择时间:12,
+    蓝队选择时间:12,
     分路选择时间:25,
 }
 
@@ -331,24 +331,24 @@ export class ChooseHeroCardLoop{
                 heroTable[key] = originTable[key]
             }
             this.setheroThatCanChooseOnTheCurrentField = heroTable
-            IsInToolsMode() && (this.setheroThatCanChooseOnTheCurrentField = [
-                21,
-                53,
-                23,
-                109,
-                29,
-                90,
-                45,
-                71,
-                51,
-                38,
-                34,
-                6,
-                68,
-                66,
-                36,
-                72,
-            ])
+            // IsInToolsMode() && (this.setheroThatCanChooseOnTheCurrentField = [
+            //     21,
+            //     53,
+            //     23,
+            //     109,
+            //     29,
+            //     90,
+            //     45,
+            //     71,
+            //     51,
+            //     38,
+            //     34,
+            //     6,
+            //     68,
+            //     66,
+            //     36,
+            //     72,
+            // ])
 
 
 

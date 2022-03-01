@@ -16,7 +16,7 @@ export enum 游戏循环 {
     "商店购买阶段"
 }
 
-const 商店购买时间 = 22
+const 商店购买时间 = 20
 const 英雄部署时间 = 25
 const 战斗结算时间 = 4
 const 策略时间 = 35
@@ -252,7 +252,6 @@ export class faultCard extends GameLoopState {
         const blue = GameRules.Blue.GetPlayerID()
         const redScnese = brachFilfer(get_current_operate_brach(),red).SceneName
         const blueScnese = brachFilfer(get_current_operate_brach(),blue).SceneName
-        print(redScnese,blueScnese) 
         GameRules.brash_solidier.AutoSolider(red,redScnese);
         GameRules.brash_solidier.AutoSolider(blue,blueScnese);
     }
@@ -268,7 +267,6 @@ export class faultCard extends GameLoopState {
             this.init_give_cards();
             GameRules.lastTruntable = new TurntableBase(GameRules.Red.GetPlayerID())
             this.Set_cuurent_option_player = GameRules.lastTruntable.nextRound.toString()
-            GameRules.SceneManager.update();
             this.host.init = true;
             this.create_solider() //每回合刷小兵
             return;
@@ -276,6 +274,7 @@ export class faultCard extends GameLoopState {
         this.Set_cuurent_option_player = GameRules.lastTruntable.nextRound.toString()
         GameRules.lastTruntable = new TurntableBase(GameRules.lastTruntable.nextRound)
         this.create_solider() //每回合刷小兵
+        GameRules.SceneManager.update();
         const blueScnese = GameRules.SceneManager.fitler(get_current_operate_brach() as BATTLE_BRACH_STATE,GameRules.Blue.GetPlayerID())
         const redScnese = GameRules.SceneManager.fitler(get_current_operate_brach() as BATTLE_BRACH_STATE,GameRules.Red.GetPlayerID())
         const bluecars = blueScnese.getAll() as Unit[]
@@ -485,6 +484,8 @@ export class shopPurchaseStage extends GameLoopState {
         CustomGameEventManager.Send_ServerToAllClients("S2C_OPEN_EQUIP_SHOP",{})
         GameRules.energyBarManager.roundIncreasesTheMaximumEnergy()
         print("进入商店购买阶段")
+        add_cuurent_glod(2,GameRules.Red.GetPlayerID())
+        add_cuurent_glod(2,GameRules.Blue.GetPlayerID())
     }
 
     run(){

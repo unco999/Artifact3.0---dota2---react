@@ -691,7 +691,7 @@ export class SmallSkill_juedou extends ability_templater{
      Magic_attack_tart_type = Magic_attack_tart_type.英雄
      heroid = "22"
      ability_select_type: select_type = select_type.敌方全体;
-     consumption: number = 6
+     consumption: number = 7
 
      constructor(){
          super("TrickSkill_leishenzhinu")
@@ -716,13 +716,13 @@ export class SmallSkill_juedou extends ability_templater{
      damage_calculate(hero:Unit){
         let damage = 0
         if(hero.Getfaulty == 1){
-            damage = 3
+            damage = 4
         }
         if(hero.Getfaulty == 2){
-            damage = 5
+            damage = 6
         }
         if(hero.Getfaulty == 3){
-            damage = 7
+            damage = 8
         }
         return damage
     }
@@ -756,6 +756,7 @@ export class SmallSkill_juedou extends ability_templater{
             _target.addmodifiler(ModifilerContainer.instance.Get_prototype_modifiler("qianggong_modifiler"))            
         }
     }
+
 }   
 
 
@@ -781,9 +782,24 @@ export class SmallSkill_juedou extends ability_templater{
         const _target = GameRules.SceneManager.get_card(target) as Unit
         if(_target.PlayerID != hero.PlayerID){
             super.spell_skill(table,target,hero)
-            _target.hurt(10,hero,'purely')    
+            _target.hurt(this.damage_calculate(hero),hero,'purely')    
         }
     }
+
+             /**伤害结算方法 */
+             damage_calculate(hero:Unit){
+                let damage = 0
+                if(hero.Getfaulty == 1){
+                    damage = 10
+                }
+                if(hero.Getfaulty == 2){
+                    damage = 12
+                }
+                if(hero.Getfaulty == 3){
+                    damage = 15
+                }
+                return damage
+            }
 
 }   
 
@@ -948,10 +964,10 @@ export class SmallSkill_juedou extends ability_templater{
             damage = 11
         }
         if(hero.Getfaulty == 2){
-            damage = 14
+            damage = 13
         }
         if(hero.Getfaulty == 3){
-            damage = 17
+            damage = 16
         }
         return damage
      }
@@ -1071,10 +1087,10 @@ export class TrickSkill_jizhonghuoli  extends ability_templater{
             damage = 5
         }
         if(hero.Getfaulty == 2){
-            damage = 7
+            damage = 6
         }
         if(hero.Getfaulty == 3){
-            damage = 10
+            damage = 8
         }
         return damage
      }
@@ -1647,6 +1663,7 @@ export class SmallSkill_julizhongji extends ability_templater{
     heroid = "71"
     ability_select_type: select_type = select_type.敌方对格;
     consumption = 2;
+
     constructor(){
         super("SmallSkill_julizhongji")
     }
@@ -1932,13 +1949,13 @@ export class SmallSkill_jiguang extends ability_templater{
      damage_calculate(hero:Unit){
         let damage = 0
         if(hero.Getfaulty == 1){
-            damage = 5
+            damage = 3
         }
         if(hero.Getfaulty == 2){
-            damage = 7
+            damage = 5
         }
         if(hero.Getfaulty == 3){
-            damage = 10
+            damage = 7
         }
         return damage
     }

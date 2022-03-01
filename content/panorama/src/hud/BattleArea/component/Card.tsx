@@ -617,7 +617,7 @@ export const Card = (props:{index:number,uuid:string,owner:number,team:{red:numb
               <Panel ref={Panel=>frame.current = Panel} className={"card_frame"}/>
               <Panel style={{width:'90%',height:"90%",align:'center center'}}>
               <DOTAAbilityImage abilityname={(GameUI?.CustomUIConfig() as any)?.Ability?.CardGame[state.Id]?.originname ?? ""} className={'abilityimage'}/>
-              <Label text={(GameUI?.CustomUIConfig() as any)?.Ability?.CardGame[state.Id]?.remark ?? ""}/>
+              <Label text={(GameUI?.CustomUIConfig() as any)?.Ability?.CardGame[state.Id]?.remark ?? ""} className={"Abilitydescribe"}/>
         </Panel>
         </Panel>
         </>

@@ -60,7 +60,6 @@ export class Hero extends Unit{
         CustomGameEventManager.RegisterListener("C2S_SEND_up_equiment",(_,event)=>{
             if(event.uuid != this.UUID) return;
             if(this.find_Equip(event.item)) { CustomGameEventManager.Send_ServerToPlayer(PlayerResource.GetPlayer(this.PlayerID),"S2C_INFORMATION",{information:"你不能装备唯一的物品!"});return}
-            if(!(GameRules.SceneManager.GetHandsScene(this.PlayerID) as Hand).find_id_and_remove(event.item)) return;
             // if(this.Equips[event.index]){
             //     this.Equips[event.index].unload(this)
             // }
@@ -68,6 +67,7 @@ export class Hero extends Unit{
                 CustomGameEventManager.Send_ServerToPlayer(PlayerResource.GetPlayer(this.PlayerID),"S2C_INFORMATION",{information:"装备已满!"})
                 return
             }
+            if(!(GameRules.SceneManager.GetHandsScene(this.PlayerID) as Hand).find_id_and_remove(event.item)) return;
             const equip = EquipContainer.instance.GetEquit(event.item)
             let index = this.getEquipSpace()
             equip.upper(this,index)

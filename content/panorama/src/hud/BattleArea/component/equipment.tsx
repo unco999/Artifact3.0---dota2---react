@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useGameEvent } from "react-panorama";
 import shortid from "shortid";
+import { JsonString2Array } from "../../../Utils";
 import useUuid from "../../useUUID.tsx/useUuid";
 
 export const EquipmentManager = (props:{uuid:string,owned:number}) =>{
@@ -23,12 +24,8 @@ export const Equipment = (props:{index:number,uuid:string,owned:number}) =>{
 
     useGameEvent("S2C_SEND_EQUIP",(event)=>{
         if(event.uuid != props.uuid) return;
-        const obj = Object.keys(event.data)
-        obj.forEach(key=>{
-            if(props.index.toString() == key){
-                setEQUIPshowName(event.data[key])
-            }
-        })
+        const obj = JsonString2Array(event.data)
+        event.data[props.index] && setEQUIPshowName(event.data[props.index])
     },[props.uuid])
 
     useEffect(()=>{

@@ -35,7 +35,7 @@ export class item_bfury_modifiler extends CAModifiler {
                 return true;
             }
             if (center && typeof (center) != "number") {
-                center.hurt(this.thisHero.attack, this.thisHero, "default");
+                center.hurt(this.thisHero.Getattack, this.thisHero, "default");
                 CustomGameEventManager.Send_ServerToAllClients("SC2_PLAY_EFFECT", { uuid: center.UUID, lookAt: "0 0 0", paticle: "particles/econ/items/ursa/ursa_swift_claw/ursa_swift_claw_right.vpcf", cameraOrigin: "0 500 0" });
             }
             if (left && typeof (left) != "number") {
@@ -87,6 +87,10 @@ export class item_force_field_modifiler extends CAModifiler {
     constructorinstance = item_force_field_modifiler;
 
     register_hook_event() {
+        this.setHookEvent(HOOK.创造时, () => {
+            this.thisHero.heal += 3
+            return true
+        })
         this.setHookEvent(HOOK.死亡前, (thishero: Hero, source: Unit) => {
             print("触动了免死金牌");
             if (thishero) {
@@ -101,15 +105,15 @@ export class item_force_field_modifiler extends CAModifiler {
 
 
     get influenceMaxheal(): any {
-        return 0;
-    }
-
-    get influenceAttack(): any {
         return 3;
     }
 
+    get influenceAttack(): any {
+        return 0;
+    }
+
     get influenceArrmor(): any {
-        return 1;
+        return 0;
     }
 
     get influenceheal(): any {
@@ -165,7 +169,7 @@ export class item_aegis_modifiler extends CAModifiler {
     }
 
     get influenceAttack(): any {
-        return 3;
+        return 0;
     }
 
     get influenceArrmor(): any {
@@ -377,6 +381,10 @@ export class item_radiance_modifiler extends CAModifiler {
     constructorinstance = item_radiance_modifiler;
 
     register_hook_event() {
+        this.setHookEvent(HOOK.创造时, () => {
+            this.thisHero.heal += 1
+            return true
+        })
         this.setHookEvent(HOOK.回合结束时, (my: Unit) => {
             const cards = GameRules.SceneManager.enemyneighbor(my);
             for (const key in cards) {
@@ -1096,6 +1104,11 @@ export class item_monkey_king_bar_modifiler extends CAModifiler{
             return true
         })
         this.setHookEvent(HOOK.回合结束时, () => {
+            this.superimposedAttack = 0
+            this.thisHero.updateAttribute()
+            return true
+        })
+        this.setHookEvent(HOOK.死亡前, () => {
             this.superimposedAttack = 0
             this.thisHero.updateAttribute()
             return true

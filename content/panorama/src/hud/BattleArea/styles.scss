@@ -247,7 +247,7 @@
     .abilityimage{
         width: 80%;
         height: 80%;
-        align:center top;
+        align:center bottom;
     }
     &.my_hide{
         opacity: 0;
@@ -264,36 +264,6 @@
     &.dragHero{
         width: 100px;
         height: 170px;
-    }
-    @for $i from 1 to 6{
-        &.you_Midway#{$i}{
-            opacity: 1;
-            width: 100px;
-            height: 170px;
-            x:560px + $i * 120px;
-            y:361px;
-            box-shadow: 3px 3px 3px 1.5 black;
-        }
-    }
-    @for $i from 1 to 6{
-        &.you_Goup#{$i}{
-            opacity: 1;
-            width: 100px;
-            height: 170px;
-            x:-80px + $i * 120px;
-            y:361px;
-            box-shadow: 3px 3px 3px 1.5 black;
-        }
-    }
-    @for $i from 1 to 6{
-        &.you_Laiddown#{$i}{
-            opacity: 1;
-            width: 100px;
-            height: 170px;
-            x:1200px + $i * 120px;
-            y:361px;
-            box-shadow: 3px 3px 3px 1.5 black;
-        }
     }
     @for $i from 1 to 6{
         &.my_Midway#{$i}{
@@ -525,36 +495,7 @@
         transform: rotateZ(90deg);
         opacity: 1;
     }
-    @for $i from 1 to 6{
-        &.my_Midway#{$i}{
-            width: 100px;
-            height: 170px;
-            x:560px + $i * 120px;
-            y:546px;
-            box-shadow: 3px 3px 3px 1.5 black;
-            opacity: 1;
-        }
-    }
-    @for $i from 1 to 6{
-        &.my_Goup#{$i}{
-            width: 100px;
-            height: 170px;
-            x:-80px + $i * 120px;
-            y:546px;
-            box-shadow: 3px 3px 3px 1.5 black;
-            opacity: 1;
-        }
-    }
-    @for $i from 1 to 6{
-        &.my_Laiddown#{$i}{
-            width: 100px;
-            height: 170px;
-            x:1200px + $i * 120px;
-            y:546px;
-            box-shadow: 3px 3px 3px 1.5 black;
-            opacity: 1;
-        }
-    }
+   
     @for $i from 1 to 30{
         &.you_hidden_area#{$i}{
             opacity: 1;
@@ -1204,4 +1145,10 @@
             font-size: 12px;
         }
     }
+}
+
+
+.Abilitydescribe{
+    color: white;
+    background-color: rgba(0, 0, 0, 0.774);
 }

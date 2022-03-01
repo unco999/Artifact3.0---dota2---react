@@ -280,7 +280,9 @@ export class Unit extends Card{
                     print("当前this的指向场景",this.UUID,this.Scene.SceneName)
                 })
                 this.cure(99999,this)
-                this.death_state = false
+                Timers.CreateTimer(1,()=>{
+                    this.death_state = false
+                })
             }else{
                 print("你当前不在战斗区域")
             }

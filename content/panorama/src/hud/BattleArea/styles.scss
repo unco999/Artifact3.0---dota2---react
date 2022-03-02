@@ -959,7 +959,13 @@
             background-color: rgb(0, 0, 0);
             align:center center;
         }
+        tooltip-arrow-position: 25% 50%;
+        tooltip-position: left bottom;
     }
+}
+
+.tip{
+    color: yellow;
 }
 
 .select{

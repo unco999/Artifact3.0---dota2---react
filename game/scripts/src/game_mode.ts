@@ -16,6 +16,7 @@ import { add_cuurent_glod, BATTLE_BRACH_STATE } from "./Manager/nettablefuc";
 import "./modifiler/modifiler"
 import './equip/item'
 import { TurntableBase } from "./feature/turntable";
+import { SetGameLoopMasK, set_settlement_false, set_settlement_true } from "./Manager/statusSwitcher";
 
 const heroSelectionTime = 0;
 
@@ -66,6 +67,12 @@ export class GameMode {
     constructor() {
         this.configure();
         ListenToGameEvent("game_rules_state_change", () => this.game_rules_state_change(), undefined);
+        ListenToGameEvent("client_disconnect",(event)=>{
+            set_settlement_true()
+        },null)
+        ListenToGameEvent("player_connect",(event)=>{
+            set_settlement_false()
+        },null)
     }
 
     private configure(): void {

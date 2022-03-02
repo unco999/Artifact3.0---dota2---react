@@ -6,7 +6,49 @@
 "branch_1" "我方中路"
 "branch_2" "我方下路"
 
-loop_state0 "英雄部署阶段"
-loop_state1 "策略阶段"
-loop_state2 "战斗结算中"
-loop_state3 "商店阶段"
+"loop_state0" "英雄部署阶段"
+"loop_state1" "策略阶段"
+"loop_state2" "战斗结算中"
+"loop_state3" "商店阶段"
+
+    //    <Equip_box itemname={"item_ultimate_scepter"} glod={2}/>
+    //     <Equip_box itemname={"item_aegis"} glod={4}/>
+    //     <Equip_box itemname={"item_bfury"} glod={3}/>
+    //     <Equip_box itemname={"item_aghanims_shard"} glod={2}/>
+    //     <Equip_box itemname={"item_force_field"} glod={4}/>
+    //     <Equip_box itemname={"item_desolator"} glod={3}/>
+    //     <Equip_box itemname={"item_radiance"} glod={3}/>
+    //     <Equip_box itemname={"item_shivas_guard"} glod={3}/>
+    //     <Equip_box itemname={"item_heart"} glod={3}/>
+    //     <Equip_box itemname={"item_monkey_king_bar"} glod={3}/>
+
+
+"custom_item_ultimate_scepter" "啊哈利姆神杖"
+"custom_item_ultimate_scepter_Description" "增强法术伤害加层 增加三点生命值上限"
+
+"custom_item_bfury" "狂战斧"
+"custom_item_bfury_Description" "攻击+3 战斗阶段对敌方近邻造成3点伤害"
+
+"custom_item_monkey_king_bar" "金箍棒"
+"custom_item_monkey_king_bar_Description" "攻击+3 释放技能后本回合获得攻击力+3 效果可叠加"
+
+"custom_item_aghanims_shard" "魔晶"
+"custom_item_aghanims_shard_Description" "增强法术伤害加层 增加1点防御力"
+
+"custom_item_desolator" "暗灭"
+"custom_item_desolator_Description" "攻击+3 战斗时视敌方抗性值为0"
+
+"custom_item_radiance" "辉耀"
+"custom_item_radiance_Description" "攻击+1 防御+1 生命上限+1 战斗结束后对敌方近邻造成2点纯粹伤害"
+
+"custom_item_shivas_guard" "西瓦之守护"
+"custom_item_shivas_guard_Description" "自身防御+2 为友方近邻增加1点抗性"
+
+"custom_item_heart" "恐鳖之心"
+"custom_item_heart_Description" "增加4点生命上限 战斗阶段结束后恢复2点生命值"
+
+"custom_item_force_field" "永恒之盘"
+"custom_item_force_field_Description" "增加4点生命上限 免疫一次致死效果 全场一次"
+
+"custom_item_aegis" "不朽之守护"
+"custom_item_aegis_Description" "增加1点防御 满状态复活 全场一次"

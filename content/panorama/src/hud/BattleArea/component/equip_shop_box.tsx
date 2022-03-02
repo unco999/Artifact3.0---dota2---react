@@ -1,8 +1,19 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 
 export const Equip_box = (props:{itemname:string,glod:number}) => {
+    const ref = useRef<ItemImage|null>()
+    
+    const mouseover = (panel:Panel) =>{
+        $.Msg($.Localize("custom_"+ props.itemname))
+        $.DispatchEvent("DOTAShowTitleTextTooltipStyled",panel!,$.Localize("custom_"+ props.itemname),$.Localize("custom_"+ props.itemname+"_Description"),"tip");
+    }
+
+    const mouseout = (panel:Panel) =>{
+        $.DispatchEvent("DOTAHideTextTooltip",panel!)
+    }
+
     return <Panel className={"Equip_box"}>
-            <DOTAItemImage itemname={props.itemname} className={"Equip"}/>
+            <DOTAItemImage onmouseover={(panel)=>mouseover(panel)} onmouseout={(penel)=>mouseout(penel)} itemname={props.itemname} className={"Equip"} showtooltip={false}/>
             <Panel className={"buy"} style={{marginTop:'3px '}}>
             <Label text={`${props.glod}金币`} style={{color:"gold"}}/>
             </Panel>

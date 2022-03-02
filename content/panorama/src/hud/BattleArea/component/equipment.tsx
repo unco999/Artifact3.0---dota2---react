@@ -30,7 +30,7 @@ export const Equipment = (props:{index:number,uuid:string,owned:number}) =>{
 
     useEffect(()=>{
         GameEvents.SendCustomGameEventToServer("C2S_GET_EQUIP",{uuid:props.uuid})
-    },[props.uuid])
+    },[])
 
     const registrationCanBeHitInTheEvent = (open:boolean) => {
         open ? $.RegisterEventHandler( 'DragDrop', ref.current!, OnDragDrop ) : $.RegisterEventHandler( 'DragDrop', ref.current!, ()=>{} );
@@ -58,8 +58,19 @@ export const Equipment = (props:{index:number,uuid:string,owned:number}) =>{
         ref.current?.RemoveClass("select")
     }
 
+    const mouseover = (panel:Panel) =>{
+        if(!EQUIPshowName) return
+        $.DispatchEvent("DOTAShowTitleTextTooltipStyled",panel!,$.Localize("custom_"+ EQUIPshowName),$.Localize("custom_"+ EQUIPshowName+"_Description"),"tip");
+        // $.Schedule(2,()=>{
+        //     $.DispatchEvent("DOTAHideTitleTextTooltip",panel!)
+        // })
+    }
 
-    return <Panel  ref={Panel => ref.current = Panel} draggable={true} className={"Equipment"}  hittest={true}>
-        <DOTAItemImage key={shortid.generate()} itemname={EQUIPshowName} className={'beEquipped'} showtooltip={false} />
+    const mouseout = (panel:Panel) =>{
+        $.DispatchEvent("DOTAHideTitleTextTooltip",panel!)
+    }
+
+    return <Panel onmouseover={(panel)=>mouseover(panel)} onmouseout={(penel)=>mouseout(penel)} ref={Panel => ref.current = Panel} draggable={true} className={"Equipment"}  hittest={false}>
+        <DOTAItemImage    itemname={EQUIPshowName} className={'beEquipped'} showtooltip={false} />
     </Panel>
 }

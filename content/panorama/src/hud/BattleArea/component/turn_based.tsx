@@ -55,7 +55,7 @@ export const Turnbased = (props:{owend:number,red:number,blue:number}) =>{
              <Label text={"SKIP"}/>
              </Panel>
              <Panel className={"defualt skip"} onmouseover={panel=>$.DispatchEvent("DOTAShowTextTooltip",panel,"暂时还不知道是什么")} onmouseout={panel=>$.DispatchEvent('DOTAHideTextTooltip')}>
-             <Label text={$.Localize("loop_state" + cuurent_loop_state.current)}/>
+             <Label text={$.Localize("#loop_state" + cuurent_loop_state.current)}/>
              </Panel>
         </Panel>
     </Panel>

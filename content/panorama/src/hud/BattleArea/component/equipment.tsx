@@ -60,7 +60,7 @@ export const Equipment = (props:{index:number,uuid:string,owned:number}) =>{
 
     const mouseover = (panel:Panel) =>{
         if(!EQUIPshowName) return
-        $.DispatchEvent("DOTAShowTitleTextTooltipStyled",panel!,$.Localize("custom_"+ EQUIPshowName),$.Localize("custom_"+ EQUIPshowName+"_Description"),"tip");
+        $.DispatchEvent("DOTAShowTitleTextTooltipStyled",panel!,$.Localize("#custom_"+ EQUIPshowName),$.Localize("#custom_"+ EQUIPshowName+"_Description"),"tip");
         // $.Schedule(2,()=>{
         //     $.DispatchEvent("DOTAHideTitleTextTooltip",panel!)
         // })

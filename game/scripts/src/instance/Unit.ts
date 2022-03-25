@@ -414,7 +414,7 @@ export class Solider extends Unit{
     }
 
     ToData():any {
-        return ""
+        return {icon:this.PlayerID == GameRules.Blue.GetPlayerID() ? "npc_dota_creep_goodguys_ranged" : "npc_dota_creep_badguys_melee"}
     }
 
 }

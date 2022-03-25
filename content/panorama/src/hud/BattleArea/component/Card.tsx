@@ -631,10 +631,11 @@ export const Card = (props:{index:number,uuid:string,owner:number,team:{red:numb
         return <>
         <Panel hittest={true}
          onmouseactivate={()=>{GameEvents.SendCustomGameEventToServer("TEST_C2S_DEATH",{uuid:props.uuid})}}   className={prefix+'Card'} ref={Panel => ref.current = Panel}>
-                <Panel className={"Modifiler_Main"}>
-                {modifilers.map(value=><StateCompoent key={shortid.generate()} name={value.name} duration={value.duration}/>)}
-                </Panel>
-                <Label text={"召唤物"} style={{fontSize:'30px',color:'white',textShadow:'0px 0px 0px 5.0 black',align:'center center'}}/>
+                 <DOTAScenePanel ref={(panel:ScenePanel)=>{ $.Msg("刷新"); $.Schedule(0.1,()=>panel?.SetUnit && panel.SetUnit(state.data?.icon,"",true))}} className={"Solider"} hittest={false} map={"unit"}  antialias={true}>
+                 <Panel className={"Modifiler_Main"}>
+                  {modifilers.map(value=><StateCompoent key={shortid.generate()} name={value.name} duration={value.duration}/>)}
+                  </Panel>
+                  </DOTAScenePanel>
                 <Label text={props.uuid} className={"uuid"}/>
                 <Panel className={"threeDimensional"}>
                 <Panel className={"attack"}>
@@ -648,12 +649,16 @@ export const Card = (props:{index:number,uuid:string,owner:number,team:{red:numb
                 </Panel>
             </Panel>
             </Panel>
-            {current_effect != "" &&<GenericPanel hittest={false} key={shortid.generate()} ref={panel=>{effect.current = panel;effect.current?.AddClass(effect_select_scenes())}} className={prefix + "effect"}  type={"DOTAParticleScenePanel"} particleName={current_effect} particleonly="true"  startActive="true" cameraOrigin={effect_parameter.current?.cameraOrigin} lookAt={effect_parameter.current?.lookAt} fov="50" />}
+            {current_effect != "" &&<GenericPanel hittest={false} key={shortid.generate()} ref={panel=>{effect.current = panel;effect.current?.AddClass(effect_select_scenes())}} className={prefix + "effect"}  type={"DOTAParticleScenePanel"} particleName={current_effect} particleonly="true"  startActive="true" cameraOrigin={effect_parameter.current?.cameraOrigin} lookAt={effect_parameter.current?.lookAt} fov="25" />}
             <Panel hittest={true} draggable={true} ref={Panel => dummy.current = Panel} onmouseover={()=>ref.current?.AddClass(prefix+"hover")} onmouseout={()=>ref.current?.RemoveClass(prefix+"hover")} className={prefix+"Carddummy"}/>
         </>
     }
 
+    const solider = useRef<ScenePanel|null>()
 
+    useEffect(()=>{
+            solider.current && solider.current.SetUnit(state.data.icon,"",true)
+    },[solider.current])
 
     const You_hand = () => {
         return <Panel className={prefix+'Card'} ref={Panel => ref.current = Panel}/>
@@ -669,11 +674,11 @@ export const Card = (props:{index:number,uuid:string,owner:number,team:{red:numb
         return <>
          <Panel hittest={true}
          onmouseactivate={()=>{GameEvents.SendCustomGameEventToServer("TEST_C2S_DEATH",{uuid:props.uuid})}}   className={prefix+'Card'} ref={Panel => ref.current = Panel}>
+                 <DOTAScenePanel key={props.uuid} ref={(panel:ScenePanel)=>{solider.current = panel}}  className={"Solider"} hittest={false} map={"unit"}  antialias={true}>
                  <Panel className={"Modifiler_Main"}>
                   {modifilers.map(value=><StateCompoent key={shortid.generate()} name={value.name} duration={value.duration}/>)}
                   </Panel>
-                <Label text={"小兵"} style={{fontSize:'30px',color:'white',textShadow:'0px 0px 0px 5.0 black',align:'center center'}}/>
-                <Label text={props.uuid} className={"uuid"}/>
+                  </DOTAScenePanel>
                 <Panel className={"threeDimensional"}>
                 <Panel className={"attack"}>
                     <Label text={attribute?.attack}/>
@@ -716,7 +721,6 @@ export const Card = (props:{index:number,uuid:string,owner:number,team:{red:numb
                   {modifilers.map(value=><StateCompoent key={shortid.generate()} name={value.name} duration={value.duration}/>)}
                   </Panel>
                   <EquipmentManager owned={props.owner} uuid={props.uuid}/>
-                  <Label hittest={false} text={"id:"+state.Id + "|" + props.uuid} className={"uuid"}/>
                   <DOTAHeroMovie hittest={false}  className={"heroimage"} heroname={(GameUI.CustomUIConfig() as any).CardHero.CardGame[state.Id].name} />
                   <Panel hittest={false}  className={"threeDimensional"}>
                 <Panel hittest={false}  className={"attack"}>
@@ -744,7 +748,6 @@ export const Card = (props:{index:number,uuid:string,owner:number,team:{red:numb
             return <>
            <Panel draggable={true} ref={Panel => dummy.current = Panel} onmouseover={()=>{frame.current?.AddClass("show");ref.current?.AddClass(prefix+"hover")}} onmouseout={()=>{frame.current?.RemoveClass("show");ref.current?.RemoveClass(prefix+"hover")}} className={prefix+"Carddummy"}/>
            <Panel ref={Panel => ref.current = Panel}  className={prefix+'Card'} >
-              <Label text={props.uuid} className={"uuid"}/>
               <Panel ref={Panel=>frame.current = Panel} className={"card_frame"}/>
               <Panel style={{width:'90%',height:"90%",align:'center center'}}>
               <DOTAItemImage itemname={state.Id} style={{width:"100%",height:"100%"}}/>

@@ -934,12 +934,12 @@ export class ScenesManager {
 
     /**友方本路查找 */
     friendbrach(Card: Card) {
-        return Card.Scene.getAll();
+        return Card?.Scene?.getAll() ?? [];
     }
 
     /**本路敌对查找 */
     enemybrach(Card: Card) {
-        return Card.Scene.find_oppose().getAll();
+        return Card?.Scene?.find_oppose()?.getAll()?? [];
     }
 
     /**敌人跨线或者全体 */

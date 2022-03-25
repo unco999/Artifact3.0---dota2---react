@@ -68,7 +68,7 @@ export const BranchCard = (props:{index:number}) => {
 
 
     return <Panel className={"BranchCard"}>
-            <Label text={$.Localize("branch_" + props.index)}/>
+            <Label text={$.Localize("#branch_" + props.index)}/>
             <Panel ref={panel=>main.current = panel} className={"box"}>
             {array.map((value)=>value != -1 && <DOTAHeroImage key={shortid.generate()} heroid={value as HeroID} className={'optionhero'}/>)}
             </Panel>

@@ -4,12 +4,11 @@ export const Equip_box = (props:{itemname:string,glod:number}) => {
     const ref = useRef<ItemImage|null>()
     
     const mouseover = (panel:Panel) =>{
-        $.Msg($.Localize("custom_"+ props.itemname))
-        $.DispatchEvent("DOTAShowTitleTextTooltipStyled",panel!,$.Localize("custom_"+ props.itemname),$.Localize("custom_"+ props.itemname+"_Description"),"tip");
+        $.DispatchEvent("DOTAShowTitleTextTooltipStyled",panel!,$.Localize("#custom_"+ props.itemname),$.Localize("#custom_"+ props.itemname+"_Description"),"tip");
     }
 
     const mouseout = (panel:Panel) =>{
-        $.DispatchEvent("DOTAHideTextTooltip",panel!)
+        $.DispatchEvent("DOTAHideTitleTextTooltip",panel!)
     }
 
     return <Panel className={"Equip_box"}>

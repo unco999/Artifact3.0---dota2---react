@@ -4,6 +4,7 @@
 		"attack" "3"
 		"arrmor" "0"
 		"heal" "3"
+		"icon" "npc_dota_hero_enigma"
 		"remark" "小谜团"
 		"name" "mituan"
 
@@ -12,6 +13,7 @@
 		"attack" "6"
 		"arrmor" "0"
 		"heal" "9"
+		"icon" "npc_dota_hero_terrorblade"
 		"remark" "召唤一个等同于恐怖利刃基础数值的幻想"
 		"name" "kongbuliren"
 
@@ -20,6 +22,7 @@
 		"attack" "3"
 		"arrmor" "0"
 		"heal" "6"
+		"icon" "npc_dota_beastmaster_boar_1"
 		"remark" "召唤一只4攻7血的豪猪"
 		"name" "haozhu"
 
@@ -28,6 +31,7 @@
 		"attack" "6"
 		"arrmor" "0"
 		"heal" "6"
+		"icon" "npc_dota_furion_treant_1"
 		"remark" "召唤3攻6血的小树人直到上限"
 		"name" "xiaoshuren"
 
@@ -36,6 +40,7 @@
 		"attack" "6"
 		"arrmor" "0"
 		"heal" "9"
+		"icon" "npc_dota_beastmaster_hawk"
 		"remark" "召唤战鹰"
 		"name" "zhanying"
 

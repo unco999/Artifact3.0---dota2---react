@@ -980,9 +980,10 @@
 }
 
 .Baffle{
-    transition-duration: 3s;
+    transition-duration: 0.55s;
     transition-property: opacity;
     opacity: 1;
+    background-color: rgb(0, 0, 0);
     &.hide{
         opacity: 0;
     }

@@ -17,6 +17,7 @@ export class spell_skill{
 
     register_gamevent(){
         CustomGameEventManager.RegisterListener("C2S_SPACE_CALL_SPELL",(_,event)=>{
+            print("当前开始施放技能")
             if(!isCanOperate(event.PlayerID) || get_settlement_current() == 1 || Get_current_option_playuer() != event.PlayerID.toString()) return;
             const abilityInstance = AbiliyContainer.instance.GetAbility(event.SKILL_ID)
             print(event.PlayerID.toString() == GameRules.Red.GetPlayerID().toString() ? "当前红色玩家释放了魔法" : "当前蓝色玩家释放了魔法")
@@ -92,12 +93,16 @@ export class spell_skill{
     }
 
     call_spell_skill(id:string,player:PlayerID,target:uuid,spell_ability_card_uuid:uuid,scnese?:number,target_index?:number){
+        print("开始释放实际技能")
         const abilityInstance = AbiliyContainer.instance.GetAbility(id)
         GameRules.energyBarManager.GetBrachEnrgyBar(get_current_operate_brach(),player).add_cuurent_energy(-abilityInstance.consumption)
+        print("开始减少技能能量")
         if(GameRules.select_the_prompt.splitLimiter(abilityInstance.heroid,player)){
             SetGameLoopMasK(player.toString() == GameRules.Red.GetPlayerID().toString() ? optionMask.红队有操作 : optionMask.蓝队有操作)
             GameRules.SceneManager.change_secens(spell_ability_card_uuid,"ABILITY",+get_current_operate_brach())
+            print("开始进行移动技能")
             Timers.CreateTimer(3,()=>{
+                print("开始进行移动技能实际效果")
                 GameRules.SceneManager.change_secens(spell_ability_card_uuid,"REMOVE",+get_current_operate_brach())
                 const hero = GameRules.SceneManager.get_hero(abilityInstance.heroid) as Unit
                 const data = GameRules.select_the_prompt.validRangeLookup(player,abilityInstance.Magic_brach,abilityInstance.Magic_range,abilityInstance.Magic_team,abilityInstance.Magic_attack_tart_type,abilityInstance.heroid)

@@ -1108,7 +1108,7 @@ export class item_monkey_king_bar_modifiler extends CAModifiler{
             this.thisHero.updateAttribute()
             return true
         })
-        this.setHookEvent(HOOK.死亡前, () => {
+        this.setHookEvent(HOOK.死亡后, () => {
             this.superimposedAttack = 0
             this.thisHero.updateAttribute()
             return true

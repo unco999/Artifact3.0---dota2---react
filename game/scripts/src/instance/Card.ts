@@ -54,18 +54,21 @@ export abstract class Card{
 
     /**查找左边是否有空位 */
     isThereAVacancyOnTheLeft(){
+        print("查看左边是否有空位")
         const scene = this.Scene as BattleArea
         return scene.CardList[this.Index - 1 - 1] == -1
     }
 
     /**查找右边是否有空位 */
     findNoVacancyOnTheRight(){
+        print("右边是否有空位")
         const scene = this.Scene as BattleArea
         return scene.CardList[this.Index - 1 + 1] == -1
     }
 
     /**卡牌向右边移动 带动对面的向左移动*/
     right(){
+        print("卡牌右移开始")
         const _scenes = this.Scene as BattleArea
         const _targetScnese = this.Scene.find_oppose() as BattleArea
         if(!_scenes?.CardList) return;
@@ -86,6 +89,7 @@ export abstract class Card{
 
     /**卡牌向左边移动 带动对面的向左移动*/
     left(){
+        print("卡牌左移开始")
         const _scenes = this.Scene as BattleArea
         const _targetScnese = this.Scene.find_oppose() as BattleArea
         while(this.Index > 3 && _scenes.CardList[this.Index - 1 - 1] == -1 

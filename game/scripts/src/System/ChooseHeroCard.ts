@@ -6,9 +6,9 @@ import '../lib/table'
 
 
 const timer = {
-    红队选择时间:4,
-    蓝队选择时间:4,
-    分路选择时间:12,
+    红队选择时间:20,
+    蓝队选择时间:20,
+    分路选择时间:40,
 }
 
 export abstract class ChooseHerostate{

@@ -175,6 +175,7 @@ export class Unit extends Card{
             } 
         }
         modiflers.forEach(modifiler=>{
+            print(modifiler.name,"被删除了")
             this.Modifilers.remove(modifiler)
         })
         this.update_modifiler_to_client()
@@ -269,11 +270,11 @@ export class Unit extends Card{
                 let deathbool:boolean = false
                 PreDeath.forEach(hook=>{
                    deathbool = hook(this,Source)
-                   print(this.UUID,"成功去了墓地")
                 })
                 !deathbool && GameRules.SceneManager.change_secens(this.UUID,"Grave",-1)
                 !deathbool && this.deleteLimitedModifier()
                 !deathbool && (this.death_state = true)
+                print(this.UUID,"成功去了墓地")
                 const PostDeath = this.hook(HOOK.死亡后)
                 PostDeath.forEach(hook=>{
                     hook(this,Source)

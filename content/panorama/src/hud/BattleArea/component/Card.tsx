@@ -793,6 +793,6 @@ export const CardContext = (props:{owner:number}) => {
 
 
     return <Panel hittest={false} className={"CardContext"}>
-        {allheaps.map((uuid,index)=><Card  owner={props.owner} team={team} key={uuid} index={index} uuid={uuid}/>)}
+        {allheaps.map((uuid,index)=><Card  owner={props.owner} team={team} key={uuid+ props.owner.toString()} index={index} uuid={uuid}/>)}
     </Panel>
 }

@@ -57,14 +57,17 @@ export class select_the_prompt{
 
     /**分路限制器 不在当前战斗回合的分路显示提示框 */
     splitLimiter(hashero:string,playerid:PlayerID){
+        print("开始显示分路控制器")
         const hero = GameRules.SceneManager.get_hero(hashero)
+        print("找到的限制英雄是",hero)
         if(!hero){
             CustomGameEventManager.Send_ServerToPlayer(PlayerResource.GetPlayer(playerid),"S2C_INFORMATION",{information:"该英雄目前不在战斗区域!"})
             return false
         }
         const CardScenes = GameRules.SceneManager.GetScenes(GameRules.SceneManager.get_hero(hashero).Scene.SceneName,hero.PlayerID)
+        print("找到的英雄卡牌场景是",CardScenes.SceneName)
         const brach = get_current_operate_brach()
-        print("当前场景为",brach)
+        print("获取全局策略路线",brach)
         if(!CardScenes) return;
         if(CardScenes.SceneName == "GOUP" && brach == "1"){
             return true
@@ -92,6 +95,7 @@ export class select_the_prompt{
            }
            let find_data = this.ability_select_show(event.abilityname,hero)
            if(abilityinstance.wounded){
+              print("开始了斩杀技能")
                find_data.table = find_data.table.filter(card=>{
                     if(typeof(card) != "number"){
                         if((card as Unit).max_heal !=  (card as Unit).GETheal){
@@ -99,8 +103,10 @@ export class select_the_prompt{
                         }
                     }
                 })
+                print("结束了斩杀技能")
            }
            if(abilityinstance.displacement != -1){
+               print("开始了全场空位技能")
                const hero = GameRules.SceneManager.get_hero(abilityinstance.heroid)
                const scene = hero.Scene as BattleArea
                let _list = []
@@ -121,14 +127,17 @@ export class select_the_prompt{
                         break
                    }
                }
+               print("结束了全场空位技能")
                CustomGameEventManager.Send_ServerToPlayer(PlayerResource.GetPlayer(hero.PlayerID),"S2C_SEND_CANSPACE",_table)
            }
            if(abilityinstance.istypeTower != -1){
+                print("开始了打塔过滤器")
                if(abilityinstance.istypeTower == 1){
                    const tower = GameRules.TowerGeneralControl.getCardScenceTower(PlayerResource.GetPlayer(hero.PlayerID),hero)
                    tower.high(hero.PlayerID)
                }
                if(abilityinstance.istypeTower == 2){
+                print("开始了全局打塔过滤器")
                 const tower1 = GameRules.TowerGeneralControl.getCardScenceTower(PlayerResource.GetPlayer(hero.PlayerID),hero)
                 const tower2 = GameRules.TowerGeneralControl.getCardScenceTower(PlayerResource.GetPlayer(hero.PlayerID),hero)
                 const tower3 = GameRules.TowerGeneralControl.getCardScenceTower(PlayerResource.GetPlayer(hero.PlayerID),hero)
@@ -164,6 +173,7 @@ export class select_the_prompt{
         })
         CustomGameEventManager.RegisterListener("C2S_REP_SKILL",(_,event)=>{
             if(!isCanOperate(event.PlayerID) || get_settlement_current() == 1 || Get_current_option_playuer() != event.PlayerID.toString()) return;
+            print("开始了空位释放技能")
             const abilityinstance = AbiliyContainer.instance.GetAbility(event.abilityname)
             const hero = GameRules.SceneManager.get_hero(abilityinstance.heroid)
             const brachkey = event.to
@@ -203,6 +213,7 @@ export class select_the_prompt{
                     hero.Id,
                 )
                 abilityinstance.post_move_spell_skill(find_data?.table as (Unit|number)[] ?? [],undefined,hero as Unit)
+                print("结束了空位释放技能")
                 print("特效全部执行完毕")
                 GameRules.SceneManager.change_secens(event.uuid,"REMOVE")
             })
@@ -211,11 +222,13 @@ export class select_the_prompt{
     
     /**技能提示索引 */
     ability_select_show(abilityName:string,hero:Hero):{_self:Hero,table:(Card|number)[],type:select_type}{
+        print("开始了技能提示索引")
         const ability_select_type = AbiliyContainer.instance.GetAbility(abilityName)
         const _select_type = ability_select_type.ability_select_type
         const Magic_attack_tart_type = ability_select_type.Magic_attack_tart_type
         switch(_select_type){
             case select_type.任意单体:{
+                print("技能提示器 select_type.任意单体")
                 const mygoup = GameRules.SceneManager.GetGoUpScene(hero.PlayerID)
                 const mymidway = GameRules.SceneManager.GetMidwayScene(hero.PlayerID)
                 const mylaiddon = GameRules.SceneManager.GetLaidDownScene(hero.PlayerID)
@@ -232,6 +245,7 @@ export class select_the_prompt{
                 ],type:select_type.任意单体} 
             }
             case select_type.全体:{
+                print("技能提示器 select_type.全体")
                 const mygoup = GameRules.SceneManager.GetGoUpScene(hero.PlayerID)
                 const mymidway = GameRules.SceneManager.GetMidwayScene(hero.PlayerID)
                 const mylaiddon = GameRules.SceneManager.GetLaidDownScene(hero.PlayerID)
@@ -252,7 +266,7 @@ export class select_the_prompt{
             case select_type.双方近邻:{
                 const enenmy = GameRules.SceneManager.enemyneighbor(hero)
                 const my = GameRules.SceneManager.friendlyNeighbor(hero)
-                print("触发了双方近邻查找器")
+                print("技能提示器 select_type.双方近邻")
                 return {_self:hero,table:[
                     my.left,my.right,
                     enenmy.center,enenmy.left,enenmy.right
@@ -260,35 +274,43 @@ export class select_the_prompt{
             }
 
             case select_type.友方本路:{
+                print("技能提示器 select_type.友方本路")
                 return {_self:hero,table:[...GameRules.SceneManager.friendbrach(hero).filter(card=> Magic_attack_Filer(Magic_attack_tart_type,card as Unit))],type:select_type.友方本路}
             }
 
             case select_type.友方单体:{
+                print("技能提示器 select_type.友方单体")
                 return {_self:hero,table:[...GameRules.SceneManager.friendbrach(hero).filter(card=> Magic_attack_Filer(Magic_attack_tart_type,card as Unit))],type:select_type.友方单体}
             }
 
             case select_type.敌方本路:{
+                print("技能提示器 select_type.敌方本路")
                 return {_self:hero,table:[...GameRules.SceneManager.enemybrach(hero).filter(card=> Magic_attack_Filer(Magic_attack_tart_type,card as Unit))],type:select_type.敌方本路}
             }
 
             case select_type.敌方单体:{
+                print("技能提示器 select_type.敌方单体")
                 return {_self:hero,table:[...GameRules.SceneManager.enemybrach(hero).filter(card=> Magic_attack_Filer(Magic_attack_tart_type,card as Unit))],type:select_type.敌方单体}
             }
 
             case select_type.敌方对格:{
+                print("技能提示器 select_type.敌方对格")
                 return {_self:hero,table:[GameRules.SceneManager.gather(Magic_attack_Filer(Magic_attack_tart_type,hero) && hero)],type:select_type.敌方对格}
             }
 
             case select_type.敌方近邻:{
+                print("技能提示器 select_type.敌方近邻")
                 const neighbor = GameRules.SceneManager.enemyneighbor(hero)
                 return {_self:hero,table:[neighbor.center,neighbor.left,neighbor.right],type:select_type.敌方近邻}
             }
 
             case select_type.自己:{
+                print("技能提示器 select_type.自己")
                 return {_self:hero,table:[],type:select_type.自己}
             }
 
             case select_type.友方全体:{
+                print("技能提示器 select_type.友方全体")
                 const mygoup = GameRules.SceneManager.GetGoUpScene(hero.PlayerID)
                 const mymidway = GameRules.SceneManager.GetMidwayScene(hero.PlayerID)
                 const mylaiddon = GameRules.SceneManager.GetLaidDownScene(hero.PlayerID)
@@ -300,6 +322,7 @@ export class select_the_prompt{
             }
 
             case select_type.全场任意敌方单体:{
+                print("技能提示器 select_type.全场任意敌方单体")
                 const yougoup = GameRules.SceneManager.GetGoUpScene(hero.PlayerID).find_oppose()
                 const youmidway = GameRules.SceneManager.GetMidwayScene(hero.PlayerID).find_oppose()
                 const youlaiddon = GameRules.SceneManager.GetLaidDownScene(hero.PlayerID).find_oppose()
@@ -312,6 +335,7 @@ export class select_the_prompt{
             }
 
             case select_type.敌方全体:{
+                print("技能提示器 select_type.敌方全体")
                 const yougoup = GameRules.SceneManager.GetGoUpScene(hero.PlayerID).find_oppose()
                 const youmidway = GameRules.SceneManager.GetMidwayScene(hero.PlayerID).find_oppose()
                 const youlaiddon = GameRules.SceneManager.GetLaidDownScene(hero.PlayerID).find_oppose()
@@ -324,6 +348,7 @@ export class select_the_prompt{
             }
 
             case select_type.本路:{
+                print("技能提示器 select_type.本路")
                const enemyScnese = hero.Scene.find_oppose()
                const myScnese = hero.Scene
                return {
@@ -347,17 +372,21 @@ export class select_the_prompt{
         if(hero == undefined) return;
         if(!(hero.isBattle())) return;
         if(magic_team == Magic_team.自己){
+            print("技能查找器 自己")
             return {_self:hero,table:[]}
         }
         if(magic_brach == Magic_brach.对格 && magic_range == Magic_range.近邻){
+            print("技能查找器 magic_brach == Magic_brach.对格 && magic_range == Magic_range.近邻")
             const data = GameRules.SceneManager.enemyneighbor(hero)
             return {_self:hero,table:[data.center,data.left,data.right]}
         }
         if(magic_brach == Magic_brach.对格){
+            print("技能查找器 magic_brach == Magic_brach.对格")
             const gather = GameRules.SceneManager.gather(hero) as Unit
             return {_self:hero,table:[gather]}
         }
         if(magic_brach == Magic_brach.跨线 && magic_range == Magic_range.全体 && magic_team == Magic_team.双方){
+            print("技能查找器 Magic_brach.跨线 && magic_range == Magic_range.全体 && magic_team == Magic_team.双方")
             const mygoup = GameRules.SceneManager.GetGoUpScene(PlayerID)
             const mymidway = GameRules.SceneManager.GetMidwayScene(PlayerID)
             const mylaiddon = GameRules.SceneManager.GetLaidDownScene(PlayerID)
@@ -375,56 +404,69 @@ export class select_the_prompt{
         }
         //本路友方单体
         if(magic_brach == Magic_brach.本路 && magic_range == Magic_range.全体 && magic_team == Magic_team.友方){
+            print("技能查找器 magic_brach == Magic_brach.本路 && magic_range == Magic_range.全体 && magic_team == Magic_team.友方")
             return {_self:hero,table:[...GameRules.SceneManager.friendbrach(hero)].filter(card=> Magic_attack_Filer(Magic_attack_tart_type,card as Unit))}
         }
         if(magic_brach == Magic_brach.本路 && magic_range == Magic_range.单体 && magic_team == Magic_team.友方){
+            print("技能查找器 magic_brach == Magic_brach.本路 && magic_range == Magic_range.单体 && magic_team == Magic_team.友方")
             return {_self:hero,table:[...GameRules.SceneManager.friendbrach(hero)].filter(card=> Magic_attack_Filer(Magic_attack_tart_type,card as Unit))}
         }
         //本路敌方单体
         if(magic_brach == Magic_brach.本路 && magic_range == Magic_range.单体 && magic_team == Magic_team.敌方){
+            print("技能查找器 magic_brach == Magic_brach.本路 && magic_range == Magic_range.单体 && magic_team == Magic_team.敌方")
             return {_self:hero,table:[...GameRules.SceneManager.enemybrach(hero)].filter(card=> Magic_attack_Filer(Magic_attack_tart_type,card as Unit))}
         }
         //本路敌方全体
         if(magic_brach == Magic_brach.本路 && magic_range == Magic_range.全体 && magic_team == Magic_team.敌方){
+            print("技能查找器 magic_brach == Magic_brach.本路 && magic_range == Magic_range.全体 && magic_team == Magic_team.敌方")
             return {_self:hero,table:[...GameRules.SceneManager.enemybrach(hero)].filter(card=> Magic_attack_Filer(Magic_attack_tart_type,card as Unit))}
         }
         //本路单体双方
         if(magic_brach == Magic_brach.本路 && magic_range == Magic_range.单体 && magic_team == Magic_team.双方){
+            print("技能查找器 magic_brach == Magic_brach.本路 && magic_range == Magic_range.单体 && magic_team == Magic_team.双方")
             return {_self:hero,table:[...GameRules.SceneManager.enemybrach(hero).concat(...GameRules.SceneManager.friendbrach(hero))].filter(card=> Magic_attack_Filer(Magic_attack_tart_type,card as Unit))}
         }
         //本路近邻友方
         if(magic_brach == Magic_brach.本路 && magic_range == Magic_range.近邻 && magic_team == Magic_team.友方){
+            print("技能查找器 magic_brach == Magic_brach.本路 && magic_range == Magic_range.近邻 && magic_team == Magic_team.友方")
             const data = GameRules.SceneManager.friendlyNeighbor(hero)
             return {_self:hero,table:[data.left,data.right].filter(card=> Magic_attack_Filer(Magic_attack_tart_type,card as Unit))}
         }
         //本路近邻敌方
         if(magic_brach == Magic_brach.本路 && magic_range == Magic_range.近邻 && magic_team == Magic_team.敌方){
+            print("技能查找器 magic_brach == Magic_brach.本路 && magic_range == Magic_range.近邻 && magic_team == Magic_team.敌方")
             const data = GameRules.SceneManager.enemyneighbor(hero)
             return {_self:hero,table:[data.center,data.left,data.right].filter(card=> Magic_attack_Filer(Magic_attack_tart_type,card as Unit))}
         }
         //本路全体友方
         if(magic_range == Magic_range.全体 && magic_team == Magic_team.友方){
+            print("技能查找器 magic_range == Magic_range.全体 && magic_team == Magic_team.友方")
             print("使用的是友方全体的结局")
             return {_self:hero,table:[...GameRules.SceneManager.friendfindAll(hero)].filter(card=> Magic_attack_Filer(Magic_attack_tart_type,card as Unit))}
         }
         //本路全体敌方
         if(magic_range == Magic_range.全体 && magic_team == Magic_team.敌方){
+            print("技能查找器 magic_range == Magic_range.全体 && magic_team == Magic_team.敌方")
             return {_self:hero,table:[...GameRules.SceneManager.enemyfindAll(hero)].filter(card=> Magic_attack_Filer(Magic_attack_tart_type,card as Unit))}
         }
         //跨线友方单体
         if(magic_brach == Magic_brach.跨线 && magic_team == Magic_team.友方 && magic_range == Magic_range.单体){
+            print("技能查找器 magic_brach == Magic_brach.跨线 && magic_team == Magic_team.友方 && magic_range == Magic_range.单体")
             return {_self:hero,table:[...GameRules.SceneManager.friendbrach(hero)].filter(card=> Magic_attack_Filer(Magic_attack_tart_type,card as Unit))}
         }
         //跨线敌方单体
         if(magic_brach == Magic_brach.跨线 && magic_team == Magic_team.敌方 && magic_range == Magic_range.单体){
+            print("技能查找器 magic_brach == Magic_brach.跨线 && magic_team == Magic_team.敌方 && magic_range == Magic_range.单体")
             return {_self:hero,table:[...GameRules.SceneManager.enemyfindAll(hero)].filter(card=> Magic_attack_Filer(Magic_attack_tart_type,card as Unit))}
         }
         //跨线友方群体 -- 单挑路线群体
         if(magic_brach == Magic_brach.跨线 && magic_team == Magic_team.友方 && magic_range == Magic_range.全体){
+            print("技能查找器 magic_brach == Magic_brach.跨线 && magic_team == Magic_team.友方 && magic_range == Magic_range.全体")
             return {_self:hero,table:[...GameRules.SceneManager.enemyfindAll(hero)].filter(card=> Magic_attack_Filer(Magic_attack_tart_type,card as Unit))}
         }
         //跨线敌方群体 -- 单条路线群体
         if(magic_brach == Magic_brach.跨线 && magic_team == Magic_team.敌方 && magic_range == Magic_range.全体){
+            print("技能查找器 magic_brach == Magic_brach.跨线 && magic_team == Magic_team.敌方 && magic_range == Magic_range.全体")
             return {_self:hero,table:[...GameRules.SceneManager.friendfindAll(hero)].filter(card=> Magic_attack_Filer(Magic_attack_tart_type,card as Unit))}
         }
     }

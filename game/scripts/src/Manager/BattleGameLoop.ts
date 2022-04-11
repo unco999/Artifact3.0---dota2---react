@@ -241,9 +241,24 @@ export class faultCard extends GameLoopState {
     register_gamevent(){
         CustomGameEventManager.RegisterListener("C2S_CLICK_SKIP",(_,event)=>{
             if(this.Get_current_option_playuer == event.PlayerID.toString()){
+                if(CustomNetTables.GetTableValue("GameMianLoop","smallCycle").current != 游戏循环.出牌阶段.toString()){
+                    return
+                }
                 SetGameLoopMasK(event.PlayerID == GameRules.Red.GetPlayerID() ? optionMask.红队点击跳过 : optionMask.蓝队点击跳过)
                 GameRules.lastTruntable.Add(event.PlayerID,false)
             }
+        })
+        CustomGameEventManager.RegisterListener("C2S_RED_SEND_SKIP",(_,event)=>{
+            if(this.Get_current_option_playuer == event.player.toString()){
+                if(CustomNetTables.GetTableValue("GameMianLoop","smallCycle").current != 游戏循环.出牌阶段.toString()){
+                    return
+                }
+                SetGameLoopMasK(event.player == GameRules.Red.GetPlayerID() ? optionMask.红队点击跳过 : optionMask.蓝队点击跳过)
+                GameRules.lastTruntable.Add(event.PlayerID,false)
+            }
+        })
+        CustomGameEventManager.RegisterListener("C2S_RED_SEND_PlayCard",(_,event)=>{
+            SetGameLoopMasK(optionMask.红队有操作)
         })
     }
 
@@ -267,14 +282,15 @@ export class faultCard extends GameLoopState {
             this.init_give_cards();
             GameRules.lastTruntable = new TurntableBase(GameRules.Red.GetPlayerID())
             this.Set_cuurent_option_player = GameRules.lastTruntable.nextRound.toString()
-            this.host.init = true;
             this.create_solider() //每回合刷小兵
+            CustomGameEventManager.Send_ServerToAllClients("S2C_BRUSH_SOLIDER",{})
+            this.host.init = true;
             return;
         }
         this.Set_cuurent_option_player = GameRules.lastTruntable.nextRound.toString()
         GameRules.lastTruntable = new TurntableBase(GameRules.lastTruntable.nextRound)
         this.create_solider() //每回合刷小兵
-        GameRules.SceneManager.update();
+        CustomGameEventManager.Send_ServerToAllClients("S2C_BRUSH_SOLIDER",{})
         const blueScnese = GameRules.SceneManager.fitler(get_current_operate_brach() as BATTLE_BRACH_STATE,GameRules.Blue.GetPlayerID())
         const redScnese = GameRules.SceneManager.fitler(get_current_operate_brach() as BATTLE_BRACH_STATE,GameRules.Red.GetPlayerID())
         const bluecars = blueScnese.getAll() as Unit[]

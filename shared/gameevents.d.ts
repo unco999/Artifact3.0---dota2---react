@@ -86,4 +86,6 @@ declare interface CustomGameEventDeclarations {
     "C2S_GET_ABILITY_T":{} //从牌库抽大招
     "C2S_GET_ONE_CARD":{} //2金币抽牌
     "TEST_ALL_DEATCH":{}//我方全部死亡
+    "C2S_RED_SEND_PlayCard":{player:PlayerID}//红方出牌
+    "C2S_RED_SEND_SKIP":{player:PlayerID}//红方跳过
 }

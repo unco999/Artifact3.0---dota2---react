@@ -121,7 +121,7 @@
 		"isbig" "1"
 		"cost" "3"
 		"heroid" "29"
-		"remark" "3水晶 潮汐小  巨浪：选择一个敌方单位，移除其抗性值,造成伤害3/5/7"
+		"remark" "3水晶 潮汐小  巨浪：选择一个敌方单位，减少2点护甲,造成伤害3/5/7"
 		"id" "14"
 		"originname" "tidehunter_gush"
 

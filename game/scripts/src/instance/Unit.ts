@@ -387,6 +387,7 @@ export class Unit extends Card{
             }
             this.heal += count
             print(this.UUID,"收到了回复,当前剩余生命值为",this.GETheal)
+            this.updateAttribute()
             CustomGameEventManager.Send_ServerToAllClients("S2C_SEND_ATTRIBUTE",this.attribute)
         }
 

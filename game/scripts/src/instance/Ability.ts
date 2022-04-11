@@ -705,7 +705,7 @@ export class SmallSkill_juedou extends ability_templater{
                  if(target.Index){
                      if(target.type == 'Hero'){
                         const _damage = new damage(hero,target)
-                        _damage.spell_skill_settlement(this.damage_calculate(hero),hero)
+                        _damage.spell_skill_settlement(this.damage_calculate(hero),hero,"purely")
                      }
                  }   
              }
@@ -815,7 +815,7 @@ export class SmallSkill_juedou extends ability_templater{
      heroid = "44"
      ability_select_type: select_type = select_type.敌方单体;
      wounded: boolean = false;
-     consumption: number = 5
+     consumption: number = 6
  
      constructor(){
          super("TrickSkill_encijietuo")
@@ -942,7 +942,7 @@ export class SmallSkill_juedou extends ability_templater{
         Magic_range = Magic_range.单体
         heroid = "25"
         ability_select_type: select_type = select_type.敌方单体;
-        consumption: number = 5
+        consumption: number = 7
 
         constructor(){
             super("TrickSkill_mieshenzhan")
@@ -984,7 +984,7 @@ export class SmallSkill_juedou extends ability_templater{
         Magic_range = Magic_range.近邻
         heroid = "33"
         ability_select_type: select_type = select_type.敌方近邻;
-        consumption: number = 6
+        consumption: number = 7
 
         constructor(){
             super("TrickSkill_heidong")
@@ -995,12 +995,12 @@ export class SmallSkill_juedou extends ability_templater{
             if(!target || !hero) return
             super.spell_skill(table,target,hero)
             const _table =  GameRules.SceneManager.enemyneighbor(hero)
-            this.__damage(_table.center,hero)
-            this.__damage(_table.left,hero)
-            this.__damage(_table.right,hero)
-            _table.center && _table.center.addmodifiler(ModifilerContainer.instance.Get_prototype_modifiler("stund1round_modifiler"))
-            _table.left && (_table.left as Unit).addmodifiler(ModifilerContainer.instance.Get_prototype_modifiler("stund1round_modifiler"))
-            _table.right && (_table.right as Unit).addmodifiler(ModifilerContainer.instance.Get_prototype_modifiler("stund1round_modifiler"))
+            typeof(_table.right) != 'number' && this.__damage(_table.center,hero)
+            typeof(_table.center) != 'number' && this.__damage(_table.left,hero)
+            typeof(_table.left) != 'number' && this.__damage(_table.right,hero)
+            typeof(_table.center) != 'number'  && _table.center.addmodifiler(ModifilerContainer.instance.Get_prototype_modifiler("stund1round_modifiler"))
+            typeof(_table.left) != 'number' && (_table.left as Unit).addmodifiler(ModifilerContainer.instance.Get_prototype_modifiler("stund1round_modifiler"))
+            typeof(_table.right) != 'number' && (_table.right as Unit).addmodifiler(ModifilerContainer.instance.Get_prototype_modifiler("stund1round_modifiler"))
         }
 
         __damage(target:Unit|number,source:Unit){
@@ -1424,7 +1424,7 @@ export class TrickSkill_yexingzhaohuanzhanying extends ability_templater{
     Magic_range = Magic_range.单体
     heroid = "38"
     ability_select_type: select_type = select_type.自己;
-    consumption = 3
+    consumption = 5
     displacement = 2
     vacancyRelease = true // 空位释放
 

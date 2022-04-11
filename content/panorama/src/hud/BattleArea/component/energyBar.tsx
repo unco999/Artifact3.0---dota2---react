@@ -15,7 +15,7 @@ export const EnergyBarManager = (props:{owner:number,brach:number}) =>{
         let max = state?.max_enrgy ? state?.max_enrgy - 1 : 0
         for(let count = 0 ; count < 10 ; count++){
             let _state_string:"consume"|"notOwned"|"beUsable" = 'notOwned';
-            if(count < max && count > index && count <= current_max){
+            if(count < max && count >= index && count <= current_max){
                 _state_string = 'consume'
             }
             else if(count > current_max){
@@ -24,7 +24,7 @@ export const EnergyBarManager = (props:{owner:number,brach:number}) =>{
             else if(count <= index){
                 _state_string = 'beUsable'
             }
-            _list.push(<EnergyBaratom prefix={prefix} state={_state_string} key={_state_string + count}  index={count}/>)
+            _list.push(<EnergyBaratom prefix={prefix} state={_state_string} key={shortid.generate()}  index={count}/>)
         }
         return _list
     }

@@ -720,7 +720,7 @@ export const Card = (props:{index:number,uuid:string,owner:number,team:{red:numb
                   <Panel className={"Modifiler_Main"}>
                   {modifilers.map(value=><StateCompoent key={shortid.generate()} name={value.name} duration={value.duration}/>)}
                   </Panel>
-                  <EquipmentManager owned={props.owner} uuid={props.uuid}/>
+                  <EquipmentManager key={props.uuid}  owned={props.owner} uuid={props.uuid}/>
                   <DOTAHeroMovie hittest={false}  className={"heroimage"} heroname={(GameUI.CustomUIConfig() as any).CardHero.CardGame[state.Id].name} />
                   <Panel hittest={false}  className={"threeDimensional"}>
                 <Panel hittest={false}  className={"attack"}>

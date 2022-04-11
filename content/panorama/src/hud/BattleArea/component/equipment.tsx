@@ -24,13 +24,14 @@ export const Equipment = (props:{index:number,uuid:string,owned:number}) =>{
 
     useGameEvent("S2C_SEND_EQUIP",(event)=>{
         if(event.uuid != props.uuid) return;
-        const obj = JsonString2Array(event.data)
+
         event.data[props.index] && setEQUIPshowName(event.data[props.index])
-    },[props.uuid])
+    },[])
 
     useEffect(()=>{
+        $.Msg("刷新了")
         GameEvents.SendCustomGameEventToServer("C2S_GET_EQUIP",{uuid:props.uuid})
-    },[])
+    },[props.uuid])
 
     const registrationCanBeHitInTheEvent = (open:boolean) => {
         open ? $.RegisterEventHandler( 'DragDrop', ref.current!, OnDragDrop ) : $.RegisterEventHandler( 'DragDrop', ref.current!, ()=>{} );
@@ -71,6 +72,6 @@ export const Equipment = (props:{index:number,uuid:string,owned:number}) =>{
     }
 
     return <Panel onmouseover={(panel)=>mouseover(panel)} onmouseout={(penel)=>mouseout(penel)} ref={Panel => ref.current = Panel} draggable={true} className={"Equipment"}  hittest={false}>
-        <DOTAItemImage    itemname={EQUIPshowName} className={'beEquipped'} showtooltip={false} />
+        <DOTAItemImage  itemname={EQUIPshowName} className={'beEquipped'} showtooltip={false} />
     </Panel>
 }

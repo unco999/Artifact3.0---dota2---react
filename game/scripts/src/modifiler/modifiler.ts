@@ -88,10 +88,12 @@ export class item_force_field_modifiler extends CAModifiler {
 
     register_hook_event() {
         this.setHookEvent(HOOK.创造时, () => {
+            this.thisHero.max_heal += 3
             this.thisHero.heal += 3
+            this.thisHero.updateAttribute()
             return true
         })
-        this.setHookEvent(HOOK.死亡前, (thishero: Hero, source: Unit) => {
+        this.setHookEvent(HOOK.死亡后, (thishero: Hero, source: Unit) => {
             print("触动了免死金牌");
             if (thishero) {
                 thishero.heal = 1;
@@ -117,7 +119,7 @@ export class item_force_field_modifiler extends CAModifiler {
     }
 
     get influenceheal(): any {
-        return 0;
+        return 3;
     }
 
 }
@@ -382,7 +384,9 @@ export class item_radiance_modifiler extends CAModifiler {
 
     register_hook_event() {
         this.setHookEvent(HOOK.创造时, () => {
+            this.thisHero.max_heal += 1
             this.thisHero.heal += 1
+            this.thisHero.updateAttribute()
             return true
         })
         this.setHookEvent(HOOK.回合结束时, (my: Unit) => {
@@ -390,7 +394,7 @@ export class item_radiance_modifiler extends CAModifiler {
             for (const key in cards) {
                 if (typeof(cards[key]) == 'number') continue;
                 const _damage = new damage(my, cards[key] as Unit);
-                _damage.spell_skill_settlement(1, my, 'purely', "particles/econ/events/spring_2021/radiance_owner_spring_2021.vpcf");
+                _damage.spell_skill_settlement(2, my, 'purely', "particles/econ/events/spring_2021/radiance_owner_spring_2021.vpcf");
             }
             return true;
         });
@@ -992,7 +996,7 @@ export class item_aghanims_shard_modifiler extends CAModifiler {
 
 
 /**
-* 魔晶的modifiler
+* 神杖的modifiler
 */
 @ca_register_modifiler()
 export class item_ultimate_scepter_modifiler extends CAModifiler {
@@ -1008,6 +1012,12 @@ export class item_ultimate_scepter_modifiler extends CAModifiler {
     constructorinstance = item_ultimate_scepter_modifiler;
 
     register_hook_event() {
+        this.setHookEvent(HOOK.创造时, () => {
+            this.thisHero.max_heal += 3
+            this.thisHero.heal += 3
+            this.thisHero.updateAttribute()
+            return true
+        })
     }
 
     get influenceMaxheal(): any {
@@ -1049,7 +1059,9 @@ export class item_heart_modifiler extends CAModifiler{
 
     register_hook_event() {
         this.setHookEvent(HOOK.创造时, () => {
+            this.thisHero.max_heal += 4
             this.thisHero.heal += 4
+            this.thisHero.updateAttribute()
             return true
         })
         this.setHookEvent(HOOK.回合结束时, () => {
@@ -1071,7 +1083,7 @@ export class item_heart_modifiler extends CAModifiler{
     }
 
     get influenceheal(): any {
-        return 0;
+        return 4;
     }
 
     get faulty() {

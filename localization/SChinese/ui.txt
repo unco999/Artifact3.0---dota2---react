@@ -48,7 +48,7 @@
 "custom_item_heart_Description" "增加4点生命上限 战斗阶段结束后恢复2点生命值"
 
 "custom_item_force_field" "永恒之盘"
-"custom_item_force_field_Description" "增加4点生命上限 免疫一次致死效果 全场一次"
+"custom_item_force_field_Description" "增加3点生命上限 免疫一次致死效果 全场一次"
 
 "custom_item_aegis" "不朽之守护"
 "custom_item_aegis_Description" "增加1点防御 满状态复活 全场一次"

@@ -1,9 +1,10 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { useNetTableValues } from "react-panorama";
+import { useNetTableKey, useNetTableValues } from "react-panorama";
 import { ConpoentDataContainer } from "../../ConpoentDataContainer";
 
 export const Main = () =>{
     const data = useNetTableValues("GameMianLoop")
+    const team = useNetTableKey("Card_group_construction_phase","team")
     const [update,setupdate] = useState<boolean>(false)
     const list = useMemo(() =>{
         const _list = []
@@ -33,6 +34,8 @@ export const Main = () =>{
             <TextButton text={"随机增加一张装备牌"} className={"default"} onactivate={()=>{GameEvents.SendCustomGameEventToServer("C2S_TEST_RANDOM_EQUIP",{})}}/>
             <TextButton text={"本方全队晕眩"} className={"default"} onactivate={()=>{GameEvents.SendCustomGameEventToServer("C2S_ALL_Stun",{})}}/>
             <TextButton text={"本方全部阵亡"} className={"default"} onactivate={()=>{GameEvents.SendCustomGameEventToServer("TEST_ALL_DEATCH",{})}}/>
+            <TextButton text={"红方点出牌"} className={"default"} onactivate={()=>{GameEvents.SendCustomGameEventToServer("C2S_RED_SEND_PlayCard",{player:team.red as PlayerID})}}/>
+            <TextButton text={"红方点跳过"} className={"default"} onactivate={()=>{GameEvents.SendCustomGameEventToServer("C2S_RED_SEND_SKIP",{player:team.red as PlayerID})}}/>
             <Panel style={{flowChildren:'right-wrap',width:'100%',height:'100%'}}>
             </Panel>
         </Panel>
